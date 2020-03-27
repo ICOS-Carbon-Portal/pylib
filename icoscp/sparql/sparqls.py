@@ -1,0 +1,605 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+    Created on Fri Aug  9 10:40:27 2019
+    This file contains an assembly of common sparql queries.
+    Each function returns a valid sparql query as string.
+    Depending on query, there is an optional input parameter to 
+    "limit" how many results are returned. By default it is set to 0 (zero)
+    returning all results from the sparql endpoint
+"""
+
+__author__ = "Claudio D'Onofrio"
+__credits__ = ["ICOS Carbon Portal Dev Team"]
+__license__ = "GPL"
+__version__ = "0.0.2"
+__maintainer__ = "Claudio D'Onofrio"
+__email__ = ["claudio.donofrio at nateko.lu.se", 'info@icos-cp.eu']
+__status__ = "Development"
+
+
+# --------------------------------------------------------------------
+# create helper functions to be used for ALL sparql queries
+# --------------------------------------------------------------------
+
+def __checklimit__(limit):
+    
+    """
+        create a string to inject into sparql queries to limit the 
+        amount of returned results
+    """
+    
+    try:
+        limit = int(limit)
+        if limit > 0:
+            return 'limit ' + str(limit)
+        else:
+            return ''
+    except ValueError:
+        return ''
+
+
+
+def __dobjUrl__(dobj):
+    
+    """
+    transform the provided digital object to a consistent format
+    the user may provide the full url or only the pid.
+    this function will return the full url in form:
+        '<https://meta.icos-cp.eu/objects/'+ dobj + '>'
+    """
+    
+    try: 
+        dobj = str(dobj)
+    except:
+       raise Exception('dobj not a string') 
+    
+    if len(dobj.split('/')) > 1:
+        # we assume the full url / handle is provided as string
+        url = '<' + dobj + '>'        
+    else:
+        # we assume only the PID is provided
+        url = '<https://meta.icos-cp.eu/objects/'+ dobj + '>'
+        
+    return url        
+
+# --------------------------------------------------------------------
+#    sparqls query functions        
+#    return a sparql query, which can be copy/pasted to the sparql
+#    endpoint at https://meta.icos-cp.eu/sparqlclient/
+# --------------------------------------------------------------------
+def atc_co2_level2(limit=0):
+
+    """ ICOS Atmospheric CO2 level 2 data objects """
+
+    query = """
+        prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+        prefix prov: <http://www.w3.org/ns/prov#>
+        select ?dobj ?spec ?fileName ?size ?submTime ?timeStart ?timeEnd
+        FROM <http://meta.icos-cp.eu/resources/atmprodcsv/>
+        where {
+                BIND(<http://meta.icos-cp.eu/resources/cpmeta/atcCo2L2DataObject> AS ?spec)
+                ?dobj cpmeta:hasObjectSpec ?spec .
+                FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}
+                ?dobj cpmeta:hasSizeInBytes ?size .
+                ?dobj cpmeta:hasName ?fileName .
+                ?dobj cpmeta:wasSubmittedBy [
+                prov:endedAtTime ?submTime ;
+                prov:wasAssociatedWith ?submitter
+                ] .
+                ?dobj cpmeta:hasStartTime | (cpmeta:wasAcquiredBy / prov:startedAtTime) ?timeStart .
+                ?dobj cpmeta:hasEndTime | (cpmeta:wasAcquiredBy / prov:endedAtTime) ?timeEnd .
+        }
+        %s
+        """ % __checklimit__(limit)
+
+    return query
+
+# -----------------------------------------------------------------------------
+
+def objectSpec(spec='atcCo2L2DataObject', station='', limit=0):
+
+    """ return digital objects sorted by station and sampling height based
+        on data specification  https://meta.icos-cp.eu/edit/cpmeta/ 
+        -> simple object specification
+        by default ATC Level2 Data for CO2 is returned
+    """
+        
+    if station:
+        station = 'FILTER(?station = "%s")' % station
+    
+    query = """
+        prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+	    prefix prov: <http://www.w3.org/ns/prov#>
+		select ?dobj ?station ?samplingHeight
+		where {
+			VALUES ?spec { <http://meta.icos-cp.eu/resources/cpmeta/%s> }
+			?dobj cpmeta:hasObjectSpec ?spec .
+			FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}
+			?dobj cpmeta:wasSubmittedBy/prov:endedAtTime ?submEnd .
+			?dobj cpmeta:wasAcquiredBy [
+				prov:wasAssociatedWith/cpmeta:hasName ?station ;
+				cpmeta:hasSamplingHeight ?samplingHeight
+			] .			
+			%s
+		}
+		order by ?station ?samplingHeight		
+        %s
+        """ % (spec,station, __checklimit__(limit))
+
+    return query
+
+# -----------------------------------------------------------------------------
+def atc_co_level2(limit=0):
+
+    """ ICOS Atmospheric CO2 level 2 data objects """
+
+    query = """
+        prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+        prefix prov: <http://www.w3.org/ns/prov#>
+        select ?dobj ?spec ?fileName ?size ?submTime ?timeStart ?timeEnd 
+        FROM <http://meta.icos-cp.eu/resources/atmprodcsv/>
+        where {
+                BIND(<http://meta.icos-cp.eu/resources/cpmeta/atcCoL2DataObject> AS ?spec)
+                ?dobj cpmeta:hasObjectSpec ?spec .
+                FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}
+                ?dobj cpmeta:hasSizeInBytes ?size .
+                ?dobj cpmeta:hasName ?fileName .
+                ?dobj cpmeta:wasSubmittedBy [
+                prov:endedAtTime ?submTime ;
+                prov:wasAssociatedWith ?submitter
+                ] .
+                
+                ?dobj cpmeta:hasStartTime | (cpmeta:wasAcquiredBy / prov:startedAtTime) ?timeStart .
+                ?dobj cpmeta:hasEndTime | (cpmeta:wasAcquiredBy / prov:endedAtTime) ?timeEnd .                
+        }
+        %s
+        """ % __checklimit__(limit)
+
+    return query
+
+# -----------------------------------------------------------------------------
+def atc_ch4_level2(limit=0):
+
+    """ ICOS Atmospheric CH4 level 2 data objects """
+
+    query = """
+        prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+        prefix prov: <http://www.w3.org/ns/prov#>
+        select ?dobj ?spec ?fileName ?size ?submTime ?timeStart ?timeEnd
+        FROM <http://meta.icos-cp.eu/resources/atmprodcsv/>
+        where {
+                BIND(<http://meta.icos-cp.eu/resources/cpmeta/atcCh4L2DataObject> AS ?spec)
+                ?dobj cpmeta:hasObjectSpec ?spec .
+                FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}
+                ?dobj cpmeta:hasSizeInBytes ?size .
+                ?dobj cpmeta:hasName ?fileName .
+                ?dobj cpmeta:wasSubmittedBy [
+                prov:endedAtTime ?submTime ;
+                prov:wasAssociatedWith ?submitter
+                ] .
+                ?dobj cpmeta:hasStartTime | (cpmeta:wasAcquiredBy / prov:startedAtTime) ?timeStart .
+                ?dobj cpmeta:hasEndTime | (cpmeta:wasAcquiredBy / prov:endedAtTime) ?timeEnd .
+        }
+        %s
+        """ % __checklimit__(limit)
+
+    return query
+# ---------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+def atc_nrt_level_1(limit=0):
+
+    """ ICOS Atmospheric level 1 data objects
+        -> Data Level 1 / ATC / CH4 and CO2
+    """
+
+    query = """
+        prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+		prefix prov: <http://www.w3.org/ns/prov#>
+		select ?dobj ?spec ?fileName ?size ?submTime ?timeStart ?timeEnd
+		FROM <http://meta.icos-cp.eu/resources/atmprodcsv/>
+		where {
+		VALUES ?spec {<http://meta.icos-cp.eu/resources/cpmeta/atcMeteoGrowingNrtDataObject> <http://meta.icos-cp.eu/resources/cpmeta/atcCo2NrtGrowingDataObject> <http://meta.icos-cp.eu/resources/cpmeta/atcCh4NrtGrowingDataObject>}
+		?dobj cpmeta:hasObjectSpec ?spec .
+	
+		FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}
+		?dobj cpmeta:hasSizeInBytes ?size .
+		?dobj cpmeta:hasName ?fileName .
+		?dobj cpmeta:wasSubmittedBy/prov:endedAtTime ?submTime .
+		?dobj cpmeta:hasStartTime | (cpmeta:wasAcquiredBy / prov:startedAtTime) ?timeStart .
+		?dobj cpmeta:hasEndTime | (cpmeta:wasAcquiredBy / prov:endedAtTime) ?timeEnd .
+	    }
+
+        %s
+        """ % __checklimit__(limit)
+
+    return query
+# ---------------------------------------------------------------------------
+
+def collections(limit=0):
+    """ Return all known collections """
+
+    query = """
+            prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+            prefix dcterms: <http://purl.org/dc/terms/>
+            select * where{
+            ?coll a cpmeta:Collection .
+            OPTIONAL{?coll cpmeta:hasDoi ?doi}
+            ?coll dcterms:title ?title .
+            }
+            %s
+            """ % __checklimit__(limit)
+
+    return query
+
+# -----------------------------------------------------------------------------
+
+
+def stations_with_pi(limit=0):
+    """
+        Define SPARQL query to get a list of ICOS stations with PI and email.
+        As per writing, (April 2019, the list is pulled from the provisional
+        data, labeling process)
+    """
+
+    query = """
+            prefix st: <http://meta.icos-cp.eu/ontologies/stationentry/>
+            select distinct ?stationTheme ?stationId ?stationName ?firstName ?lastName ?email
+            from <http://meta.icos-cp.eu/resources/stationentry/>
+            where{
+                ?s st:hasShortName ?stationId .
+                ?s st:hasLongName ?stationName .
+                ?s st:hasPi ?pi .
+                ?pi st:hasFirstName ?firstName .
+                ?pi st:hasLastName ?lastName .
+                ?pi st:hasEmail ?email .
+                ?s a ?stationClass .
+                BIND (replace(str(?stationClass), "http://meta.icos-cp.eu/ontologies/stationentry/", "") AS ?stationTheme )
+            }            
+            %s
+        """ % __checklimit__(limit)
+
+    return query
+# -----------------------------------------------------------------------------
+
+def cpbGetInfo(dobj):
+    """
+        Define SPARQL query to get information about a digitial object
+        aiming to assmble the underlying binary data structure schema for
+        a fast access to the binary file.
+        Input dobj: Persisten Identifier
+        dobj may be in the form of the PID or the full handle
+    """
+   
+    query = """
+            prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+            select * where {
+                values ?dobj { %s }
+                ?dobj cpmeta:hasObjectSpec ?objSpec ;
+                cpmeta:hasNumberOfRows ?nRows ;
+                cpmeta:hasName ?fileName .
+                ?objSpec rdfs:label ?specLabel .
+                OPTIONAL{?dobj cpmeta:hasActualColumnNames ?columnNames }
+            }
+            
+            """ %__dobjUrl__(dobj)
+
+    return query
+# -----------------------------------------------------------------------------
+def cpbGetSchemaDetail(formatSpec):
+    """
+        Define SPARQL query to get information about a digitial object
+        to assmble the underlying binary data structure schema for
+        access to the binary file.
+        :param formatSpec url for the specification  
+    """
+
+    query = """
+            prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+            SELECT distinct ?objFormat ?colName ?valueType ?valFormat ?unit ?qKind ?colTip ?isRegex
+            WHERE {
+                <%(formSpec)s> cpmeta:containsDataset ?dset .
+                <%(formSpec)s> cpmeta:hasFormat ?objFormat .
+                ?dset cpmeta:hasColumn ?column .
+                ?column cpmeta:hasColumnTitle ?colName ;
+                    cpmeta:hasValueFormat ?valFormat ;
+                    cpmeta:hasValueType ?valType .                
+                ?valType rdfs:label ?valueType .
+                optional{?valType rdfs:comment ?colTip }
+                optional{
+                    ?valType cpmeta:hasUnit ?unit .
+                    ?valType cpmeta:hasQuantityKind [rdfs:label ?qKind ] .
+                }
+            } order by ?colName                       
+            """ % {'formSpec': formatSpec}
+    return query
+
+# -----------------------------------------------------------------------------
+def dobjStation(dobj):
+    """
+        Define SPARQL query to get information about a station
+        where the digitial object was sampled.        
+        :param dobj pid
+    """
+    query = """
+            prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+            prefix prov: <http://www.w3.org/ns/prov#>
+            select distinct ?dobj ?stationName ?stationId ?samplingHeight ?longitude ?latitude ?elevation ?theme
+            where{
+            		{	select ?dobj (min(?station0) as ?stationName)
+            			(sample(?stationId0) as ?stationId) 
+            			(sample(?stationLongitude) as ?longitude)
+            			(sample(?stationLatitude) as ?latitude)
+            			(sample(?stationElevation) as ?elevation)
+            			(sample(?samplingHeight0) as ?samplingHeight)
+            			where{
+            				VALUES ?dobj { %s }
+            				OPTIONAL{
+            						?dobj cpmeta:wasAcquiredBy ?acq.
+            						?acq prov:wasAssociatedWith ?stationUri .
+            						OPTIONAL{ ?stationUri cpmeta:hasName ?station0 }
+            						OPTIONAL{ ?stationUri cpmeta:hasStationId ?stationId0 }
+            						OPTIONAL{ ?stationUri cpmeta:hasLongitude ?stationLongitude }
+            						OPTIONAL{ ?stationUri cpmeta:hasLatitude ?stationLatitude }
+            						OPTIONAL{ ?stationUri cpmeta:hasElevation ?stationElevation }
+            						OPTIONAL{ ?acq cpmeta:hasSamplingHeight ?samplingHeight0 }
+            				}
+            			}
+            			group by ?dobj
+            		}
+            		?dobj cpmeta:hasObjectSpec ?specUri .
+            		OPTIONAL{ ?specUri cpmeta:hasDataTheme [rdfs:label ?theme ;]}
+            		OPTIONAL{?dobj cpmeta:hasActualColumnNames ?columnNames }
+            }
+            """ %__dobjUrl__(dobj)
+    return query
+# -----------------------------------------------------------------------------
+# originals from Karolina
+# stripped to return sparql queries only
+# -----------------------------------------------------------------------------
+
+def get_coords_icos_stations_atc():
+    
+    """
+    Input parameters: No input parameter/s
+    Output:           pandas dataframe
+                      columns: 
+                            1. URL to station landing page (var_name: 'station', var_type: String)
+                            2. Name of station PI (var_name: 'PI_names', var_type: String)
+                            3. Station name (var_name: 'stationName', var_type: String)
+                            4. 3-character Station ID (var_name: 'stationId', var_type: String)
+                            5. 2-character Country code (var_name: 'Country', var_type: String)
+                            6. Station Latitude (var_name: 'lat', var_type: String)
+                            7. Station Longitude (var_name: 'lon', var_type: String)
+
+    """
+    
+
+    query = """
+        prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+        select *
+        from <http://meta.icos-cp.eu/resources/icos/>
+        where{
+        {
+        select ?station (GROUP_CONCAT(?piLname; separator=";") AS ?PI_names)
+        where{
+          ?station a cpmeta:AS .
+          ?pi cpmeta:hasMembership ?piMemb .
+          ?piMemb cpmeta:atOrganization ?station  .
+           ?piMemb cpmeta:hasRole <http://meta.icos-cp.eu/resources/roles/PI> .
+           filter not exists {?piMemb cpmeta:hasEndTime []}
+           ?pi cpmeta:hasLastName ?piLname .
+        }
+        group by ?station
+        }
+        ?station a cpmeta:AS .
+        ?station cpmeta:hasName ?stationName ;
+           cpmeta:hasStationId ?stationId ;
+           cpmeta:countryCode ?Country ;
+           cpmeta:hasLatitude ?lat ;
+           cpmeta:hasLongitude ?lon .
+        }
+        order by ?Short_name
+    """
+    
+    return query
+
+# -----------------------------------------------------------------------------
+
+def get_icos_stations_atc_L1():
+    
+    """
+    Description:      Download ICOS station names for all L1 gases from ICOS CP with a SPARQL-query.
+    Input parameters: No input parameter/s
+    Output:           Pandas Dataframe
+                      columns: 
+                            1. URL to ICOS RI Data Object Landing Page (var_name: 'dobj', var_type: String)
+                            2. Filename for Data Object (var_name: 'filename', var_type: String)
+                            3. Name of gas (var_name: 'variable', var_type: String)
+                            4. Station name (var_name: 'stationName', var_type: String)
+                            5. Sampling height a.g.l. (var_name: 'height', var_type: String)
+                            6. Sampling Start Time (var_name: 'timeStart', var_type: String)
+                            7. Sampling End Time (var_naem: 'timeEnd', var_type: String)
+
+    """
+    
+    query = """
+        prefix cpres: <http://meta.icos-cp.eu/resources/cpmeta/>
+        prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+        prefix prov: <http://www.w3.org/ns/prov#>
+        select ?dobj ?fileName ?variable ?stationName ?height ?timeStart ?timeEnd #?stationId
+        where{
+           values ?vtype { cpres:co2MixingRatio cpres:coMixingRatioPpb cpres:ch4MixingRatioPpb}
+           #values ?spec {cpres:atcCo2NrtGrowingDataObject cpres:atcCoNrtGrowingDataObject cpres:atcCh4NrtGrowingDataObject}
+           ?vtype rdfs:label ?variable .
+           ?col cpmeta:hasValueType ?vtype .
+           ?dset cpmeta:hasColumn ?col .
+           ?spec cpmeta:containsDataset ?dset .
+           ?spec cpmeta:hasAssociatedProject <http://meta.icos-cp.eu/resources/projects/icos> .
+           ?spec cpmeta:hasDataLevel "1"^^xsd:integer .
+           ?dobj cpmeta:hasObjectSpec ?spec .
+           ?dobj cpmeta:hasName ?fileName .
+           ?dobj cpmeta:hasSizeInBytes ?fileSize .
+           filter not exists {[] cpmeta:isNextVersionOf ?dobj}
+           ?dobj cpmeta:wasAcquiredBy [
+              #prov:wasAssociatedWith/cpmeta:hasStationId ?stationId ;
+              prov:startedAtTime ?timeStart ;
+              prov:endedAtTime ?timeEnd ;
+              prov:wasAssociatedWith/cpmeta:hasName ?stationName 
+            ] .
+            ?dobj cpmeta:wasAcquiredBy/cpmeta:hasSamplingHeight ?height .
+        }
+        order by ?variable ?stationName ?height
+    """
+    
+    return query
+
+# -----------------------------------------------------------------------------
+
+def get_icos_stations_atc_L2():
+    """    
+    Description:      Download ICOS station names for all L2 gases from ICOS CP with a SPARQL-query.
+    Input parameters: No input parameter/s
+    Output:           pandas dataframe
+                      columns: 
+                            1. URL to ICOS RI Data Object Landing Page (var_name: 'dobj', var_type: String)
+                            2. Filename for Data Object (var_name: 'filename', var_type: String)
+                            3. Name of gas (var_name: 'variable', var_type: String)
+                            4. Station name (var_name: 'stationName', var_type: String)
+                            5. Sampling height a.g.l. (var_name: 'height', var_type: String)
+                            6. Sampling Start Time (var_name: "timeStart", var_type: Datetime Object)
+                            7. Sampling End Time (var_name: "timeEnd", var_type: Datetime Object)
+
+    """
+    
+    query = """
+        prefix cpres: <http://meta.icos-cp.eu/resources/cpmeta/>
+        prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+        prefix prov: <http://www.w3.org/ns/prov#>
+        select ?dobj ?fileName ?variable ?stationName ?height ?timeStart ?timeEnd #?stationId
+        where{
+           values ?vtype {cpres:coMixingRatioPpb cpres:ch4MixingRatioPpb cpres:co2MixingRatio }
+           #values ?spec {cpres:atcCo2L2DataObject cpres:atcCoL2DataObject cpres:atcCh4L2DataObject}
+           ?vtype rdfs:label ?variable .
+           ?col cpmeta:hasValueType ?vtype .
+           ?dset cpmeta:hasColumn ?col .
+           ?spec cpmeta:containsDataset ?dset .
+           ?spec cpmeta:hasAssociatedProject <http://meta.icos-cp.eu/resources/projects/icos> .
+           ?spec cpmeta:hasDataLevel "2"^^xsd:integer .
+           ?dobj cpmeta:hasObjectSpec ?spec .
+           ?dobj cpmeta:hasName ?fileName .
+           filter not exists {[] cpmeta:isNextVersionOf ?dobj}
+           ?dobj cpmeta:wasAcquiredBy [
+              #prov:wasAssociatedWith/cpmeta:hasStationId ?stationId ;
+              prov:startedAtTime ?timeStart ;
+              prov:endedAtTime ?timeEnd ;
+              prov:wasAssociatedWith/cpmeta:hasName ?stationName
+            ] .
+            ?dobj cpmeta:wasAcquiredBy/cpmeta:hasSamplingHeight ?height .
+        }
+        order by ?variable ?stationName ?height
+    """
+
+    return query
+
+# -----------------------------------------------------------------------------
+# originals from Ute
+# stripped to return sparql queries only
+# -----------------------------------------------------------------------------
+
+
+def get_station_class():
+    # Query the ICOS SPARQL endpoint for a station list
+    # query stationId, class, lng name and country
+
+    query = """
+    prefix st: <http://meta.icos-cp.eu/ontologies/stationentry/>
+    select distinct ?stationId ?stationClass ?country ?longName
+    from <http://meta.icos-cp.eu/resources/stationentry/>
+    where{
+      ?s a st:AS .
+      ?s st:hasShortName ?stationId .
+      ?s st:hasStationClass ?stationClass .
+      ?s st:hasCountry ?country .
+      ?s st:hasLongName ?longName .
+      filter (?stationClass = "1" || ?stationClass = "2")
+    }
+    ORDER BY ?stationClass ?stationId 
+    """
+
+    return query
+
+# -----------------------------------------------------------------------------
+def atc_query(tracer,level=2):
+    """
+        Return SPARQL query to get a list of
+        ICOS Atmospheric CO2, CO or MTO, level 2 or level 1 (=NRT) data objects
+       :return: SPARQL query to get all ATC Level <level> products for tracer <tracer>
+       :rtype: string 
+    """
+    tracer = tracer.lower().title()
+    dataobject = ["NrtGrowingDataObject","L2DataObject"]
+    
+    query = """
+        prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+        prefix prov: <http://www.w3.org/ns/prov#>
+        select ?dobj ?spec ?fileName ?size ?submTime ?timeStart ?timeEnd
+        FROM <http://meta.icos-cp.eu/resources/atmprodcsv/>
+        where {
+                BIND(<http://meta.icos-cp.eu/resources/cpmeta/atc"""+tracer+dataobject[level-1]+"""> AS ?spec)
+                ?dobj cpmeta:hasObjectSpec ?spec .
+	
+                FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}
+                ?dobj cpmeta:hasSizeInBytes ?size .
+                ?dobj cpmeta:hasName ?fileName .
+                ?dobj cpmeta:wasSubmittedBy [
+                prov:endedAtTime ?submTime ;
+                prov:wasAssociatedWith ?submitter
+                ] .
+                ?dobj cpmeta:hasStartTime | (cpmeta:wasAcquiredBy / prov:startedAtTime) ?timeStart .
+                ?dobj cpmeta:hasEndTime | (cpmeta:wasAcquiredBy / prov:endedAtTime) ?timeEnd .
+        }
+
+        """
+    return query
+#------------------------------------------------------------------------------
+    
+def atc_stationlist(station,tracer='co2',level=2):
+    """
+        Return SPARQL query to get a list of
+        ICOS Atmospheric CO2, CO or MTO, level 2 or level 1 (=NRT) data objects
+        for all stations in list
+       :return: SPARQL query to get all ATC products for specific stations, tracer and ICOS-level
+       :rtype: string 
+    """
+    tracer = tracer.lower().title()
+    dataobject = ["NrtGrowingDataObject","L2DataObject"]
+    
+    if type(station) == str:
+        station = [station]
+    strUrl=" "
+    for ist in station:
+        strUrl = strUrl + " " + """<http://meta.icos-cp.eu/resources/stations/AS_"""+ist+""">"""
+
+    query = """
+    prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+    prefix prov: <http://www.w3.org/ns/prov#>
+    select ?dobj ?spec ?fileName ?size ?submTime ?timeStart ?timeEnd
+    FROM <http://meta.icos-cp.eu/resources/atmprodcsv/>
+    where {
+        BIND(<http://meta.icos-cp.eu/resources/cpmeta/atc"""+tracer+dataobject[level-1]+"""> AS ?spec)
+        ?dobj cpmeta:hasObjectSpec ?spec .
+        VALUES ?station {"""+strUrl+"""} ?dobj cpmeta:wasAcquiredBy/prov:wasAssociatedWith ?station .
+        FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}
+        ?dobj cpmeta:hasSizeInBytes ?size .
+        ?dobj cpmeta:hasName ?fileName .
+        ?dobj cpmeta:wasSubmittedBy [
+            prov:endedAtTime ?submTime ;
+            prov:wasAssociatedWith ?submitter
+        ] .
+        ?dobj cpmeta:hasStartTime | (cpmeta:wasAcquiredBy / prov:startedAtTime) ?timeStart .
+        ?dobj cpmeta:hasEndTime | (cpmeta:wasAcquiredBy / prov:endedAtTime) ?timeEnd .
+        }
+        """
+    return query
