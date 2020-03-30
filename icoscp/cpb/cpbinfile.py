@@ -9,7 +9,7 @@
 __author__ = "Claudio D'Onofrio"
 __credits__ = ["ICOS Carbon Portal Dev Team"]
 __license__ = "GPL"
-__version__ = "0.0.3. jupyter"
+__version__ = "0.0.4. jupyter"
 __maintainer__ = "Claudio D'Onofrio"
 __email__ = ["claudio.donofrio at nateko.lu.se", 'info@icos-cp.eu']
 __status__ = "Development"
@@ -34,7 +34,8 @@ class CpBinFile():
     def __init__(self, digitalObject = ''):          
         
         self._colSelected = None    # 'none' -> ALL columns are returned
-        self._endian = 'big'        # default "big"
+        self._endian = 'big'        # default "big endian conversion 
+        self._dtconvert = True      # convert Unixtimstamp to datetime object
         self._info1 = None          # sparql query object           
         self._info2 = None          # sparql query objcect format
         self._info3 = None        # station information for dobj
@@ -73,7 +74,14 @@ class CpBinFile():
     def valid(self):
         return self._dobjValid
     #-----------
-    
+    @property
+    def dateTimeConvert(self):
+        return self._dtconvert
+    #-----------
+    @dateTimeConvert.setter
+    def dateTimeConvert(self, convert=True):
+        self._dtconvert = convert
+    #-----------
     @property
     def colNames(self):
         if self._dobjValid:
@@ -241,10 +249,8 @@ class CpBinFile():
             except requests.exceptions.HTTPError as e:
                 raise Exception(e)
 
-
             #track data usage
             self.__portalUse()
-
             
             return self.__unpackRawData(r.content)                    
 
@@ -266,6 +272,14 @@ class CpBinFile():
         except Exception as e:
             raise Exception('_unpackRawData')
             print(e)
+                
+        """
+            The ICOS Carbon Portal provides a TIMESTAMP which is
+            a unix timestamp in milliseconds [UTC]
+            Convert the "number" to a pandas date/time object       
+        """
+        if 'TIMESTAMP' in df.columns and self._dtconvert:
+            df['TIMESTAMP'] = pd.to_datetime(df.loc[:,'TIMESTAMP'],unit='ms')
                     
         return df
 
