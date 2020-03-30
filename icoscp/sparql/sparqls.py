@@ -603,3 +603,125 @@ def atc_stationlist(station,tracer='co2',level=2):
         }
         """
     return query
+
+#------------------------------------------------------------------------------
+
+
+def icos_hist_L1_L2_sparql(station_code, samp_height, icos_label):
+    
+    '''
+    Description: Function that returns a pandas DataFrame with file info
+                 for a specified station from the drought2018AtmoProduct. 
+                
+    Input:       1. Station code, characters (var_name: "station_code", var_type: String)
+                 2. Station sampling height  (var_name: "samp_height", var_type: Int/Float)
+                 3. Label specifying if the station is an ICOS station 
+                    (var_name: "icos_label", var_type: Boolean)
+    
+    Output:      Pandas DataFrame
+                
+                 1. Data Object ID (var_name: "dobj", var_type: String)
+                 2. Data specification (var_name: "spec", var_type: String)
+                 3. Filename (var_name: "fileName", var_type: String)
+                 4. Size (var_name: "size", var_type: Int)
+                 5. Submission time (var_name: "submTime", var_type: String)
+                 6. Observation starting time (var_name: "timeStart", var_type: String)
+                 7. Observation end date (var_name: "timeEnd", var_type: String)
+                 8. Station sampling height (var_name: "samplingHeight", var_type: String)
+                
+                
+    '''    
+    
+    #If the station is an ICOS station:
+    if(icos_label):
+        station_label = 'AS_' + station_code
+    
+    #If the station is NOT an ICOS station:
+    else:
+        station_label = 'ATMO_' + station_code
+
+        
+    
+    #Define URL:
+    url = 'https://meta.icos-cp.eu/sparql'
+    
+    query = '''
+        prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+        prefix prov: <http://www.w3.org/ns/prov#>
+        select ?dobj ?spec ?fileName ?size ?submTime ?timeStart ?timeEnd ?samplingHeight
+        where {
+            VALUES ?spec {<http://meta.icos-cp.eu/resources/cpmeta/atcCo2NrtGrowingDataObject>
+            <http://meta.icos-cp.eu/resources/cpmeta/atcCo2L2DataObject>
+            <http://meta.icos-cp.eu/resources/cpmeta/drought2018AtmoProduct>}
+            ?dobj cpmeta:hasObjectSpec ?spec .
+            VALUES ?station {<http://meta.icos-cp.eu/resources/stations/'''+station_label+'''>}
+            ?dobj cpmeta:wasAcquiredBy/prov:wasAssociatedWith ?station .
+            ?dobj cpmeta:hasSizeInBytes ?size .
+            ?dobj cpmeta:hasName ?fileName .
+            ?dobj cpmeta:wasSubmittedBy/prov:endedAtTime ?submTime .
+            ?dobj cpmeta:hasStartTime | (cpmeta:wasAcquiredBy / prov:startedAtTime) ?timeStart .
+            ?dobj cpmeta:hasEndTime | (cpmeta:wasAcquiredBy / prov:endedAtTime) ?timeEnd .
+            FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}
+            ?dobj cpmeta:wasAcquiredBy / cpmeta:hasSamplingHeight ?samplingHeight .
+            FILTER( ?samplingHeight = "'''+str(samp_height)+'''"^^xsd:float )
+        }
+        order by desc(?submTime)
+    '''
+    return query
+#------------------------------------------------------------------------------
+
+
+def icos_hist_sparql():
+    
+    '''
+    Description: Function that returns a pandas DataFrame with info
+                 for all stations included in the drought2018AtmoProduct. 
+                
+    Input:       No input parameters
+    
+    Output:      Pandas DataFrame
+                
+                 1. Station code, 3 characrers (var_name: "Short_name", var_type: String)
+                 2. Country code, 2 characters (var_name: "Country", var_type: String)
+                 3. Station latitude (var_name: "lat", var_type: String)
+                 4. Station longitude (var_name: "lon", var_type: String)
+                 5. Station name (var_name: "Long_name", var_type: String)
+                 6. Sampling height (var_name: "height", var_type: String)
+                
+                
+    '''
+  
+    
+    #Define URL:
+    url = 'https://meta.icos-cp.eu/sparql'
+    
+    query = """
+        prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+        prefix prov: <http://www.w3.org/ns/prov#>
+        select
+            (str(?sName) AS ?Short_name)
+            ?Country
+            ?lat ?lon
+            (str(?lName) AS ?Long_name)
+            ?height
+        where{
+            {
+                select distinct ?s ?height
+                where {
+                    ?dobj cpmeta:hasObjectSpec <http://meta.icos-cp.eu/resources/cpmeta/drought2018AtmoProduct> .
+                    ?dobj cpmeta:wasAcquiredBy/prov:wasAssociatedWith ?s .
+                    ?dobj cpmeta:hasSizeInBytes ?size .
+                    ?dobj cpmeta:wasAcquiredBy/cpmeta:hasSamplingHeight ?height .
+                    FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}
+                }
+            }
+            ?s cpmeta:hasStationId ?sName .
+            ?s cpmeta:hasName ?lName .
+            ?s cpmeta:countryCode ?Country .
+            ?s cpmeta:hasLatitude ?lat .
+            ?s cpmeta:hasLongitude ?lon .
+        }
+    """
+    
+    return query
+#------------------------------------------------------------------------------
