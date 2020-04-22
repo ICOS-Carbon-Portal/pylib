@@ -245,9 +245,14 @@ def stations_with_pi(limit=0):
 
     query = """
             prefix st: <http://meta.icos-cp.eu/ontologies/stationentry/>
-            select distinct ?stationTheme ?stationId ?stationName ?firstName ?lastName ?email
+            select distinct ?stationId ?stationName ?stationTheme 
+            ?lat ?lon ?eas ?eag ?firstName ?lastName ?email            
             from <http://meta.icos-cp.eu/resources/stationentry/>
             where{
+                optional{?s st:hasLon ?lon} .
+                optional{?s st:hasLat ?lat} .
+                optional{?s st:hasElevationAboveSea ?eas} .
+                optional{?s st:hasElevationAboveGround ?eag} .
                 ?s st:hasShortName ?stationId .
                 ?s st:hasLongName ?stationName .
                 ?s st:hasPi ?pi .
