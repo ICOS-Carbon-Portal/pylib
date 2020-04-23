@@ -246,7 +246,7 @@ def stations_with_pi(limit=0):
     query = """
             prefix st: <http://meta.icos-cp.eu/ontologies/stationentry/>
             select distinct ?stationId ?stationName ?stationTheme 
-            ?lat ?lon ?eas ?eag ?firstName ?lastName ?email            
+            ?lat ?lon ?eas ?eag ?firstName ?lastName ?email ?country            
             from <http://meta.icos-cp.eu/resources/stationentry/>
             where{
                 optional{?s st:hasLon ?lon} .
@@ -260,6 +260,8 @@ def stations_with_pi(limit=0):
                 ?pi st:hasLastName ?lastName .
                 ?pi st:hasEmail ?email .
                 ?s a ?stationClass .
+                optional{?s st:hasCountry ?country} .
+                
                 BIND (replace(str(?stationClass), "http://meta.icos-cp.eu/ontologies/stationentry/", "") AS ?stationTheme )
             }            
             %s

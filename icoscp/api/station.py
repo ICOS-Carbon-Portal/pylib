@@ -39,7 +39,6 @@ __maintainer__ = "Claudio D'Onofrio"
 __email__ = ["claudio.donofrio at nateko.lu.se", 'info@icos-cp.eu']
 __status__ = "Development"
 
-
 import json
 import pandas as pd
 from icoscp.sparql.runsparql import RunSparql
@@ -68,8 +67,7 @@ class Station():
         - email (PI email)            
         """
 
-        # Be aware, that attributList is filled to the the ORDER of attributes        
-        # you need to adjust the function setStation(attributeList)
+        # Be aware, that attrList needs to be in the same ORDER as attributes                
         self._stationId = None        
         self._name = None
         self._theme = None
@@ -81,13 +79,18 @@ class Station():
         #pi information
         self._firstName = None
         self._lastName = None
-        self._email = None     
+        self._email = None
         
-        #check if attributeList of Station is equal to provided List
+        # other information
+        self._country = None     
+        
+        # if the object is initialized with values
+        # the count of entries in the list must be equal to the number
+        # of attributes and the correct order as well. Entries can be empty.
+        
         if attrList:            
             self.setStation(attrList)
             
-    
     #super().__init__() # for subclasses
     #-------------------------------------
     @property
@@ -177,6 +180,14 @@ class Station():
     @email.setter
     def email(self, email):
         self._email = email
+    #-------------------------------------     
+    @property
+    def country(self):
+        return self._country
+    
+    @country.setter
+    def country(self, country):
+        self._country = country
     #-------------------------------------
     def __str__(self):        
         return json.dumps(self.__dict__, indent=2)
