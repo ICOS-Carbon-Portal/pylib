@@ -697,30 +697,30 @@ def icos_hist_sparql():
     
     query = """
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
-        prefix prov: <http://www.w3.org/ns/prov#>
-        select
-            (str(?sName) AS ?Short_name)
-            ?Country
-            ?lat ?lon
-            (str(?lName) AS ?Long_name)
-            ?height
-        where{
-            {
-                select distinct ?s ?height
-                where {
-                    ?dobj cpmeta:hasObjectSpec <http://meta.icos-cp.eu/resources/cpmeta/drought2018AtmoProduct> .
-                    ?dobj cpmeta:wasAcquiredBy/prov:wasAssociatedWith ?s .
-                    ?dobj cpmeta:hasSizeInBytes ?size .
-                    ?dobj cpmeta:wasAcquiredBy/cpmeta:hasSamplingHeight ?height .
-                    FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}
-                }
-            }
-            ?s cpmeta:hasStationId ?sName .
-            ?s cpmeta:hasName ?lName .
-            ?s cpmeta:countryCode ?Country .
-            ?s cpmeta:hasLatitude ?lat .
-            ?s cpmeta:hasLongitude ?lon .
-        }
+	prefix prov: <http://www.w3.org/ns/prov#>
+	select
+	(str(?sName) AS ?Short_name)
+	?Country
+	?lat ?lon
+	(str(?lName) AS ?Long_name)
+	?height
+	where{
+	{
+	select distinct ?s ?height
+	where {
+	?dobj cpmeta:hasObjectSpec <http://meta.icos-cp.eu/resources/cpmeta/drought2018AtmoProduct> .
+	?dobj cpmeta:wasAcquiredBy/prov:wasAssociatedWith ?s .
+	?dobj cpmeta:hasSizeInBytes ?size .
+	OPTIONAL{?dobj cpmeta:wasAcquiredBy/cpmeta:hasSamplingHeight ?height }
+	FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}
+	}
+	}
+	?s cpmeta:hasStationId ?sName .
+	?s cpmeta:hasName ?lName .
+	?s cpmeta:countryCode ?Country .
+	?s cpmeta:hasLatitude ?lat .
+	?s cpmeta:hasLongitude ?lon .
+	}
     """
     
     return query
