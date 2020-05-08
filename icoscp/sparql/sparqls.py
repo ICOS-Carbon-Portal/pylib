@@ -607,7 +607,7 @@ def atc_stationlist(station,tracer='co2',level=2):
 #------------------------------------------------------------------------------
 
 
-def icos_hist_L1_L2_sparql(station_code, samp_height, icos_label):
+def icos_hist_L1_L2_sparql(station_code, icos_label):
     
     '''
     Description: Function that returns a pandas DataFrame with file info
@@ -662,8 +662,7 @@ def icos_hist_L1_L2_sparql(station_code, samp_height, icos_label):
             ?dobj cpmeta:hasStartTime | (cpmeta:wasAcquiredBy / prov:startedAtTime) ?timeStart .
             ?dobj cpmeta:hasEndTime | (cpmeta:wasAcquiredBy / prov:endedAtTime) ?timeEnd .
             FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}
-            ?dobj cpmeta:wasAcquiredBy / cpmeta:hasSamplingHeight ?samplingHeight .
-            FILTER( ?samplingHeight = "'''+str(samp_height)+'''"^^xsd:float )
+            OPTIONAL{?dobj cpmeta:wasAcquiredBy / cpmeta:hasSamplingHeight ?samplingHeight}
         }
         order by desc(?submTime)
     '''
