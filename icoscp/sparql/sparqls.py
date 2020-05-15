@@ -754,9 +754,9 @@ def get_icos_citation(dataObject):
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
         select * where{
         optional{<"""+dataObject+"""> cpmeta:hasCitationString ?cit}}
-    """
-	
-	#Return query-string:
-	return query
+        """
+    
+    #Return query-string:
+    return query
 #------------------------------------------------------------------------------
 
