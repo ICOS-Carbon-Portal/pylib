@@ -375,7 +375,7 @@ def get_coords_icos_stations_atc():
 
     """
     
-
+    #Define SPARQL query:
     query = """
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
         select *
@@ -403,6 +403,7 @@ def get_coords_icos_stations_atc():
         order by ?Short_name
     """
     
+    #Return string with SPARQL query:
     return query
 
 # -----------------------------------------------------------------------------
@@ -424,6 +425,7 @@ def get_icos_stations_atc_L1():
 
     """
     
+    #Define SPARQL query:
     query = """
         prefix cpres: <http://meta.icos-cp.eu/resources/cpmeta/>
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
@@ -453,6 +455,7 @@ def get_icos_stations_atc_L1():
         order by ?variable ?stationName ?height
     """
     
+    #Return string with SPARQL query:
     return query
 
 # -----------------------------------------------------------------------------
@@ -473,6 +476,7 @@ def get_icos_stations_atc_L2():
 
     """
     
+    #Define SPARQL query:
     query = """
         prefix cpres: <http://meta.icos-cp.eu/resources/cpmeta/>
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
@@ -500,7 +504,8 @@ def get_icos_stations_atc_L2():
         }
         order by ?variable ?stationName ?height
     """
-
+    
+    #Return string with SPARQL query:
     return query
 
 # -----------------------------------------------------------------------------
@@ -640,11 +645,8 @@ def icos_hist_L1_L2_sparql(station_code, icos_label):
     else:
         station_label = 'ATMO_' + station_code
 
-        
-    
-    #Define URL:
-    url = 'https://meta.icos-cp.eu/sparql'
-    
+       
+    #Define SPARQL query:
     query = '''
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
         prefix prov: <http://www.w3.org/ns/prov#>
@@ -690,10 +692,7 @@ def icos_hist_sparql():
                 
     '''
   
-    
-    #Define URL:
-    url = 'https://meta.icos-cp.eu/sparql'
-    
+    #Define SPARQL query:    
     query = """
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
 	prefix prov: <http://www.w3.org/ns/prov#>
@@ -746,14 +745,14 @@ def get_icos_citation(dataObject):
 
     """
     
-    #Define URL:
-    url = 'https://meta.icos-cp.eu/sparql'
+    #Get data object URL regardless if dobj is expressed as an URL or as an alpharithmetical code (i.e. fraction of URL)
+    dobj = __dobjUrl__(dataObject)
     
     #Define SPARQL-query to get the citation for the given data object id:
     query = """
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
         select * where{
-        optional{<"""+dataObject+"""> cpmeta:hasCitationString ?cit}}
+        optional{"""+dobj+""" cpmeta:hasCitationString ?cit}}
         """
     
     #Return query-string:
