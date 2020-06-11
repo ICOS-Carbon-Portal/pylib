@@ -36,7 +36,7 @@ def __checklimit__(limit):
         else:
             return ''
     except ValueError:
-        return ''
+        return 'limit not an integer'
 
 
 
@@ -234,7 +234,81 @@ def collections(limit=0):
     return query
 
 # -----------------------------------------------------------------------------
+def stationResource(stationId):
+    """
+    returns query to ask for the station ressource url and 
+    latitute and longitude from the dataportal (NOT labelling app)
+    
+    Param: str, stationID like HTM or SE-NOR
 
+    Returns str
+
+    """
+    query = """
+			prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+			SELECT *
+			FROM <http://meta.icos-cp.eu/resources/icos/>
+			WHERE {
+			  ?s cpmeta:hasStationId ?id .
+              FILTER (?id = "%s")
+			  ?s cpmeta:hasLatitude ?lat .
+			  ?s cpmeta:hasLongitude ?lon .
+			}
+            """ % stationId
+    return query
+
+# -----------------------------------------------------------------------------
+
+def stationData(station, level='2'):
+    """
+    Define SPARQL query to get a list of data objects for a specific station.
+
+    Parameters
+    ----------
+    station : str , Station ID.
+    level : str , optional,  ['1','2','3','all'] 
+            find data products for icos level. The default is 2.
+
+    Returns
+    -------
+    query : str , valid sparql query.
+    """
+    accepted_levels = [1,2,3]
+    try:
+        if not (isinstance(station, str) or isinstance(level,str)):
+            return
+        if level.lower() == 'all':
+            level = '>0'
+        elif not int(level) in accepted_levels:
+            level=' = 2'
+        else:
+            level = ' = ' + level
+    except:
+        return 'input parameters not valid'
+
+    query = """
+			prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+			prefix prov: <http://www.w3.org/ns/prov#>
+#			select ?datalevel ?dobj ?spec ?station ?timeStart ?timeEnd
+			select *
+			where {
+				VALUES ?station {<%s>}                                 
+				?dobj cpmeta:hasObjectSpec ?spec .	
+				FILTER NOT EXISTS {?spec cpmeta:hasAssociatedProject/cpmeta:hasHideFromSearchPolicy "true"^^xsd:boolean}
+				FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}				
+				?dobj cpmeta:wasAcquiredBy / prov:startedAtTime ?timeStart .
+				?dobj cpmeta:wasAcquiredBy / prov:endedAtTime ?timeEnd .
+				?dobj cpmeta:wasAcquiredBy/prov:wasAssociatedWith ?station .                                                
+                ?spec rdfs:label ?specLabel .                
+                #OPTIONAL (?dobj cpmeta:hasSamplingHeight ?samplingHeight ) 
+                ?dobj cpmeta:wasAcquiredBy/cpmeta:hasSamplingHeight ?samplingheight.
+                
+                
+				?spec cpmeta:hasDataLevel ?datalevel .
+				FILTER (?datalevel  %s)				
+            }          """ % (station, level)
+
+    return query
 
 def stations_with_pi(limit=0):
     """
@@ -246,7 +320,8 @@ def stations_with_pi(limit=0):
     query = """
             prefix st: <http://meta.icos-cp.eu/ontologies/stationentry/>
             select distinct ?stationId ?stationName ?stationTheme 
-            ?lat ?lon ?eas ?eag ?firstName ?lastName ?email ?country            
+            ?class  ?siteType
+            ?lat ?lon ?eas ?eag ?firstName ?lastName ?email ?country
             from <http://meta.icos-cp.eu/resources/stationentry/>
             where{
                 optional{?s st:hasLon ?lon} .
@@ -260,7 +335,9 @@ def stations_with_pi(limit=0):
                 ?pi st:hasLastName ?lastName .
                 ?pi st:hasEmail ?email .
                 ?s a ?stationClass .
+                ?s st:hasStationClass ?class .
                 optional{?s st:hasCountry ?country} .
+                optional{?s st:hasSiteType ?siteType} .
                 
                 BIND (replace(str(?stationClass), "http://meta.icos-cp.eu/ontologies/stationentry/", "") AS ?stationTheme )
             }            

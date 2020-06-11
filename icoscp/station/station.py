@@ -31,18 +31,18 @@
     
 """
 
-__author__ = "Claudio D'Onofrio"
-__credits__ = ["ICOS Carbon Portal Dev Team"]
-__license__ = "GPL"
-__version__ = "0.0.1. jupyter"
-__maintainer__ = "Claudio D'Onofrio"
-__email__ = ["claudio.donofrio at nateko.lu.se", 'info@icos-cp.eu']
-__status__ = "Development"
+# ----------------------------------------------
+# for testing only, set path to ICOS pytools
+import sys
+sys.path.insert(0,'C:\\Users\\Claudio\\Documents\\GitHub\\ICOS-CP\\jupyter\\pytools')
+# ----------------------------------------------
 
 import json
 import pandas as pd
 from icoscp.sparql.runsparql import RunSparql
 from icoscp.sparql import sparqls
+from icoscp.cpb.cpbinfile import CpBinFile as binfile
+from tqdm import tqdm
 
 # ----------------------------------------------
 class Station():
@@ -68,9 +68,14 @@ class Station():
         """
 
         # Be aware, that attrList needs to be in the same ORDER as attributes                
-        self._stationId = None        
-        self._name = None
-        self._theme = None
+        # info
+        self._stationId = None          # shortName like HTM or SE-NOR               
+        self._name = None               # longName
+        self._theme = None              # AS | ES | OS
+        self._icosclass = None          # 1 | 2 
+        self._siteType = None           # description of site
+        
+        #locations
         self._lat = None
         self._lon = None
         self._eas = None
@@ -83,6 +88,7 @@ class Station():
         
         # other information
         self._country = None     
+        
         
         # if the object is initialized with values
         # the count of entries in the list must be equal to the number
@@ -109,8 +115,15 @@ class Station():
     @theme.setter
     def theme(self, theme):
         self._theme = theme
+     #-------------------------------------
+    @property
+    def icosclass(self):
+        return self._icosclass
     
-    #-------------------------------------
+    @icosclass.setter
+    def icosclass(self, icosclass):
+        self._icosclass = icosclass
+     #-------------------------------------    
     @property
     def name(self):
         return self._name
@@ -189,10 +202,33 @@ class Station():
     def country(self, country):
         self._country = country
     #-------------------------------------
-    def __str__(self):        
+    def __str__(self):          
         return json.dumps(self.__dict__, indent=2)
+        #d =  self.__dict__
+        #d.pop('_data', None)
+        #return json.dumps(d, indent=2)
         
+    def data(self, level=None):
         
+        if not isinstance(self._data, pd.DataFrame):
+            # _data is not a dataframe but contains a string...
+            return self._data
+
+        if level:
+            # if level is provided, filter pandas data frame
+            return self._data[self._data['datalevel']==str(level)]
+        else:
+            # return complete pandas data fram
+            return self._data
+    
+    def products(self):
+        
+        if not isinstance(self._products, pd.DataFrame):
+            return self._products
+        else:            
+            return self._products
+    
+    
     def setStation(self, attributeList):
         """
         Parameters
@@ -203,13 +239,16 @@ class Station():
         - stationId(shortName)
         - name (longName)
         - theme (AS, ES, OS)
+        - Class (ICOS Station class, see ICOS Handbook)
+        - siteType (description of site, if available)
         - latitude (convertible to float)
         - longitude (convertible to float)
         - eas (elevation above sea level) (convertible to float)
         - eag (elevation above ground, height of the tower) (convertible to float)   
         - firstName (PI first name)
         - lastName (PI last name)
-        - email (PI email)                        
+        - email (PI email)    
+        - country                    
         
         Returns
         -------
@@ -229,12 +268,14 @@ class Station():
                     self.__setattr__(a[0], float(a[1]))
                 except:
                     self.__setattr__(a[0], '')
-                    print(self.stationId + ' convert ' + a[1] + ' to float failed for ' + a[0])
+                    #print(self.stationId + ' convert ' + a[1] + ' to float failed for ' + a[0])
             else:
                 self.__setattr__(a[0], a[1])
-                
+        
+        # lets try to populate the data objects
+        self.__setData()
 
-    def getInfo(self, fmt = 'dict'):
+    def info(self, fmt = 'dict'):
         """
         Parameters
         ----------
@@ -252,6 +293,13 @@ class Station():
         newKeys = [k.strip('_') for k in list(self.__dict__)]
         values =  self.__dict__.values()
         dictionary = dict(zip(newKeys,values))
+        # remove data and products from the dict to get a shorter
+        # summary of informatino about station
+        if 'data' in dictionary:
+            del dictionary['data']
+            
+        if 'products' in dictionary:
+            del dictionary['products']
         
         if fmt == 'dict':
             return dictionary
@@ -268,23 +316,132 @@ class Station():
         if fmt == 'html':
             data = pd.DataFrame(dictionary, index=[0])
             return data.to_html()
+        
+    def __setData(self):
+        
+        """
+        Query the sparql endpoint for data products submitted by this station
+        adjust latitude and longitude and store a list of data specifications
+        and data objects (PID's)
+        """
+        
+        if not self.stationId:
+            return
+        
+        # get the ressource url and adjust lat and lon from data portal
+        query = sparqls.stationResource(self.stationId)
+        key, val = RunSparql(query, 'array').run()
+        if val:            
+            self.url = val[0][0]
+            self.lat = float(val[0][2])
+            self.lon = float(val[0][3])
+            
+            query = sparqls.stationData(self.url,'all')
+            self._data = RunSparql(query, 'pandas').run()
+            
+        else:
+            self._data = 'no data available'
+        
+        # check if data is available and extract the 'unique' data products
+        # and unique sampling heights
+        if isinstance(self._data, pd.DataFrame):
+            p = self._data['specLabel'].unique()            
+            self._products = pd.DataFrame(p)
+            
+            sh = self._data['samplingheight'].astype(float)
+            sh = sh.unique().tolist()   
+            sh.sort()
+            self._samplingheight = sh
+        else:
+            self._products = 'no data available'
+            self._samplingheight = []
+     
 
+"""
+        # get all the digital data objects... without extracting the data
+        
+        dobjList = []
+        for pid in self._data['dobj']:
+            dobjList.append(binfile(pid))
+        if dobjList:
+            self.dobjList = dobjList
+"""        
+            
+# --EOF Station Class-----------------------------------------            
 # ------------------------------------------------------------
-def getStationList():
+def get(stationId):
+    """
+    Parameters
+    ----------
+    stationId : str StationId as you can extract with getIdList. Example 'NOR'
+                for Atmosphere Norunda station
+    example :  get('NOR')
+            
+    Returns
+    -------
+    station : object Returns a station object (if stationId is found)
+
+    """
+    query = sparqls. stations_with_pi()
+    key, stations = RunSparql(query,'array').run()
+    #idx = [i for i, s in enumerate(stations) if stationId in s]
+    for stn in stations:
+        if stn[0].lower() == stationId.lower():
+            return Station(stn)
+    return 'station '+ stationId + ' not found'
+
+    
+def getIdList():
+    """
+    Returns a list with Station Id extracted from the Labelling app.
+    """
+    query = sparqls. stations_with_pi()
+    return RunSparql(query,'pandas').run()
+    
+    
+def getList(theme=['AS','ES','OS'], icosclass=['1','2']):
     """
     Query the SPARQL endpoint for stations, create
     an object for each Station and return a list of stations
+    which are in the "labeliing" app. By default only stations
+    which have been certified (Class 1 & 2) are return.
+    Param:      theme (str | [iterable object])
+                label (str | [iterable object])
+    Example:    getStationList('As')
+                getStationList(('As','OS'), '2')
     
     Returns
     -------
-    stationList : list
+    stationList : list, default is all certified stations
     """
-    query = sparqls. stations_with_pi()
-    cpStations = RunSparql(query,'pandas').run()    
-    stationList = []
-    for s in cpStations.values.tolist():        
-        stationList.append(Station(s))
+    
+    defaulttheme=['AS','ES','OS']
+    
+     # make sure input is in uppercase    
+    try:
         
+        if isinstance(theme, str):            
+            if not theme.upper() in defaulttheme:
+                raise Exception('theme')
+        else:
+           theme = [x.upper() for x in theme]                  
+           
+    except:
+        # looks like input is not a string and/or not an iterable str.
+        # comparison failed. Revert to default values, return all certified stations.
+        theme=['AS','ES','OS']           
+    
+    query = sparqls. stations_with_pi()    
+    key, stations = RunSparql(query,'array').run()
+        
+    stationList = []
+    for stn in tqdm(stations):
+        if stn[2] in theme:
+            if stn[3] in icosclass:                
+                stationList.append(Station(stn))        
+            elif '0' in icosclass and not stn[3] in icosclass :
+                stationList.append(Station(stn))        
+            
     return stationList
 # ------------------------------------------------------------    
 if __name__ == "__main__":
@@ -293,5 +450,18 @@ if __name__ == "__main__":
     get a full list from the CarbonPortal SPARQLl endpoint
     and create a list of station objects    
     """
-    stationList = getStationList()
+    print("You have chosen to run this as a standalone script")
+    print("usually you would try to import a station in your own script")
+    print("and then you have the following basic commands [examples]:")
+    print("idList = station.getIdList # returns a list of ICOS Station ID's")
+    print("norunda = station.get('NOR') # returns a station object for the Atmospheric station of Norunda")
+    print("stationList = station.getList(['OS']) # returns a list of station objects for all Ocean ICOS stations.")
+    
+    myStation = get('nor')    
+    
+    
+    #print(norunda.info())
+    
+    # getIdList()
+    # getStationList()
 # ------------------------------------------------------------
