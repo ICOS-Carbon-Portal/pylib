@@ -49,6 +49,8 @@ class CpBinFile():
         self._dobjSet = False       # -> see dobj setter
         self._dobjValid = False     # -> see __getPayload()
         
+        self.citation = None        # hold the citation string for the object
+        
         # this needs to be the last call within init. If dobj is provided
         # __payLoad() is exectued automatically to create json object 
         # for all columns#
@@ -210,6 +212,10 @@ class CpBinFile():
                                     'columnNumbers':self._colSelected,
                                     'subFolder':self._info2['objFormat'].iloc[0].split('/')[-1]
                      }
+        
+        # get the citation for this object
+        sparql.query = sparqls.get_icos_citation(self.dobj)                   
+        self.citation = sparql.run()['cit'][0]     
         self._dobjValid = True
         return
         
