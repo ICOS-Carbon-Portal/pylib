@@ -14,34 +14,25 @@
         - firstName (PI first name)
         - lastName (PI last name)
         - email (PI email)  
+        ...
         
     Examples:
-    - run as script
-        creates variable named 'stationList' containing a list of stations
-    - import 
     import station
-    myList = station.getStationList()
+    myList = station.getList(['AS'], 1) 
+    myStation = station.get('HTM')
     
-    for each station in the list you can extract above listed attributes.
-    for example
+    # extract attributes for each station with
+    station.info()
+    
+    # extract single attribute with
     station.lat -> return latitude as float
-    station.getInfo() -> returns all attributes at once.
-    The format returned can be controled with ('dict')(default format)
-    ('json')('list')('pandas')('html')
     
 """
-
-# ----------------------------------------------
-# for testing only, set path to ICOS pytools
-import sys
-sys.path.insert(0,'C:\\Users\\Claudio\\Documents\\GitHub\\ICOS-CP\\jupyter\\pytools')
-# ----------------------------------------------
 
 import json
 import pandas as pd
 from icoscp.sparql.runsparql import RunSparql
 from icoscp.sparql import sparqls
-from icoscp.cpb.cpbinfile import CpBinFile as binfile
 from tqdm import tqdm
 
 # ----------------------------------------------
@@ -54,17 +45,11 @@ class Station():
     def __init__(self, attrList=None):
         """
         Initialize your Staion either with NO arguments, or
-        provide a list of arguments in the following order:
-        - stationId(shortName)
-        - name (longName)
-        - theme (AS, ES, OS)
-        - latitude
-        - longitude
-        - eas (elevation above sea level)
-        - eag (elevation above ground, height of the tower)        
-        - firstName (PI first name)
-        - lastName (PI last name)
-        - email (PI email)            
+        provide a full list of arguments in the exact order how the
+        attributes are listed 
+        [ stationID | stationName | theme | class | type | lat |
+         lon | eas | eag | firstname | lastname | email | country ]
+      
         """
 
         # Be aware, that attrList needs to be in the same ORDER as attributes                
@@ -76,15 +61,15 @@ class Station():
         self._siteType = None           # description of site
         
         #locations
-        self._lat = None
-        self._lon = None
-        self._eas = None
-        self._eag = None
+        self._lat = None                # latitude
+        self._lon = None                # longitude
+        self._eas = None                # elevation above sea level
+        self._eag = None                # elevation above ground, height of tower
         
         #pi information
-        self._firstName = None
-        self._lastName = None
-        self._email = None
+        self._firstName = None          # Station PI first name
+        self._lastName = None           # Station PI last name
+        self._email = None              # Station PI email
         
         # other information
         self._country = None     
@@ -294,7 +279,7 @@ class Station():
         values =  self.__dict__.values()
         dictionary = dict(zip(newKeys,values))
         # remove data and products from the dict to get a shorter
-        # summary of informatino about station
+        # summary of information about station
         if 'data' in dictionary:
             del dictionary['data']
             
@@ -450,18 +435,21 @@ if __name__ == "__main__":
     get a full list from the CarbonPortal SPARQLl endpoint
     and create a list of station objects    
     """
-    print("You have chosen to run this as a standalone script")
-    print("usually you would try to import a station in your own script")
-    print("and then you have the following basic commands [examples]:")
-    print("idList = station.getIdList # returns a list of ICOS Station ID's")
-    print("norunda = station.get('NOR') # returns a station object for the Atmospheric station of Norunda")
-    print("stationList = station.getList(['OS']) # returns a list of station objects for all Ocean ICOS stations.")
+    msg = """
+    You have chosen to run this as a standalone script.
+    usually you would try to import a station in your own script
+    and then you have the following basic commands [examples]:
     
-    myStation = get('nor')    
+    # return a list of ICOS Station ID's
+    idList = station.getIdList 
     
+    # return the station object for ID (example > Norunda in Sweden)
+    myStation = station.get('NOR') 
     
-    #print(norunda.info())
+    # return a list of station objects for all Level 1 Ocean ICOS stations.
+    stationList = station.getList(['OS'], '1') 
+    """
+    print(msg)
     
-    # getIdList()
-    # getStationList()
+
 # ------------------------------------------------------------
