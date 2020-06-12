@@ -812,36 +812,3 @@ def icos_hist_sparql():
 
 
 
-def get_icos_citation(dataObject):
-    
-    """
-    Project:         'ICOS Carbon Portal'
-    Created:          Fri May 10 12:35:00 2019
-    Last Changed:     Fri May 15 09:55:00 2020
-    Version:          1.1.0
-    Author(s):        Oleg, Karolina
-    
-    Description:      Function that takes a string variable representing the URL with data object ID as input and
-                      returns a query-string with the citation for the corresponding data object. The data object ID is
-                      a unique identifier of every separate ICOS dataset.
-    
-    Input parameters: Data Object ID (var_name: "dataObject", var_type: String)
-    
-    Output:           Citation (var_type: String)
-
-    """
-    
-    #Get data object URL regardless if dobj is expressed as an URL or as an alpharithmetical code (i.e. fraction of URL)
-    dobj = __dobjUrl__(dataObject)
-    
-    #Define SPARQL-query to get the citation for the given data object id:
-    query = """
-        prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
-        select * where{
-        optional{"""+dobj+""" cpmeta:hasCitationString ?cit}}
-        """
-    
-    #Return query-string:
-    return query
-#------------------------------------------------------------------------------
-
