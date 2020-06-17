@@ -9,7 +9,7 @@
 __author__      = ["Claudio D'Onofrio"]
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.1.0"
+__version__     = "0.1.1"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "rc1"
@@ -24,7 +24,7 @@ from icoscp.sparql.runsparql import RunSparql
 import icoscp.sparql.sparqls as sparqls
 from icoscp.cpb import dtype_dict
 
-class CpBinFile():
+class Dobj():
     """ Use an ICOS digital object id to query the sparql endpoint
         for infos, and create the "payload" to retrieve the binary data
         the method .getColumns() will return the actual data
@@ -113,6 +113,9 @@ class CpBinFile():
     #-----------
 
 # -------------------------------------------------    
+    def get(self):
+        """ return data as pandas data frame"""
+        return self.getColumns()
     
     def getColumns(self, columns=None):
         # if columns = None, return ALL columns, otherwise, 
