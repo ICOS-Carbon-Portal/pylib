@@ -1,33 +1,29 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 """
     Created on Wed April 22 2020
-    Module to create a list of ICOS station objcets.
-    A station object contains attributes for:
-        - stationId (shortName)
-        - name (longName)
-        - theme (AS, ES, OS)
-        - lat (latitude)
-        - lon (longitude)
-        - eas (elevation above sea level)
-        - eag (elevation above ground, height of the tower)        
-        - firstName (PI first name)
-        - lastName (PI last name)
-        - email (PI email)  
-        ...
+    The Station module is used to explore ICOS stations and the corresponding
+    data products. Since you need to know the "station id" to create a station
+    object, convenience functions are provided:
+    
+    Example usage:
         
-    Examples:
-    import station
-    myList = station.getList(['AS'], 1) 
-    myStation = station.get('HTM')
-    
-    # extract attributes for each station with
-    station.info()
-    
-    # extract single attribute with
-    station.lat -> return latitude as float
-    
+    from icoscp.station import station
+    station.getIdList() -> returns a pandas data frame with all ICOS stations
+    myStation = station.get('ID') -> provide an ID to create a station object
+    myList = station.getList('AS', '1') ->  returns a list of class 1
+                                            Atmospheric stations         
 """
+
+__author__      = ["Claudio D'Onofrio"]
+__credits__     = "ICOS Carbon Portal"
+__license__     = "GPL-3.0"
+__version__     = "0.1.0"
+__maintainer__  = "ICOS Carbon Portal, elaborated products team"
+__email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
+__status__      = "rc1"
+__date__        = "2019-08-09"
 
 import json
 import pandas as pd
@@ -37,9 +33,18 @@ from tqdm import tqdm
 
 # ----------------------------------------------
 class Station():
-    """ Create an ICOS Station object
-        including common attributes like
-        ID, Name, PI, Lat, Long etc.        
+    """ Create an ICOS Station object. This class intends to create 
+        an instance of station, providing meta data including 
+        ID, Name, PI, Lat, Long etc.
+        Examples:
+        import station
+        myList = station.getList(['AS'], 1) 
+        myStation = station.get('HTM')
+        
+        station.info()
+        
+        # extract single attribute
+        station.lat -> returns latitude as float
     """
     
     def __init__(self, attrList=None):

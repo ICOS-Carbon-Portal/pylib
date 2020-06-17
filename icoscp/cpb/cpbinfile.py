@@ -2,24 +2,23 @@
 # -*- coding: utf-8 -*-
 """
     Created on Fri Aug  9 10:40:27 2019
-    Use an ICOS digital object id to query the sparql endpoint
-    for infos, and create the "payload" to retrieve the binary data
+    Use an ICOS digital object id (persistent identification url)
+    to load a binary representation of the data object.
 """
 
-__author__ = "Claudio D'Onofrio"
-__credits__ = ["ICOS Carbon Portal Dev Team"]
-__license__ = "GPL"
-__version__ = "0.0.4. jupyter"
-__maintainer__ = "Claudio D'Onofrio"
-__email__ = ["claudio.donofrio at nateko.lu.se", 'info@icos-cp.eu']
-__status__ = "Development"
-
+__author__      = ["Claudio D'Onofrio"]
+__credits__     = "ICOS Carbon Portal"
+__license__     = "GPL-3.0"
+__version__     = "0.1.0"
+__maintainer__  = "ICOS Carbon Portal, elaborated products team"
+__email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
+__status__      = "rc1"
+__date__        = "2019-08-09"
 
 import os
 import requests
 import struct
 import pandas as pd
-
 
 from icoscp.sparql.runsparql import RunSparql
 import icoscp.sparql.sparqls as sparqls
@@ -38,7 +37,7 @@ class CpBinFile():
         self._dtconvert = True      # convert Unixtimstamp to datetime object
         self._info1 = None          # sparql query object           
         self._info2 = None          # sparql query objcect format
-        self._info3 = None        # station information for dobj
+        self._info3 = None          # station information for dobj
         self._colSchema = None      # format of columns (read struct bin data)        
         self._dtypeStruct = None    # format of columns (read struct bin data)        
         self._json = None           # holds the "payload" for requests        

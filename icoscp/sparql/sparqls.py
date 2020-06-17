@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 """
     Created on Fri Aug  9 10:40:27 2019
     This file contains an assembly of common sparql queries.
@@ -9,17 +10,18 @@
     returning all results from the sparql endpoint
 """
 
-__author__ = "Claudio D'Onofrio"
-__credits__ = ["ICOS Carbon Portal Dev Team"]
-__license__ = "GPL"
-__version__ = "0.0.3"
-__maintainer__ = "Claudio D'Onofrio", "Ute Karstens"
-__email__ = ["claudio.donofrio at nateko.lu.se", 'info@icos-cp.eu']
-__status__ = "Development"
+__author__      = ["Claudio D'Onofrio"]
+__credits__     = "ICOS Carbon Portal"
+__license__     = "GPL-3.0"
+__version__     = "0.1.3"
+__maintainer__  = "ICOS Carbon Portal, elaborated products team"
+__email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
+__status__      = "rc1"
+__date__        = "2019-08-09"
 
 
 # --------------------------------------------------------------------
-# create helper functions to be used for ALL sparql queries
+# create internal helper functions to be used for ALL sparql queries
 # --------------------------------------------------------------------
 
 def __checklimit__(limit):
@@ -43,9 +45,9 @@ def __checklimit__(limit):
 def __dobjUrl__(dobj):
     
     """
-    transform the provided digital object to a consistent format
-    the user may provide the full url or only the pid.
-    this function will return the full url in form:
+       transform the provided digital object to a consistent format
+       the user may provide the full url or only the pid.
+       this function will return the full url in form:
         '<https://meta.icos-cp.eu/objects/'+ dobj + '>'
     """
     
@@ -64,9 +66,9 @@ def __dobjUrl__(dobj):
     return url        
 
 # --------------------------------------------------------------------
-#    sparqls query functions        
-#    return a sparql query, which can be copy/pasted to the sparql
-#    endpoint at https://meta.icos-cp.eu/sparqlclient/
+#   sparqls query functions
+#   return a sparql query, which can be copy/pasted to the sparql
+#   endpoint at https://meta.icos-cp.eu/sparqlclient/
 # --------------------------------------------------------------------
 def atc_co2_level2(limit=0):
 

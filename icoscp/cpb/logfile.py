@@ -1,19 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 """
-Created on Tue Aug 13 11:45:36 2019
+    Created on Tue Aug 13 11:45:36 2019
+    Check the usage of dataobjects through this
+    It is a completely anonymous service to record how many times
+    a dataobject is accessed.    
 """
 
-__author__ = "Claudio D'Onofrio"
-__credits__ = ["ICOS Carbon Portal Dev Team"]
-__license__ = "GPL"
-__version__ = "0.0.1"
-__maintainer__ = "Claudio D'Onofrio"
-__email__ = ["claudio.donofrio at nateko.lu.se", 'info@icos-cp.eu']
-__status__ = "Development"
-
-
-""" check the usage of this download library """
+__author__      = ["Claudio D'Onofrio"]
+__credits__     = "ICOS Carbon Portal"
+__license__     = "GPL-3.0"
+__version__     = "0.1.0"
+__maintainer__  = "ICOS Carbon Portal, elaborated products team"
+__email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
+__status__      = "rc1"
+__date__        = "2019-08-13"
 
 import requests
 import json

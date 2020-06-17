@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 """
     Created on Fri Aug  9 10:40:27 2019
     This file handles the communication with the ICOS Sparql Endpoint.
@@ -7,17 +8,16 @@
     and returns a formatted response.
 """
 
-__author__ = "Claudio D'Onofrio"
-__credits__ = ["ICOS Carbon Portal Dev Team"]
-__license__ = "GPL"
-__version__ = "0.0.1"
-__maintainer__ = "Claudio D'Onofrio"
-__email__ = ["claudio.donofrio at nateko.lu.se", 'info@icos-cp.eu']
-__status__ = "Development"
+__author__      = ["Claudio D'Onofrio"]
+__credits__     = "ICOS Carbon Portal"
+__license__     = "GPL-3.0"
+__version__     = "0.1.0"
+__maintainer__  = "ICOS Carbon Portal, elaborated products team"
+__email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
+__status__      = "rc1"
+__date__        = "2019-08-09"
 
 
-
-# ----------------------------------------------------------
 import requests
 import pandas as pd
 
