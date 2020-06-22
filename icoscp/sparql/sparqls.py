@@ -291,7 +291,6 @@ def stationData(station, level='2'):
     query = """
 			prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
 			prefix prov: <http://www.w3.org/ns/prov#>
-#			select ?datalevel ?dobj ?spec ?station ?timeStart ?timeEnd
 			select *
 			where {
 				VALUES ?station {<%s>}                                 
@@ -302,10 +301,7 @@ def stationData(station, level='2'):
 				?dobj cpmeta:wasAcquiredBy / prov:endedAtTime ?timeEnd .
 				?dobj cpmeta:wasAcquiredBy/prov:wasAssociatedWith ?station .                                                
                 ?spec rdfs:label ?specLabel .                
-                #OPTIONAL (?dobj cpmeta:hasSamplingHeight ?samplingHeight ) 
-                ?dobj cpmeta:wasAcquiredBy/cpmeta:hasSamplingHeight ?samplingheight.
-                
-                
+                OPTIONAL {?dobj cpmeta:wasAcquiredBy/cpmeta:hasSamplingHeight ?samplingheight} .                                
 				?spec cpmeta:hasDataLevel ?datalevel .
 				FILTER (?datalevel  %s)				
             }          """ % (station, level)

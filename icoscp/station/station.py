@@ -193,13 +193,17 @@ class Station():
         self._country = country
     #-------------------------------------
     def __str__(self):          
-        return json.dumps(self.__dict__, indent=2)
-        #d =  self.__dict__
-        #d.pop('_data', None)
-        #return json.dumps(d, indent=2)
+        return self.info('json')
         
     def data(self, level=None):
-        
+        """
+        return a list of digital objects for the station
+        parameter: level [str | int] default None
+        provide filter to dataobjects
+            1 = raw data
+            2 = QAQC data
+            3 = elaborated products
+        """
         if not isinstance(self._data, pd.DataFrame):
             # _data is not a dataframe but contains a string...
             return self._data
@@ -283,6 +287,7 @@ class Station():
         newKeys = [k.strip('_') for k in list(self.__dict__)]
         values =  self.__dict__.values()
         dictionary = dict(zip(newKeys,values))
+        
         # remove data and products from the dict to get a shorter
         # summary of information about station
         if 'data' in dictionary:
@@ -298,12 +303,18 @@ class Station():
             return json.dumps(dictionary, indent=4)
                         
         if fmt == 'list':
-            return (list(newKeys), list(values))
+            return (list(dictionary.keys()), list(dictionary.values()))
         
         if fmt == 'pandas':            
+            if 'samplingheight' in dictionary:
+                del dictionary['samplingheight']
+                
             return pd.DataFrame(dictionary, index=[0])
         
         if fmt == 'html':
+            if 'samplingheight' in dictionary:
+                del dictionary['samplingheight']
+            
             data = pd.DataFrame(dictionary, index=[0])
             return data.to_html()
         
