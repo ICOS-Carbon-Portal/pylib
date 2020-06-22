@@ -303,6 +303,7 @@ def stationData(station, level='2'):
                 ?spec rdfs:label ?specLabel .                
                 OPTIONAL {?dobj cpmeta:wasAcquiredBy/cpmeta:hasSamplingHeight ?samplingheight} .                                
 				?spec cpmeta:hasDataLevel ?datalevel .
+                ?dobj cpmeta:hasSizeInBytes ?bytes .
 				FILTER (?datalevel  %s)				
             }          """ % (station, level)
 
