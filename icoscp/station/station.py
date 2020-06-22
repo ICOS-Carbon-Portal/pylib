@@ -215,11 +215,27 @@ class Station():
             # return complete pandas data fram
             return self._data
     
-    def products(self):
+    def products(self, fmt='pandas'):
+        """
+        Parameters
+        ----------
+        fmt : str,  optional ['pandas', 'dict']
+                    Return a pandas dataframe of unique data products for
+                    the station. The default is 'pandas'.
+
+        Returns
+        -------
+        [pandas data frame | dict]
+            uniqe list of data products.
+
+        """
         
         if not isinstance(self._products, pd.DataFrame):
             return self._products
-        else:            
+        
+        if fmt == 'dict':
+            return self._products.to_dict()
+        else:
             return self._products
     
     
@@ -306,15 +322,9 @@ class Station():
             return (list(dictionary.keys()), list(dictionary.values()))
         
         if fmt == 'pandas':            
-            if 'samplingheight' in dictionary:
-                del dictionary['samplingheight']
-                
             return pd.DataFrame(dictionary, index=[0])
         
-        if fmt == 'html':
-            if 'samplingheight' in dictionary:
-                del dictionary['samplingheight']
-            
+        if fmt == 'html':           
             data = pd.DataFrame(dictionary, index=[0])
             return data.to_html()
         
@@ -343,31 +353,57 @@ class Station():
         else:
             self._data = 'no data available'
         
-        # check if data is available and extract the 'unique' data products
-        # and unique sampling heights
+        # check if data is available and extract the 'unique' data products        
         if isinstance(self._data, pd.DataFrame):
             p = self._data['specLabel'].unique()            
             self._products = pd.DataFrame(p)
-            
-            sh = self._data['samplingheight'].astype(float)
-            sh = sh.unique().tolist()   
-            sh.sort()
-            self._samplingheight = sh
         else:
             self._products = 'no data available'
-            self._samplingheight = []
-     
 
-"""
-        # get all the digital data objects... without extracting the data
-        
-        dobjList = []
-        for pid in self._data['dobj']:
-            dobjList.append(binfile(pid))
-        if dobjList:
-            self.dobjList = dobjList
-"""        
             
+    def sh(self, product = None):
+        """        
+        This function is a short cut to return the getSamplingHeight()        
+        for documentation, please refer to .getSamplingHeight()
+        """
+        return self.getSamplingHeight(product)
+    
+    def getSamplingHeight(self, product = None):
+        """        
+
+        Parameters
+        ----------
+        product : str,  please provide a valid object specification
+                        DESCRIPTION. The default is None.
+
+        Returns
+        -------
+        a list of unique values for sampling for the specified data product\
+        in case of no samplinghights or the product is not found for this
+        station, an empty list is returned.       
+
+        """
+        # default return value is empty list
+        sh = ['']
+        if not product:
+            return sh
+        
+        # check if product is availabe for station
+        if not product in self._data.values:
+            return sh
+        
+        # if product is available but no sampling height is defined, return
+        if not self._data['samplingheight'][self._data.specLabel.str.contains(product)].count():
+            return sh
+        
+        # finaly get all sampling heights and create a unique list
+        # count returns zero, of no sampling heights found
+        sh = self._data['samplingheight'][self._data.specLabel == product].astype(float)
+        sh = sh.unique().tolist()
+        sh.sort()        
+        return sh
+        
+        
 # --EOF Station Class-----------------------------------------            
 # ------------------------------------------------------------
 def get(stationId):
