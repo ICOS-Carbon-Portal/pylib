@@ -182,6 +182,8 @@ class Dobj():
             colList = colList.replace('"', '')
             #create a list
             colList = colList.split(',')
+            #remove leading and trailing whitespaces from entries
+            colList = [c.strip() for c in colList]
             # remove all "columns" from info2 which are not in colList
             for i, c in enumerate(self._info2['colName']):
                 if not c in colList:
