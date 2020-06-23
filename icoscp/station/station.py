@@ -27,6 +27,7 @@ __date__        = "2019-08-09"
 
 import json
 import pandas as pd
+import numpy as np
 from icoscp.sparql.runsparql import RunSparql
 from icoscp.sparql import sparqls
 from tqdm import tqdm
@@ -357,6 +358,9 @@ class Station():
         if isinstance(self._data, pd.DataFrame):
             p = self._data['specLabel'].unique()            
             self._products = pd.DataFrame(p)
+            
+            # replace samplingheight=None with empty string
+            self._data.samplingheight.replace(to_replace=[None], value="", inplace=True)
         else:
             self._products = 'no data available'
 
@@ -385,22 +389,26 @@ class Station():
         """
         # default return value is empty list
         sh = ['']
-        if not product:
-            return sh
         
         # check if product is availabe for station
         if not product in self._data.values:
             return sh
         
         # if product is available but no sampling height is defined, return
-        if not self._data['samplingheight'][self._data.specLabel.str.contains(product)].count():
+        # count returns zero, if no sampling heights found
+        if not self._data['samplingheight'][self._data.specLabel.str.match(product)].count():
             return sh
         
-        # finaly get all sampling heights and create a unique list
-        # count returns zero, of no sampling heights found
-        sh = self._data['samplingheight'][self._data.specLabel == product].astype(float)
-        sh = sh.unique().tolist()
-        sh.sort()        
+        # finally get all sampling heights and create a unique list        
+        sh = self._data.samplingheight[self._data.specLabel == product].unique()        
+        sh = list(filter(None, sh))
+        if not sh:
+            return['']
+        
+        # at this point we have to assume we have an unsorted list of
+        # samplingheights as strings. cast to float and sort.
+        sh = [float(s) for s in sh]
+        sh.sort()
         return sh
         
         
