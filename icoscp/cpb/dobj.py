@@ -219,7 +219,12 @@ class Dobj():
         
         # get the citation for this object
         sparql.query = sparqls.get_icos_citation(self.dobj)                   
-        self.citation = sparql.run()['cit'][0]     
+        citation = sparql.run()['cit'][0] 
+        if not citation:
+            self.citation = 'no citation available ...'
+        else:
+            self.citation = citation  
+        
         self._dobjValid = True
         return
         
