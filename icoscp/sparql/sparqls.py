@@ -235,39 +235,18 @@ def collections(limit=0):
 
     return query
 
-# -----------------------------------------------------------------------------
-def stationResource(stationId):
-    """
-    returns query to ask for the station ressource url and 
-    latitute and longitude from the dataportal (NOT labelling app)
-    
-    Param: str, stationID like HTM or SE-NOR
-
-    Returns str
-
-    """
-    query = """
-			prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
-			SELECT *
-			FROM <http://meta.icos-cp.eu/resources/icos/>
-			WHERE {
-			  ?s cpmeta:hasStationId ?id .
-              FILTER (?id = "%s")
-			  ?s cpmeta:hasLatitude ?lat .
-			  ?s cpmeta:hasLongitude ?lon .
-			}
-            """ % stationId
-    return query
 
 # -----------------------------------------------------------------------------
 
-def stationData(station, level='2'):
+def stationData(uri, level='2'):
     """
     Define SPARQL query to get a list of data objects for a specific station.
+    Since a station ID might belong to more than one, a list of URI is expected
+    and all dataproducts are provided.
 
     Parameters
     ----------
-    station : str , Station ID.
+    uri : list , station URI, 
     level : str , optional,  ['1','2','3','all'] 
             find data products for icos level. The default is 2.
 
@@ -277,23 +256,24 @@ def stationData(station, level='2'):
     """
     accepted_levels = [1,2,3]
     try:
-        if not (isinstance(station, str) or isinstance(level,str)):
+        if not isinstance(level,str):
             return
         if level.lower() == 'all':
-            level = '>0'
+            level = '>0'                    
         elif not int(level) in accepted_levels:
-            level=' = 2'
+            level=' >1'
         else:
             level = ' = ' + level
     except:
         return 'input parameters not valid'
 
+    uristr = '<' + '> <'.join(uri) + '>'
     query = """
 			prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
 			prefix prov: <http://www.w3.org/ns/prov#>
 			select *
 			where {
-				VALUES ?station {<%s>}                                 
+				VALUES ?station {%s}                                 
 				?dobj cpmeta:hasObjectSpec ?spec .	
 				FILTER NOT EXISTS {?spec cpmeta:hasAssociatedProject/cpmeta:hasHideFromSearchPolicy "true"^^xsd:boolean}
 				FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}				
@@ -305,16 +285,20 @@ def stationData(station, level='2'):
 				?spec cpmeta:hasDataLevel ?datalevel .
                 ?dobj cpmeta:hasSizeInBytes ?bytes .
 				FILTER (?datalevel  %s)				
-            }          """ % (station, level)
+            }          """ % (uristr, level)
 
     return query
 
-def stations_with_pi(limit=0):
+def stations_with_pi(station = '', limit=0):
     """
         Define SPARQL query to get a list of ICOS stations with PI and email.
         As per writing, (April 2019, the list is pulled from the provisional
         data, labeling process)
     """
+    if station:
+        flt = 'FILTER(?stationId = "' + station + '") . '
+    else:
+        flt = station
 
     query = """
             prefix st: <http://meta.icos-cp.eu/ontologies/stationentry/>
@@ -323,11 +307,12 @@ def stations_with_pi(limit=0):
             ?lat ?lon ?eas ?eag ?firstName ?lastName ?email ?country
             from <http://meta.icos-cp.eu/resources/stationentry/>
             where{
+                ?s st:hasShortName ?stationId .
+                %s
                 optional{?s st:hasLon ?lon} .
                 optional{?s st:hasLat ?lat} .
                 optional{?s st:hasElevationAboveSea ?eas} .
-                optional{?s st:hasElevationAboveGround ?eag} .
-                ?s st:hasShortName ?stationId .
+                optional{?s st:hasElevationAboveGround ?eag} .                
                 ?s st:hasLongName ?stationName .
                 ?s st:hasPi ?pi .
                 ?pi st:hasFirstName ?firstName .
@@ -341,11 +326,53 @@ def stations_with_pi(limit=0):
                 BIND (replace(str(?stationClass), "http://meta.icos-cp.eu/ontologies/stationentry/", "") AS ?stationTheme )
             }            
             %s
-        """ % __checklimit__(limit)
+        """ % (flt, __checklimit__(limit))
 
     return query
 # -----------------------------------------------------------------------------
+def getStations(station = ''):
+    """
+    Define SPARQL query to return a list of all known stations
+    at the Carbon Portal. This can include NON-ICOS stations.
+    Note: excluding WDGCC stations ( https://gaw.kishou.go.jp/ ),
+    which are visible in the data portal for historic reasons.
 
+    Parameters
+    ----------
+    station : str, optional, case sensitive
+        DESCRIPTION. The default is '', and empyt string which returns ALL
+        stations. If you provide a station id, be aware, that it needs to be
+        exactly as provided from the Triple Store....case sensitive. 
+
+    Returns
+    -------
+    query : str, valid sparql query to run against the Carbon Portal SPARQL endpoint.
+    """
+    if station:
+        flt = 'FILTER(?id = "' + station + '") . '
+    else:
+        flt = station
+    
+    query = """
+            prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+            select *
+            from <http://meta.icos-cp.eu/resources/icos/> 
+            from <http://meta.icos-cp.eu/resources/extrastations/> 
+            where {
+            	?uri cpmeta:hasStationId ?id .   
+                %s
+            	OPTIONAL {?uri cpmeta:hasName ?name  } .                
+            	OPTIONAL {?uri cpmeta:countryCode ?country }.
+            	OPTIONAL {?uri cpmeta:hasLatitude ?lat }.
+            	OPTIONAL {?uri cpmeta:hasLongitude ?lon }.
+            	OPTIONAL {?uri cpmeta:hasElevation ?elevation } .
+            }
+            """ %(flt)
+            
+            
+    return query
+
+# -----------------------------------------------------------------------------
 def cpbGetInfo(dobj):
     """
         Define SPARQL query to get information about a digitial object
