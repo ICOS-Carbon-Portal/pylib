@@ -401,20 +401,21 @@ class Station():
     
     def getSamplingHeight(self, product = None):
         """        
-
+        a list of unique values for sampling heights for the specified data product
+        in case of no sampling hights or the product is not found for this
+        station, an empty list is returned.
+        A short-cut function is defined .sh() which calls this function.
+        
         Parameters
         ----------
-        product : str,  please provide a valid object specification
-        DESCRIPTION. The default is None.
+        product : str,  digital object specification        
 
         Returns
         -------
-        a list of unique values for sampling for the specified data product
-        in case of no samplinghights or the product is not found for this
-        station, an empty list is returned.       
-
+        list, empty if sampling height for product is not found.
+        
         """
-        # default return value is empty list
+        # default return empty list
         sh = ['']
         
         # check if product is availabe for station
@@ -454,8 +455,8 @@ def get(stationId):
     station : object Returns a station object (if stationId is found)
 
     """
-    #mport time
-    #ic = time.perf_counter()
+    import time
+    tic = time.perf_counter()
     
     # create the station instance
     myStn = Station()  
@@ -520,8 +521,8 @@ def get(stationId):
             myStn.eag = lstn['eag'].values[0]
 
     myStn._setData()        
-    #toc = time.perf_counter()
-    #print(toc-tic)
+    toc = time.perf_counter()
+    print(toc-tic)
     return myStn
 
     
