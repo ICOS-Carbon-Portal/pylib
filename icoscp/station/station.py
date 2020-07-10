@@ -1,19 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""
-    Created on Wed April 22 2020
+"""    
     The Station module is used to explore ICOS stations and the corresponding
     data products. Since you need to know the "station id" to create a station
     object, convenience functions are provided:
     
     Example usage:
         
-    from icoscp.station import station
-    station.getIdList() -> returns a pandas data frame with all ICOS stations
-    myStation = station.get('ID') -> provide an ID to create a station object
-    myList = station.getList('AS', '1') ->  returns a list of class 1
-                                            Atmospheric stations         
+    from icoscp.station import station    
+    station.getIdList() # returns a pandas data frame with all station Id's'
+    myStation = station.get('StationId') # create a single statino object
+    myList = station.getList('AS') #  returns a list of Atmospheric stations
 """
 
 __author__      = ["Claudio D'Onofrio"]
@@ -27,7 +25,6 @@ __date__        = "2019-08-09"
 
 import json
 import pandas as pd
-import numpy as np
 from icoscp.sparql.runsparql import RunSparql
 from icoscp.sparql import sparqls
 from tqdm import tqdm
@@ -36,10 +33,10 @@ from tqdm import tqdm
 class Station():
     """ Create an ICOS Station object. This class intends to create 
         an instance of station, providing meta data including 
-        ID, Name, PI, Lat, Long etc.
+        stationId, Name, PI, Lat, Lon,  etc.
         Examples:
         import station
-        myList = station.getList(['AS'], 1) 
+        myList = station.getList(['AS']) 
         myStation = station.get('HTM')
         
         station.info()
@@ -83,13 +80,6 @@ class Station():
         self._project = None        # list, project affiliation, 
         self._uri = None            # list, links to ressources, landing pages
         
-        
-        # if the object is initialized with values
-        # the count of entries in the list must be equal to the number
-        # of attributes and the correct order as well. Entries can be empty.
-        
-        #if attrList:            
-        #    self.setStation(attrList)
             
     #super().__init__() # for subclasses
     #-------------------------------------
@@ -131,8 +121,7 @@ class Station():
     
     @name.setter
     def name(self, name):
-        self._name = name
-    
+        self._name = name    
     #-------------------------------------
     @property
     def lat(self):
@@ -140,8 +129,7 @@ class Station():
     
     @lat.setter
     def lat(self, lat):
-        self._lat = lat
-    
+        self._lat = lat    
     #-------------------------------------
     @property
     def lon(self):
@@ -149,8 +137,7 @@ class Station():
     
     @lon.setter
     def lon(self, lon):
-        self._lon = lon
-    
+        self._lon = lon    
     #-------------------------------------
     @property
     def eas(self):
@@ -158,8 +145,7 @@ class Station():
     
     @eas.setter
     def eas(self, eas):
-        self._eas = eas
-    
+        self._eas = eas    
     #-------------------------------------
     @property
     def eag(self):
@@ -167,8 +153,7 @@ class Station():
     
     @eag.setter
     def eag(self, eag):
-        self._eag = eag
-    
+        self._eag = eag    
     #-------------------------------------
     @property
     def firstName(self):
@@ -176,8 +161,7 @@ class Station():
     
     @firstName.setter
     def firstName(self, firstName):
-        self._firstName = firstName
-    
+        self._firstName = firstName    
     #-------------------------------------
     @property
     def lastName(self):
@@ -268,14 +252,18 @@ class Station():
             return self._products
     
     
-    def setStation(self, attributeList):
+    def setStation(self, attrib=None):
         """
-        Parameters
+        You can set attributes for the station by providing a dictionary        
+        Parameters.      
+        project & uri must be a list
+        lat, lon, eas, eag, must be convertible to float
+        everything else is a string.
+        
         ----------
-        attributeList : list | array, must be iterable for a in list:
-
-        provide a list of arguments in the following order:
-        - stationId(shortName)
+        attributeList : dictionary containing attributes
+        
+        - stationId (shortName)
         - name (longName)
         - theme (AS, ES, OS)
         - Class (ICOS Station class, see ICOS Handbook)
@@ -292,27 +280,33 @@ class Station():
         Returns
         -------
         None
-        
-
         """
-        if len(self.__dict__) != len(attributeList):
-            raise Exception('length of property list not valid')
+        
+        if not isinstance(attrib, dict):            
             return
         
-        # minimal sanity check, that number attributes are actually numbers
-        check = ['_lat','_lon','_eag','_eas']
-        for a in zip(self.__dict__, attributeList):            
-            if a[0] in check and a[1]:
+        # minimal sanity check
+        checkFloat = ['lat','lon','eag','eas']
+        checkList = ['project', 'uri']
+                                
+        #create 'keys' without the underscore
+        keys = [k.strip('_') for k in list(self.__dict__)]        
+        for a in attrib:
+            a = a.strip('_')
+            if a in keys and a in checkFloat:
                 try:
-                    self.__setattr__(a[0], float(a[1]))
+                    self.__setattr__('_'+a, float(attrib[a]))
                 except:
-                    self.__setattr__(a[0], '')
-                    #print(self.stationId + ' convert ' + a[1] + ' to float failed for ' + a[0])
+                    continue
+            elif a in keys and a in checkList:
+                try:
+                    self.__setattr__('_'+a, list(attrib[a]))
+                except:
+                    continue
             else:
-                self.__setattr__(a[0], a[1])
-        
-        # lets try to populate the data objects
-        self.__setData()
+                self.__setattr__('_' + a, attrib[a])
+                
+
 
     def info(self, fmt = 'dict'):
         """
@@ -411,11 +405,11 @@ class Station():
         Parameters
         ----------
         product : str,  please provide a valid object specification
-                        DESCRIPTION. The default is None.
+        DESCRIPTION. The default is None.
 
         Returns
         -------
-        a list of unique values for sampling for the specified data product\
+        a list of unique values for sampling for the specified data product
         in case of no samplinghights or the product is not found for this
         station, an empty list is returned.       
 
@@ -602,14 +596,23 @@ def getList(theme=['AS','ES','OS'], ids=None):
     which have been certified (Class 1 & 2). 
     NOTE: if you provide a station list, all other parameters are ignored.
     
+    Example:
+    # get all ICOS stations 
+    getStationList()
     
-    Example:    getStationList('As')
-                getStationList(('As','OS'), '2')
+    # get a list of station objects for ICOS Atmospheric stations
+    getStationList('As')
+
+    # get a list for Atmosphere and Ocean stations
+    getStationList(['As','OS']) 
+    
+    # get list of stations with Id's (id's are case sensitive..)
+    getStationList(ids=['HTM', 'LMP', SAC])
     
     Parameters
     ----------
-    theme : str | [iterable object of strings])
-    icosclass :  str | [iterable object of strings])    
+    theme : str | [iterable object of strings]) valid entries AS, ES, OS
+    
     stationIds : str | [iterable object of strings]) 
     
     Returns
@@ -669,8 +672,8 @@ if __name__ == "__main__":
     # return the station object for ID (example > Norunda in Sweden)
     myStation = station.get('NOR') 
     
-    # return a list of station objects for all Level 1 Ocean ICOS stations.
-    stationList = station.getList(['OS'], '1') 
+    # return a list of station objects for all Ocean ICOS stations.
+    stationList = station.getList(['OS']) 
     """
     print(msg)
     
