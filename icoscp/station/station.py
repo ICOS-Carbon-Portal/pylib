@@ -347,9 +347,34 @@ class Station():
         if fmt == 'pandas':            
             return pd.DataFrame(dictionary, index=[0])
         
-        if fmt == 'html':           
-            data = pd.DataFrame(dictionary, index=[0])
-            return data.to_html()
+        if fmt == 'html':
+	    
+	    #Create and initialize variable to store station info in html table:
+            html_table = '<table>'
+
+            #Loop through all keys of station dictionary:
+            for k in dictionary.keys():
+
+                #Check if current dict key holds the the long name of the station and
+                #if the key to the URL of the station landing page is included:
+                if((k=='name') & ('url' in dictionary.keys())):
+                    
+                    #Create table row and add link with URL to station landing page:
+                    html_table = html_table+'<tr><td>'+k+'</td><td><b>&nbsp;&nbsp;&nbsp;&nbsp;<a href="'+str(dictionary['url'])+'"target="_blank">'+str(dictionary[k])+'</a></b></td></tr>'           
+                
+                #Skip creating table row for 'url' key:
+                elif(k=='url'):
+                    continue
+                
+                #Add table row with station info for current key:
+                else:
+                    html_table = html_table+'<tr><td>'+k+'</td><td><b>&nbsp;&nbsp;&nbsp;&nbsp;'+str(dictionary[k])+'</b></td></tr>'
+            
+            #Add html closing tag for table:
+            html_table = html_table +'</table>'
+            
+            #Return station info as html table:
+            return html_table
         
     def _setData(self):
         
