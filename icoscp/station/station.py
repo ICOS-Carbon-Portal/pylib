@@ -1,19 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""
-    Created on Wed April 22 2020
+"""    
     The Station module is used to explore ICOS stations and the corresponding
     data products. Since you need to know the "station id" to create a station
     object, convenience functions are provided:
     
     Example usage:
         
-    from icoscp.station import station
-    station.getIdList() -> returns a pandas data frame with all ICOS stations
-    myStation = station.get('ID') -> provide an ID to create a station object
-    myList = station.getList('AS', '1') ->  returns a list of class 1
-                                            Atmospheric stations         
+    from icoscp.station import station    
+    station.getIdList() # returns a pandas data frame with all station Id's'
+    myStation = station.get('StationId') # create a single statino object
+    myList = station.getList('AS') #  returns a list of Atmospheric stations
 """
 
 __author__      = ["Claudio D'Onofrio"]
@@ -27,7 +25,6 @@ __date__        = "2019-08-09"
 
 import json
 import pandas as pd
-import numpy as np
 from icoscp.sparql.runsparql import RunSparql
 from icoscp.sparql import sparqls
 from tqdm import tqdm
@@ -36,10 +33,10 @@ from tqdm import tqdm
 class Station():
     """ Create an ICOS Station object. This class intends to create 
         an instance of station, providing meta data including 
-        ID, Name, PI, Lat, Long etc.
+        stationId, Name, PI, Lat, Lon,  etc.
         Examples:
         import station
-        myList = station.getList(['AS'], 1) 
+        myList = station.getList(['AS']) 
         myStation = station.get('HTM')
         
         station.info()
@@ -48,10 +45,10 @@ class Station():
         station.lat -> returns latitude as float
     """
     
-    def __init__(self, attrList=None):
+    def __init__(self):
         """
-        Initialize your Staion either with NO arguments, or
-        provide a full list of arguments in the exact order how the
+        Initialize your Station either with NO arguments, or
+        provide a list of arguments in the exact order how the
         attributes are listed 
         [ stationID | stationName | theme | class | type | lat |
          lon | eas | eag | firstname | lastname | email | country ]
@@ -60,33 +57,29 @@ class Station():
 
         # Be aware, that attrList needs to be in the same ORDER as attributes                
         # info
-        self._stationId = None          # shortName like HTM or SE-NOR               
-        self._name = None               # longName
-        self._theme = None              # AS | ES | OS
-        self._icosclass = None          # 1 | 2 
-        self._siteType = None           # description of site
+        self._stationId = None      # shortName like HTM or SE-NOR   
+        self._valid = False         # if stationId is set and valid, return True            
+        self._name = None           # longName
+        self._theme = None          # AS | ES | OS
+        self._icosclass = None      # 1 | 2 
+        self._siteType = None       # description of site
         
         #locations
-        self._lat = None                # latitude
-        self._lon = None                # longitude
-        self._eas = None                # elevation above sea level
-        self._eag = None                # elevation above ground, height of tower
+        self._lat = None            # latitude
+        self._lon = None            # longitude
+        self._eas = None            # elevation above sea level
+        self._eag = None            # elevation above ground, height of tower
         
         #pi information
-        self._firstName = None          # Station PI first name
-        self._lastName = None           # Station PI last name
-        self._email = None              # Station PI email
+        self._firstName = None      # Station PI first name
+        self._lastName = None       # Station PI last name
+        self._email = None          # Station PI email
         
         # other information
-        self._country = None     
+        self._country = None
+        self._project = None        # list, project affiliation, 
+        self._uri = None            # list, links to ressources, landing pages
         
-        
-        # if the object is initialized with values
-        # the count of entries in the list must be equal to the number
-        # of attributes and the correct order as well. Entries can be empty.
-        
-        if attrList:            
-            self.setStation(attrList)
             
     #super().__init__() # for subclasses
     #-------------------------------------
@@ -97,7 +90,14 @@ class Station():
     @stationId.setter
     def stationId(self, stationId):
         self._stationId = stationId
+    #-------------------------------------
+    @property
+    def valid(self):
+        return self._valid
     
+    @valid.setter
+    def valid(self, valid):
+        self._valid = valid
     #-------------------------------------
     @property
     def theme(self):
@@ -121,8 +121,7 @@ class Station():
     
     @name.setter
     def name(self, name):
-        self._name = name
-    
+        self._name = name    
     #-------------------------------------
     @property
     def lat(self):
@@ -130,8 +129,7 @@ class Station():
     
     @lat.setter
     def lat(self, lat):
-        self._lat = lat
-    
+        self._lat = lat    
     #-------------------------------------
     @property
     def lon(self):
@@ -139,8 +137,7 @@ class Station():
     
     @lon.setter
     def lon(self, lon):
-        self._lon = lon
-    
+        self._lon = lon    
     #-------------------------------------
     @property
     def eas(self):
@@ -148,8 +145,7 @@ class Station():
     
     @eas.setter
     def eas(self, eas):
-        self._eas = eas
-    
+        self._eas = eas    
     #-------------------------------------
     @property
     def eag(self):
@@ -157,8 +153,7 @@ class Station():
     
     @eag.setter
     def eag(self, eag):
-        self._eag = eag
-    
+        self._eag = eag    
     #-------------------------------------
     @property
     def firstName(self):
@@ -166,8 +161,7 @@ class Station():
     
     @firstName.setter
     def firstName(self, firstName):
-        self._firstName = firstName
-    
+        self._firstName = firstName    
     #-------------------------------------
     @property
     def lastName(self):
@@ -193,8 +187,26 @@ class Station():
     def country(self, country):
         self._country = country
     #-------------------------------------
+    @property
+    def project(self):
+        return self._project
+    
+    @project.setter
+    def project(self, project):
+        self._project = project
+    #-------------------------------------
+    @property
+    def uri(self):
+        return self._uri
+    
+    @uri.setter
+    def uri(self, uri):
+        self._uri = uri
+    #-------------------------------------
+
     def __str__(self):          
         return self.info('json')
+       
         
     def data(self, level=None):
         """
@@ -240,14 +252,18 @@ class Station():
             return self._products
     
     
-    def setStation(self, attributeList):
+    def setStation(self, attrib=None):
         """
-        Parameters
+        You can set attributes for the station by providing a dictionary        
+        Parameters.      
+        project & uri must be a list
+        lat, lon, eas, eag, must be convertible to float
+        everything else is a string.
+        
         ----------
-        attributeList : list | array, must be iterable for a in list:
-
-        provide a list of arguments in the following order:
-        - stationId(shortName)
+        attributeList : dictionary containing attributes
+        
+        - stationId (shortName)
         - name (longName)
         - theme (AS, ES, OS)
         - Class (ICOS Station class, see ICOS Handbook)
@@ -264,27 +280,33 @@ class Station():
         Returns
         -------
         None
-        
-
         """
-        if len(self.__dict__) != len(attributeList):
-            raise Exception('length of property list not valid')
+        
+        if not isinstance(attrib, dict):            
             return
         
-        # minimal sanity check, that number attributes are actually numbers
-        check = ['_lat','_lon','_eag','_eas']
-        for a in zip(self.__dict__, attributeList):            
-            if a[0] in check and a[1]:
+        # minimal sanity check
+        checkFloat = ['lat','lon','eag','eas']
+        checkList = ['project', 'uri']
+                                
+        #create 'keys' without the underscore
+        keys = [k.strip('_') for k in list(self.__dict__)]        
+        for a in attrib:
+            a = a.strip('_')
+            if a in keys and a in checkFloat:
                 try:
-                    self.__setattr__(a[0], float(a[1]))
+                    self.__setattr__('_'+a, float(attrib[a]))
                 except:
-                    self.__setattr__(a[0], '')
-                    #print(self.stationId + ' convert ' + a[1] + ' to float failed for ' + a[0])
+                    continue
+            elif a in keys and a in checkList:
+                try:
+                    self.__setattr__('_'+a, list(attrib[a]))
+                except:
+                    continue
             else:
-                self.__setattr__(a[0], a[1])
-        
-        # lets try to populate the data objects
-        self.__setData()
+                self.__setattr__('_' + a, attrib[a])
+                
+
 
     def info(self, fmt = 'dict'):
         """
@@ -325,9 +347,7 @@ class Station():
         if fmt == 'pandas':            
             return pd.DataFrame(dictionary, index=[0])
         
-        if fmt == 'html':           
-            #data = pd.DataFrame(dictionary, index=[0])
-            #return data.to_html()
+        if fmt == 'html':
 	    
 	    #Create and initialize variable to store station info in html table:
             html_table = '<table>'
@@ -356,7 +376,7 @@ class Station():
             #Return station info as html table:
             return html_table
         
-    def __setData(self):
+    def _setData(self):
         
         """
         Query the sparql endpoint for data products submitted by this station
@@ -366,7 +386,7 @@ class Station():
         
         if not self.stationId:
             return
-        
+        """      
         # get the ressource url and adjust lat and lon from data portal
         query = sparqls.stationResource(self.stationId)
         key, val = RunSparql(query, 'array').run()
@@ -374,22 +394,27 @@ class Station():
             self.url = val[0][0]
             self.lat = float(val[0][2])
             self.lon = float(val[0][3])
-            
-            query = sparqls.stationData(self.url,'all')
-            self._data = RunSparql(query, 'pandas').run()
-            
-        else:
-            self._data = 'no data available'
+        """            
         
-        # check if data is available and extract the 'unique' data products        
-        if isinstance(self._data, pd.DataFrame):
-            p = self._data['specLabel'].unique()            
-            self._products = pd.DataFrame(p)
-            
-            # replace samplingheight=None with empty string
-            self._data.samplingheight.replace(to_replace=[None], value="", inplace=True)
+        # it is possible, that a station id has multiple URI
+        # ask for all URI
+        query = sparqls.stationData(self.uri,'all')
+        data = RunSparql(query, 'pandas').run()
+        
+        if not data.empty:
+            self._data = data            
         else:
-            self._products = 'no data available'
+             self._data = 'no data available'            
+         
+         # check if data is available and extract the 'unique' data products        
+        if isinstance(self._data, pd.DataFrame):
+             p = self._data['specLabel'].unique()            
+             self._products = pd.DataFrame(p)
+             
+             # replace samplingheight=None with empty string
+             self._data.samplingheight.replace(to_replace=[None], value="", inplace=True)
+        else:
+             self._products = 'no data available'
 
             
     def sh(self, product = None):
@@ -401,20 +426,21 @@ class Station():
     
     def getSamplingHeight(self, product = None):
         """        
-
+        a list of unique values for sampling heights for the specified data product
+        in case of no sampling hights or the product is not found for this
+        station, an empty list is returned.
+        A short-cut function is defined .sh() which calls this function.
+        
         Parameters
         ----------
-        product : str,  please provide a valid object specification
-                        DESCRIPTION. The default is None.
+        product : str,  digital object specification        
 
         Returns
         -------
-        a list of unique values for sampling for the specified data product\
-        in case of no samplinghights or the product is not found for this
-        station, an empty list is returned.       
-
+        list, empty if sampling height for product is not found.
+        
         """
-        # default return value is empty list
+        # default return empty list
         sh = ['']
         
         # check if product is availabe for station
@@ -454,44 +480,185 @@ def get(stationId):
     station : object Returns a station object (if stationId is found)
 
     """
-    query = sparqls. stations_with_pi()
-    key, stations = RunSparql(query,'array').run()
-    #idx = [i for i, s in enumerate(stations) if stationId in s]
-    for stn in stations:
-        if stn[0].lower() == stationId.lower():
-            return Station(stn)
-    return 'station '+ stationId + ' not found'
+    import time
+    tic = time.perf_counter()
+    
+    # create the station instance
+    myStn = Station()  
+    
+    query = sparqls.getStations(stationId)    
+    stn = RunSparql(query,'pandas').run()
+    
+    if stn.empty:
+        myStn.stationId = stationId
+        myStn.valid = False        
+        return myStn
+    else:
+        stn['project'] = stn.apply(lambda x : __project(x['uri']), axis=1)
+
+    # we have found a valid id
+    myStn.stationId = stn.id.values[0]
+    myStn.valid = True
+    
+    # it is possible that more than one station has the same id
+    # we will give precedence to the icos project
+    # but provide a list of URI and projects affiliations
+    
+    # get lat, lon, eas from icos entry
+    if not stn[stn.project.str.upper() == "ICOS"].empty:
+        if stn.lat.any():
+            myStn.lat = float(stn.lat[stn.project.str.upper() == 'ICOS'])
+        if stn.lat.any():
+            myStn.lon = float(stn.lon[stn.project.str.upper() == 'ICOS'])
+        if stn.elevation.any():
+            myStn.eas = float(stn.elevation[stn.project.str.upper() == 'ICOS'])
+    else: 
+        if stn.lat.any():
+            myStn.lat = float(stn.lat.values[0])
+        if stn.lon.any():
+            myStn.lon = float(stn.lon.values[0])
+        if stn.elevation.any():
+            myStn.eas = float(stn.elevation.values[0])
+        
+    
+    myStn.name = stn.name.iloc[0]
+    myStn.country = stn.country.iloc[0]
+    myStn.project = stn.project.tolist()
+    myStn.uri = stn.uri.tolist()
+        
+    
+    # if the station belongs to ICOS
+    # add information from the labeling app.
+    # this is an interim step and should be removed after the full meta data
+    # flow from the thematic centres is achieved.        
+    
+    if 'ICOS' in myStn.project:            
+        query = sparqls.stations_with_pi(stationId)
+        lstn = RunSparql(query,'pandas').run()
+        if not lstn.empty:
+            myStn.theme = lstn['stationTheme'].values[0]
+            myStn.icosclass = lstn['class'].values[0]
+            myStn.icosclass = lstn['class'].values[0]
+            myStn.firstName = lstn['firstName'].values[0]
+            myStn.lastName = lstn['lastName'].values[0]
+            myStn.email = lstn['email'].values[0]
+            myStn.siteType = lstn['siteType'].values[0]
+            myStn.eag = lstn['eag'].values[0]
+
+    myStn._setData()        
+    toc = time.perf_counter()
+    print(toc-tic)
+    return myStn
 
     
-def getIdList():
+def getIdList(project='ICOS', sort='name'):
     """
-    Returns a list with Station Id extracted from the Labelling app.
-    """
-    query = sparqls. stations_with_pi()
-    return RunSparql(query,'pandas').run()
-    
-    
-def getList(theme=['AS','ES','OS'], icosclass=['1','2']):
-    """
-    Query the SPARQL endpoint for stations, create
-    an object for each Station and return a list of stations
-    which are in the "labeliing" app. By default only stations
-    which have been certified (Class 1 & 2) are return.
-    Param:      theme (str | [iterable object])
-                label (str | [iterable object])
-    Example:    getStationList('As')
-                getStationList(('As','OS'), '2')
+    Returns a list with all station id's. By default only only ICOS stations
+    will be returned. If filter is set to 'all',  all known station id's are retured.
+    Please be aware, that the usage of data associated with non-ICOS station
+    might be different then the CCBY 4.0 Licence at ICOS.
+
+    Parameters
+    ----------
+    project : str, optional. The default is 'ICOS'. If you provide the
+                set project to "all" for all known stations
+                or provide a project name (see getIdList.project)                
+                             
+    sort : str, optional. The default is 'name'.
     
     Returns
     -------
-    stationList : list, default is all certified stations
+    Pandas data frame with station id's, name and country.
+    """    
+    
+    project = project.upper()
+    
+    query = sparqls.getStations()    
+    stn = RunSparql(query,'pandas').run()
+    stn['project'] = stn.apply(lambda x : __project(x['uri']), axis=1)
+    stn['theme'] = stn.apply(lambda x: x['uri'].split('/')[-1].split('_')[0], axis=1)
+    
+    if not project == 'ALL':
+        stn = stn[stn.project == project.upper()]
+    
+    stn.sort_values(by='name', inplace=True)
+    
+    return stn
+    
+def __project(uri):
+    """
+    internal use, do not call directly. Lambda function
+    to apply on dataframe to get a column for 'project'
+
+    Parameters
+    ----------
+    uri : Carbon Portal resource descriptor
+    
+    Returns 
+    -------
+    project : str, from predefined dict
+
+    """
+    uri = uri.lower().split('/')[-1].split('_')[0]
+    project = {
+        'as' : "ICOS",
+        'es' : "ICOS",
+        'os' : "ICOS", 
+        'neon' : 'NEON', 
+        'ingos' : 'INGOS' ,   
+        'fluxnet' : 'FLUXNET'
+        }
+    
+    if uri in project:
+        return project.get(uri)
+    else:
+        return 'other'
+    
+def getList(theme=['AS','ES','OS'], ids=None):
+    """
+    Query the SPARQL endpoint for stations, create an object for each Station
+    and return the list of stations.
+    By default all (Ocean, Ecosystem, Atmosphere) ICOS stations are returned
+    which have been certified (Class 1 & 2). 
+    NOTE: if you provide a station list, all other parameters are ignored.
+    
+    Example:
+    # get all ICOS stations 
+    getStationList()
+    
+    # get a list of station objects for ICOS Atmospheric stations
+    getStationList('As')
+
+    # get a list for Atmosphere and Ocean stations
+    getStationList(['As','OS']) 
+    
+    # get list of stations with Id's (id's are case sensitive..)
+    getStationList(ids=['HTM', 'LMP', SAC])
+    
+    Parameters
+    ----------
+    theme : str | [iterable object of strings]) valid entries AS, ES, OS
+    
+    stationIds : str | [iterable object of strings]) 
+    
+    Returns
+    -------
+    stationList : list of station objects
+    
     """
     
-    defaulttheme=['AS','ES','OS']
+    stationList = []
     
+    # if a list of id's is provided, ignore theme and class.    
+    if ids:
+        for s in tqdm(ids):
+            stationList.append(get(s))
+            
+        return stationList
+    
+    defaulttheme=['AS','ES','OS']    
      # make sure input is in uppercase    
-    try:
-        
+    try:        
         if isinstance(theme, str):            
             if not theme.upper() in defaulttheme:
                 raise Exception('theme')
@@ -501,25 +668,23 @@ def getList(theme=['AS','ES','OS'], icosclass=['1','2']):
     except:
         # looks like input is not a string and/or not an iterable str.
         # comparison failed. Revert to default values, return all certified stations.
-        theme=['AS','ES','OS']           
+        theme=['AS','ES','OS']
     
-    query = sparqls. stations_with_pi()    
-    key, stations = RunSparql(query,'array').run()
-        
+    # get station list, by default returns all icos stations
+    stations = getIdList()
+    # filter by theme
+    stations = stations[stations.theme.isin(theme)]
+    
     stationList = []
-    for stn in tqdm(stations):
-        if stn[2] in theme:
-            if stn[3] in icosclass:                
-                stationList.append(Station(stn))        
-            elif '0' in icosclass and not stn[3] in icosclass :
-                stationList.append(Station(stn))        
+    for s in tqdm(stations.id):
+        stationList.append(get(s))
             
     return stationList
 # ------------------------------------------------------------    
 if __name__ == "__main__":
     """
     execute only if run as a script
-    get a full list from the CarbonPortal SPARQLl endpoint
+    get a full list from the CarbonPortal SPARQL endpoint
     and create a list of station objects    
     """
     msg = """
@@ -533,8 +698,8 @@ if __name__ == "__main__":
     # return the station object for ID (example > Norunda in Sweden)
     myStation = station.get('NOR') 
     
-    # return a list of station objects for all Level 1 Ocean ICOS stations.
-    stationList = station.getList(['OS'], '1') 
+    # return a list of station objects for all Ocean ICOS stations.
+    stationList = station.getList(['OS']) 
     """
     print(msg)
     
