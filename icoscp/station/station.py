@@ -334,6 +334,9 @@ class Station():
             
         if 'products' in dictionary:
             del dictionary['products']
+            
+        if 'valid' in dictionary:
+            del dictionary['valid']
         
         if fmt == 'dict':
             return dictionary
@@ -349,26 +352,26 @@ class Station():
         
         if fmt == 'html':
 	    
-	    #Create and initialize variable to store station info in html table:
-            html_table = '<table>'
+	    #Create and initialize variable to store station info in html table:            
+            html_table = '<style>td{padding: 3px;}</style><table>'
 
             #Loop through all keys of station dictionary:
             for k in dictionary.keys():
 
                 #Check if current dict key holds the the long name of the station and
                 #if the key to the URL of the station landing page is included:
-                if((k=='name') & ('url' in dictionary.keys())):
+                if((k=='name') & ('uri' in dictionary.keys())):
                     
                     #Create table row and add link with URL to station landing page:
-                    html_table = html_table+'<tr><td>'+k+'</td><td><b>&nbsp;&nbsp;&nbsp;&nbsp;<a href="'+str(dictionary['url'])+'"target="_blank">'+str(dictionary[k])+'</a></b></td></tr>'           
+                    html_table = html_table+'<tr><td>'+k+'</td><td><b><a href="'+str(dictionary['uri'][0])+'"target="_blank">'+str(dictionary[k])+'</a></b></td></tr>'           
                 
                 #Skip creating table row for 'url' key:
-                elif(k=='url'):
+                elif(k=='uri'):
                     continue
                 
                 #Add table row with station info for current key:
                 else:
-                    html_table = html_table+'<tr><td>'+k+'</td><td><b>&nbsp;&nbsp;&nbsp;&nbsp;'+str(dictionary[k])+'</b></td></tr>'
+                    html_table = html_table+'<tr><td>'+k+'</td><td><b>'+str(dictionary[k])+'</b></td></tr>'
             
             #Add html closing tag for table:
             html_table = html_table +'</table>'
@@ -480,8 +483,6 @@ def get(stationId):
     station : object Returns a station object (if stationId is found)
 
     """
-    import time
-    tic = time.perf_counter()
     
     # create the station instance
     myStn = Station()  
@@ -546,8 +547,6 @@ def get(stationId):
             myStn.eag = lstn['eag'].values[0]
 
     myStn._setData()        
-    toc = time.perf_counter()
-    print(toc-tic)
     return myStn
 
     
