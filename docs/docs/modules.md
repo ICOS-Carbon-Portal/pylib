@@ -189,6 +189,8 @@ True if stationId is found.
 ### **Convenience functions**
 The following three functions are recommend to get information about the available stations at the Carbon Portal and how to get a valid station object (or list of):
 
+#### .getIdList()
+
 `station.getIdList(project='ICOS', sort='name')`
 
 This returns a DataFrame with columns:
@@ -199,10 +201,15 @@ By default ICOS certified stations are returned. If project is set to 'all', all
 
 - Return Pandas DataFrame
 
+#### .get()
+
 `station.get('StationID')`
 Provide a valid station id (see getIdList()) to create a Station object. NOTE: stationId is CaseSensitive.
 
 - Return Station Object
+
+
+#### .getList()
 
 `station.getList(theme=['AS','ES','OS'], ids=None)`
 
