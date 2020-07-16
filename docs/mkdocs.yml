@@ -1,0 +1,14 @@
+site_name: ICOS Carbon Portal pylib
+nav:
+    - About: index.md
+    - Installation: install.md
+    - Modules: modules.md
+    - Examples: examples.md
+    - FAQ: faq.md
+   
+markdown_extensions:
+    - attr_list
+  
+theme:
+    name: readthedocs
+    collapse_navigation: False
