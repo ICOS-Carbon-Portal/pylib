@@ -1,8 +1,8 @@
 Metadata-Version: 2.1
 Name: icoscp
-Version: 0.1.0rc2
+Version: 0.1.0
 Summary: Access to ICOS data objects hosted at https://data.icos-cp.eu
-Home-page: https://www.icos-cp.eu/, https://github.com/ICOS-Carbon-Portal
+Home-page: https://www.icos-cp.eu/
 Author: Claudio D'Onofrio, ICOS Carbon Portal
 Author-email: claudio.donofrio@nateko.lu.se, info@icos-cp.eu
 License: GPLv3+
