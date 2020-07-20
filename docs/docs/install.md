@@ -6,7 +6,7 @@ This library is in active development and may change at any time. We do our best
 The library is developed with  Python 3.7.x and we assume that any recent Python distribution should work.
 If you have trouble to run the library, we are very keen to know why. Please get in contact.
 
-## pip
+## pip official release
 
 The recommended way of installation is by using pip:
 
@@ -21,16 +21,12 @@ For example with mini-conda (https://docs.conda.io/en/latest/miniconda.html) you
 - `activate icos`
 - `pip install icoscp`
 
+## Manaual installation
+If you would like to install the latest version (branch from Github), you can download / fork the repo and install the library with:
 
-## manual
-
-If you don't want to change your python environment and would like to test the library, you may download the package from Github, or create a fork of the master branch to a folder of your choice. Then you could start your python script by inserting the path to this folder with:
-
-	import sys
-	sys.path.insert(0,'C:\\Users\\username\\path\\to\\library\\icoscp') # windows style
-	sys.path.insert(0,'/home/user/path/to/icoscp') # *nix style	
-	
-	from icoscp.cpb. import Dobj
+- `pip install .`
+<br>or<br>
+- `python setup.py install`
 
 
 ## dependencies

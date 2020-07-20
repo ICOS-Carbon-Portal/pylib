@@ -2,7 +2,7 @@ import setuptools
 
 def readme():
     try:
-        with open('ReadmeSetup.md') as f:
+        with open('readme.md') as f:
             return f.read()
     except:
         pass
@@ -10,14 +10,14 @@ def readme():
 
 setuptools.setup(
     name='icoscp',
-    version='0.1.0rc0',
-	license='CC BY 4.0',
+    version='0.1.0rc2',
+	license='GPLv3+',
     author="Claudio D'Onofrio, ICOS Carbon Portal",
     author_email='claudio.donofrio@nateko.lu.se, info@icos-cp.eu',
-    description='Access to ICOS data',
+    description='Access to ICOS data objects hosted at https://data.icos-cp.eu',
     long_description=readme(),
     long_description_content_type='text/markdown',
-    url='https://www.icos-cp.eu/, https://github.com/ICOS-Carbon-Portal',
+    url='https://www.icos-cp.eu/',
     project_urls={
             'Source':'https://github.com/ICOS-Carbon-Portal/jupyter/tree/master/pytools',
             'DataPortal':'https://data.icos-cp.eu/portal/',
@@ -27,7 +27,7 @@ setuptools.setup(
     classifiers=[
         'Programming Language :: Python :: 3',
 		'Development Status :: 4 - Beta', 
-        'License :: CC BY 4.0',  
+        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
         'Intended Audience :: Science/Research',
 		'Intended Audience :: Developers',
 		'Intended Audience :: Education',

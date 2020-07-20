@@ -16,7 +16,7 @@
 
 __author__      = ["Claudio D'Onofrio"]
 __credits__     = "ICOS Carbon Portal"
-__license__     = "GPL-3.0, CC BY 4.0"
+__license__     = "GPL-3.0"
 __version__     = "0.1.0"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
