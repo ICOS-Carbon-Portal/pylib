@@ -6,9 +6,9 @@ nav:
     - Examples: examples.md
     - FAQ: faq.md
    
-markdown_extensions:
-    - attr_list
+#markdown_extensions:
+#    - attr_list
   
 theme:
     name: readthedocs
-    collapse_navigation: False
+#    collapse_navigation: False
