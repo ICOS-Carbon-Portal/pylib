@@ -1,6 +1,6 @@
 # Content
 
-The following modules are available in the library to find and access data hosted at the Carbon Portal. After a succesful installation into your python environment you should be able to load the modules with:
+The following modules are available in the library to find and access data hosted at the Carbon Portal. After a successful installation into your python environment you should be able to load the modules with:
 
 - `from icoscp.cpb import Dobj`
 - `from icoscp.station import station`
@@ -9,9 +9,9 @@ The following modules are available in the library to find and access data hoste
 
 <hr>
 
-## dobj
+## Dobj
 
-This is the basic module to load a **d**igital **obj**ect (data set) into memory. You need to know a valid persistent identifier (PID/URL) to access the data. Either you can browse the data portal (https://data.icos-cp.eu) to find PID's or you can use the 'station' package to find PID's programatically (see section [station](#station)). In essence each data object is linked to a unique and persistend identifier in the form of a URL. Hence each data object has an online landing page. If you select any data object on https://data.icos-cp.eu and then navigate to the PID link (which looks like 11676/j7-Lxlln8_ysi4DEV8qine_v ) you end up on the 'landing' page of the document. If you look at the address bar of your browser, you will see an URL similar to https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v . To access the data you need to know this URL or the last part of the URL (j7-Lxlln8_ysi4DEV8qine_v).
+This is the basic module to load a **d**igital **obj**ect (data set) into memory. You need to know a valid persistent identifier (PID/URL) to access the data. Either you can browse the data portal (https://data.icos-cp.eu) to find PID's or you can use the 'station' package to find PID's programatically (see section [station](#station)). In essence each data object is linked to a unique and persistent identifier in the form of a URL. Hence each data object has an on-line landing page. If you select any data object on https://data.icos-cp.eu and then navigate to the PID link (which looks like 11676/j7-Lxlln8_ysi4DEV8qine_v ) you end up on the 'landing' page of the document. If you look at the address bar of your browser, you will see an URL similar to https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v . To access the data you need to know this URL or the last part of the URL (j7-Lxlln8_ysi4DEV8qine_v).
 
 Load the module with:<br>
 `from icoscp.cpb.dobj import Dobj`
@@ -85,7 +85,7 @@ Station name
 - Return STR
 
 
-## station
+## Station
 The station module provides a search facility to explore ICOS stations and find associated data objects and data products. There is a lot of information available abouthe the ICOS stations, partner countries, measured variables and much more in the [ICOS Handbook](https://www.icos-cp.eu/sites/default/files/cmis/ICOS%20Handbook%202020.pdf). 
 
 load the module with:<br>
@@ -222,7 +222,7 @@ This is the easiest way to get a list of ICOS stations. By default a full list o
 
 - Return LIST[Station Objects]
 
-## sparql
+## Sparql
 At the ICOS Carbon Portal we store all data and meta data as linked data in a triple store. For more information about this approach refer to [Semantic Web](https://www.w3.org/standards/semanticweb/), [Resource Description Framework (RDF)](https://www.w3.org/RDF/), and [Triple Stores](https://en.wikipedia.org/wiki/Triplestore).
 
 This module is a simple interface to the [SPARQL endpoint](https://meta.icos-cp.eu/sparqlclient/?type=CSV) at the Carbon Portal. You can write your own queries and use the module to query the database or use some of the provided built in queries. 

@@ -3,18 +3,49 @@
 
 ## Digital Object
 
-For the example below, we assume that you know how to get hold of 
-the URI use at the Carbon Portal. You can read more about this in the Modules section. The following examples will use the URI [https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc](https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc): ICOS Atmosphere Level 2 data, Norunda, release 2019-1. Go to the landing page find more information.
+For the example below, we assume that you know how to get hold of the URI used at the Carbon Portal. You can read more about this in the Modules section. Each object in the data portal has a unique and persistent identification in form of an URI. The following examples will use the URI 
+
+[https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc](https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc)
+
+ICOS Atmosphere Level 2 data, Norunda, release 2019-1. Go to the landing page to find more information about this data set.
 
 <hr>
 
-### DataFrame
+### Data Object
 
 	from icoscp.cpb.dobj import Dobj
-
 	dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
-	data = dobj.get()
-	data.head(10) 
+	
+Information (meta data) is automatically stored in the data frames with the object, accessible with `Dobj.info` command. More about the content of info and other attributes are in the [modules section](modules.md#dobjinfo). For example to list all the columns available in the data set:
+	
+	dobj.colNames
+
+|   | Column Name|
+|---|-----------:|
+| 0 |  Flag      |
+| 1 |    NbPoints|
+| 2 |       Stdev|
+| 3 |   TIMESTAMP|
+| 4 |         ch4|
+
+< br>
+or get the citation string for this object:
+	
+	dobj.citation
+	
+"ICOS RI, 2019. ICOS ATC CH4 Release, Norunda (59.0 m), 2017-04-01–2019-04-30, https://hdl.handle.net/11676/lNJPHqvsMuTAh-3DOvJejgYc"
+
+### DataFrame
+
+Extracting the data as pandas data frame:
+
+	from icoscp.cpb.dobj import Dobj
+	uri = 'https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc'
+	do = Dobj(uri)
+	if do.valid:
+		data = do.get()
+	else:
+		print('no binary data available')
 	
 Printing the first 10 rows of the data (data.head(10)) should yield the following table:
 
@@ -78,7 +109,7 @@ To get a useful plot, at least we should have a title and the unit of measuremen
 
 ### Station Id's
 
-The function to get the station id's might be something you will use a lot. Based on a station id you can get all the dobj id's (PID/URI) and hence access to the data. So if you have no idea whatsovever what stations are available, you came to the right place:
+The function to get the station id's might be something you will use a lot. Based on a station id you can get all the dobj id's (PID/URI) and hence access to the data. So if you have no idea whatsoever what stations are available, you came to the right place:
 
 	from icoscp.station import station
 	stationList = station.getIdlist()  # returns a Pandas DataFrame
@@ -100,13 +131,12 @@ uri |   id    |                         name |...| project | theme |
 Now you have basic information about a station, but most important you got the station id as well. NOTE: to create a station object you need to provide the station id as is **CaseSensitiv**
 
 ### A station Object
-Let's create a station object and have a look what information is provided with the functin .info() . Each entry from "info" is an attribute and can be extracted with "myStation.attrib". In the following example you can access the station name with myStation.name
+Let's create a station object and have a look what information is provided with the function .info() . Each entry from "info" is an attribute and can be extracted with "myStation.attribute". In the following example you can access the station name with myStation.name
 
 	from icoscp.station import station
-	myStation = station.get('IT-Noe')
+	myStation = station.get('SE-Nor')
 	myStation.info()
 	
-
 {
 'stationId': 'SE-Nor',<br>
 'name': 'Norunda',<br>

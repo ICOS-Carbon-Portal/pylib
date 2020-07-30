@@ -23,3 +23,11 @@ else:
 print(data.head())
 print('citation: ', f.citation)
 
+
+import matplotlib.pyplot as plt
+from icoscp.cpb.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
+data = dobj.get()
+data.plot(x='TIMESTAMP', y='ch4', grid=True)
+
