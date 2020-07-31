@@ -1,7 +1,5 @@
 #
 
-
-
 ## Nice to have
 - attribute 'sampling height' for Dobj
 - search for station by Name
@@ -14,7 +12,3 @@
  
 	Example Norunda, Sweden (stationId "SE-Nor" for Ecosystem, stationId "NOR" for Atmosphere).
 
-
-
-
-<hr>cd20200715
