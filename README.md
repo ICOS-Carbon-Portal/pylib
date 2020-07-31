@@ -20,7 +20,7 @@ For example with mini-conda (https://docs.conda.io/en/latest/miniconda.html) you
 - `pip install icoscp`
 
 
-
+Documentation about the library and all the modules are available at https://icos-carbon-portal.github.io/pylib/
 
 
 
