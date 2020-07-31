@@ -11,15 +11,21 @@ The following modules are available in the library to find and access data hoste
 
 ## Dobj
 
-This is the basic module to load a **d**igital **obj**ect (data set) into memory. You need to know a valid persistent identifier (PID/URL) to access the data. Either you can browse the data portal (https://data.icos-cp.eu) to find PID's or you can use the 'station' package to find PID's programatically (see section [station](#station)). In essence each data object is linked to a unique and persistent identifier in the form of a URL. Hence each data object has an on-line landing page. If you select any data object on https://data.icos-cp.eu and then navigate to the PID link (which looks like 11676/j7-Lxlln8_ysi4DEV8qine_v ) you end up on the 'landing' page of the document. If you look at the address bar of your browser, you will see an URL similar to https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v . To access the data you need to know this URL or the last part of the URL (j7-Lxlln8_ysi4DEV8qine_v).
+This is the basic module to load a **d**igital **obj**ect (data set) into memory. You need to know a valid persistent identifier (PID/URL) to access the data. Either you can browse the [data portal](https://data.icos-cp.eu) to find PID's or you can use the 'station' package to find PID's programatically (see section [station](#station)). In essence each data object is linked to a unique and persistent identifier in the form of a URL. Hence each data object has an on-line landing page. If you select any data object on [https://data.icos-cp.eu](https://data.icos-cp.eu) and then navigate to the PID link (which looks like 11676/j7-Lxlln8_ysi4DEV8qine_v ) you end up on the 'landing' page of the document. If you look at the address bar of your browser, you will see an URL similar to [https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v](https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v). To access the data you need to know this URL or the last part of the URL (j7-Lxlln8_ysi4DEV8qine_v).
 
 Load the module with:<br>
-`from icoscp.cpb.dobj import Dobj`
+	from icoscp.cpb.dobj import Dobj
 
 classmethod **Dobj(digitalObject='')**<br>
-You can initialise a Dobj with a PID. The following two statements yield the same result.<br>
-`myDobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')`<br>
-`myDobj = Dobj('j7-Lxlln8_ysi4DEV8qine_v')`
+You can initialise a Dobj with a PID. The following two statements yield the same result.
+
+	myDobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+	myDobj = Dobj('j7-Lxlln8_ysi4DEV8qine_v')
+
+or create an 'empty' instance and the set the identifier later:
+
+	myDobj = Dobj()
+	myDobj.dobj = "j7-Lxlln8_ysi4DEV8qine_v"
 
 Attributes:
 
@@ -88,8 +94,9 @@ Station name
 ## Station
 The station module provides a search facility to explore ICOS stations and find associated data objects and data products. There is a lot of information available abouthe the ICOS stations, partner countries, measured variables and much more in the [ICOS Handbook](https://www.icos-cp.eu/sites/default/files/cmis/ICOS%20Handbook%202020.pdf). 
 
-load the module with:<br>
-`from icoscp.station import station`
+load the module with:
+
+	from icoscp.station import station
 
 classmethod **station.Station()**<br>
 The station object is primarily a data structure to store the associated meta data. The meta data is provided with specific and complex Sparql queries. It is possible to instantiate this class on its own, but we recommend to use the convenience functions `station.getIdList()` `station.get('StationID')` `station.getList()`  as described further below to create the station object. Once you have a created valid station object a list attributes are available:
@@ -102,13 +109,13 @@ Country code
 ### **Station.data(level=None)**
 All associated data object for the station are returned. ICOS distinguishes data in terms of how processed they are.
 
-	Data level 1: Near Real Time Data (NRT) or Internal Work data (IW).
-	Data level 2: The final quality checked ICOS RI data set,
-					published by the CFs, to be distributed through the Carbon Portal.
+	- Data level 1: Near Real Time Data (NRT) or Internal Work data (IW).
+	- Data level 2: The final quality checked ICOS RI data set, published by the CFs, 
+					to be distributed through the Carbon Portal. 
 					This level is the ICOS-data product and free available for users.
-	Data level 3: All kinds of elaborated products by scientific communities
+	- Data level 3: All kinds of elaborated products by scientific communities
 					that rely on ICOS data products are called Level 3 data.
-	
+
 - Return Pandas DataFrame
 
 ### **Station.eag**
@@ -189,36 +196,39 @@ True if stationId is found.
 ### **Convenience functions**
 The following three functions are recommend to get information about the available stations at the Carbon Portal and how to get a valid station object (or list of):
 
-#### .getIdList()
+#### station.getIdList()
 
-`station.getIdList(project='ICOS', sort='name')`
+	station.getIdList(project='ICOS', sort='name')
 
 This returns a DataFrame with columns:
-	
-	['uri', 'id', 'name', 'country', 'lat', 'lon', 'elevation', 'project', 'theme']
+
+`['uri', 'id', 'name', 'country', 'lat', 'lon', 'elevation', 'project', 'theme']`
 
 By default ICOS certified stations are returned. If project is set to 'all', all known  stations (to the Carbon Portal) are returned. By default the DataFrame is sorted by name. You can provide any column name as sorting parameter. The 'id' of the record, can be used to instantiate  a station. Hence it is easy to adjust and filter these records and use the column 'id' as input for station.get()
 
 - Return Pandas DataFrame
 
-#### .get()
+#### station.get()
 
-`station.get('StationID')`
+	station.get('stationID')
+
 Provide a valid station id (see getIdList()) to create a Station object. NOTE: stationId is CaseSensitive.
 
 - Return Station Object
 
 
-#### .getList()
+#### station.getList()
 
-`station.getList(theme=['AS','ES','OS'], ids=None)`
+	 station.getList(theme=['AS','ES','OS'], ids=None)
 
 This is the easiest way to get a list of ICOS stations. By default a full list of all certified ICOS stations is returned. You can filter the output by provided a list of themes OR you can provide a list of station id's. NOTE: If you provide a list of id's, the theme filter is ignored. 
 
-	.getList(['as', 'os'])
-		list with ICOS atmospheric and ocean stations
-	.getList(ids=['NOR', 'HTM', 'HUN'])
-		list with stations NOR (Norunda), HTM (Hyltemossa), HUN (Hegyhatsal)
+	station.getList(['as', 'os'])
+list with ICOS atmospheric and ocean stations
+
+	station.getList(ids=['NOR', 'HTM', 'HUN'])
+	
+list with stations NOR (Norunda), HTM (Hyltemossa), HUN (Hegyhatsal)
 
 - Return LIST[Station Objects]
 
@@ -250,19 +260,7 @@ Retrieve or set the output format.
 
 - Return STR
 
-### **RunSparql.format = 'fmt'**
-Retrieve or set the output format.
-	
-	fmt = 'json', 'csv', 'dict', 'pandas', 'array', 'html'
-
-- Return TUPLE | FMT
-
 ### **RunSparql.run()**
 This method actually executes the query and formats the result to the output format. If the sparql query is not executable because of syntax errors, for example, a TUPLE is returned (False, 'Bad Request')
 
 - Return TUPLE | FMT
-
-
-
-
-<hr>cd20200715

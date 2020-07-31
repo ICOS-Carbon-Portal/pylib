@@ -12,5 +12,3 @@
  
 	Example Norunda, Sweden (stationId "SE-Nor" for Ecosystem, stationId "NOR" for Atmosphere).
 
-
-<hr>cd20200715
