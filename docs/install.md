@@ -1,10 +1,8 @@
 # Installation
 
+This library is in active development and may change at any time. We do our best to keep the function calls and parameters consistent, but without a guarantee. You can follow the development on Github. At the moment the master branch is found at [https://github.com/ICOS-Carbon-Portal/jupyter](https://github.com/ICOS-Carbon-Portal/jupyter). Create an issue to leave comments, suggestions or if you find something not working as expected. The library has not been tested on many different operating systems and environments, hence we appreciate you telling us what is good and bad. 
 
-This library is in active development and may change at any time. We do our best to keep the function calls and parameters consistent, but without a guarantee. You can follow the development on Github. At the moment the master branch is found at https://github.com/ICOS-Carbon-Portal/jupyter.  Create an issue to leave comments, suggestions or if you find something not working as expected. The library has not been tested on many different operating systems and environments, hence we appreciate you telling us what is good and bad. 
-
-The library is developed with  Python 3.7.x and we assume that any recent Python distribution should work.
-If you have trouble to run the library, we are very keen to know why. Please get in contact.
+The library is developed with  Python 3.7.x and we assume that any recent Python distribution should work. If you have any trouble to run the library, we are very keen to know why. Please get in touch.
 
 ## Pip official release
 

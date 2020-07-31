@@ -26,8 +26,10 @@ or create an 'empty' instance and the set the identifier later:
 
 	myDobj = Dobj()
 	myDobj.dobj = "j7-Lxlln8_ysi4DEV8qine_v"
+<br>
 
-Attributes:
+<h2>Attributes:</h2>
+<hr>
 
 ### **Dobj.citation**
 Citation string
@@ -100,6 +102,10 @@ load the module with:
 
 classmethod **station.Station()**<br>
 The station object is primarily a data structure to store the associated meta data. The meta data is provided with specific and complex Sparql queries. It is possible to instantiate this class on its own, but we recommend to use the convenience functions `station.getIdList()` `station.get('StationID')` `station.getList()`  as described further below to create the station object. Once you have a created valid station object a list attributes are available:
+
+
+<h2>Attributes:</h2>
+<hr>
 
 ### **Station.country**
 Country code
@@ -243,8 +249,13 @@ Load the module with:<br>
 classmethod **RunSparql(sparql_query='', output_format='txt')**<br>
 sparql_query needs to be a valid query. You can test a query directly at the online SPARQL endpoint at [https://meta.icos-cp.eu/sparqlclient/?type=CSV](https://meta.icos-cp.eu/sparqlclient/?type=CSV). The ouput format is by default (txt/json) but you can adjust with the following formats ['json', 'csv', 'dict', 'pandas', 'array', 'html'].
 
+
+<h2>Attributes:</h2>
+<hr>
+
+
 ### **RunSparql.data**
-If a query is set and the method .run() was executed, it returns the result from the SPARQL endpoint. If no data is available the method returns False as BOOL.
+If a query is set and the method .run() was executed, it returns the result from the SPARQL endpoint. If no data is available the method returns False (BOOL).
 
 - Return BOOL | STR
 
