@@ -2,7 +2,7 @@
 
 The following modules are available in the library to find and access data hosted at the Carbon Portal. After a successful installation into your python environment you should be able to load the modules with:
 
-- `from icoscp.cpb import Dobj`
+- `from icoscp.cpb.dobj import Dobj`
 - `from icoscp.station import station`
 - `from icoscp.sparql.runsparql import RunSparql`
 - `from icoscp.sparql import sparqls`
