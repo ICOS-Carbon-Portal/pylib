@@ -353,7 +353,8 @@ class Station():
         if fmt == 'html':
 	    
 	    #Create and initialize variable to store station info in html table:            
-            html_table = '<style>td{padding: 3px;}</style><table>'
+            html_table = """<meta content="text/html; charset=UTF-8">
+                            <style>td{padding: 3px;}</style><table>"""
 
             #Loop through all keys of station dictionary:
             for k in dictionary.keys():
@@ -365,9 +366,15 @@ class Station():
                     #Create table row and add link with URL to station landing page:
                     html_table = html_table+'<tr><td>'+k+'</td><td><b><a href="'+str(dictionary['uri'][0])+'"target="_blank">'+str(dictionary[k])+'</a></b></td></tr>'           
                 
-                #Skip creating table row for 'url' key:
+                #Skip creating table row for 'uri' key:
                 elif(k=='uri'):
                     continue
+                
+                #Dict key 'project' returns a list. Print all comma-sep items as string.
+                elif(k=='project'):
+
+                    project_str = ', '.join(dictionary[k])
+                    html_table = html_table+'<tr><td>'+k+'</td><td><b>'+project_str+'</b></td></tr>'
                 
                 #Add table row with station info for current key:
                 else:
