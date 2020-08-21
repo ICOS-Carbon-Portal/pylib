@@ -1,12 +1,13 @@
 Metadata-Version: 2.1
 Name: icoscp
-Version: 0.1.0
+Version: 0.1.1
 Summary: Access to ICOS data objects hosted at https://data.icos-cp.eu
 Home-page: https://www.icos-cp.eu/
 Author: Claudio D'Onofrio, ICOS Carbon Portal
 Author-email: claudio.donofrio@nateko.lu.se, info@icos-cp.eu
 License: GPLv3+
-Project-URL: Source, https://github.com/ICOS-Carbon-Portal/jupyter/tree/master/pytools
+Project-URL: Source, https://github.com/ICOS-Carbon-Portal/pylib
+Project-URL: Documentation, https://icos-carbon-portal.github.io/pylib/
 Project-URL: DataPortal, https://data.icos-cp.eu/portal/
 Project-URL: SparqlEndpoint, https://meta.icos-cp.eu/sparqlclient/?type=CSV
 Description: # ICOS Carbon Portal Python Package
@@ -31,7 +32,7 @@ Description: # ICOS Carbon Portal Python Package
         - `pip install icoscp`
         
         
-        
+        Documentation about the library and all the modules are available at https://icos-carbon-portal.github.io/pylib/
         
         
         

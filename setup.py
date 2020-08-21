@@ -9,7 +9,7 @@ def readme():
 
 setuptools.setup(
     name='icoscp',
-    version='0.1.0',
+    version='0.1.1',
 	license='GPLv3+',
     author="Claudio D'Onofrio, ICOS Carbon Portal",
     author_email='claudio.donofrio@nateko.lu.se, info@icos-cp.eu',
@@ -18,7 +18,8 @@ setuptools.setup(
     long_description_content_type='text/markdown',
     url='https://www.icos-cp.eu/',
     project_urls={
-            'Source':'https://github.com/ICOS-Carbon-Portal/jupyter/tree/master/pytools',
+            'Source':'https://github.com/ICOS-Carbon-Portal/pylib',
+			'Documentation':'https://icos-carbon-portal.github.io/pylib/',
             'DataPortal':'https://data.icos-cp.eu/portal/',
             'SparqlEndpoint':'https://meta.icos-cp.eu/sparqlclient/?type=CSV'},
     packages=setuptools.find_packages(),
