@@ -10,6 +10,8 @@ make sure you have a python environment with:
 
 ### create the distribution files
 
+I highly recomend you delete the folder "build" if you have one, then run
+
 python setup.py sdist bdist_wheel
 
 
@@ -28,4 +30,4 @@ Further, remember to adjust the 'version' after icoscp==    otherwise you may en
 
 ### Finally, upload the release to the real pypi.org...
 
-- twine upload dist/*
+- twine upload dist/icoscp-0.1.20.tar.gz
