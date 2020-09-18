@@ -1,5 +1,12 @@
 # Examples
 
+The following paragraphs explain how to use the library in worked examples. If you rather would like run the library live and play around with data sets: We have a public Jupyter Hub running Python3 notebooks, where the library is preinstalled. The examples from this page are available in the folder `pylib_examples`
+
+[https://exploredata.icos-cp.eu/](https://exploredata.icos-cp.eu/)
+
+user: yourname <br>
+password: msa
+
 
 ## Digital Object
 
