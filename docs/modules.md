@@ -7,7 +7,7 @@ The following modules are available in the library to find and access data hoste
 - `from icoscp.sparql.runsparql import RunSparql`
 - `from icoscp.sparql import sparqls`
 
-<hr>
+<hr><hr>
 
 ## Dobj
 
@@ -92,6 +92,7 @@ Station name
 
 - Return STR
 
+<hr><hr>
 
 ## Station
 The station module provides a search facility to explore ICOS stations and find associated data objects and data products. There is a lot of information available abouthe the ICOS stations, partner countries, measured variables and much more in the [ICOS Handbook](https://www.icos-cp.eu/sites/default/files/cmis/ICOS%20Handbook%202020.pdf). 
@@ -237,6 +238,82 @@ list with ICOS atmospheric and ocean stations
 list with stations NOR (Norunda), HTM (Hyltemossa), HUN (Hegyhatsal)
 
 - Return LIST[Station Objects]
+
+<hr><hr>
+
+## Collection
+
+This module supports to load a collection of digital objects. Data products ( [https://www.icos-cp.eu/data-products](https://www.icos-cp.eu/data-products) ) or collections are an assembly for a specific theme, or project. For example the ICOS community assembled data to provide a base for the Drought anomaly in 2018. This dataset was then used to study the impact of this extreme event, which ultimately led to a series of publications available as theme issue in [The Royal Society](https://royalsocietypublishing.org/toc/rstb/2020/375/1810). Subsequently the data sets are now public available a the ICOS Carbon Portal. An the easiest way to load the complete dataset is by using the Collection Module.
+
+[Drought-2018 ecosystem eddy covariance flux product for 52 stations](https://www.icos-cp.eu/data-products/YVR0-4898)<br>
+[Drought-2018 atmospheric CO2 Mole Fraction product for 48 stations (96 sample heights)](https://www.icos-cp.eu/data-products/ERE9-9D85)
+
+Load the module with:<br>
+	from icoscp.collection import collection
+
+classmethod **Collection(coll)**<br>
+(where `coll` represents a pandas dataframe, similar to the output from .getIdList()). BUT only similar. We do **NOT Recommend** to instantiate this class directly. Please use the function .get(CollectionId). The Purpose of the class documentation is to provide you a list of attributes available, after the .get(CollectionId) return a collection object.
+
+<h2>Attributes:</h2>
+<hr>
+
+### **Collection.id**
+This is the ICOS URI (PID). A link to the landingpage on the ICOS dataportal
+- Return STR
+
+### **Collection.doi**
+If available, the official DOI in form of 'prefix'.'Id'.
+- Return Str
+
+### **Collection.citation**
+For convenience the citation string provided from [https://citation.crosscite.org/] is stored in this attribute. If you like to have a different format, please have a look at .getCitation description below.
+
+- Return STR
+
+### **Collection.title**
+- Return STR
+
+### **Collection.description**
+- Return STR
+
+### **Collection.info**
+For convenience all the attributes above in form of a dictionary.
+
+- Return DICT
+
+### **Collection.dataset**
+This returns a list of PID/URI of digital objects associated with the collection.
+
+- Return LIST[STR]
+
+### **Collection.data**
+This returns a list of Dobj associated to the collection. Please refer to the module Digital Object above.
+
+- Return LIST[Dobj]
+
+### **Collection.getCitation(format='apa', lang='en-GB')**
+If the collection has a DOI, you will get a citation string from https://citation.crosscite.org/. You can provide any style & language parameters as listed on citation.crosscite.org, default style is *apa* and language *en-GB*, which is stored in the attribute `collection.citation`. Use this function if you need a specific format & language adaption. Example to get a Bibtex styled citation: `.getCitation('bibtex','en-US')`
+
+
+### **Convenience functions**
+The following functions are recommended to get information about the available collections as well as creating an instance of a collection.
+
+#### collection.getIdList()
+This will return a pandas data frame, listing all available collections at the data portal. The data frame contains the following columns: ['collection', 'doi', 'title', 'description', 'dobj', 'count']. We would recommend that you pay close attention to the `count`. We have collections with many data objects associated. If you just want to play around, select a collection with less than 10 objects.
+
+
+`collection` contains the PID/URI for the collection. This is the ID you need to provide for the .get(CollectionId) function.<br>
+`dobj` contains a list (LIST[STR]) of all PID/URI associated data objects <br>
+`count` tells you how many data objects are associated with this collection.
+
+- Returns a pandas data frame 
+
+#### collection.get(CollectionId)
+Create a collection object. See the class method above for the attributes available in the collection object. The parameter CollectionId is equivalent to the PID/URI of the collection landing page and can be extracted with the function .getIdList()
+
+- Returns Collection
+
+<hr><hr>
 
 ## Sparql
 At the ICOS Carbon Portal we store all data and meta data as linked data in a triple store. For more information about this approach refer to [Semantic Web](https://www.w3.org/standards/semanticweb/), [Resource Description Framework (RDF)](https://www.w3.org/RDF/), and [Triple Stores](https://en.wikipedia.org/wiki/Triplestore).

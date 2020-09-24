@@ -219,23 +219,41 @@ def atc_nrt_level_1(limit=0):
     return query
 # ---------------------------------------------------------------------------
 
-def collections(limit=0):
-    """ Return all known collections """
-
+def collections(id=None):
+    """ Return all known collections, or if id is provided only the specific collection """
+    
+    if not id:
+        coll = '' # create an empyt string insert into sparql query
+    else:
+        coll = ''.join(['VALUES ?collection {<',id,'>} .'])
+        
     query = """
             prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
             prefix dcterms: <http://purl.org/dc/terms/>
             select * where{
-            ?coll a cpmeta:Collection .
-            OPTIONAL{?coll cpmeta:hasDoi ?doi}
-            ?coll dcterms:title ?title .
-            }
+            ?collection a cpmeta:Collection .
             %s
-            """ % __checklimit__(limit)
+            OPTIONAL{?collection cpmeta:hasDoi ?doi} .
+            ?collection dcterms:title ?title .
+            OPTIONAL{?collection dcterms:description ?description}
+            FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?collection}
+            }
+            order by ?title
+            """ % coll
 
     return query
 
 
+# -----------------------------------------------------------------------------
+def collection_items(collection_id):
+    
+    """ Return all item for a collection """
+    
+    query = """    
+            select * where{ %s <http://purl.org/dc/terms/hasPart> ?dobj}
+
+            """ % __dobjUrl__(collection_id)
+    return query
 # -----------------------------------------------------------------------------
 
 def stationData(uri, level='2'):
