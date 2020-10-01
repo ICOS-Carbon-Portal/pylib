@@ -4,6 +4,7 @@ The following modules are available in the library to find and access data hoste
 
 - `from icoscp.cpb.dobj import Dobj`
 - `from icoscp.station import station`
+- `from icoscp.collection import collection`
 - `from icoscp.sparql.runsparql import RunSparql`
 - `from icoscp.sparql import sparqls`
 
@@ -47,14 +48,22 @@ Set or retrieve. Default **True**. The binary data representation provides a UTC
 - Return BOOL
 
 ### **Dobj.dobj = PID**
-Set or retrievethe PID for the Dobj, default is empty (""). If a PID is set, an automatic chekck is performed to find the meta data for the object. If this is succesfull, the 'valid' property is set to **True**
+See Dobj.id
+
+### **Dobj.id = PID** 
+Set or retrieve the PID for the Dobj, default is empty (""). If a PID is set, an automatic chekck is performed to find the meta data for the object. If this is successful, the 'valid' property is set to **True**
 
 - Return STR
 
-### **Dobj.get()**
-Retrieve the actual data for the PID.
+### **Dobj.data**
+Retrieve the actual data for the PID, the same as `.get()`.
 
-- Retrun Pandas DataFrame
+- Return Pandas DataFrame
+
+### **Dobj.get()**
+Retrieve the actual data for the PID. The same as `.data`
+
+- Return Pandas DataFrame
 
 ### **Dobj.valid**
 True if PID is set and found at the ICOS Carbon Portal
@@ -91,6 +100,11 @@ Elevation above sea level for station. Be aware, this is NOT the sampling height
 Station name
 
 - Return STR
+
+### **Dobj.size()**
+The real size of the dobj in [bytes, KB, MB, TB]. Since this object may contain the data, it is no longer just a pointer to data.
+
+- Return TUPLE (int32, STR), where int32 represents the size and STR the unit. Example output looks like: (4.353, 'MB')
 
 <hr><hr>
 
@@ -243,26 +257,25 @@ list with stations NOR (Norunda), HTM (Hyltemossa), HUN (Hegyhatsal)
 
 ## Collection
 
-This module supports to load a collection of digital objects. Data products ( [https://www.icos-cp.eu/data-products](https://www.icos-cp.eu/data-products) ) or collections are an assembly for a specific theme, or project. For example the ICOS community assembled data to provide a base for the Drought anomaly in 2018. This dataset was then used to study the impact of this extreme event, which ultimately led to a series of publications available as theme issue in [The Royal Society](https://royalsocietypublishing.org/toc/rstb/2020/375/1810). Subsequently the data sets are now public available a the ICOS Carbon Portal. An the easiest way to load the complete dataset is by using the Collection Module.
-
-[Drought-2018 ecosystem eddy covariance flux product for 52 stations](https://www.icos-cp.eu/data-products/YVR0-4898)<br>
-[Drought-2018 atmospheric CO2 Mole Fraction product for 48 stations (96 sample heights)](https://www.icos-cp.eu/data-products/ERE9-9D85)
+This module supports to load a collection of digital objects. Data products ( [https://www.icos-cp.eu/data-products](https://www.icos-cp.eu/data-products) ) or collections are an assembly for a specific theme, or project. For example the ICOS community assembled data to provide a base for the Drought anomaly in 2018. This dataset was then used to study the impact of this extreme event, which ultimately led to a series of publications available as 'theme issue' in [The Royal Society](https://royalsocietypublishing.org/toc/rstb/2020/375/1810). Subsequently the data sets are now public available at the ICOS Carbon Portal ( [Drought-2018 ecosystem eddy covariance flux product for 52 stations](https://www.icos-cp.eu/data-products/YVR0-4898) and [Drought-2018 atmospheric CO2 Mole Fraction product for 48 stations (96 sample heights)](https://www.icos-cp.eu/data-products/ERE9-9D85). <br>
 
 Load the module with:<br>
 	from icoscp.collection import collection
 
 classmethod **Collection(coll)**<br>
-(where `coll` represents a pandas dataframe, similar to the output from .getIdList()). BUT only similar. We do **NOT Recommend** to instantiate this class directly. Please use the function .get(CollectionId). The Purpose of the class documentation is to provide you a list of attributes available, after the .get(CollectionId) return a collection object.
+(where `coll` represents a pandas data frame, similar to the output from .getIdList()). BUT only similar. We do **NOT Recommend** to instantiate this class directly. Please **use** the function **.get(CollectionId)**. The Purpose of the class documentation is to provide you a list of attributes available, after the .get(CollectionId) return a collection object.
 
 <h2>Attributes:</h2>
 <hr>
 
 ### **Collection.id**
-This is the ICOS URI (PID). A link to the landingpage on the ICOS dataportal
+This is the ICOS URI (PID). A link to the landing page on the ICOS data portal.
+
 - Return STR
 
 ### **Collection.doi**
-If available, the official DOI in form of 'prefix'.'Id'.
+If available, the official DOI in form of '10.18160/ry7n-3r04'.
+
 - Return Str
 
 ### **Collection.citation**
@@ -276,12 +289,15 @@ For convenience the citation string provided from [https://citation.crosscite.or
 ### **Collection.description**
 - Return STR
 
-### **Collection.info**
-For convenience all the attributes above in form of a dictionary.
+### **Collection.info()**
+For convenience all the attributes above `(id, doi, citation, title, description)`. You can choose the output format
+with fmt=["dict" | "pandas" | "html"]. The default is "dict".
 
-- Return DICT
+	info(self, fmt='dict')
 
-### **Collection.dataset**
+- Return FMT, default DICT
+
+### **Collection.datalink**
 This returns a list of PID/URI of digital objects associated with the collection.
 
 - Return LIST[STR]
@@ -291,25 +307,38 @@ This returns a list of Dobj associated to the collection. Please refer to the mo
 
 - Return LIST[Dobj]
 
-### **Collection.getCitation(format='apa', lang='en-GB')**
-If the collection has a DOI, you will get a citation string from https://citation.crosscite.org/. You can provide any style & language parameters as listed on citation.crosscite.org, default style is *apa* and language *en-GB*, which is stored in the attribute `collection.citation`. Use this function if you need a specific format & language adaption. Example to get a Bibtex styled citation: `.getCitation('bibtex','en-US')`
+### **Collection.getCitation()**
+
+	Collection.getCitation(format='apa', lang='en-GB')**
+
+If the collection has a DOI, you will get a citation string from [https://citation.crosscite.org/](https://citation.crosscite.org/). You may provide any style & language parameters found on the website. Our default style is *apa* and language *en-GB*, which is stored in the attribute `collection.citation`. Use the function getCitation(), if you need a specific format & language adaption. Example to get a Bibtex styled citation: `.getCitation('bibtex','de-CH')`
 
 
 ### **Convenience functions**
 The following functions are recommended to get information about the available collections as well as creating an instance of a collection.
 
 #### collection.getIdList()
-This will return a pandas data frame, listing all available collections at the data portal. The data frame contains the following columns: ['collection', 'doi', 'title', 'description', 'dobj', 'count']. We would recommend that you pay close attention to the `count`. We have collections with many data objects associated. If you just want to play around, select a collection with less than 10 objects.
 
+	collection.getIdList()
 
-`collection` contains the PID/URI for the collection. This is the ID you need to provide for the .get(CollectionId) function.<br>
-`dobj` contains a list (LIST[STR]) of all PID/URI associated data objects <br>
-`count` tells you how many data objects are associated with this collection.
+This will return a pandas data frame, listing all available collections at the data portal. The data frame contains the following columns: `['collection', 'doi', 'title', 'description', 'dobj', 'count']`. We would recommend that you pay close attention to the `count`. We have collections with many data objects associated. If you just want to play around, select a collection with less than 10 objects.
 
+- `collection` contains the PID/URI for the collection. This is the ID you need to provide for the .get(CollectionId) function. Please be aware that you need to provide the full URI.<br> Example: .get('https://meta.icos-cp.eu/collections/n7cIMHIyqHJKBeF_3jjgptHP')<br>
+- `dobj` contains a list (LIST[STR]) of all PID/URI associated data objects.<br>
+- `count` tells you how many data objects are associated with this collection.
+<br><br>
 - Returns a pandas data frame 
 
-#### collection.get(CollectionId)
-Create a collection object. See the class method above for the attributes available in the collection object. The parameter CollectionId is equivalent to the PID/URI of the collection landing page and can be extracted with the function .getIdList()
+#### collection.get()
+
+	collection.get(CollectionId)
+
+Create a collection object. See the class method above for the attributes available in the collection object.
+The `CollectionId` must be either the full ICOS URI of the collection landing page or the DOI (if one is available). Not all collections have a DOI. Both information can be extracted with the function .getIdList() .The following to lines to create 'myCollection' yield the **same result**:
+
+	myCollection = get('https://meta.icos-cp.eu/collections/n7cIMHIyqHJKBeF_3jjgptHP')
+	myCollection = get('10.18160/ry7n-3r04')
+
 
 - Returns Collection
 

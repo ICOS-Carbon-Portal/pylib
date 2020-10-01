@@ -5,7 +5,6 @@
     The collection module is used to explore ICOS data collected for a specific
     project or data product assembly.
 
-
     Example usage:
 
     from icoscp.collection import collection
@@ -30,7 +29,9 @@ from icoscp.sparql.runsparql import RunSparql
 from icoscp.sparql import sparqls
 from icoscp.cpb.dobj import Dobj
 from tqdm import tqdm
+import pandas as pd
 import requests
+
 
 # ----------------------------------------------
 class Collection():
@@ -42,7 +43,7 @@ class Collection():
             title: (str) Title of the collection
             description: (str) A short description about the collection            
             data: list[dobj] A list of digital data objects, see module cpb.Dobj
-            dataset: list[str] A list of PID/URI for all associated datasets
+            datalink: list[str] A list of PID/URI for all associated datasets
             citation: (str) The citatin string, IF a DOI is associated.
     """
     
@@ -50,12 +51,12 @@ class Collection():
         
         self._id = None             # PID, landing page link        
         self._doi = None            # DOI
-        self._citation = None        # Citation string IF DOI is available
+        self._citation = None       # Citation string IF DOI is available
         self._title = None          # title for the collection
         self._description = None    # description
         self._info = None           # keep the original pandas data frame 
         self._data = None           # a list of dataobjects
-        self._dataset = None       # a list of PID's linking to dobj
+        self._datalink = None       # a list of PID's linking to dobj
         
         self.__set__(coll)          # initialize the object with the
                                     # provided pandas dataframe
@@ -98,8 +99,8 @@ class Collection():
         return self._data
      #-------------------------------------
     @property
-    def info(self):
-        return self._info    
+    def datalink(self):
+        return self._datalink
     #-------------------------------------
     @property
     def citation(self):
@@ -122,17 +123,17 @@ class Collection():
         dolist = RunSparql(query,'pandas').run()
         
         # keep the list of dobj associated with collection
-        self._dataset = dolist.dobj.to_list()
+        self._datalink = dolist.dobj.to_list()
         
         # create dobj objects 
         self._data = []
-        for do in tqdm(self._dataset):
-            self._data.append(Dobj(do))     
+        for dobj in tqdm(self._datalink):
+            self._data.append(Dobj(dobj))     
             
         # citation..        
         self._citation = self.getCitation()
         
-        # create the info dictionary
+        # create the info as dictionary
         self._info = {
             "id": self._id,
             "doi": self._doi,
@@ -140,7 +141,37 @@ class Collection():
             "title" : self._title,
             "description" : self._description
             }
+
+    def info(self, fmt='dict'):
+        """
+        Return information about the collection
+        (id, doi, citation, title, description).
+
+        Parameters
+        ----------
+        fmt : STR, optional, define output format:
+            ["dict" | 'pandas' | 'html']. The default is 'dict'.
+
+        Returns
+        -------
+        FMT
+        """
+    
+        if fmt=='dict':
+            return self._info
         
+        # convert dict to pandas dataframe....use pandas built-in 
+        # converters afterwards
+        df = pd.DataFrame.from_dict(self._info, orient='index')
+        if fmt=='pandas':
+            return df
+        if fmt=='html':
+            return df.to_html()
+        else:
+            # default if format is not recogized
+            return self._info
+    
+
     def getCitation(self, format='apa', lang='en-GB'):
         '''
         Get a citation string from https://citation.crosscite.org/
@@ -152,8 +183,6 @@ class Collection():
         
         Parameters
         ----------
-        doi : STR
-            Provide a valid DOI like '10.18160/RY7N-3R04'.
         format : STR, optional. The default is 'apa'.
         lang : STR, optional. The default is 'en-GB'.
     
@@ -162,6 +191,12 @@ class Collection():
         STR, Citation for DOI
     
         '''
+        # check if a doi is available at all
+        if not self._doi:
+            self._citation = 'no citation available'
+            return self._citation
+        
+        # get the citation 
         header = {'accept': 'text/plain'}        
         url = 'https://citation.crosscite.org/format?'
         
@@ -199,7 +234,8 @@ def get(collectionId):
     if len(coll)==1:
         return Collection(coll)
     else:
-        return False
+        msg = 'No collection found. Check Id.'
+        return msg, False
 
     
 def getIdList():
@@ -211,16 +247,15 @@ def getIdList():
   
     Returns
     -------
-    Pandas data frame with collection Id's, DOI's and Title
+    Pandas data frame with collection Id's, DOI's and Title,...
     """    
     
     query = sparqls.collections()
     coll = RunSparql(query,'pandas').run()
     
     # register tqdm with pandas then change .apply to .progress_apply
-    # would be nice, but creates error with future warning....
-    # tqdm.pandas()
-    
+    # would be nice, but creates warning with future ...
+    # tqdm.pandas()    
     
     # add count of data sets
     coll['dobj'] = coll.apply(lambda x : __itemCount(x['collection']), axis=1)
@@ -232,7 +267,6 @@ def __itemCount(id):
     query = sparqls.collection_items(id)
     item = RunSparql(query,'pandas').run()
     return item.dobj.to_list()
-    
     
 # ------------------------------------------------------------    
 if __name__ == "__main__":
@@ -246,9 +280,7 @@ if __name__ == "__main__":
     collection.getIdList()
         
     Example to get a collection and print the citation
-        
-    coll = get('https://meta.icos-cp.eu/collections/n7cIMHIyqHJKBeF_3jjgptHP')
-    coll.citation
-    """
-    print(msg)
-    
+    """ 
+    c = get('https://meta.icos-cp.eu/collections/n7cIMHIyqHJKBeF_3jjgptHP')
+    print(c.info('pandas'))
+    #print(msg)
