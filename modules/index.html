@@ -68,6 +68,10 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#dobjdobj-pid">Dobj.dobj = PID</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dobjid-pid">Dobj.id = PID</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dobjdata">Dobj.data</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#dobjget">Dobj.get()</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#dobjvalid">Dobj.valid</a>
@@ -81,6 +85,8 @@
     <li class="toctree-l3"><a class="reference internal" href="#dobjelevation">Dobj.elevation</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#dobjstation">Dobj.station</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dobjsize">Dobj.size()</a>
     </li>
         </ul>
     </li>
@@ -125,6 +131,36 @@
     <li class="toctree-l4"><a class="reference internal" href="#stationget">station.get()</a>
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#stationgetlist">station.getList()</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#collection">Collection</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#collectionid">Collection.id</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#collectiondoi">Collection.doi</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#collectioncitation">Collection.citation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#collectiontitle">Collection.title</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#collectiondescription">Collection.description</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#collectioninfo">Collection.info()</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#collectiondatalink">Collection.datalink</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#collectiondata">Collection.data</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#collectiongetcitation">Collection.getCitation()</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#convenience-functions_1">Convenience functions</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#collectiongetidlist">collection.getIdList()</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#collectionget">collection.get()</a>
     </li>
         </ul>
     </li>
@@ -190,11 +226,11 @@
 <ul>
 <li><code>from icoscp.cpb.dobj import Dobj</code></li>
 <li><code>from icoscp.station import station</code></li>
+<li><code>from icoscp.collection import collection</code></li>
 <li><code>from icoscp.sparql.runsparql import RunSparql</code></li>
 <li><code>from icoscp.sparql import sparqls</code></li>
 </ul>
-<hr>
-
+<p><hr><hr></p>
 <h2 id="dobj">Dobj</h2>
 <p>This is the basic module to load a <strong>d</strong>igital <strong>obj</strong>ect (data set) into memory. You need to know a valid persistent identifier (PID/URL) to access the data. Either you can browse the <a href="https://data.icos-cp.eu">data portal</a> to find PID's or you can use the 'station' package to find PID's programatically (see section <a href="#station">station</a>). In essence each data object is linked to a unique and persistent identifier in the form of a URL. Hence each data object has an on-line landing page. If you select any data object on <a href="https://data.icos-cp.eu">https://data.icos-cp.eu</a> and then navigate to the PID link (which looks like 11676/j7-Lxlln8_ysi4DEV8qine_v ) you end up on the 'landing' page of the document. If you look at the address bar of your browser, you will see an URL similar to <a href="https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v">https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v</a>. To access the data you need to know this URL or the last part of the URL (j7-Lxlln8_ysi4DEV8qine_v).</p>
 <p>Load the module with:<br>
@@ -229,14 +265,21 @@ myDobj.dobj = "j7-Lxlln8_ysi4DEV8qine_v"
 <li>Return BOOL</li>
 </ul>
 <h3 id="dobjdobj-pid"><strong>Dobj.dobj = PID</strong></h3>
-<p>Set or retrievethe PID for the Dobj, default is empty (""). If a PID is set, an automatic chekck is performed to find the meta data for the object. If this is succesfull, the 'valid' property is set to <strong>True</strong></p>
+<p>See Dobj.id</p>
+<h3 id="dobjid-pid"><strong>Dobj.id = PID</strong></h3>
+<p>Set or retrieve the PID for the Dobj, default is empty (""). If a PID is set, an automatic chekck is performed to find the meta data for the object. If this is successful, the 'valid' property is set to <strong>True</strong></p>
 <ul>
 <li>Return STR</li>
 </ul>
-<h3 id="dobjget"><strong>Dobj.get()</strong></h3>
-<p>Retrieve the actual data for the PID.</p>
+<h3 id="dobjdata"><strong>Dobj.data</strong></h3>
+<p>Retrieve the actual data for the PID, the same as <code>.get()</code>.</p>
 <ul>
-<li>Retrun Pandas DataFrame</li>
+<li>Return Pandas DataFrame</li>
+</ul>
+<h3 id="dobjget"><strong>Dobj.get()</strong></h3>
+<p>Retrieve the actual data for the PID. The same as <code>.data</code></p>
+<ul>
+<li>Return Pandas DataFrame</li>
 </ul>
 <h3 id="dobjvalid"><strong>Dobj.valid</strong></h3>
 <p>True if PID is set and found at the ICOS Carbon Portal</p>
@@ -273,6 +316,12 @@ info[2] -&gt; information about the station, where the data was obtained. Name, 
 <ul>
 <li>Return STR</li>
 </ul>
+<h3 id="dobjsize"><strong>Dobj.size()</strong></h3>
+<p>The real size of the dobj in [bytes, KB, MB, TB]. Since this object may contain the data, it is no longer just a pointer to data.</p>
+<ul>
+<li>Return TUPLE (int32, STR), where int32 represents the size and STR the unit. Example output looks like: (4.353, 'MB')</li>
+</ul>
+<p><hr><hr></p>
 <h2 id="station">Station</h2>
 <p>The station module provides a search facility to explore ICOS stations and find associated data objects and data products. There is a lot of information available abouthe the ICOS stations, partner countries, measured variables and much more in the <a href="https://www.icos-cp.eu/sites/default/files/cmis/ICOS%20Handbook%202020.pdf">ICOS Handbook</a>. </p>
 <p>load the module with:</p>
@@ -407,6 +456,87 @@ OS for Ocean Stations
 <ul>
 <li>Return LIST[Station Objects]</li>
 </ul>
+<p><hr><hr></p>
+<h2 id="collection">Collection</h2>
+<p>This module supports to load a collection of digital objects. Data products ( <a href="https://www.icos-cp.eu/data-products">https://www.icos-cp.eu/data-products</a> ) or collections are an assembly for a specific theme, or project. For example the ICOS community assembled data to provide a base for the Drought anomaly in 2018. This dataset was then used to study the impact of this extreme event, which ultimately led to a series of publications available as 'theme issue' in <a href="https://royalsocietypublishing.org/toc/rstb/2020/375/1810">The Royal Society</a>. Subsequently the data sets are now public available at the ICOS Carbon Portal ( <a href="https://www.icos-cp.eu/data-products/YVR0-4898">Drought-2018 ecosystem eddy covariance flux product for 52 stations</a> and <a href="https://www.icos-cp.eu/data-products/ERE9-9D85">Drought-2018 atmospheric CO2 Mole Fraction product for 48 stations (96 sample heights)</a>. <br></p>
+<p>Load the module with:<br>
+    from icoscp.collection import collection</p>
+<p>classmethod <strong>Collection(coll)</strong><br>
+(where <code>coll</code> represents a pandas data frame, similar to the output from .getIdList()). BUT only similar. We do <strong>NOT Recommend</strong> to instantiate this class directly. Please <strong>use</strong> the function <strong>.get(CollectionId)</strong>. The Purpose of the class documentation is to provide you a list of attributes available, after the .get(CollectionId) return a collection object.</p>
+<h2>Attributes:</h2>
+
+<hr>
+
+<h3 id="collectionid"><strong>Collection.id</strong></h3>
+<p>This is the ICOS URI (PID). A link to the landing page on the ICOS data portal.</p>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="collectiondoi"><strong>Collection.doi</strong></h3>
+<p>If available, the official DOI in form of '10.18160/ry7n-3r04'.</p>
+<ul>
+<li>Return Str</li>
+</ul>
+<h3 id="collectioncitation"><strong>Collection.citation</strong></h3>
+<p>For convenience the citation string provided from [https://citation.crosscite.org/] is stored in this attribute. If you like to have a different format, please have a look at .getCitation description below.</p>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="collectiontitle"><strong>Collection.title</strong></h3>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="collectiondescription"><strong>Collection.description</strong></h3>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="collectioninfo"><strong>Collection.info()</strong></h3>
+<p>For convenience all the attributes above <code>(id, doi, citation, title, description)</code>. You can choose the output format
+with fmt=["dict" | "pandas" | "html"]. The default is "dict".</p>
+<pre><code>info(self, fmt='dict')
+</code></pre>
+<ul>
+<li>Return FMT, default DICT</li>
+</ul>
+<h3 id="collectiondatalink"><strong>Collection.datalink</strong></h3>
+<p>This returns a list of PID/URI of digital objects associated with the collection.</p>
+<ul>
+<li>Return LIST[STR]</li>
+</ul>
+<h3 id="collectiondata"><strong>Collection.data</strong></h3>
+<p>This returns a list of Dobj associated to the collection. Please refer to the module Digital Object above.</p>
+<ul>
+<li>Return LIST[Dobj]</li>
+</ul>
+<h3 id="collectiongetcitation"><strong>Collection.getCitation()</strong></h3>
+<pre><code>Collection.getCitation(format='apa', lang='en-GB')**
+</code></pre>
+<p>If the collection has a DOI, you will get a citation string from <a href="https://citation.crosscite.org/">https://citation.crosscite.org/</a>. You may provide any style &amp; language parameters found on the website. Our default style is <em>apa</em> and language <em>en-GB</em>, which is stored in the attribute <code>collection.citation</code>. Use the function getCitation(), if you need a specific format &amp; language adaption. Example to get a Bibtex styled citation: <code>.getCitation('bibtex','de-CH')</code></p>
+<h3 id="convenience-functions_1"><strong>Convenience functions</strong></h3>
+<p>The following functions are recommended to get information about the available collections as well as creating an instance of a collection.</p>
+<h4 id="collectiongetidlist">collection.getIdList()</h4>
+<pre><code>collection.getIdList()
+</code></pre>
+<p>This will return a pandas data frame, listing all available collections at the data portal. The data frame contains the following columns: <code>['collection', 'doi', 'title', 'description', 'dobj', 'count']</code>. We would recommend that you pay close attention to the <code>count</code>. We have collections with many data objects associated. If you just want to play around, select a collection with less than 10 objects.</p>
+<ul>
+<li><code>collection</code> contains the PID/URI for the collection. This is the ID you need to provide for the .get(CollectionId) function. Please be aware that you need to provide the full URI.<br> Example: .get('https://meta.icos-cp.eu/collections/n7cIMHIyqHJKBeF_3jjgptHP')<br></li>
+<li><code>dobj</code> contains a list (LIST[STR]) of all PID/URI associated data objects.<br></li>
+<li><code>count</code> tells you how many data objects are associated with this collection.
+<br><br></li>
+<li>Returns a pandas data frame </li>
+</ul>
+<h4 id="collectionget">collection.get()</h4>
+<pre><code>collection.get(CollectionId)
+</code></pre>
+<p>Create a collection object. See the class method above for the attributes available in the collection object.
+The <code>CollectionId</code> must be either the full ICOS URI of the collection landing page or the DOI (if one is available). Not all collections have a DOI. Both information can be extracted with the function .getIdList() .The following to lines to create 'myCollection' yield the <strong>same result</strong>:</p>
+<pre><code>myCollection = get('https://meta.icos-cp.eu/collections/n7cIMHIyqHJKBeF_3jjgptHP')
+myCollection = get('10.18160/ry7n-3r04')
+</code></pre>
+<ul>
+<li>Returns Collection</li>
+</ul>
+<p><hr><hr></p>
 <h2 id="sparql">Sparql</h2>
 <p>At the ICOS Carbon Portal we store all data and meta data as linked data in a triple store. For more information about this approach refer to <a href="https://www.w3.org/standards/semanticweb/">Semantic Web</a>, <a href="https://www.w3.org/RDF/">Resource Description Framework (RDF)</a>, and <a href="https://en.wikipedia.org/wiki/Triplestore">Triple Stores</a>.</p>
 <p>This module is a simple interface to the <a href="https://meta.icos-cp.eu/sparqlclient/?type=CSV">SPARQL endpoint</a> at the Carbon Portal. You can write your own queries and use the module to query the database or use some of the provided built in queries. </p>

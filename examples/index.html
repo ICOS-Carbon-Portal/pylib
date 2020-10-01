@@ -84,6 +84,14 @@
     </li>
         </ul>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#collections">Collections</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#find-a-collection">Find a collection</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#create-a-collection-representation">Create a collection representation</a>
+    </li>
+        </ul>
+    </li>
     </ul>
                     </li>
                 </ul>
@@ -126,7 +134,7 @@
                 <h1 id="examples">Examples</h1>
 <p>The following paragraphs explain how to use the library in worked examples. If you rather would like run the library live and play around with data sets: We have a public Jupyter Hub running Python3 notebooks, where the library is preinstalled. The examples from this page are available in the folder <code>pylib_examples</code></p>
 <p><a href="https://exploredata.icos-cp.eu/">https://exploredata.icos-cp.eu/</a></p>
-<p>user: yourname <br>
+<p>user: name@organisation <br>
 password: msa</p>
 <h2 id="digital-object">Digital Object</h2>
 <p>For the example below, we assume that you know how to get hold of the URI used at the Carbon Portal. You can read more about this in the Modules section. Each object in the data portal has a unique and persistent identification in form of an URI. The following examples will use the URI </p>
@@ -281,6 +289,12 @@ else:
 </tr>
 </tbody>
 </table>
+<p><br>Since version <code>0.1.3</code> a simplified access to the data is possible with:</p>
+<pre><code>do.data
+</code></pre>
+<p>So instead of data = do.get() to 'extract' the pandas data frame you can directly use the data frame to print the first 10 rows, which will give you the same result as above:</p>
+<pre><code>do.data.head(10)
+</code></pre>
 <hr>
 
 <h3 id="minimalistic-plot">Minimalistic Plot</h3>
@@ -511,6 +525,46 @@ IT-Noe Arca di Noe - Le Prigionette 40.60617 8.15117 <br>
 UK-AMo Auchencorth Moss 55.7925 -3.24362 <br>
 FR-Aur Aurade 43.54965 1.106103 <br>
 ...</p>
+<h2 id="collections">Collections</h2>
+<h3 id="find-a-collection">Find a collection</h3>
+<pre><code>from icoscp.collection import collection
+collection.getIdList()
+</code></pre>
+<p>Output is a pandas data frame, where each row contains information about a collection. The column <code>collection</code> or <code>doi</code> can be used to create a collection representation. The column <code>dobj</code> contains a list of all associated digital objects (the data) and the column <code>count</code> tells you how many data files are associated.</p>
+<table>
+<thead>
+<tr>
+<th>collection</th>
+<th>doi</th>
+<th>title</th>
+<th>description</th>
+<th>dobj</th>
+<th>count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>https://meta.icos-cp.eu/collections/WM5ShdLFqP...</td>
+<td>10.18160/P7E9-EKEA</td>
+<td>Ambient atmospheric methane observations from ...</td>
+<td>This dataset for historic ambient CH4 mole fra...</td>
+<td>[https://meta.icos-cp.eu/objects/pWqX-lRUsilS_...</td>
+<td>30</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<h3 id="create-a-collection-representation">Create a collection representation</h3>
+<p>with the information from above, you can use either the <code>collection</code> or <code>doi</code> to initialize a collection representation and print some information. Have a look at <a href="../modules/#collection">Modules / collection</a> for a full list of attributes.</p>
+<pre><code>myCollection = collection.get('10.18160/ry7n-3r04')
+myCollection.info()
+</code></pre>
+<p>{'id': 'https://meta.icos-cp.eu/collections/n7cIMHIyqHJKBeF_3jjgptHP',
+ 'doi': '10.18160/ry7n-3r04',
+ 'citation': 'Ramonet, M. (2019). ICOS Atmosphere Level 2 data, Puy de Dome, release 2019-1 (1.0). ICOS ERIC- Carbon Portal. https://doi.org/10.18160/RY7N-3R04\n',
+ 'title': 'ICOS Atmosphere Level 2 data, Puy de Dome, release 2019-1',
+ 'description': 'ICOS Atmospheric Greenhouse Gas Mole Fractions of CO2, CH4, CO and Meteorological Observations, period 2016-08-25 to 2019-04-30, Puy de Dome, final quality controlled Level 2 data, release 2019-1'}</p>
+<p>A more in depth example and how to plot data from the collection can be found on <a href="https://exploredata.icos-cp.eu">https://exploredata.icos-cp.eu</a></p>
               
             </div>
           </div>
