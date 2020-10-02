@@ -10,11 +10,16 @@ If you would rather stick to the conventional "download the data" approach, to s
 
 The ICOS Carbon Portal provides persistent digital object identifiers for each data set or file to improve the FAIR-ness of data and to give all the users easy tools for provenance, citation and reproducibility, etc.. Hence you only need to store a list of pid's (persistent digital object identifiers), or you can use one of the built in sparql queries, to reproduce always exactly the same result, regardless on which computer you run it. You can share your code with colleges, without the need of moving data around. Basically you bring the software to the data, rather then data to the software. This is especially true, if you create a Jupyter Notebook hosted at the Carbon Portal.
 
-## Documentation
-Full documentation about the library is available at the github project website [https://icos-carbon-portal.github.io/pylib/](https://icos-carbon-portal.github.io/pylib/).
-
-
 ## Changelog
 
 - 2020/07/15 publish first version to pypi.org
+- 2020/10/01 release 0.1.3
+
+	- Add module 'collection' to support loading data products. See [Modules / collection](modules.md#collection)
+	- Change behaviour of Dobj to keep data persistent. The pandas data frame is now persistent stored as pandas dataframe in the object. Older versions did query the server every time for the data. A new attribute is available: `Dobj.data` which returns the pandas dataframe. This change in behaviour is controlled with `Dobj._datapersistent = True` (default), and can be reverted by setting it to False. 
+	- A new attribute `Dobj.id` is available (which is equivalent to Dobj.dobj) but is more human understandable. Dobj.id retrieves or sets the PID/URI.
+
+
+
+
 
