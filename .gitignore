@@ -1,3 +1,4 @@
 site/
+build/
 __pycache__/
 *.egg-info
