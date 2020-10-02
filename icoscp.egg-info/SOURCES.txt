@@ -6,6 +6,8 @@ icoscp.egg-info/SOURCES.txt
 icoscp.egg-info/dependency_links.txt
 icoscp.egg-info/requires.txt
 icoscp.egg-info/top_level.txt
+icoscp/collection/__init__.py
+icoscp/collection/collection.py
 icoscp/cpb/__init__.py
 icoscp/cpb/dobj.py
 icoscp/cpb/dtype_dict.py

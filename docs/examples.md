@@ -4,7 +4,7 @@ The following paragraphs explain how to use the library in worked examples. If y
 
 [https://exploredata.icos-cp.eu/](https://exploredata.icos-cp.eu/)
 
-user: yourname <br>
+user: name@organisation <br>
 password: msa
 
 
@@ -68,6 +68,14 @@ id |  Flag |  NbPoints | Stdev  |           TIMESTAMP |          ch4
 7  |     O |        16 |  0.736 | 2017-04-01 07:00:00 |  1960.550049
 8  |     O |        16 |  0.429 | 2017-04-01 08:00:00 |  1962.540039
 9  |     O |        17 |  0.861 | 2017-04-01 09:00:00 |  1965.349976
+
+<br>Since version `0.1.3` a simplified access to the data is possible with:
+
+	do.data
+
+So instead of data = do.get() to 'extract' the pandas data frame you can directly use the data frame to print the first 10 rows, which will give you the same result as above:
+
+	do.data.head(10)
 
 <hr>
 
@@ -222,4 +230,32 @@ IT-Noe Arca di Noe - Le Prigionette 40.60617 8.15117 <br>
 UK-AMo Auchencorth Moss 55.7925 -3.24362 <br>
 FR-Aur Aurade 43.54965 1.106103 <br>
 ...
+
+## Collections
+
+### Find a collection
+
+	from icoscp.collection import collection
+	collection.getIdList()
+
+Output is a pandas data frame, where each row contains information about a collection. The column `collection` or `doi` can be used to create a collection representation. The column `dobj` contains a list of all associated digital objects (the data) and the column `count` tells you how many data files are associated.
+
+collection | doi | title | description | dobj | count 
+-----------|-----|-------|-------------|------|-------
+https://meta.icos-cp.eu/collections/WM5ShdLFqP...|10.18160/P7E9-EKEA|Ambient atmospheric methane observations from ...|This dataset for historic ambient CH4 mole fra...|[https://meta.icos-cp.eu/objects/pWqX-lRUsilS_...|30
+
+<br>
+### Create a collection representation
+with the information from above, you can use either the `collection` or `doi` to initialize a collection representation and print some information. Have a look at [Modules / collection](modules.md#collection) for a full list of attributes.
+
+	myCollection = collection.get('10.18160/ry7n-3r04')
+	myCollection.info()
+
+{'id': 'https://meta.icos-cp.eu/collections/n7cIMHIyqHJKBeF_3jjgptHP',
+ 'doi': '10.18160/ry7n-3r04',
+ 'citation': 'Ramonet, M. (2019). ICOS Atmosphere Level 2 data, Puy de Dome, release 2019-1 (1.0). ICOS ERIC- Carbon Portal. https://doi.org/10.18160/RY7N-3R04\n',
+ 'title': 'ICOS Atmosphere Level 2 data, Puy de Dome, release 2019-1',
+ 'description': 'ICOS Atmospheric Greenhouse Gas Mole Fractions of CO2, CH4, CO and Meteorological Observations, period 2016-08-25 to 2019-04-30, Puy de Dome, final quality controlled Level 2 data, release 2019-1'}
+ 
+A more in depth example and how to plot data from the collection can be found on [https://exploredata.icos-cp.eu](https://exploredata.icos-cp.eu)
 

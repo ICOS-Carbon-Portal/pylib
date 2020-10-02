@@ -9,11 +9,11 @@
 __author__      = ["Claudio D'Onofrio"]
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.1.1"
+__version__     = "0.1.2"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "rc1"
-__date__        = "2019-08-09"
+__date__        = "2020-09-27"
 
 import os
 import requests
@@ -50,6 +50,12 @@ class Dobj():
         
         self.citation = None        # hold the citation string for the object
         
+        self._data = pd.DataFrame() # This holds the data pandas dataframe
+                                    # persistent in the object. 
+        self._datapersistent = True # If True (default), data is kept persistent
+                                    # in self._data. If False, force to reload
+                                    # from data portal.
+        
         # this needs to be the last call within init. If dobj is provided
         # __payLoad() is exectued automatically to create json object 
         # for all columns#
@@ -70,6 +76,14 @@ class Dobj():
             self._dobj = digitalObject
             self._dobjSet = True
             self.__getPayload()
+    #-----------
+    @property
+    def id(self):
+        return self._dobj
+    
+    @id.setter
+    def id(self, id=''):
+        self.dobj = id
     #-----------
     @property
     def valid(self):
@@ -106,6 +120,10 @@ class Dobj():
         return float(self._info3.elevation[0])
     #-----------
     @property
+    def data(self):
+        return self.getColumns()
+    #-----------
+    @property
     def info(self):
         if self._dobjValid:
             return [self._info1, self._info2, self._info3]
@@ -118,6 +136,12 @@ class Dobj():
         return self.getColumns()
     
     def getColumns(self, columns=None):
+        #check if the data is alreday present and persistent is true.
+        # return the existing dataframe in self._data        
+        if not self._data.empty and self._datapersistent:
+            return self._data
+
+        # if datapersistence is fals or the data is missing download..        
         # if columns = None, return ALL columns, otherwise, 
         # try to extract only a subset of columns
         if (not columns) & self._dobjValid:
@@ -295,7 +319,10 @@ class Dobj():
         """
         if 'TIMESTAMP' in df.columns and self._dtconvert:
             df['TIMESTAMP'] = pd.to_datetime(df.loc[:,'TIMESTAMP'],unit='ms')
-                    
+        
+        if self._datapersistent:
+            self._data = df
+            
         return df
 
     # -------------------------------------------------                       
@@ -365,3 +392,31 @@ class Dobj():
             self._colSelected = colSelected
             
         return True
+     
+    # ------------------------------------------------------------    
+    def size(self):
+        """
+        return the real size of object
+        https://goshippo.com/blog/measure-real-size-any-python-object/
+        """
+        import icoscp.cpb.get_size as s
+        return s.get(self)
+    
+if __name__ == "__main__":
+    """
+    execute only if run as a script
+    """
+    
+    msg="""
+    You should use this Class within a script.
+    Example to create a digital object representation
+    
+    from icoscp.cpb.dobj import Dobj
+    
+    do = Dobj('https://meta.icos-cp.eu/objects/M6XCOcBsPDTnlUv_6gGNZ2EX')
+    data = do.get() 
+    data.head(3)           
+    """
+       
+    print(msg)
+    
