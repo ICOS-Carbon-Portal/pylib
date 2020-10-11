@@ -11,6 +11,7 @@ icoscp/collection/collection.py
 icoscp/cpb/__init__.py
 icoscp/cpb/dobj.py
 icoscp/cpb/dtype_dict.py
+icoscp/cpb/get_size.py
 icoscp/cpb/logfile.py
 icoscp/sparql/__init__.py
 icoscp/sparql/runsparql.py
