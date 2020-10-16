@@ -9,16 +9,17 @@
 __author__      = ["Claudio D'Onofrio"]
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.1.2"
+__version__     = "0.1.3"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "rc1"
-__date__        = "2020-09-27"
+__date__        = "2020-10-16"
 
 import os
 import requests
 import struct
 import pandas as pd
+import re
 
 from icoscp.sparql.runsparql import RunSparql
 import icoscp.sparql.sparqls as sparqls
@@ -188,38 +189,56 @@ class Dobj():
         # -------------------------------------------------
         # get the information about the underlying format
         # from the previous query -> sparql.data....
+        # info2 will contain a list of all columns
         sparql.query = sparqls.cpbGetSchemaDetail(self._info1['objSpec'][0])
         sparql.run()  
         self._info2 = sparql.data()
         
-        # the lenght of info2 will be equal to "all" columns...         
-        if not len(self._info2):
-            self._dobjValid = False
-            return False
+        # if info[1][columnNames] contains a list (optional columns...)
+        # we need to deal with possible regex entries
         
-        # ...except if info[1][columnNames] contains a list (optional columns...)               
-        if not pd.isnull(self._info1['columnNames'][0]):            
-            colList = self._info1['columnNames'][0]
-            # remove [] from beginning and end
-            colList = colList[1:len(colList)-1]
-            # remove all double quotes"
-            colList = colList.replace('"', '')
-            #create a list
-            colList = colList.split(',')
-            #remove leading and trailing whitespaces from entries
-            colList = [c.strip() for c in colList]
-            # remove all "columns" from info2 which are not in colList
-            for i, c in enumerate(self._info2['colName']):
-                if not c in colList:
-                    self._info2 = self._info2.drop(i)   
-                  
+        if not self._info1.columnNames.empty:
+            
+            # check if a there is regex column, if yes, deal with it             
+            if self._info2.isRegex.count():                
+           
+                colList = self._info1['columnNames'][0]
+                # remove [] from beginning and end
+                colList = colList[1:len(colList)-1]
+                # remove all double quotes and make a list
+                colList = colList.replace('"', '').split(',')
+                #remove leading and trailing whitespaces from entries
+                colList = [c.strip() for c in colList]
+                
+                #replace _info1.columnNames with a clean list
+                self._info1.loc[0].columnNames = colList
+                
+                # cycle through all column definition which are regex
+                regexrow = self._info2[self._info2.isRegex == 'true']
+                for i, r in enumerate(regexrow.colName):
+                    # for each column, test if regex matches and
+                    # create an entry in self._info2
+                    for c in colList:
+                        if re.match(r, c):
+                            row = regexrow.iloc[[i]]
+                            row.loc[row.index[0]].colName = c
+                            row.loc[row.index[0]].isRegex = None                            
+                            self._info2 = pd.concat([self._info2, row],ignore_index=True)
+                
+                # now we have expanded all regex column...remove the original regex rows
+                self._info2 = self._info2[self._info2.isRegex != 'true']
+
+        # make sure that _info2 is sorted....the binary file representation
+        # has been crated that way, hence we need to have the same order
+        self._info2.sort_values(by='colName', inplace=True)
+            
         # if no specific columns are selected, default to all
         if not self._colSelected:
             self._colSelected = list(range(0,len(self._info2)))
 
         # -------------------------------------------------
         # create the dataType format, neccesary to interpret the binary 
-        # data with python struct library or numpy
+        # data with python struct library or numpy        
         self._colSchema = []        
         for f in self._info2['valFormat']:
             try:
@@ -320,6 +339,24 @@ class Dobj():
         if 'TIMESTAMP' in df.columns and self._dtconvert:
             df['TIMESTAMP'] = pd.to_datetime(df.loc[:,'TIMESTAMP'],unit='ms')
         
+        # there are files with date and time where
+        # date is a unixtimestamp
+        # time seconds per day
+        if 'date' in df.columns and self._dtconvert:
+            df['date'] = pd.to_datetime(df.loc[:,'date'],unit='D')
+        
+        if 'time' in df.columns and self._dtconvert:
+            # convert unix timestamp
+            df['time'] = pd.to_datetime(df.loc[:,'time'],unit='s')
+            # remove the data, so that only time remains
+            df['time'] = pd.to_datetime(df.loc[:,'time'],format='%H:%M').dt.time
+            
+        # reorder the data frame in case of regex/optional columns
+        # to the original order provided by cpmeta:hasColumns
+        if self._info1.loc[0].columnNames:
+            df = df[self._info1.loc[0].columnNames]
+        
+        # store data in object
         if self._datapersistent:
             self._data = df
             

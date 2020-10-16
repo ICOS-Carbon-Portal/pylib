@@ -448,6 +448,7 @@ def cpbGetSchemaDetail(formatSpec):
                     cpmeta:hasValueType ?valType .                
                 ?valType rdfs:label ?valueType .
                 optional{?valType rdfs:comment ?colTip }
+                optional{ ?column cpmeta:isRegexColumn ?isRegex } .
                 optional{
                     ?valType cpmeta:hasUnit ?unit .
                     ?valType cpmeta:hasQuantityKind [rdfs:label ?qKind ] .
