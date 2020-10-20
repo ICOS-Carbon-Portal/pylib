@@ -9,11 +9,11 @@
 __author__      = ["Claudio D'Onofrio"]
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.1.3"
+__version__     = "0.1.4"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "rc1"
-__date__        = "2020-10-16"
+__date__        = "2020-10-20"
 
 import os
 import requests
@@ -194,25 +194,23 @@ class Dobj():
         sparql.run()  
         self._info2 = sparql.data()
         
-        # if info[1][columnNames] contains a list (optional columns...)
-        # we need to deal with possible regex entries
-        
-        if not self._info1.columnNames.empty:
+        # if info[1][columnNames] contains a list (optional columns...)       
+        if not pd.isnull(self._info1['columnNames'][0]):        
+            # create a clean list of actual column names and
+            # place it back to self._info1
+            colList = self._info1['columnNames'][0]
+            # remove [] from beginning and end
+            colList = colList[1:len(colList)-1]
+            # remove all double quotes and make a list
+            colList = colList.replace('"', '').split(',')
+            #remove leading and trailing whitespaces from entries
+            colList = [c.strip() for c in colList]
+                
+            #replace _info1.columnNames with a clean list
+            self._info1.loc[0].columnNames = colList
             
             # check if a there is regex column, if yes, deal with it             
             if self._info2.isRegex.count():                
-           
-                colList = self._info1['columnNames'][0]
-                # remove [] from beginning and end
-                colList = colList[1:len(colList)-1]
-                # remove all double quotes and make a list
-                colList = colList.replace('"', '').split(',')
-                #remove leading and trailing whitespaces from entries
-                colList = [c.strip() for c in colList]
-                
-                #replace _info1.columnNames with a clean list
-                self._info1.loc[0].columnNames = colList
-                
                 # cycle through all column definition which are regex
                 regexrow = self._info2[self._info2.isRegex == 'true']
                 for i, r in enumerate(regexrow.colName):
@@ -228,6 +226,12 @@ class Dobj():
                 # now we have expanded all regex column...remove the original regex rows
                 self._info2 = self._info2[self._info2.isRegex != 'true']
 
+            # potentially there a more column definitions than actual columns
+            # remove all "columns" from info2 which are not in colList
+            for i, c in enumerate(self._info2['colName']):
+                if not c in colList:
+                    self._info2 = self._info2.drop(i)   
+        
         # make sure that _info2 is sorted....the binary file representation
         # has been crated that way, hence we need to have the same order
         self._info2.sort_values(by='colName', inplace=True)
