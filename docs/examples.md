@@ -5,7 +5,7 @@ The following paragraphs explain how to use the library in worked examples. If y
 [https://exploredata.icos-cp.eu/](https://exploredata.icos-cp.eu/)
 
 user: name@organisation <br>
-password: msa
+password: **msa**
 
 
 ## Digital Object
@@ -82,14 +82,13 @@ So instead of data = do.get() to 'extract' the pandas data frame you can directl
 ### Minimalistic Plot
 
 This first example shows how to extract a data file and create a plot. It is the easiest way to load the data into a Pandas DataFrame in your Python environment. The DataFrame contains the following columNames:
-Flag, NbPoints, Stdev, TIMESTAMP, ch4. Let's load the data and create a plot for measured methan concentrations over time.
+Flag, NbPoints, Stdev, TIMESTAMP, ch4. Let's load the data and create a plot for measured methane concentrations over time.
 
 	import matplotlib.pyplot as plt
 	from icoscp.cpb.dobj import Dobj
 
 	dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
-	data = dobj.get()
-	data.plot(x='TIMESTAMP', y='ch4', grid=True)
+	dobj.data.plot(x='TIMESTAMP', y='ch4', grid=True)
 
 	plt.show()
 
@@ -104,7 +103,7 @@ To get a useful plot, at least we should have a title and the unit of measuremen
 	from icoscp.cpb.dobj import Dobj
 
 	dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
-	data = dobj.get()
+	dobj.get()
 
 	# extract information from the dobj meta data
 	# look at dobj.info() for a full list 
