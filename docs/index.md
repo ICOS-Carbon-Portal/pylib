@@ -12,15 +12,22 @@ The ICOS Carbon Portal provides persistent digital object identifiers for each d
 
 ## Changelog
 
-- 2020/07/15 publish first version to pypi.org
 
-- 2020/10/01 release 0.1.3
+- 2020/10/20 release 0.1.5<br>
+	fix bug introduced with v 0.1.4
+	datasets with optional columns where not loaded if data object specifications mismatched the list of columns
+
+
+- 2020/10/16 release 0.1.4<br>
+	add support for regex columns
+
+- 2020/10/01 release 0.1.3<br>
 	- Add module 'collection' to support loading data products. See [Modules / collection](modules.md#collection)
 	- Change behaviour of Dobj to keep data persistent. The pandas data frame is now persistent stored as pandas dataframe in the object. Older versions did query the server every time for the data. A new attribute is available: `Dobj.data` which returns the pandas dataframe. This change in behaviour is controlled with `Dobj._datapersistent = True` (default), and can be reverted by setting it to False. 
-	- A new attribute `Dobj.id` is available (which is equivalent to Dobj.dobj) but is more human understandable. Dobj.id retrieves or sets the PID/URI.<br><br>
+	- A new attribute `Dobj.id` is available (which is equivalent to Dobj.dobj) but is more human understandable. Dobj.id retrieves or sets the PID/URI.
 
-- 2020/10/16 release 0.1.4  fix support for regex columns
-
+- 2020/07/15 release 0.1.2<br>
+	first public version to pypi.org
 
 
 

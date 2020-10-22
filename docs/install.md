@@ -26,6 +26,9 @@ If you would like to install the latest version (branch from Github), you can do
 <br>or<br>
 - `python setup.py install`
 
+<br>or without downloading directly from our github master branch<br>
+- `pip install git+https://github.com/ICOS-Carbon-Portal/pylib.git`
+
 
 ## Dependencies
 The following modules are required by the library:
