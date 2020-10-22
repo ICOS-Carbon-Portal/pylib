@@ -114,18 +114,25 @@
 <h2 id="changelog">Changelog</h2>
 <ul>
 <li>
-<p>2020/07/15 publish first version to pypi.org</p>
+<p>2020/10/20 release 0.1.5<br>
+    fix bug introduced with v 0.1.4
+    datasets with optional columns where not loaded if data object specifications mismatched the list of columns</p>
 </li>
 <li>
-<p>2020/10/01 release 0.1.3</p>
+<p>2020/10/16 release 0.1.4<br>
+    add support for regex columns</p>
+</li>
+<li>
+<p>2020/10/01 release 0.1.3<br></p>
 <ul>
 <li>Add module 'collection' to support loading data products. See <a href="modules/#collection">Modules / collection</a></li>
 <li>Change behaviour of Dobj to keep data persistent. The pandas data frame is now persistent stored as pandas dataframe in the object. Older versions did query the server every time for the data. A new attribute is available: <code>Dobj.data</code> which returns the pandas dataframe. This change in behaviour is controlled with <code>Dobj._datapersistent = True</code> (default), and can be reverted by setting it to False. </li>
-<li>A new attribute <code>Dobj.id</code> is available (which is equivalent to Dobj.dobj) but is more human understandable. Dobj.id retrieves or sets the PID/URI.<br><br></li>
+<li>A new attribute <code>Dobj.id</code> is available (which is equivalent to Dobj.dobj) but is more human understandable. Dobj.id retrieves or sets the PID/URI.</li>
 </ul>
 </li>
 <li>
-<p>2020/10/16 release 0.1.4  fix support for regex columns</p>
+<p>2020/07/15 release 0.1.2<br>
+    first public version to pypi.org</p>
 </li>
 </ul>
               
@@ -181,5 +188,5 @@
 
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2020-10-16 13:32:00.547503+00:00
+Build Date UTC : 2020-10-22 09:04:14.478766+00:00
 -->

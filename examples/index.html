@@ -135,7 +135,7 @@
 <p>The following paragraphs explain how to use the library in worked examples. If you rather would like run the library live and play around with data sets: We have a public Jupyter Hub running Python3 notebooks, where the library is preinstalled. The examples from this page are available in the folder <code>pylib_examples</code></p>
 <p><a href="https://exploredata.icos-cp.eu/">https://exploredata.icos-cp.eu/</a></p>
 <p>user: name@organisation <br>
-password: msa</p>
+password: <strong>msa</strong></p>
 <h2 id="digital-object">Digital Object</h2>
 <p>For the example below, we assume that you know how to get hold of the URI used at the Carbon Portal. You can read more about this in the Modules section. Each object in the data portal has a unique and persistent identification in form of an URI. The following examples will use the URI </p>
 <p><a href="https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc">https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc</a></p>
@@ -299,13 +299,12 @@ else:
 
 <h3 id="minimalistic-plot">Minimalistic Plot</h3>
 <p>This first example shows how to extract a data file and create a plot. It is the easiest way to load the data into a Pandas DataFrame in your Python environment. The DataFrame contains the following columNames:
-Flag, NbPoints, Stdev, TIMESTAMP, ch4. Let's load the data and create a plot for measured methan concentrations over time.</p>
+Flag, NbPoints, Stdev, TIMESTAMP, ch4. Let's load the data and create a plot for measured methane concentrations over time.</p>
 <pre><code>import matplotlib.pyplot as plt
 from icoscp.cpb.dobj import Dobj
 
 dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
-data = dobj.get()
-data.plot(x='TIMESTAMP', y='ch4', grid=True)
+dobj.data.plot(x='TIMESTAMP', y='ch4', grid=True)
 
 plt.show()
 </code></pre>
@@ -318,7 +317,7 @@ plt.show()
 from icoscp.cpb.dobj import Dobj
 
 dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
-data = dobj.get()
+dobj.get()
 
 # extract information from the dobj meta data
 # look at dobj.info() for a full list 

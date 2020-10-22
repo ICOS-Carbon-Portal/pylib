@@ -66,10 +66,6 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">FAQ</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#nice-to-have">Nice to have</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#known-issues">Known issues</a>
-    </li>
     </ul>
                     </li>
                 </ul>
@@ -105,19 +101,24 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="_1"></h1>
-<h2 id="nice-to-have">Nice to have</h2>
+                <p>Things, which have popped while using this library, and might
+be of interest</p>
+<h2 id="qa">Q&amp;A</h2>
 <ul>
-<li>attribute 'sampling height' for Dobj</li>
-<li>search for station by Name</li>
-<li>attribute 'license' for data object</li>
+<li>dobj.station returns None</li>
 </ul>
-<h2 id="known-issues">Known issues</h2>
+<p>The attribute of dobj.station is set only AFTER you have called dobj.data. Not very intuitive and will be rectified in a future release.</p>
+<h2 id="good-to-know">Good to Know</h2>
 <ul>
 <li>
 <p>Stations are associated with the stationID. This means that at the moment a combined 
  station, certified for Ecosystem AND Atmosphere, has two different stationId's and hence to access ALL data for such a station you need provide a list of stationId's to find a complete set of data products.</p>
 <p>Example Norunda, Sweden (stationId "SE-Nor" for Ecosystem, stationId "NOR" for Atmosphere).</p>
+</li>
+<li>
+<p>Collection data not available
+    Collection is loosely assembled and may contain any kind of files and information. For example it is possible to gather pdf documents and NetCDF and some tabular files in a collection. These files will be presented to you, becuase they are within the collection. BUT only tabular files (where a preview is available in the data portal) can be accessed directly.
+    With other words, you can NOT expect that you can 'load' all files listed in a collection.</p>
 </li>
 </ul>
               
