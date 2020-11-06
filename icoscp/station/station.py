@@ -581,13 +581,15 @@ def getIdList(project='ICOS', sort='name'):
     
     query = sparqls.getStations()    
     stn = RunSparql(query,'pandas').run()
+
     stn['project'] = stn.apply(lambda x : __project(x['uri']), axis=1)
     stn['theme'] = stn.apply(lambda x: x['uri'].split('/')[-1].split('_')[0], axis=1)
     
     if not project == 'ALL':
         stn = stn[stn.project == project.upper()]
-    
-    stn.sort_values(by='name', inplace=True)
+    # we may have double entries....drop 
+    stn.drop
+    stn.sort_values(by=sort, inplace=True)
     
     return stn
     
