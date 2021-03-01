@@ -381,3 +381,6 @@ Retrieve or set the output format.
 This method actually executes the query and formats the result to the output format. If the sparql query is not executable because of syntax errors, for example, a TUPLE is returned (False, 'Bad Request')
 
 - Return TUPLE | FMT
+
+## STILT
+
