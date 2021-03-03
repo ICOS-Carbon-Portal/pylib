@@ -15,11 +15,11 @@
 
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.1.0"
+__version__     = "0.1.6a"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
-__status__      = "rc1"
-__date__        = "2019-08-09"
+__status__      = "alpha"
+__date__        = "2021-03-01"
 
 
 
