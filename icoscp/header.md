@@ -2,7 +2,7 @@
 ## Please use the following structure as "header" entries for python files:
 ## everything inside the -------- code block--------
 ## should be present. 
-### __data__ is used for creatin date__
+### __data__ is used for creation date__
 ### __version__ we follow a major.minor.micro structure. The first release was unified to version 0.1.0
 
 
