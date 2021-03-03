@@ -8,8 +8,7 @@ import os
 import numpy as np
 import pandas as pd
 from icoscp.station import station as cpstation
-
-STILTPATH = '/data/stiltweb/stations/'
+import icoscp.const as CPC
 
 def getStilt():
     # store all STILT station information in a dictionary 
@@ -18,11 +17,11 @@ def getStilt():
     
     #-----  assemble information
     # use directory listing from siltweb data
-    allStations = os.listdir(STILTPATH)
+    allStations = os.listdir(CPC.STILTPATH)
 
     
     # add information on station name (and new STILT station id) from stations.csv file used in stiltweb     
-    url="https://stilt.icos-cp.eu/viewer/stationinfo"
+    url= CPC.STILTINFO
     df = pd.read_csv(url)
     
     
@@ -42,7 +41,7 @@ def getStilt():
         stations[ist] = {}
         # get filename of link (original stiltweb directory structure) and extract location information
        
-        loc_ident = os.readlink(STILTPATH+ist)
+        loc_ident = os.readlink(CPC.STILTPATH+ist)
         clon = loc_ident[-13:-6]
         lon = np.float(clon[:-1])
         if clon[-1:] == 'W':
@@ -71,11 +70,11 @@ def getStilt():
         
         
         # set years and month of available data
-        years = os.listdir(STILTPATH+'/'+ist)
+        years = os.listdir(CPC.STILTPATH+'/'+ist)
         stations[ist]['years'] = years
         for yy in sorted(stations[ist]['years']):
             stations[ist][yy] = {}
-            months = os.listdir(STILTPATH+'/'+ist+'/'+yy)
+            months = os.listdir(CPC.STILTPATH+'/'+ist+'/'+yy)
             stations[ist][yy]['months'] = months
             stations[ist][yy]['nmonths'] = len(stations[ist][yy]['months'])
             
