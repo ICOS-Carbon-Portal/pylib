@@ -21,5 +21,3 @@ __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "alpha"
 __date__        = "2021-03-01"
 
-
-
