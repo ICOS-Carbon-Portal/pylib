@@ -20,9 +20,8 @@ def getStilt():
     allStations = os.listdir(CPC.STILTPATH)
 
     
-    # add information on station name (and new STILT station id) from stations.csv file used in stiltweb     
-    url= CPC.STILTINFO
-    df = pd.read_csv(url)
+    # add information on station name (and new STILT station id) from stations.csv file used in stiltweb. this is available from the backend through a url...see constants
+    df = pd.read_csv(CPC.STILTINFO)
     
     
     # add ICOS flag to the station
