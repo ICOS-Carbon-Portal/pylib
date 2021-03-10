@@ -35,7 +35,7 @@ Information (meta data) is automatically stored in the data frames with the obje
 | 3 |   TIMESTAMP|
 | 4 |         ch4|
 
-< br>
+
 or get the citation string for this object:
 	
 	dobj.citation
@@ -50,9 +50,9 @@ Extracting the data as pandas data frame:
 	uri = 'https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc'
 	do = Dobj(uri)
 	if do.valid:
-		data = do.get()
+		display(do.data.head())
 	else:
-		print('no binary data available')
+		print('no preview data available')
 	
 Printing the first 10 rows of the data (data.head(10)) should yield the following table:
 
@@ -112,7 +112,7 @@ To get a useful plot, at least we should have a title and the unit of measuremen
 	title = dobj.info[2].stationName[0] + ' (' + dobj.info[2].stationId[0] + ')'
 	title = title + '\n'  + dobj.info[0].specLabel[0]
 
-	plot = data.plot(x='TIMESTAMP', y='ch4', grid=True, title=title)
+	plot = dobj.data.plot(x='TIMESTAMP', y='ch4', grid=True, title=title)
 	plot.set(ylabel=unit)
 
 	plt.show()
