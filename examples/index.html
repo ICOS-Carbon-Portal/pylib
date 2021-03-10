@@ -179,8 +179,7 @@ dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
 </tr>
 </tbody>
 </table>
-<p>&lt; br&gt;
-or get the citation string for this object:</p>
+<p>or get the citation string for this object:</p>
 <pre><code>dobj.citation
 </code></pre>
 <p>"ICOS RI, 2019. ICOS ATC CH4 Release, Norunda (59.0 m), 2017-04-01–2019-04-30, https://hdl.handle.net/11676/lNJPHqvsMuTAh-3DOvJejgYc"</p>
@@ -190,9 +189,9 @@ or get the citation string for this object:</p>
 uri = 'https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc'
 do = Dobj(uri)
 if do.valid:
-    data = do.get()
+    display(do.data.head())
 else:
-    print('no binary data available')
+    print('no preview data available')
 </code></pre>
 <p>Printing the first 10 rows of the data (data.head(10)) should yield the following table:</p>
 <table>
