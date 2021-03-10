@@ -325,7 +325,7 @@ title = dobj.info[0].specLabel[0]
 title = dobj.info[2].stationName[0] + ' (' + dobj.info[2].stationId[0] + ')'
 title = title + '\n'  + dobj.info[0].specLabel[0]
 
-plot = data.plot(x='TIMESTAMP', y='ch4', grid=True, title=title)
+plot = dobj.data.plot(x='TIMESTAMP', y='ch4', grid=True, title=title)
 plot.set(ylabel=unit)
 
 plt.show()
