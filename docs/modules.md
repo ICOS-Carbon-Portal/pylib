@@ -279,7 +279,7 @@ If available, the official DOI in form of '10.18160/ry7n-3r04'.
 - Return Str
 
 ### **Collection.citation**
-For convenience the citation string provided from [https://citation.crosscite.org/] is stored in this attribute. If you like to have a different format, please have a look at .getCitation description below.
+For convenience the citation string provided from [https://citation.crosscite.org/](https://citation.crosscite.org/) is stored in this attribute. If you like to have a different format, please have a look at .getCitation description below.
 
 - Return STR
 

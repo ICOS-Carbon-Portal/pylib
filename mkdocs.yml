@@ -5,6 +5,7 @@ nav:
     - Modules: modules.md
     - Examples: examples.md
     - FAQ: faq.md
+    - Changelog: changelog.md
    
 #markdown_extensions:
 #    - attr_list
