@@ -1,6 +1,6 @@
 # Examples
 
-The following paragraphs explain how to use the library in worked examples. If you rather would like run the library live and play around with data sets: We have a public Jupyter Hub running Python3 notebooks, where the library is preinstalled. The examples from this page are available in the folder `pylib_examples`
+The following paragraphs explain how to use the library in worked examples. If you would like to run the library live and play around with data sets without installation: We have a public Jupyter Hub running Python3 notebooks, where the library is preinstalled. The examples from this page are available in the folder `pylib_examples`
 
 [https://exploredata.icos-cp.eu/](https://exploredata.icos-cp.eu/)
 
@@ -10,7 +10,7 @@ password: **msa**
 
 ## Digital Object
 
-For the example below, we assume that you know how to get hold of the URI used at the Carbon Portal. You can read more about this in the Modules section. Each object in the data portal has a unique and persistent identification in form of an URI. The following examples will use the URI 
+For the example below, we assume that you know how to get hold of the PID/URI used at the Carbon Portal. You can read more about this in the Modules section. Each object in the data portal has a unique and persistent identification in form of an URI. The following examples will use the URI 
 
 [https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc](https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc)
 
