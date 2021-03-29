@@ -9,7 +9,7 @@
 __author__      = ["Claudio D'Onofrio"]
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.1.4"
+__version__     = "0.1.5"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "rc1"
@@ -106,18 +106,22 @@ class Dobj():
     #-----------
     @property
     def station(self):
+        self.getColumns()
         return self._info3.stationName[0]
     #-----------
     @property
     def lat(self):
+        self.getColumns() # make sure info3 is filled
         return float(self._info3.latitude[0])
     #-----------
     @property
     def lon(self):
+        self.getColumns() # make sure info3 is filled
         return float(self._info3.longitude[0])
     #-----------
     @property
     def elevation(self):
+        self.getColumns() # make sure info3 is filled
         return float(self._info3.elevation[0])
     #-----------
     @property

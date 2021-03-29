@@ -217,7 +217,7 @@ class Station():
             2 = QAQC data
             3 = elaborated products
         """
-        # check if data has already bee asked for
+        # check if data has already been asked for
         if not self.__datacheck:
             self._setData()
             self.__datacheck = True
@@ -719,7 +719,5 @@ if __name__ == "__main__":
     stationList = station.getList(['OS']) 
     """
     print(msg)
-    
-    nor = get("NOR")
 
 # ------------------------------------------------------------
