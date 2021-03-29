@@ -98,6 +98,7 @@ class RunSparql():
 
         r = requests.get(url, params={'query': self.__query})
         if not r.ok:
+            print(r.ok, r.reason)
             return r.ok, r.reason
 
         # now check what format we should return.
