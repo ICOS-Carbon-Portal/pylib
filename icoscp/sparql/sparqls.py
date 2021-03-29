@@ -213,7 +213,6 @@ def atc_nrt_level_1(limit=0):
 		?dobj cpmeta:hasStartTime | (cpmeta:wasAcquiredBy / prov:startedAtTime) ?timeStart .
 		?dobj cpmeta:hasEndTime | (cpmeta:wasAcquiredBy / prov:endedAtTime) ?timeEnd .
 	    }
-
         %s
         """ % __checklimit__(limit)
 
@@ -228,7 +227,6 @@ def collections(id=None):
     id : STR, optional
         The default is None, which returns all know collections.
         You can provide a ICOS URI or DOI to filter for a specifict collection
-
     Returns
     -------
     query : STR
@@ -264,7 +262,6 @@ def collection_items(id):
     
     query = """    
             select * where{ %s <http://purl.org/dc/terms/hasPart> ?dobj}
-
             """ % __dobjUrl__(id)
     return query
 # -----------------------------------------------------------------------------
@@ -274,13 +271,11 @@ def stationData(uri, level='2'):
     Define SPARQL query to get a list of data objects for a specific station.
     Since a station ID might belong to more than one, a list of URI is expected
     and all dataproducts are provided.
-
     Parameters
     ----------
     uri : list , station URI, 
     level : str , optional,  ['1','2','3','all'] 
             find data products for icos level. The default is 2.
-
     Returns
     -------
     query : str , valid sparql query.
@@ -367,14 +362,12 @@ def getStations(station = ''):
     at the Carbon Portal. This can include NON-ICOS stations.
     Note: excluding WDGCC stations ( https://gaw.kishou.go.jp/ ),
     which are visible in the data portal for historic reasons.
-
     Parameters
     ----------
     station : str, optional, case sensitive
         DESCRIPTION. The default is '', and empyt string which returns ALL
         stations. If you provide a station id, be aware, that it needs to be
         exactly as provided from the Triple Store....case sensitive. 
-
     Returns
     -------
     query : str, valid sparql query to run against the Carbon Portal SPARQL endpoint.
@@ -514,7 +507,6 @@ def get_coords_icos_stations_atc():
                             5. 2-character Country code (var_name: 'Country', var_type: String)
                             6. Station Latitude (var_name: 'lat', var_type: String)
                             7. Station Longitude (var_name: 'lon', var_type: String)
-
     """
     
     #Define SPARQL query:
@@ -564,7 +556,6 @@ def get_icos_stations_atc_L1():
                             5. Sampling height a.g.l. (var_name: 'height', var_type: String)
                             6. Sampling Start Time (var_name: 'timeStart', var_type: String)
                             7. Sampling End Time (var_naem: 'timeEnd', var_type: String)
-
     """
     
     #Define SPARQL query:
@@ -615,7 +606,6 @@ def get_icos_stations_atc_L2():
                             5. Sampling height a.g.l. (var_name: 'height', var_type: String)
                             6. Sampling Start Time (var_name: "timeStart", var_type: Datetime Object)
                             7. Sampling End Time (var_name: "timeEnd", var_type: Datetime Object)
-
     """
     
     #Define SPARQL query:
@@ -707,7 +697,6 @@ def atc_query(tracer,level=2):
                 ?dobj cpmeta:hasStartTime | (cpmeta:wasAcquiredBy / prov:startedAtTime) ?timeStart .
                 ?dobj cpmeta:hasEndTime | (cpmeta:wasAcquiredBy / prov:endedAtTime) ?timeEnd .
         }
-
         """
     return query
 #------------------------------------------------------------------------------
@@ -884,7 +873,6 @@ def get_icos_citation(dataObject):
     Input parameters: Data Object ID (var_name: "dataObject", var_type: String)
     
     Output:           Citation (var_type: String)
-
     """
     
     #Get data object URL regardless if dobj is expressed as an URL or as an alpharithmetical code (i.e. fraction of URL)
@@ -901,3 +889,132 @@ def get_icos_citation(dataObject):
     return query
 #------------------------------------------------------------------------------
 
+
+
+def icos_prods_per_domain(domain='atmosphere'):
+    
+    """
+    Project:         'ICOS Carbon Portal'
+    Created:          Fri Mar 19 09:35:00 2021
+    Last Changed:     Fri Mar 19 09:35:00 2021
+    Version:          1.0.0
+    Author(s):        Oleg, Karolina
+    
+    Description:      Function that creates a string for a SPARQL query.
+                      The query is supposed to return all ICOS L1 & L2 
+                      ICOS data product names/ spec labels (incl. pre-ICOS
+                      data from InGos and Drought 2018 project data) for
+                      the selected domain.
+    
+    Input parameters: ICOS domain e.g. "atmosphere", "ecosystem" or "ocean"
+                      (var_name: "domain", var_type: String)
+    
+    Output:           SPARQL query (var_type: String)
+    
+    """
+    
+    #Check input value:
+    if ((domain!='atmosphere') & (domain!='ecosystem') & (domain!='ocean')):
+        
+        #Error message for invalid input entry:
+        print("Invalid input variable! Acceptable domain values are: 'atmosphere', 'ecosystem' or 'ocean'")
+        query = ''
+    
+    #If input entry is valid:
+    else:
+    
+        #Define SPARQL-query to get the available data product names for a given domain:
+        query = """ prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+        select ?specLabel ?spec where{
+        ?spec cpmeta:hasDataTheme <http://meta.icos-cp.eu/resources/themes/"""+domain+"""> .
+        ?spec cpmeta:hasDataLevel ?dataLevel .
+        filter(?dataLevel > 0 && ?dataLevel < 3)
+        {
+            {?spec cpmeta:hasAssociatedProject <http://meta.icos-cp.eu/resources/projects/icos> }
+            UNION
+            {
+                ?spec cpmeta:hasAssociatedProject?/cpmeta:hasKeywords ?keywords
+                filter(contains(?keywords, "pre-ICOS"))
+            }
+        }
+        filter exists{?spec cpmeta:containsDataset []}
+        filter exists{[] cpmeta:hasObjectSpec ?spec}
+        ?spec rdfs:label ?specLabel .
+        }
+        order by ?specLabel
+        """
+    
+    #Return query-string:
+    return query
+#------------------------------------------------------------------------------
+
+
+
+def prod_availability(dobj_spec_ls):
+    
+    """
+    Project:         'ICOS Carbon Portal'
+    Created:          Fri Mar 19 09:35:00 2021
+    Last Changed:     Fri Mar 19 09:35:00 2021
+    Version:          1.0.0
+    Author(s):        Oleg, Karolina
+    
+    Description:      Function that creates a string for a SPARQL query.
+                      The query is supposed to return a pandas dataframe
+                      with metadata for all stations (within a certain domain)
+                      that produce the selected data products. The metadata 
+                      includes: data object id, station ID, station sampling height 
+                      (if applicable), data product specification label,
+                      start-date of observations and end-date of observations.
+    
+    Input parameters: List of ICOS data object specifications
+                      (var_name: "dobj_spec_ls", var_type: List of strings)
+    
+    Output:           SPARQL query (var_type: String)
+    
+    """
+    
+    #Check input:
+    if (isinstance(dobj_spec_ls, list) & (len(dobj_spec_ls)>0) & (len(dobj_spec_ls)<4)):
+        
+        #Add '<' and '>' at the begining and the end of every dobj spec label:
+        dobj_spec_ls_frmt = ['<'+i+'>' for i in dobj_spec_ls if isinstance(i, str)]
+        
+        #Export list items to a string:
+        dobj_spec_labels = ' '.join(dobj_spec_ls_frmt)
+    
+        #
+        query = """prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+        prefix prov: <http://www.w3.org/ns/prov#>
+        select ?dobj ?samplingHeight ?specLabel ?timeStart ?timeEnd ?stationId
+        where {
+            {
+                select * where {
+                    VALUES ?spec {"""+dobj_spec_labels+"""
+                    }
+                    ?dobj cpmeta:hasObjectSpec ?spec .
+                    ?dobj cpmeta:wasAcquiredBy [
+                        prov:startedAtTime ?timeStart ;
+                        prov:endedAtTime ?timeEnd ;
+                        prov:wasAssociatedWith ?station
+                    ] .
+                    optional {?dobj cpmeta:wasAcquiredBy/cpmeta:hasSamplingHeight ?samplingHeight }
+                    FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}
+                }
+            }
+            ?station cpmeta:hasStationId ?stationId .
+            ?spec rdfs:label ?specLabel
+        }"""
+        
+    else:
+        
+        #Prompt error message:
+        print('Invalid entry! The input has to be a list of 1 to max 3 items.')
+        
+        #Empty query:
+        query = ''
+    
+    #Return query-string:
+    return query
