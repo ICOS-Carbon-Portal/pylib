@@ -17,11 +17,11 @@
 __author__      = ["Claudio D'Onofrio"]
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.1.1"
+__version__     = "0.1.2"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "rc1"
-__date__        = "2019-08-09"
+__date__        = "2020-11-05"
 
 import json
 import pandas as pd
@@ -47,16 +47,11 @@ class Station():
     
     def __init__(self):
         """
-        Initialize your Station either with NO arguments, or
-        provide a list of arguments in the exact order how the
-        attributes are listed 
-        [ stationID | stationName | theme | class | type | lat |
-         lon | eas | eag | firstname | lastname | email | country ]
+        Initialize your Station. If you have a list of attributes,
+        call .setStation(attribList). 
       
         """
 
-        # Be aware, that attrList needs to be in the same ORDER as attributes                
-        # info
         self._stationId = None      # shortName like HTM or SE-NOR   
         self._valid = False         # if stationId is set and valid, return True            
         self._name = None           # longName
@@ -79,6 +74,11 @@ class Station():
         self._country = None
         self._project = None        # list, project affiliation, 
         self._uri = None            # list, links to ressources, landing pages
+        
+        # data and products
+        self.__datacheck = False    # check if data and products have been asked for already
+        self._data = None           # list of associated dataobjects
+        self._products = None       # list of available products
         
             
     #super().__init__() # for subclasses
@@ -217,6 +217,11 @@ class Station():
             2 = QAQC data
             3 = elaborated products
         """
+        # check if data has already been asked for
+        if not self.__datacheck:
+            self._setData()
+            self.__datacheck = True
+            
         if not isinstance(self._data, pd.DataFrame):
             # _data is not a dataframe but contains a string...
             return self._data
@@ -242,6 +247,10 @@ class Station():
             uniqe list of data products.
 
         """
+        # check if data has already bee asked for
+        if not self.__datacheck:
+            self._setData()
+            self.__datacheck = True
         
         if not isinstance(self._products, pd.DataFrame):
             return self._products
@@ -497,7 +506,7 @@ def get(stationId):
     query = sparqls.getStations(stationId)    
     stn = RunSparql(query,'pandas').run()
     
-    if stn.empty:
+    if not isinstance(stn, pd.DataFrame) or stn.empty:
         myStn.stationId = stationId
         myStn.valid = False        
         return myStn
@@ -553,7 +562,7 @@ def get(stationId):
             myStn.siteType = lstn['siteType'].values[0]
             myStn.eag = lstn['eag'].values[0]
 
-    myStn._setData()        
+    #myStn._setData()        
     return myStn
 
     
@@ -581,13 +590,15 @@ def getIdList(project='ICOS', sort='name'):
     
     query = sparqls.getStations()    
     stn = RunSparql(query,'pandas').run()
+
     stn['project'] = stn.apply(lambda x : __project(x['uri']), axis=1)
     stn['theme'] = stn.apply(lambda x: x['uri'].split('/')[-1].split('_')[0], axis=1)
     
     if not project == 'ALL':
         stn = stn[stn.project == project.upper()]
-    
-    stn.sort_values(by='name', inplace=True)
+    # we may have double entries....drop 
+    stn.drop
+    stn.sort_values(by=sort, inplace=True)
     
     return stn
     
@@ -708,6 +719,5 @@ if __name__ == "__main__":
     stationList = station.getList(['OS']) 
     """
     print(msg)
-    
 
 # ------------------------------------------------------------

@@ -1,6 +1,6 @@
 # Examples
 
-The following paragraphs explain how to use the library in worked examples. If you rather would like run the library live and play around with data sets: We have a public Jupyter Hub running Python3 notebooks, where the library is preinstalled. The examples from this page are available in the folder `pylib_examples`
+The following paragraphs explain how to use the library in worked examples. If you would like to run the library live and play around with data sets without installation: We have a public Jupyter Hub running Python3 notebooks, where the library is preinstalled. The examples from this page are available in the folder `pylib_examples`
 
 [https://exploredata.icos-cp.eu/](https://exploredata.icos-cp.eu/)
 
@@ -10,7 +10,7 @@ password: **msa**
 
 ## Digital Object
 
-For the example below, we assume that you know how to get hold of the URI used at the Carbon Portal. You can read more about this in the Modules section. Each object in the data portal has a unique and persistent identification in form of an URI. The following examples will use the URI 
+For the example below, we assume that you know how to get hold of the PID/URI used at the Carbon Portal. You can read more about this in the Modules section. Each object in the data portal has a unique and persistent identification in form of an URI. The following examples will use the URI 
 
 [https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc](https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc)
 
@@ -35,7 +35,7 @@ Information (meta data) is automatically stored in the data frames with the obje
 | 3 |   TIMESTAMP|
 | 4 |         ch4|
 
-< br>
+
 or get the citation string for this object:
 	
 	dobj.citation
@@ -50,9 +50,9 @@ Extracting the data as pandas data frame:
 	uri = 'https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc'
 	do = Dobj(uri)
 	if do.valid:
-		data = do.get()
+		display(do.data.head())
 	else:
-		print('no binary data available')
+		print('no preview data available')
 	
 Printing the first 10 rows of the data (data.head(10)) should yield the following table:
 
@@ -112,7 +112,7 @@ To get a useful plot, at least we should have a title and the unit of measuremen
 	title = dobj.info[2].stationName[0] + ' (' + dobj.info[2].stationId[0] + ')'
 	title = title + '\n'  + dobj.info[0].specLabel[0]
 
-	plot = data.plot(x='TIMESTAMP', y='ch4', grid=True, title=title)
+	plot = dobj.data.plot(x='TIMESTAMP', y='ch4', grid=True, title=title)
 	plot.set(ylabel=unit)
 
 	plt.show()

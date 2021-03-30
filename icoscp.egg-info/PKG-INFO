@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: icoscp
-Version: 0.1.5
+Version: 0.1.6
 Summary: Access to ICOS data objects hosted at https://data.icos-cp.eu
 Home-page: https://www.icos-cp.eu/
 Author: Claudio D'Onofrio, ICOS Carbon Portal
@@ -23,6 +23,7 @@ Description: # ICOS Carbon Portal Python Package
         What is the package about?
         In essence this package allows you to have direct access to data objects from the ICOS CarbonPortal were a "Preview" is available. It is an easy access to data objects hosted at the ICOS Carbon Portal ( https://data.icos-cp.eu/ ). By using this library you can load data files directly into memory.
         
+        Please be aware, that by either downloading data, or accessing data directly through this library, you agree and accept, that all ICOS data is provided under a <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0 licence <img src="https://www.icos-cp.eu/sites/default/files/inline-images/creativecommons.png"></a>
         
         We would encourage you to use a virtual environment for python to test this library.
         For example with mini-conda (https://docs.conda.io/en/latest/miniconda.html) you can create a new environment with:

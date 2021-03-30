@@ -2,32 +2,25 @@
 # -*- coding: utf-8 -*-
 
 """
-Example 1:
+Example:
     Create a digital object represenation based on a PID 
-    @author: Claudio
+    Full documentation for the library available @
+    https://icos-carbon-portal.github.io/pylib/  
+    
+    for more examples, please visit our Jupyter Hub and navigate
+    to pylib_examples
+    https://exploredata.icos-cp.eu
 """
 
-
 from icoscp.cpb.dobj import Dobj
 
-pid = 'ZHgulniA9Ie7PhfnHZo2Z9Ga'
+pid = 'https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc'
 f = Dobj(pid)
-
-
-if f.valid:
-    data = f.get()
-else:        
-    raise SystemExit('no binary data available', 0)
     
 # print the first few rows
-print(data.head())
+print(f.data.head())
+# print citation
 print('citation: ', f.citation)
 
-
-import matplotlib.pyplot as plt
-from icoscp.cpb.dobj import Dobj
-
-dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
-data = dobj.get()
-data.plot(x='TIMESTAMP', y='ch4', grid=True)
+f.data.plot(x='TIMESTAMP', y='ch4', grid=True)
 
