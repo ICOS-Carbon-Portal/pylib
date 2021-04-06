@@ -189,8 +189,6 @@ def __country(countrycode='', latlon=[]):
         country_information=resp.json()
         return country_information['countryName'], country_information
 
-
-
     
 def __stationName(idx, name, alt):    
     if name=='nan':
