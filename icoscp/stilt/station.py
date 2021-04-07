@@ -77,11 +77,21 @@ def get(**kwargs):
 
     """
     
+    # start with getting all stations
     stations = __get_all()
     
-    
-    return stations
+    if not kwargs:
+        return stations
 
+    # valid key words:
+    keywords = ['stiltid','icosid','outfmt','country','bbox','pinpoint', \
+                'sdate','edate', 'hours', 'search']
+    
+    for k in kwargs.keys():
+        if str(k).lower() in keywords:
+            print(k,kwargs[k])
+            #v(k,kwargs[k])
+    
 
 def __get_all():
     """
