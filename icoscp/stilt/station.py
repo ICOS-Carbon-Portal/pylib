@@ -8,124 +8,145 @@ import os
 import numpy as np
 import pandas as pd
 import requests
+import json
+from tqdm.notebook import tqdm
 from icoscp.station import station as cpstation
+import icoscp.stilt.geoinfo as geoinfo
 import icoscp.const as CPC
 
-def get(**kwargs):
-    """
-    Return a list of stilt stations. Providing no keyword arguments will
-    return a complete list of all stations. You can filter the result by 
-    by providing the following keywords:
+# --- START KEYWORD FUNCTIONS ---
+
+def _id(kwargs, stations):
+    ids = kwargs['id']
+    if isinstance(ids,str):
+        ids=[ids]
+    if not isinstance(ids,list):
+        ids=list(ids)
     
-
-    Parameters
-    ----------    
-                                    
-    stiltID STR, list of STR:
-        Provide the stilt station id         
-
-    icosID STR, list of STR:
-        Provide ICOS station id
-
-    outfmt STR ['pandas' | 'dict' | 'list']:
-        the result is returned as
-            pandas,  dataframe with some key information
-            dict, dictionary with full metadata for each station
-            list of stilt station objects
-
-    #Spatial search keywords:
-
-    country STR, list of STR:
-        Provide country code either fullname, 2 or 3 digit 
-        where country is e.g "SE", "SWE" or "Sweden" (ISO standard)
-
-    bbox LIST of Tuples:
-        spatial filter by bounding box where bbox=[Topleft(lat,lon), BR(lat,lon)]
-
-    pinpoint LIST: [lat, lon, distanceKM]
-        spatial filter by pinpoint location plus distance in KM
-        distance in km is use to create a bounding box.
+    # check stilt id
+    flt = list(set(ids).intersection(stations))
     
-    #Temporal keywords:
-    sdate Input formats:
-           - datetime.date objs
-           - unix timestamp
-           - pandas.datetime
-           - STR: "YYYY-MM-DD":
-        where 'sdate' is a list of dates.
-        single list-item refers to start date (if edate is also provided) of a period or a single date
-        single list-item refers (if edate is not provided) 
-        multiple items for list of single dates option
+    #check icos id
+    for k in stations:
+        if stations[k]['icos']:
+            if stations[k]['icos']['stationId'] in ids:
+                flt.append(k)
+            
+    stations =  {k: stations[k] for k in flt}
+    return stations
 
-    edate Input format see sdata:
-        where 'sdate' is a single date
+def _outfmt(kwargs, stations):
+    print(kwargs)   
+    return stations
 
-    hours LIST of (see Input format sdate):
-        where 'hours' is a list of hours (strings, int or datetime objs).
+def _country(kwargs, stations):
+    countries = kwargs['country']
+    if isinstance(countries,str):
+        countries=[countries]
+    if not isinstance(countries,list):
+        countries=list(countries)
+       
+    idx = []
+    for k in stations:
+        for c in countries:
+            g = stations[k]['geoinfo']
+            check = []  
+            # sometime country is not available....
+            # location in a ocean for example..hence try:
+            try:
+                check.append(g['alpha2Code'].lower())
+                check.append(g['alpha3Code'].lower())
+                check.append(g['countryName'].lower())
+                check.append(g['name'].lower())
+                check.append(g['nativeName'].lower())
+                check.append(g['altSpellings'])
+            except:
+                pass
+            
+            if c.lower() in check:
+                idx.append(k)
+    
+    flt = list(set(idx).intersection(stations))
+    stations =  {k: stations[k] for k in flt}
+    return stations
+            
+
+def _bbox(kwargs, stations):
+    bbox=kwargs['bbox']
+    lat1 = float(bbox[1][0])
+    lat2 = float(bbox[0][0])
+    lon1 = float(bbox[0][1])
+    lon2 = float(bbox[1][1])
+            
+    flt = []
+    for k in stations:
+        if lat1 <= float(stations[k]['lat']) <= lat2:
+            if lon1 <= float(stations[k]['lon']) <= lon2:
+                flt.append(k)                
         
-        Default ['00:00', '03:00', ..., '21:00'] --- > all the timeslots with data (no filter)
+    stations =  {k: stations[k] for k in flt}
+    return stations
 
-    search STR:
-        Arbitrary string search keyword
+def _pinpoint(kwargs, stations):
+    lat = kwargs['pinpoint'][0]
+    lon = kwargs['pinpoint'][1]
+    deg = kwargs['pinpoint'][2]*0.01
+    lat1 = lat+deg
+    lat2 = lat-deg
+    lon1 = lon-deg
+    lon2 = lon+deg
+    box = {'bbox':[(lat1, lon1),(lat2, lon2)]}
+    return _bbox(box, stations)
 
-    
-    
+def _sdate(kwargs, stations):
+    print(kwargs)  
+    return stations
 
-    Returns
-    -------
-    List of Stiltstation in the form of outfmt=format, see format above.
+def _edate(kwargs, stations):
+    print(kwargs)  
+    return stations
 
-    """
-    
-    # start with getting all stations
-    stations = __get_all()
-    
-    if not kwargs:
-        return stations
+def _hours(kwargs, stations):
+    print(kwargs)  
+    return stations
 
-    # valid key words:
-    keywords = ['stiltid','icosid','outfmt','country','bbox','pinpoint', \
-                'sdate','edate', 'hours', 'search']
-    
-    for k in kwargs.keys():
-        if str(k).lower() in keywords:
-            print(k,kwargs[k])
-            #v(k,kwargs[k])
-    
+def _search(kwargs, stations):
+    """ search for arbitrary string"""
+    idx = []
+    for k in stations:
+        txt = json.dumps(stations[k])                         
+        if kwargs['search'].lower() in txt.lower():
+            idx.append(k)
+            
+    flt = list(set(idx).intersection(stations))    
+    return {k: stations[k] for k in flt}
+
+# --- END KEYWORD FUNCTIONS ---
+
+
 
 def __get_all():
+    """ get all stilt stations available on the server 
+        return dictionary with meta data, keys are stilt station id's
     """
-    
-
-    Returns
-    -------
-    stations : TYPE
-        DESCRIPTION.
-
-    """
-    
-    # store all STILT station information in a dictionary 
-    # get all ICOS station IDs by listing subdirectories in stiltweb
-    # extract location from filename of link
-    
-    #-----  assemble information
+        
     # use directory listing from siltweb data
     allStations = os.listdir(CPC.STILTPATH)
 
-    
-    # add information on station name (and new STILT station id) from stations.csv file used in stiltweb. this is available from the backend through a url...see constants
+    # add information on station name (and new STILT station id)
+    # from stations.csv file used in stiltweb.
+    # this is available from the backend through a url
     df = pd.read_csv(CPC.STILTINFO)
-    
     
     # add ICOS flag to the station
     icosStations = cpstation.getIdList()
     icosStations = list(icosStations['id'][icosStations.theme=='AS'])
     
-    #----  dictionary to return
+    # dictionary to return
     stations = {}
 
     # fill dictionary with ICOS station id, latitude, longitude and altitude
-    for ist in sorted(allStations):
+    for ist in tqdm(sorted(allStations)):
   
         if not ist in df['STILT id'].values:
             continue
@@ -155,11 +176,11 @@ def __get_all():
         stations[ist]['name'] = __stationName(stations[ist]['id'], stationName, stations[ist]['alt'])        
 
         # set a flag if it is an ICOS station
-        if stations[ist]['id'][0:3].upper() in icosStations:
-            stations[ist]['icos'] = True
+        stn = stations[ist]['id'][0:3].upper()
+        if stn in icosStations:
+            stations[ist]['icos'] = cpstation.get(stn).info()
         else:
             stations[ist]['icos'] = False
-        
         
         # set years and month of available data
         years = os.listdir(CPC.STILTPATH+'/'+ist)
@@ -169,36 +190,33 @@ def __get_all():
             months = os.listdir(CPC.STILTPATH+'/'+ist+'/'+yy)
             stations[ist][yy]['months'] = months
             stations[ist][yy]['nmonths'] = len(stations[ist][yy]['months'])
-            
+    
+    # merge geoinfo
+    geo = geoinfo.get()
+    
+    for k in stations:  
+        if k in geo.keys():
+            stations[k]['geoinfo'] = geo[k]
+    else:
+        stations[k]['geoinfo'] = __country([stations[k]['lat'],stations[k]['lon']]) 
+    
     return stations
-            
-def __country(countrycode='', latlon=[]):
-    '''
-    returns the country name and json object with full information about the 
-    country from https://restcountries.eu.
-    Please provided either the country code like 'se' or 'swe'
-    OR latlon.
-        If both parameters are provided, contrycode only is used.
-        If no parameter is provided, False is returned
+ 
 
-    Example:    c = __country('SE')
-                c = __country('SWE')
-                c = __country(latlon=[65.2,13.5])
-    '''
-    if countrycode:
+def __country(latlon):
+        """ return country information based on lat lon wgs84"""  
+        url='https://api.bigdatacloud.net/data/reverse-geocode-client?'\
+            'latitude=' + str(latlon[0]) + '&longitude=' + str(latlon[1])
+        resp = requests.get(url=url)        
+        a = resp.json()
+        
         # API to reterive country name using country code. 
-        url = 'https://restcountries.eu/rest/v2/alpha/' + countrycode
+        url='https://restcountries.eu/rest/v2/alpha/' + a['countryCode']
         resp = requests.get(url=url)
-        country_information=resp.json()
-        return country_information['name'], country_information
-
-    if len(latlon)==2:           
-        url='https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=' + \
-            str(latlon[0]) + '&longitude=' + str(latlon[1]) + '12&localityLanguage=en'
-        resp = requests.get(url=url)
-        country_information=resp.json()
-        return country_information['countryName'], country_information
-
+        b = resp.json()
+        
+        return {**a, **b}
+        
     
 def __stationName(idx, name, alt):    
     if name=='nan':
@@ -206,4 +224,102 @@ def __stationName(idx, name, alt):
     if not (name[-1]=='m' and name[-2].isdigit()):           
         name = name + ' ' + str(alt) + 'm'    
     return name
+
+
+def get(**kwargs):
+    """
+    Return a list of stilt stations. Providing no keyword arguments will
+    return a complete list of all stations. You can filter the result by 
+    by providing the following keywords:
     
+
+    Parameters
+    ----------    
+                                    
+    id STR, list of STR:
+        Provide station id or list of id's. You can provide
+        either stilt or icos id's mixed together.
+        Example:    station.get(id='HTM')
+                    station.get(id=['NOR', 'GAT344'])
+
+
+    outfmt STR ['pandas' | 'dict' | 'list']:
+        the result is returned as
+            pandas,  dataframe with some key information
+            dict, dictionary with full metadata for each station
+            list of stilt station objects
+
+    #Spatial search keywords:
+
+    country STR, list of STR:
+        Provide country code either fullname, 2 or 3 digit 
+        where country is e.g "SE", "SWE" or "Sweden" 
+        Example:    station.get(country='Sweden')
+        
+    bbox LIST of Tuples:
+        spatial filter by bounding box where bbox=[Topleft(lat,lon), BR(lat,lon)]
+        The following example is approximately covering scandinavia
+        Example:    station.get(bbox=[(70,5),(55,32)])
+
+    pinpoint LIST: [lat, lon, distanceKM]
+        spatial filter by pinpoint location plus distance in KM
+        distance in km is use to create a bounding box
+        We use a very rough estimate of 1degree = 100 km
+    
+    #Temporal keywords:
+    sdate Input formats:
+           - datetime.date objs
+           - unix timestamp
+           - pandas.datetime
+           - STR: "YYYY-MM-DD":
+        where 'sdate' is a list of dates.
+        single list-item refers to start date (if edate is also provided) of a period or a single date
+        single list-item refers (if edate is not provided) 
+        multiple items for list of single dates option
+
+    edate Input format see sdata:
+        where 'sdate' is a single date
+
+    hours LIST of (see Input format sdate):
+        where 'hours' is a list of hours (strings, int or datetime objs).
+        
+        Default ['00:00', '03:00', ..., '21:00'] --- > all the timeslots with data (no filter)
+
+    search STR:
+        Arbitrary string search keyword
+
+
+    Returns
+    -------
+    List of Stiltstation in the form of outfmt=format, see format above.
+
+    """
+    
+    # start with getting all stations
+    stations = __get_all()
+    
+    if not kwargs:
+        return stations
+
+   # convert all keywords to lower case
+    kwargs =  {k.lower(): v for k, v in kwargs.items()}
+    
+    # valid key words. Make surea all are lower capital and that
+    # the function has been defined above and that outfmt is the very 
+    # last call:
+    fun = {'id': _id,
+           'country': _country, 
+           'bbox': _bbox,
+           'pinpoint': _pinpoint,
+           'sdate':_sdate,
+           'edate':_edate,
+           'hours':_hours,
+           'search':_search,
+           'outfmt': _outfmt,
+           }
+    
+    for k in kwargs.keys():        
+        if k in fun.keys():
+            stations = fun[k](kwargs, stations)
+
+    return stations
