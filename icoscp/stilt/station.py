@@ -36,8 +36,23 @@ def _id(kwargs, stations):
     return stations
 
 def _outfmt(kwargs, stations):
-    print(kwargs)   
-    return stations
+    if 'outfmt' in kwargs: 
+        fmt = kwargs['outfmt']
+    else:
+        fmt = 'dict'
+        
+    if fmt == 'pandas':
+        df = pd.DataFrame().from_dict(stations)
+        df = df.transpose()
+        return df
+        
+    if fmt == 'list':
+        print('fn convert dict to stilt objects needs to be implemented')
+        #stnlist = __get_object(stations)
+        return stations
+
+    # by default stations is a dict..
+    return stations 
 
 def _country(kwargs, stations):
     countries = kwargs['country']
@@ -188,6 +203,9 @@ def __get_all():
         for yy in sorted(stations[ist]['years']):
             stations[ist][yy] = {}
             months = os.listdir(CPC.STILTPATH+'/'+ist+'/'+yy)
+            # remove cache txt entry
+            sub = 'cache'
+            months = sorted([m for m in months if not sub.lower() in m.lower()])
             stations[ist][yy]['months'] = months
             stations[ist][yy]['nmonths'] = len(stations[ist][yy]['months'])
     
@@ -298,8 +316,10 @@ def get(**kwargs):
     # start with getting all stations
     stations = __get_all()
     
+    # with no keyword arguments, return all stations
+    # in default format (see _outfmt())
     if not kwargs:
-        return stations
+        return _outfmt(kwargs, stations)
 
    # convert all keywords to lower case
     kwargs =  {k.lower(): v for k, v in kwargs.items()}
@@ -314,12 +334,11 @@ def get(**kwargs):
            'sdate':_sdate,
            'edate':_edate,
            'hours':_hours,
-           'search':_search,
-           'outfmt': _outfmt,
+           'search':_search           
            }
     
     for k in kwargs.keys():        
         if k in fun.keys():
             stations = fun[k](kwargs, stations)
 
-    return stations
+    return _outfmt(kwargs, stations)
