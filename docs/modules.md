@@ -342,8 +342,48 @@ The `CollectionId` must be either the full ICOS URI of the collection landing pa
 
 - Returns Collection
 
-<hr><hr>
+<hr>
+## Stilt
+At the ICOS Carbon Portal we offer a service to calculate your own STILT footprints  ([https://www.icos-cp.eu/data-services/tools/stilt-footprint](https://www.icos-cp.eu/data-services/tools/stilt-footprint)).
+The calculated footprints are only available on our servers providing Python Jupyter Notebooks. Please read about our public available Jupyter Hub [here](https://icos-carbon-portal.github.io/jupyter/).
 
+### Searching/Finding STILT stations and results
+
+The main script is loaded as:<br>
+	from icoscp.stilt import station
+
+
+### **station.get(\*\*kwargs)**
+This is the main function to search/find STILT stations. By default it returns a dictionary where each station id is the key to access meta data. The order how you provide keywords is respected and you can influence the result. Keyword arguments are applied sequentially (the result from the first keyword is provides as input to the second and so on).
+
+- No keyword argument provided ( station.get() ), returns a dictionary with ALL Stilt stations.
+
+##### id='STR' | ['STR','STR',...]
+Provide a single id as string, or a list of strings.<br>
+**myStations = station.get(id=['HTM', 'NOR']**
+
+##### country='STR' | ['STR','STR',...]
+Provide a single country id as string, or a list of strings. You can provide alpha-2, alpha-3 code  (ISO 3166) or the full country name. (some translations are available as well. To find all STILT stations with geolocation in Norway you can search for either NO, NOR, Norway, Norge. <br>
+**myStations = station.get(country=['Swe','norge'])**
+
+##### bbox=[(lat,lon),(lat,lon)]
+Bounding Box. Provide a two tuple of location (wgs84), where the box is defined as TopLeftCorner and BottomRightCorner.<br>
+**myStations = station.get(bbox=[(70,5),(55,32)])** # approximately scandinavia
+
+##### pinpoint=[lat,lon,distanceKM]
+Provide a single point (lat, lon). Distance in KM creates a bounding box. Distance is very roughly translated with 1 degree = 1 KM. The bounding box is calculated as distance in all directions (distance 200KM will create a bbox 400 x 400 KM with pinpoint in the centre).<br>
+myStations = station.get(pinpoint=[55.7,13.1,200]) 
+
+##### search='STR'
+Search string will find any occurrence in the station metadata. For example all STILT stations in a Kingdom in Europe?<br>
+**myStations = station.get(search='kingdom')**
+
+
+##### outfmt = 'dict' | 'pandas' | 'list'
+This keyword is ALWAYS executed last, regardless of the position within keyword arguments. By default a dictionary is returned. With 'pandas' a pandas data frame is returned where the station id is indexed, each row contains one station with the same metadata as is available in the dictionary. List however returns a list of STILT station objects. Please see the class documentation....<br>
+**myStations = station.get(country='Italy', outfmt='pandas')** 
+
+<hr>
 ## Sparql
 At the ICOS Carbon Portal we store all data and meta data as linked data in a triple store. For more information about this approach refer to [Semantic Web](https://www.w3.org/standards/semanticweb/), [Resource Description Framework (RDF)](https://www.w3.org/RDF/), and [Triple Stores](https://en.wikipedia.org/wiki/Triplestore).
 
@@ -382,5 +422,5 @@ This method actually executes the query and formats the result to the output for
 
 - Return TUPLE | FMT
 
-## STILT
+
 
