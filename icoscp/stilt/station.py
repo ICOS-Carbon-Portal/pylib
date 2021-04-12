@@ -1,8 +1,19 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+"""    
+    Extract all STILT stations from the ICOS Carbon Portal Server
+    The main function is station.get() to filter and search. See
+    Description of keyword arguments. 
 """
-Created on Tue Dec  8 09:07:38 2020
-@author: Claudio
-"""
+
+__credits__     = "ICOS Carbon Portal"
+__license__     = "GPL-3.0"
+__version__     = "0.1.0"
+__maintainer__  = "ICOS Carbon Portal, elaborated products team"
+__email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
+__status__      = "rc1"
+__date__        = "2021-04-12"
 
 import os
 import numpy as np
