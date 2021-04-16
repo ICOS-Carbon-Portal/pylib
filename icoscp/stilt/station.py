@@ -23,6 +23,7 @@ import json
 from tqdm.notebook import tqdm
 from icoscp.station import station as cpstation
 import icoscp.stilt.geoinfo as geoinfo
+import icoscp.stilt.fmap as fmap
 import icoscp.const as CPC
 
 # --- START KEYWORD FUNCTIONS ---
@@ -47,22 +48,28 @@ def _id(kwargs, stations):
     return stations
 
 def _outfmt(kwargs, stations):
+
     if 'outfmt' in kwargs: 
         fmt = kwargs['outfmt']
     else:
         fmt = 'dict'
         
     if fmt == 'pandas':
-        df = pd.DataFrame().from_dict(stations)
-        df = df.transpose()
-        return df
+        df = pd.DataFrame().from_dict(stations)        
+        return df.transpose()
         
     if fmt == 'list':
         print('fn convert dict to stilt objects needs to be implemented')
         #stnlist = __get_object(stations)
         return stations
 
-    # by default stations is a dict..
+    if fmt == 'map':              
+        return fmap.get(stations)
+    
+    if fmt == 'map_html':         
+        return fmap.get(stations, 'html')
+    
+    # by default return stations is a dict..
     return stations 
 
 def _country(kwargs, stations):
@@ -272,12 +279,20 @@ def get(**kwargs):
                     station.get(id=['NOR', 'GAT344'])
 
 
-    outfmt STR ['pandas' | 'dict' | 'list']:
+    outfmt STR ['pandas' | 'dict' | 'list' | 'map' | 'map_html']:
         the result is returned as
             pandas,  dataframe with some key information
-            dict, dictionary with full metadata for each station
-            list of stilt station objects
-
+            dict:       dictionary with full metadata for each station
+            list:       list of stilt station objects
+            map:        folium map, can be displayed directly in notebooks
+            map_html:   STR, a static html representation. save this string
+                        as file to get a static html map
+    stations DICT
+        all actions are performed on this dictionary, rather than
+        dynamically search for all stilt station on our server.
+        Can be useful for creating a map, or getting a subset of stations
+        from an existing search.
+        
     #Spatial search keywords:
 
     country STR, list of STR:
@@ -324,8 +339,11 @@ def get(**kwargs):
 
     """
     
-    # start with getting all stations
-    stations = __get_all()
+    if 'stations' in kwargs:        
+        stations = kwargs['stations']
+    else:        
+        # start with getting all stations
+        stations = __get_all()
     
     # with no keyword arguments, return all stations
     # in default format (see _outfmt())
