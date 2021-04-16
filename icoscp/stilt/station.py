@@ -66,9 +66,6 @@ def _outfmt(kwargs, stations):
     if fmt == 'map':              
         return fmap.get(stations)
     
-    if fmt == 'map_html':         
-        return fmap.get(stations, 'html')
-    
     # by default return stations is a dict..
     return stations 
 
@@ -279,14 +276,13 @@ def get(**kwargs):
                     station.get(id=['NOR', 'GAT344'])
 
 
-    outfmt STR ['pandas' | 'dict' | 'list' | 'map' | 'map_html']:
+    outfmt STR ['pandas' | 'dict' | 'list' | 'map']:
         the result is returned as
             pandas,  dataframe with some key information
             dict:       dictionary with full metadata for each station
             list:       list of stilt station objects
             map:        folium map, can be displayed directly in notebooks
-            map_html:   STR, a static html representation. save this string
-                        as file to get a static html map
+            
     stations DICT
         all actions are performed on this dictionary, rather than
         dynamically search for all stilt station on our server.

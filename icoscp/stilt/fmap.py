@@ -48,10 +48,8 @@ def get(stations, fmt='map', cluster=True):
                        zoom_start=zoom,
                        no_wrap=True)
     
-    #---------------------------------------------------------------
     # add tiles, to see what kind of basemap you like
-    # tile layers will be displayed in the top right 
-    # menu. 
+    # tile layers will be displayed in the top right
     
     folium.TileLayer('openstreetmap').add_to(myMap)
     folium.TileLayer('cartodbpositron').add_to(myMap)
@@ -75,13 +73,10 @@ def get(stations, fmt='map', cluster=True):
             myMap.add_child(m)
     
     folium.LayerControl().add_to(myMap)    
-    if str(fmt).lower() == 'html':        
-        myMap = myMap.get_root().render()
-    
     return myMap
 
 def _pretty_html(station):
-    #<table width="300", class="w3-table w3-striped">
+    # create a html table for the popup 
     header = """<!DOCTYPE html>
                 <html>
                 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
