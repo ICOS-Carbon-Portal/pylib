@@ -2,368 +2,447 @@
 # -*- coding: utf-8 -*-
 
 """    
-    Extract all STILT stations from the ICOS Carbon Portal Server
-    The main function is station.get() to filter and search. See
-    Description of keyword arguments. 
+    
+    Description:      Class that creates objects to set and get the attributes
+                      of a station for which STILT model output is available for.
+                      
 """
 
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
 __version__     = "0.1.0"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
-__email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
+__email__       = ['info@icos-cp.eu']
 __status__      = "rc1"
-__date__        = "2021-04-12"
+__date__        = "2021-04-23"
+#################################################################################
 
+#Import modules
 import os
 import numpy as np
 import pandas as pd
 import requests
 import json
-from tqdm.notebook import tqdm
-from icoscp.station import station as cpstation
-import icoscp.stilt.geoinfo as geoinfo
-import icoscp.stilt.fmap as fmap
 import icoscp.const as CPC
+import icoscp.stilt.geoinfo as geoinfo
+from icoscp.station import station as cpstation
 
-# --- START KEYWORD FUNCTIONS ---
+import operator
+import xarray as xr
+import datetime as dt
 
-def _id(kwargs, stations):
-    ids = kwargs['id']
-    if isinstance(ids,str):
-        ids=[ids]
-    if not isinstance(ids,list):
-        ids=list(ids)
+from icoscp.stilt import stationfilter
+from icoscp.stilt import timefuncs as tf
+from icoscp.stilt import checks
+#################################################################################
+
+# --- STILT Station Class --- #
+class StiltStation():
     
-    # check stilt id
-    flt = list(set(ids).intersection(stations))
-    
-    #check icos id
-    for k in stations:
-        if stations[k]['icos']:
-            if stations[k]['icos']['stationId'] in ids:
-                flt.append(k)
-            
-    stations =  {k: stations[k] for k in flt}
-    return stations
-
-def _outfmt(kwargs, stations):
-
-    if 'outfmt' in kwargs: 
-        fmt = kwargs['outfmt']
-    else:
-        fmt = 'dict'
-        
-    if fmt == 'pandas':
-        df = pd.DataFrame().from_dict(stations)        
-        return df.transpose()
-        
-    if fmt == 'list':
-        print('fn convert dict to stilt objects needs to be implemented')
-        #stnlist = __get_object(stations)
-        return stations
-
-    if fmt == 'map':              
-        return fmap.get(stations)
-    
-    # by default return stations is a dict..
-    return stations 
-
-def _country(kwargs, stations):
-    countries = kwargs['country']
-    if isinstance(countries,str):
-        countries=[countries]
-    if not isinstance(countries,list):
-        countries=list(countries)
-       
-    idx = []
-    for k in stations:
-        for c in countries:
-            g = stations[k]['geoinfo']
-            check = []  
-            # sometime country is not available....
-            # location in a ocean for example..hence try:
-            try:
-                check.append(g['alpha2Code'].lower())
-                check.append(g['alpha3Code'].lower())
-                check.append(g['countryName'].lower())
-                check.append(g['name'].lower())
-                check.append(g['nativeName'].lower())
-                check.append(g['altSpellings'])
-            except:
-                pass
-            
-            if c.lower() in check:
-                idx.append(k)
-    
-    flt = list(set(idx).intersection(stations))
-    stations =  {k: stations[k] for k in flt}
-    return stations
-            
-
-def _bbox(kwargs, stations):
-    bbox=kwargs['bbox']
-    lat1 = float(bbox[1][0])
-    lat2 = float(bbox[0][0])
-    lon1 = float(bbox[0][1])
-    lon2 = float(bbox[1][1])
-            
-    flt = []
-    for k in stations:
-        if lat1 <= float(stations[k]['lat']) <= lat2:
-            if lon1 <= float(stations[k]['lon']) <= lon2:
-                flt.append(k)                
-        
-    stations =  {k: stations[k] for k in flt}
-    return stations
-
-def _pinpoint(kwargs, stations):
-    lat = kwargs['pinpoint'][0]
-    lon = kwargs['pinpoint'][1]
-    deg = kwargs['pinpoint'][2]*0.01
-    lat1 = lat+deg
-    lat2 = lat-deg
-    lon1 = lon-deg
-    lon2 = lon+deg
-    box = {'bbox':[(lat1, lon1),(lat2, lon2)]}
-    return _bbox(box, stations)
-
-def _sdate(kwargs, stations):
-    print(kwargs)  
-    return stations
-
-def _edate(kwargs, stations):
-    print(kwargs)  
-    return stations
-
-def _hours(kwargs, stations):
-    print(kwargs)  
-    return stations
-
-def _search(kwargs, stations):
-    """ search for arbitrary string"""
-    idx = []
-    for k in stations:
-        txt = json.dumps(stations[k])                         
-        if kwargs['search'].lower() in txt.lower():
-            idx.append(k)
-            
-    flt = list(set(idx).intersection(stations))    
-    return {k: stations[k] for k in flt}
-
-# --- END KEYWORD FUNCTIONS ---
-
-
-
-def __get_all():
-    """ get all stilt stations available on the server 
-        return dictionary with meta data, keys are stilt station id's
     """
-        
-    # use directory listing from siltweb data
-    allStations = os.listdir(CPC.STILTPATH)
-
-    # add information on station name (and new STILT station id)
-    # from stations.csv file used in stiltweb.
-    # this is available from the backend through a url
-    df = pd.read_csv(CPC.STILTINFO)
+    Attributes: id:              STILT station ID (e.g. 'HTM150')
+                siteID:          Station ID as 3-character station code (e.g 'HTM')  
+                locIdent:        String with latitude-longitude-altitude
+                                 of STILT station (e.g. '35.34Nx025.67Ex00150')
+                alt:             Station altitude (in meters above ground level)
+                lat:             Station latitude
+                lon:             Station longitude
+                name:            STILT station long name
+                icos:            Variable signifying if STILT station is an ICOS station
+                years:           List of years for which STILT results are available for
+                geoinfo:         Dictionary with nested dictionaries of geographical info
     
-    # add ICOS flag to the station
-    icosStations = cpstation.getIdList()
-    icosStations = list(icosStations['id'][icosStations.theme=='AS'])
+    """
     
-    # dictionary to return
-    stations = {}
-
-    # fill dictionary with ICOS station id, latitude, longitude and altitude
-    for ist in tqdm(sorted(allStations)):
-  
-        if not ist in df['STILT id'].values:
-            continue
+    #Import modules:
+    
+    #Function that initializes the attributes of an object:
+    def __init__(self):
         
-        stations[ist] = {}
-        # get filename of link (original stiltweb directory structure) and extract location information
-       
-        loc_ident = os.readlink(CPC.STILTPATH+ist)
-        clon = loc_ident[-13:-6]
-        lon = np.float(clon[:-1])
-        if clon[-1:] == 'W':
-            lon = -lon
-        clat = loc_ident[-20:-14]
-        lat = np.float(clat[:-1])
-        if clat[-1:] == 'S':
-            lat = -lat
-        alt = np.int(loc_ident[-5:])
-
-        stations[ist]['lat']=lat
-        stations[ist]['lon']=lon
-        stations[ist]['alt']=alt
-        stations[ist]['locIdent']=os.path.split(loc_ident)[-1]
-
-        # set the name and id         
-        stations[ist]['id'] = df.loc[df['STILT id'] == ist]['STILT id'].item()        
-        stationName = str(df.loc[df['STILT id'] == ist]['STILT name'].item())        
-        stations[ist]['name'] = __stationName(stations[ist]['id'], stationName, stations[ist]['alt'])        
-
-        # set a flag if it is an ICOS station
-        stn = stations[ist]['id'][0:3].upper()
-        if stn in icosStations:
-            stations[ist]['icos'] = cpstation.get(stn).info()
+        #Object attributes:
+        self._path_fp = CPC.STILTFP    # Path to location where STILT footprints are stored
+        self._path_ts = CPC.STILTPATH  # Path to location where STILT time series are stored
+        self._url = CPC.STILTINFO      # URL to STILT information 
+        self.id = ''                   # STILT ID for station (e.g. 'HTM150')
+        self.lat = ''
+        self.lon = ''
+        self.alt = ''
+        self.locIdent = ''
+        self.name = ''
+        self.icos = False
+        self.years = []
+        self.geoinfo = {}
+        
+    #----------------------------------------------------------------------------------------------------------   
+    
+    #Function that allows the addition of new obj attributes at runtime:
+    def newAttr(self, attr):
+        
+        setattr(self, attr, attr)
+    #----------------------------------------------------------------------------------------------------------
+    
+    def get_info(self, st_dict):
+        
+        #Check if input is a dictionary:
+        if (isinstance(st_dict, dict)):
+            
+            #Check if ob attributes are included as keys in the input dict:
+            if(all(item in st_dict.keys() for item in ['id', 'lat', 'lon', 'alt', 'locIdent', 'name', 'icos', 'years', 'geoinfo'])):
+                
+                #Update obj attributes:
+                self.id = st_dict['id']                  
+                self.lat = st_dict['lat'] 
+                self.lon = st_dict['lon'] 
+                self.alt = st_dict['alt'] 
+                self.locIdent = st_dict['locIdent'] 
+                self.name = st_dict['name'] 
+                self.icos = st_dict['icos'] 
+                self.years = sorted(st_dict['years']) 
+                self.geoinfo = st_dict['geoinfo'] 
+                
+                
+            else:
+                print('Error! Dictionary keys do not match STILT station obj attributes...')
+            
         else:
-            stations[ist]['icos'] = False
-        
-        # set years and month of available data
-        years = os.listdir(CPC.STILTPATH+'/'+ist)
-        stations[ist]['years'] = years
-        for yy in sorted(stations[ist]['years']):
-            stations[ist][yy] = {}
-            months = os.listdir(CPC.STILTPATH+'/'+ist+'/'+yy)
-            # remove cache txt entry
-            sub = 'cache'
-            months = sorted([m for m in months if not sub.lower() in m.lower()])
-            stations[ist][yy]['months'] = months
-            stations[ist][yy]['nmonths'] = len(stations[ist][yy]['months'])
-    
-    # merge geoinfo
-    geo = geoinfo.get()
-    
-    for k in stations:  
-        if k in geo.keys():
-            stations[k]['geoinfo'] = geo[k]
-    else:
-        stations[k]['geoinfo'] = __country([stations[k]['lat'],stations[k]['lon']]) 
-    
-    return stations
- 
-
-def __country(latlon):
-        """ return country information based on lat lon wgs84"""  
-        url='https://api.bigdatacloud.net/data/reverse-geocode-client?'\
-            'latitude=' + str(latlon[0]) + '&longitude=' + str(latlon[1])
-        resp = requests.get(url=url)        
-        a = resp.json()
-        
-        # API to reterive country name using country code. 
-        url='https://restcountries.eu/rest/v2/alpha/' + a['countryCode']
-        resp = requests.get(url=url)
-        b = resp.json()
-        
-        return {**a, **b}
-        
-    
-def __stationName(idx, name, alt):    
-    if name=='nan':
-        name = idx
-    if not (name[-1]=='m' and name[-2].isdigit()):           
-        name = name + ' ' + str(alt) + 'm'    
-    return name
-
-
-def get(**kwargs):
-    """
-    Return a list of stilt stations. Providing no keyword arguments will
-    return a complete list of all stations. You can filter the result by 
-    by providing the following keywords:
-    
-
-    Parameters
-    ----------    
-                                    
-    id STR, list of STR:
-        Provide station id or list of id's. You can provide
-        either stilt or icos id's mixed together.
-        Example:    station.get(id='HTM')
-                    station.get(id=['NOR', 'GAT344'])
-
-
-    outfmt STR ['pandas' | 'dict' | 'list' | 'map']:
-        the result is returned as
-            pandas,  dataframe with some key information
-            dict:       dictionary with full metadata for each station
-            list:       list of stilt station objects
-            map:        folium map, can be displayed directly in notebooks
+            print('Error! Expected a dictionary with STILT station info as input...')
             
-    stations DICT
-        all actions are performed on this dictionary, rather than
-        dynamically search for all stilt station on our server.
-        Can be useful for creating a map, or getting a subset of stations
-        from an existing search.
+        return self
+    #----------------------------------------------------------------------------------------------------------
+    
+    def _getLocIdent(self):
         
-    #Spatial search keywords:
-
-    country STR, list of STR:
-        Provide country code either fullname, 2 or 3 digit 
-        where country is e.g "SE", "SWE" or "Sweden" 
-        Example:    station.get(country='Sweden')
+        #Check if locIdent folder exists:
+        if(os.path.split(os.readlink(self._path_ts+self.id))[-1]):
+            loc_ident = os.path.split(os.readlink(self._path_ts+self.id))[-1]
         
-    bbox LIST of Tuples:
-        spatial filter by bounding box where bbox=[Topleft(lat,lon), BR(lat,lon)]
-        The following example is approximately covering scandinavia
-        Example:    station.get(bbox=[(70,5),(55,32)])
+        else:
+            loc_ident = None
 
-    pinpoint LIST: [lat, lon, distanceKM]
-        spatial filter by pinpoint location plus distance in KM
-        distance in km is use to create a bounding box
-        We use a very rough estimate of 1degree = 100 km
+        #Return value:
+        return loc_ident
+    #----------------------------------------------------------------------------------------------------------
     
-    #Temporal keywords:
-    sdate Input formats:
-           - datetime.date objs
-           - unix timestamp
-           - pandas.datetime
-           - STR: "YYYY-MM-DD":
-        where 'sdate' is a list of dates.
-        single list-item refers to start date (if edate is also provided) of a period or a single date
-        single list-item refers (if edate is not provided) 
-        multiple items for list of single dates option
-
-    edate Input format see sdata:
-        where 'sdate' is a single date
-
-    hours LIST of (see Input format sdate):
-        where 'hours' is a list of hours (strings, int or datetime objs).
+    def _getReceptorHeight(self):
         
-        Default ['00:00', '03:00', ..., '21:00'] --- > all the timeslots with data (no filter)
+        #Check if locIdent folder exists:
+        if(os.path.split(os.readlink(self._path_ts+self.id))[-1]):
+            loc_ident = os.path.split(os.readlink(self._path_ts+self.id))[-1]
+            receptor_height = np.int(loc_ident[-5:])
+        
+        else:
+            receptor_height = None
 
-    search STR:
-        Arbitrary string search keyword
-
-
-    Returns
-    -------
-    List of Stiltstation in the form of outfmt=format, see format above.
-
-    """
+        #Return value:
+        return receptor_height
+    #----------------------------------------------------------------------------------------------------------   
     
-    if 'stations' in kwargs:        
-        stations = kwargs['stations']
-    else:        
-        # start with getting all stations
-        stations = __get_all()
-    
-    # with no keyword arguments, return all stations
-    # in default format (see _outfmt())
-    if not kwargs:
-        return _outfmt(kwargs, stations)
+    def _getLatitude(self):
+        
+        #Check if locIdent folder exists:
+        if(os.path.split(os.readlink(self._path_ts+self.id))[-1]):
+            
+            #Get location identification string ('56.10Nx013.42Ex00030')
+            loc_ident = os.path.split(os.readlink(self._path_ts+self.id))[-1]
+            
+            #Extract latitude string ('56.10N'):
+            lat_str = loc_ident[-20:-14]
+            
+            #Check if latitude is expressed in South degrees:
+            if lat_str[-1:] == 'S':
+                latitude = - np.float(lat_str[:-1])
+            
+            #If latitude is expressed in North degrees
+            else:
+                latitude = np.float(lat_str[:-1])
+            
+        else:
+            latitude = None
 
-   # convert all keywords to lower case
-    kwargs =  {k.lower(): v for k, v in kwargs.items()}
+        #Return value:
+        return latitude
+    #----------------------------------------------------------------------------------------------------------
     
-    # valid key words. Make surea all are lower capital and that
-    # the function has been defined above and that outfmt is the very 
-    # last call:
-    fun = {'id': _id,
-           'country': _country, 
-           'bbox': _bbox,
-           'pinpoint': _pinpoint,
-           'sdate':_sdate,
-           'edate':_edate,
-           'hours':_hours,
-           'search':_search           
-           }
-    
-    for k in kwargs.keys():        
-        if k in fun.keys():
-            stations = fun[k](kwargs, stations)
+    def _getLongitude(self):
+        
+        #Check if locIdent folder exists:
+        if(os.path.split(os.readlink(self._path_ts+self.id))[-1]):
+            
+            #Get location identification string ('56.10Nx013.42Ex00030')
+            loc_ident = os.path.split(os.readlink(self._path_ts+self.id))[-1]
+            
+            #Extract longitude string ('56.10N'):
+            lon_str = loc_ident[-13:-6]
+            
+            #Check if longitude is expressed in degrees West:
+            if lon_str[-1:] == 'W':
+                longitude = - np.float(lon_str[:-1])
+            
+            #If longitude is expressed in degrees East:
+            else:
+                longitude = np.float(lon_str[:-1])
+            
+        else:
+            longitude = None
 
-    return _outfmt(kwargs, stations)
+        #Return value:
+        return longitude
+    #----------------------------------------------------------------------------------------------------------
+    
+    def _getName(self):
+        
+        #Read csv to pandas dataframe:
+        try:
+            df = pd.read_csv(self._url)
+
+        except:
+            df = pd.DataFrame()
+    
+        
+        #Check if locIdent folder exists:
+        if(df.empty==False):
+            
+            #Extract long name of STILT station:
+            st_name = df['STILT name'].loc[df['STILT id']==self.id].values[0]
+            
+            
+        else:
+            st_name = None
+
+        #Return value:
+        return st_name    
+    #----------------------------------------------------------------------------------------------------------
+    
+    #Function that checks if STILT station is also an ICOS station
+    #and, if so, returns station metadata information:
+    def _getIcos(self):
+        
+        #Get a list of ICOS station IDs (atmosphere):
+        icosStations = cpstation.getIdList()
+        icosStations = list(icosStations['id'][icosStations.theme=='AS'])
+        
+        #Get station 3-character code from STILT ID:
+        stn = self.id[0:3].upper()
+        
+        if stn in icosStations:
+            icos_info = cpstation.get(stn).info()
+        else:
+            icos_info = False
+        
+        return icos_info
+    #----------------------------------------------------------------------------------------------------------
+    
+    def _getGeoinfo(self):
+        
+        #Get dict with geographic info for all stations:
+        geo = geoinfo.get()
+        
+        #Check if the current STILT ID is included in the dict:
+        if self.id in geo.keys():
+            g_dict = geo[self.id]
+        else:
+            g_dict = stationfilter.__country([self.lat,self.lon]) 
+            
+        return g_dict
+    #----------------------------------------------------------------------------------------------------------
+    
+    def _getYears(self):
+        
+        years = sorted(os.listdir(CPC.STILTPATH+'/'+self.id))
+        
+        return years
+    #----------------------------------------------------------------------------------------------------------
+    
+    def get(self, stilt_st_id):
+        
+        #Check input variable is a string:
+        if(not isinstance(stilt_st_id, str)):
+            
+            raise Exception('Wrong STILT station ID!\nInput variable is not a string...')
+        
+        #Check if there are STILT results available for the selected station:
+        elif(stilt_st_id not in os.listdir(self._path_ts)):
+            
+            raise Exception('No STILT results available for selected STILT station ID')
+        
+        #Add string with STILT station ID info to obj attr:
+        else:
+            self.id = stilt_st_id
+            self.locIdent = self._getLocIdent()
+            self.alt = self._getReceptorHeight()
+            self.lat = self._getLatitude()
+            self.lon = self._getLongitude()
+            self.name = self._getName()
+            self.icos = self._getIcos()
+            self.geoinfo = self._getGeoinfo()
+            self.years = self._getYears()
+        
+        return self
+
+    
+    #----------------------------------------------------------------------------------------------------------
+    def get_ts(self, sdate, edate, hours=['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00'], columns='default'):
+    
+        """
+        Project:         'ICOS Carbon Portal'
+        Created:          Mon Oct 08 10:30:00 2018
+        Last Changed:     Fri Apr 23 15:30:00 2021
+        Version:          1.1.3
+        Author(s):        Ute Karstens, Karolina Pantazatou
+
+        Description:      Function that checks if there are STILT concentration time series
+                          available for a given time period, and, if this is the case,
+                          returns the available STILT concentration time series in a
+                          pandas dataframe.
+
+
+
+        Output:           Pandas Dataframe
+
+                          Columns:
+                          1. Time (var_name: "isodate", var_type: date),
+                          2. STILT CO2 (var_name: "co2.fuel", var_type: float)
+                          3. Biospheric CO2 emissions (var_name: "co2.bio", var_type: float)
+                          4. Background CO2 (var_name: "co2.background", var_type: float)
+
+        """
+        
+        #Convert date-strings to date objs:
+        s_date = tf.str_to_date(sdate)
+        e_date = tf.str_to_date(edate)
+        
+        #Create an empty dataframe to store the timeseries:
+        df=pd.DataFrame({'A' : []})
+        
+        #Check date input parameters:
+        if (tf.check_dates(s_date, e_date) & checks.check_stilt_hours(hours) & (len(checks.check_columns(columns))>0)):
+
+            #Add headers:
+            headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
+
+            #Create an empty list, to store the new time range with available STILT model results:
+            new_range=[]
+
+            #Create a pandas dataframe containing one column of datetime objects with 3-hour intervals:
+            #date_range = pd.date_range(start_date, end_date+dt.timedelta(hours=24), freq='3H')
+            date_range = pd.date_range(s_date, e_date, freq='3H')
+
+            #Loop through every Datetime object in the dataframe:
+            for zDate in date_range:
+
+                #Check if STILT results exist:
+                if os.path.exists(self._path_fp + self.locIdent + '/' +
+                                  str(zDate.year)+'/'+str(zDate.month).zfill(2)+'/'+
+                                  str(zDate.year)+'x'+str(zDate.month).zfill(2)+'x'+str(zDate.day).zfill(2)+'x'+
+                                  str(zDate.hour).zfill(2)+'/'):
+
+                    #If STILT-results exist for the current Datetime object, append current Datetime object to list: 
+                    new_range.append(zDate)
+
+            #If the list is not empty:
+            if len(new_range) > 0:
+
+                #Assign the new time range to date_range:
+                date_range = new_range
+
+                #Get new starting date:
+                fromDate = date_range[0].strftime('%Y-%m-%d')
+
+                #Get new ending date:
+                toDate = date_range[-1].strftime('%Y-%m-%d')
+
+                #Store the STILT result column names to a variable:
+                #Obs! Check if cols is empty - if so prompt error msg and break, else continue
+                columns = (checks.check_columns(columns))
+
+                #Store the STILT result data column names to a variable:
+                data = '{"columns": '+columns+', "fromDate": "'+fromDate+'", "toDate": "'+toDate+'", "stationId": "'+self.id+'"}'
+
+                #Send request to get STILT results:
+                response = requests.post(self._url, headers=headers, data=data)
+
+                #Check if response is successful: 
+                if response.status_code != 500:
+
+                    #Get response in json-format and read it in to a numpy array:
+                    output=np.asarray(response.json())
+
+                    #Convert numpy array with STILT results to a pandas dataframe: 
+                    df = pd.DataFrame(output[:,:], columns=eval(columns))
+
+                    #Replace 'null'-values with numpy NaN-values:
+                    df = df.replace('null',np.NaN)
+
+                    #Set dataframe data type to float:
+                    df = df.astype(float)
+
+                    #Convert the data type of the 'date'-column to Datetime Object:
+                    df['date'] = pd.to_datetime(df['isodate'], unit='s')
+
+                    #Set 'date'-column as index:
+                    df.set_index(['date'],inplace=True)
+                    
+                    #Filter dataframe values by timeslots:
+                    df = df.loc[df.index.strftime('%H:%M').isin(hours)]
+
+                else:
+                    
+                    #Print message:
+                    print("\033[0;31;1m Error...\nToo big STILT dataset!\nSelect data for a shorter time period.\n\n")
+
+        #Return dataframe:    
+        return df
+    #----------------------------------------------------------------------------------------------------------
+    
+    
+    def get_fp(self, start_date, end_date, hours=['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00']): 
+        
+        #Convert date-strings to date objs:
+        s_date = tf.str_to_date(start_date)
+        e_date = tf.str_to_date(end_date)
+        
+        #Define & initialize footprint variable:
+        fp = xr.DataArray()
+        
+        #Check date input parameters:
+        if (tf.check_dates(s_date, e_date) & checks.check_stilt_hours(hours)):
+        
+            #Create a pandas dataframe containing one column of datetime objects with 3-hour intervals:
+            date_range = pd.date_range(start_date, end_date, freq='3H')
+            
+            #Filter date_range by timeslots:
+            date_range = [t for t in date_range if t.strftime('%H:%M') in hours]
+
+            #Loop over all dates and store the corresponding fp filenames in a list:       
+            fp_files = [(self._path_fp + self.locIdent +'/'+
+                         str(dd.year)+'/'+str(dd.month).zfill(2)+'/'+
+                         str(dd.year)+'x'+str(dd.month).zfill(2)+'x'+
+                         str(dd.day).zfill(2)+'x'+str(dd.hour).zfill(2)+'/foot')
+                        for dd in date_range
+                        if os.path.isfile(self._path_fp + self.locIdent +'/'+
+                                          str(dd.year)+'/'+str(dd.month).zfill(2)+'/'+
+                                          str(dd.year)+'x'+str(dd.month).zfill(2)+'x'+
+                                          str(dd.day).zfill(2)+'x'+str(dd.hour).zfill(2)+'/foot')]
+
+            #Concatenate xarrays on time axis:
+            fp = xr.open_mfdataset(fp_files, concat_dim="time",
+                                   data_vars='minimal', coords='minimal',
+                                   compat='override', parallel=True)
+
+            #Format time attributes:
+            fp.time.attrs["standard_name"] = "time"
+            fp.time.attrs["axis"] = "T"
+
+            #Format latitude attributes:
+            fp.lat.attrs["axis"] = "Y"
+            fp.lat.attrs["standard_name"] = "latitude"
+
+            #Format longitude attributes:
+            fp.lon.attrs["axis"] = "X"
+            fp.lon.attrs["standard_name"] = "longitude"
+        
+        #Return footprint array:
+        return fp
+    
+# ----------------------------------- End of STILT Station Class ------------------------------------- #        
+
