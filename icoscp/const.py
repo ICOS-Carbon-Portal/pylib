@@ -14,7 +14,8 @@
 #local path to stiltstations if running on jupyter server
 STILTPATH = '/data/stiltweb/stations/'
 
+# Path to location where STILT footprints are stored
+STILTFP = '/data/stiltweb/slots/'
+
 # provide STILT station info from backend
 STILTINFO = 'https://stilt.icos-cp.eu/viewer/stationinfo'
-
-
