@@ -674,23 +674,23 @@ def getList(theme=['AS','ES','OS'], ids=None):
         return stationList
     
     defaulttheme=['AS','ES','OS']    
-     # make sure input is in uppercase    
-    try:        
-        if isinstance(theme, str):            
-            if not theme.upper() in defaulttheme:
-                raise Exception('theme')
-        else:
-           theme = [x.upper() for x in theme]                  
-           
-    except:
-        # looks like input is not a string and/or not an iterable str.
-        # comparison failed. Revert to default values, return all certified stations.
-        theme=['AS','ES','OS']
+    
+    # make sure input is a list and in uppercase    
+    
+    if isinstance(theme, str):
+        theme = [theme.upper()]
+    elif isinstance(theme, list):
+        theme = [x.upper() for x in theme]
+    if not isinstance(theme, list) or not (set(defaulttheme) & set(theme)):
+        # looks like input is not a theme.
+        # Revert to default values, return all certified stations.
+        theme=defaulttheme
     
     # get station list, by default returns all icos stations
     stations = getIdList()
     # filter by theme
     stations = stations[stations.theme.isin(theme)]
+    
     
     stationList = []
     for s in tqdm(stations.id):
