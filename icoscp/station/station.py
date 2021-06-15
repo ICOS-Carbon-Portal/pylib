@@ -76,7 +76,7 @@ class Station():
         self._uri = None            # list, links to ressources, landing pages
         
         # data and products
-        self.__datacheck = False    # check if data and products have been asked for already
+        self._datacheck = False    # check if data and products have been asked for already
         self._data = None           # list of associated dataobjects
         self._products = None       # list of available products
         
@@ -218,9 +218,9 @@ class Station():
             3 = elaborated products
         """
         # check if data has already been asked for
-        if not self.__datacheck:
+        if not self._datacheck:
             self._setData()
-            self.__datacheck = True
+            self._datacheck = True
             
         if not isinstance(self._data, pd.DataFrame):
             # _data is not a dataframe but contains a string...
@@ -248,9 +248,9 @@ class Station():
 
         """
         # check if data has already bee asked for
-        if not self.__datacheck:
+        if not self._datacheck:
             self._setData()
-            self.__datacheck = True
+            self._datacheck = True
         
         if not isinstance(self._products, pd.DataFrame):
             return self._products
