@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.7
+- add licence attribute to Dobj()
+- handel single str input to station.getList()
+- stats report distinguis between intern/external usage
+- remove checkdata flag from station.info()
+
 ## 0.1.6
 - 2021/03/29
 - add sparql queries for availability table

@@ -5,7 +5,7 @@ The following paragraphs explain how to use the library in worked examples. If y
 [https://exploredata.icos-cp.eu/](https://exploredata.icos-cp.eu/)
 
 user: name@organisation <br>
-password: **msa**
+password: get in touch to get the password
 
 
 ## Digital Object
