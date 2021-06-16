@@ -8,7 +8,7 @@ This library provides an easy access to data hosted at the ICOS Carbon Portal ([
 
 If you would rather stick to the conventional "download the data" approach, to store and use the data locally, we suggest you go to the data portal website and "download" the data.
 
-Please be aware, that by either downloading data, or accessing data directly through this library, you agree and accept, that all ICOS data is provided under a <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0 licence <img src="https://www.icos-cp.eu/sites/default/files/inline-images/creativecommons.png"></a> ([licence.pdf](files/licence.pdf))
+Please be aware, that by either downloading data, or accessing data directly through this library, you agree and accept, that all ICOS data is provided under a <a href="https://data.icos-cp.eu/licence" target="_blank">CC BY 4.0 licence <img src="https://www.icos-cp.eu/sites/default/files/inline-images/creativecommons.png"></a> ([licence.pdf](files/licence.pdf))
 
 The ICOS Carbon Portal provides persistent digital object identifiers for each data set or file to improve the FAIR-ness of data and to give all the users easy tools for provenance, citation and reproducibility, etc.. Hence you only need to store a list of pid's (persistent digital object identifiers), or you can use one of the built in sparql queries, to reproduce always exactly the same result, regardless on which computer you run it. You can share your code with colleges, without the need of moving data around. Basically you bring the software to the data, rather then data to the software. This is especially true, if you create a Jupyter Notebook hosted at the Carbon Portal.
 
