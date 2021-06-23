@@ -144,7 +144,7 @@ class Dobj():
 # -------------------------------------------------    
 
     def __str__(self):
-        out = str(self.info[0].iloc[0]['dobj']) + ' ' + str(self.info[0].iloc[0]['fileName'])
+        out = str(self.info[0].iloc[0]['dobj'])
         return out
     
         
