@@ -9,11 +9,11 @@
 __author__      = ["Claudio D'Onofrio"]
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.1.5"
+__version__     = "0.1.6"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "rc1"
-__date__        = "2020-10-20"
+__date__        = "2021-06-15"
 
 import os
 import requests
@@ -373,13 +373,20 @@ class Dobj():
     # -------------------------------------------------                       
     def __portalUse(self):
         
-        """ private function to track data usage """        
+        """ private function to track data usage """    
+        #check if used on our own jupyter hub servers
+        if os.path.isdir(self._localpath):
+            internal = 'True'
+        else: 
+            internal = 'False'
+        
         counter = {'BinaryFileDownload':{
         'params':{
             'objId':self._dobj,
             'columns': self.colNames.tolist(),            
             'library':__name__, 
-            'version':__version__}
+            'version':__version__,
+            'internal': internal}
             }
         }
         server = 'https://cpauth.icos-cp.eu/logs/portaluse'        
