@@ -37,6 +37,11 @@ Citation string
 
 - Return STR
 
+### **Dobj.licence**
+Licence associated with the dataset.
+
+- Return DICT
+
 ### **Dobj.colNames**
 Available column names. This information is part of the Dobj.info, which holds all the available meta data.
 
