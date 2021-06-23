@@ -336,16 +336,12 @@ class Station():
         values =  self.__dict__.values()
         dictionary = dict(zip(newKeys,values))
         
-        # remove data and products from the dict to get a shorter
-        # summary of information about station
-        if 'data' in dictionary:
-            del dictionary['data']
-            
-        if 'products' in dictionary:
-            del dictionary['products']
-            
-        if 'valid' in dictionary:
-            del dictionary['valid']
+        # remove some of the __dictionary__ keys to get a shorter
+        # summary of information about the station
+        
+        remove = ['data', 'products', 'valid', 'datacheck']
+        dictionary = {key: value for key, value in dictionary.items() if key not in remove}
+        
         
         if fmt == 'dict':
             return dictionary

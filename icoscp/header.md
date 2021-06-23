@@ -11,9 +11,7 @@
 # -*- coding: utf-8 -*-
 
 """
-    Created on Fri Aug  9 10:40:27 2019
-    Use an ICOS digital object id (persistent identification url)
-    to load a binary representation of the data object.
+    Informative description abouth module
 """
 
 __author__      = ["Claudio D'Onofrio"]
@@ -25,13 +23,5 @@ __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "rc1"
 __date__        = "2019-08-09"
 
-import os
-import requests
-import struct
-import pandas as pd
-
-from icoscp.sparql.runsparql import RunSparql
-import icoscp.sparql.sparqls as sparqls
-from icoscp.cpb import dtype_dict
 
 ------------ end of header entries -----------------------
