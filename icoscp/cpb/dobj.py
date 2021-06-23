@@ -50,6 +50,7 @@ class Dobj():
         self._dobjValid = False     # -> see __getPayload()
         
         self.citation = None        # hold the citation string for the object
+        self._licence = None         # hold the licence links and text
         
         self._data = pd.DataFrame() # This holds the data pandas dataframe
                                     # persistent in the object. 
@@ -133,9 +134,20 @@ class Dobj():
         if self._dobjValid:
             return [self._info1, self._info2, self._info3]
         return None 
+    #-----------    
+    @property
+    def licence(self):
+        if self._dobjValid:
+            return self.__licence()
+        return None 
     #-----------
-
 # -------------------------------------------------    
+
+    def __str__(self):
+        out = str(self.info[0].iloc[0]['dobj']) + ' ' + str(self.info[0].iloc[0]['fileName'])
+        return out
+    
+        
     def get(self):
         """ return data as pandas data frame"""
         return self.getColumns()
@@ -453,6 +465,18 @@ class Dobj():
         """
         import icoscp.cpb.get_size as s
         return s.get(self)
+    
+    # -------------------------------------------------------------
+    def __licence(self):
+        """
+        Licence associated for this data object. 
+
+        Returns
+        -------
+        DICT : conotaining the the licence text and url
+
+        """
+        return {'licence':'CC BY 4.0', 'url': 'https://data.icos-cp.eu/licence' }
     
 if __name__ == "__main__":
     """
