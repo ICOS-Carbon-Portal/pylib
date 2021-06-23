@@ -18,4 +18,7 @@ STILTPATH = '/data/stiltweb/stations/'
 STILTFP = '/data/stiltweb/slots/'
 
 # provide STILT station info from backend
-STILTINFO = 'https://stilt.icos-cp.eu/viewer/stiltresult'
+STILTINFO = 'https://stilt.icos-cp.eu/viewer/stationinfo'
+
+# online results
+STILTTS = 'https://stilt.icos-cp.eu/viewer/stiltresult'

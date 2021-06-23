@@ -62,7 +62,7 @@ class StiltStation():
         #Object attributes:
         self._path_fp = CPC.STILTFP    # Path to location where STILT footprints are stored
         self._path_ts = CPC.STILTPATH  # Path to location where STILT time series are stored
-        self._url = CPC.STILTINFO      # URL to STILT information 
+        self._url = CPC.STILTTS     # URL to STILT information 
         self.id = ''                   # STILT ID for station (e.g. 'HTM150')
         self.lat = ''
         self.lon = ''
@@ -275,11 +275,9 @@ class StiltStation():
             self.name = self._getName()
             self.icos = self._getIcos()
             self.geoinfo = self._getGeoinfo()
-            self.years = self._getYears()
-        
+            self.years = self._getYears()        
         return self
 
-    
     #----------------------------------------------------------------------------------------------------------
     def get_ts(self, sdate, edate, hours=['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00'], columns='default'):
     
