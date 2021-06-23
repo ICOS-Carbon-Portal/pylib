@@ -2,9 +2,10 @@
 
 ## 0.1.7
 - add licence attribute to Dobj()
-- handel single str input to station.getList()
-- stats report distinguis between intern/external usage
-- remove checkdata flag from station.info()
+- handle single str input to station.getList()
+- stats report distinguish between intern/external usage
+- remove _checkdata flag from station.info()
+- update documentation
 
 ## 0.1.6
 - 2021/03/29
