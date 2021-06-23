@@ -10,14 +10,14 @@ make sure you have a python environment with:
 
 ### create the distribution files
 
-I highly recomend you delete the folder "build" if you have one, then run
+I highly recommend you delete the folder "build" if you have one, then run
 
 python setup.py sdist bdist_wheel
 
 
 
-### upload to testpi
-twine upload --repository testpypi dist/*
+### upload to testpi (with the latest version...)
+twine upload --repository testpypi dist/icoscp-0.1.7.tar.gz
 
 ### test installation from testpi
 
