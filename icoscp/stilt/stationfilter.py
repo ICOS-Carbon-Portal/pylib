@@ -18,13 +18,13 @@ __date__        = "2021-04-12"
 import os
 import numpy as np
 import pandas as pd
-import requests
 import json
 from tqdm.notebook import tqdm
 from icoscp.station import station as cpstation
 import icoscp.stilt.geoinfo as geoinfo
 import icoscp.stilt.fmap as fmap
 import icoscp.const as CPC
+import icoscp.country
 
 from icoscp.stilt import timefuncs as tf
 from icoscp.stilt.station import StiltStation
@@ -284,18 +284,7 @@ def __get_all():
  
 
 def __country(latlon):
-        """ return country information based on lat lon wgs84"""  
-        url='https://api.bigdatacloud.net/data/reverse-geocode-client?'\
-            'latitude=' + str(latlon[0]) + '&longitude=' + str(latlon[1])
-        resp = requests.get(url=url)        
-        a = resp.json()
-        
-        # API to reterive country name using country code. 
-        url='https://restcountries.eu/rest/v2/alpha/' + a['countryCode']
-        resp = requests.get(url=url)
-        b = resp.json()
-        
-        return {**a, **b}
+    return icoscp.country.get(latlon=latlon)
         
     
 def __stationName(idx, name, alt):    
