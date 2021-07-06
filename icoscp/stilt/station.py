@@ -389,3 +389,40 @@ def find(**kwargs):
             
     return _outfmt(kwargs, stations)
 
+def get(stations=None, id=None):
+    """
+    This function returns a list of stiltstation objects. 
+    A valid object, gives access to the underlying timeseries and footprints
+    You may provide a str or list of STILT id's or the 'result' of a search 
+    
+    Example: .get('HTM030')
+             .get(['HTM030'])
+             .get(['HTM030','HTM150'])
+    Parameters
+    ----------
+    stations : DICT | LIST[DICT]
+        The result of .find(....) where one station (DICT) is found or 
+        multiple stations (LIST[DICT])
+        
+    id : STR | LIST[STR]
+        A single string or a list of strings containing one or more stilt
+        station ids.
+
+    Returns
+    -------
+    LIST[stiltstation]
+
+    """
+    from icoscp.stilt.stiltstation import StiltStation
+    obj = []
+
+    if isinstance(id,str) or isinstance(id,list):
+        st = find(id=id)
+        for s in st:
+            obj.append(StiltStation(st[s]))
+    
+    if isinstance(stations,dict):  
+        for s in stations:
+            obj.append(StiltStation(stations[s]))
+    
+    return obj  
