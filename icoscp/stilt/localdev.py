@@ -9,6 +9,7 @@ import json
 import requests
 import pandas as pd
 from icoscp.stilt import timefuncs as tf
+from icoscp.stilt.stiltstation import StiltStation
     
 def _id(kwargs, stations):
     ids = kwargs['id']
@@ -228,49 +229,86 @@ def __country(latlon,id):
     return country
 
 
-def get(stations=None, id=None):
+def get(id=None):
     """
-    This function returns a list of stiltstation objects. 
-    A valid object, gives access to the underlying timeseries and footprints
-    You may provide a str or list of STILT id's or the 'result' of a search 
+    This function returns a stilt station object or a list of
+    stiltstation objects. 
+    A stilt station object, gives access to the underlying data
+    (timeseries and footprints)
+    You may provide a str or list of STILT id's or the 'result' of a .find() 
     
     Example: .get('HTM030')
-             .get(['HTM030'])
+            .get(['HTM030'])
+                returns one stiltobject for HTM030
+             
              .get(['HTM030','HTM150'])
+                 returns a list of two stiltobjects
+        
+            .get('KIT') 
+                returns a list of stiltstations based on .find(search='KIT')
+                
+            .get(find(country=['Sweden','Finland']))
+                returns a list of stilstations found in Sweden and Finland
     Parameters
     ----------
-    stations : DICT | LIST[DICT]
-        The result of .find(....) where one station (DICT) is found or 
-        multiple stations (LIST[DICT])
+    id :    DICT | LIST[DICT]
+                The result of .find(....) where one station (DICT) is found or 
+                multiple stations (LIST[DICT])
         
-    id : STR | LIST[STR]
-        A single string or a list of strings containing one or more stilt
-        station ids.
+            STR | LIST[STR]
+                A single string or a list of strings containing one or more
+                stilt station ids.
 
     Returns
     -------
     LIST[stiltstation]
 
     """
-    from icoscp.stilt.stiltstation import StiltStation
-    obj = []
+    
+    stationslist = []
 
-    if isinstance(id,str) or isinstance(id,list):
+    if isinstance(id,str):
         st = find(id=id)
+        if not st:
+            return None
         for s in st:
-            obj.append(StiltStation(st[s]))
+            stationslist.append(StiltStation(st[s]))
     
-    if isinstance(stations,dict):
-        for s in stations:
-            obj.append(StiltStation(stations[s]))
+    if isinstance(id,dict):  
+        for s in id:
+            stationslist.append(StiltStation(id[s]))
+            
+    if isinstance(id, list):
+        if isinstance(id[0],dict):
+           for s in id:
+               stationslist.append(StiltStation(id[s]))
     
-    return obj  
+        if isinstance(id[0], str):            
+            st = find(id=id)
+            if not st:
+                return None
+            for s in st:
+                stationslist.append(StiltStation(st[s]))
+                
+    if len(stationslist) == 1:
+        return stationslist[0]
+    else:
+        return stationslist
 
-test = find(country='greece')
+#test = find(country='greece')
 #test = find(pinpoint=[55.7,13.1,300])
-test = find(country=['nor','Sweden'])
+#test = find(country=['nor','Sweden'])
 
 #htm = find(id='HTM030')
 
-#test1 = get(stations=htm)
-#test2 = get(id=['HTM030','HTM150'])
+g = get('KITTY')
+g1 = get('HTM030')
+print(g1)
+g2 = get(['HTM030','HTM150'])
+for g in g2:
+    print(g)
+g3 = get(find(id='KIT030'))
+print(g3)
+g4 = get(find(search='KIT'))
+for g in g4:
+    print(g)

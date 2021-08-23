@@ -2,10 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-
     Description:      Class that creates objects to set and get the attributes
                       of a station for which STILT model output is available for.
-
 """
 
 __credits__     = "ICOS Carbon Portal"
@@ -24,9 +22,6 @@ import pandas as pd
 import requests
 import json
 import icoscp.const as CPC
-import icoscp.stilt.geoinfo as geoinfo
-from icoscp.station import station as cpstation
-
 import xarray as xr
 
 from icoscp.stilt import timefuncs as tf
@@ -92,10 +87,13 @@ class StiltStation():
 
     def __str__(self):
         # by default called when a an 'object' is printed
+        
         out = {'id:': self.id, 
                'name:': self.name, 
                'lat:': self.lat, 
-               'lon:': self.lon
+               'lon:': self.lon,
+               'alt [m]:': self.alt,
+               'country': self.geoinfo['name'] 
                }
         return json.dumps(out)
         

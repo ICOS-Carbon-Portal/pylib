@@ -20,7 +20,9 @@ import numpy as np
 import pandas as pd
 import json
 from tqdm.notebook import tqdm
+
 from icoscp.station import station as cpstation
+from icoscp.stilt.stiltstation import StiltStation
 import icoscp.stilt.geoinfo as geoinfo
 import icoscp.stilt.fmap as fmap
 import icoscp.const as CPC
@@ -52,7 +54,7 @@ def _id(kwargs, stations):
 def _outfmt(kwargs, stations):
     if not stations:
         # no search restult found, return empty
-        return None
+        stations={'empty':'no stiltstations found'}
     
     if 'outfmt' in kwargs:
         fmt = kwargs['outfmt']
@@ -390,40 +392,68 @@ def find(**kwargs):
             
     return _outfmt(kwargs, stations)
 
-def get(stations=None, id=None):
+def get(id=None):
     """
-    This function returns a list of stiltstation objects. 
-    A valid object, gives access to the underlying timeseries and footprints
-    You may provide a str or list of STILT id's or the 'result' of a search 
+    This function returns a stilt station object or a list of
+    stiltstation objects. 
+    A stilt station object, gives access to the underlying data
+    (timeseries and footprints)
+    You may provide a str or list of STILT id's or the 'result' of a .find() 
     
     Example: .get('HTM030')
-             .get(['HTM030'])
+            .get(['HTM030'])
+                returns one stiltobject for HTM030
+             
              .get(['HTM030','HTM150'])
+                 returns a list of two stiltobjects
+        
+            .get('KIT') 
+                returns a list of stiltstations based on .find(search='KIT')
+                
+            .get(find(country=['Sweden','Finland']))
+                returns a list of stilstations found in Sweden and Finland
     Parameters
     ----------
-    stations : DICT | LIST[DICT]
-        The result of .find(....) where one station (DICT) is found or 
-        multiple stations (LIST[DICT])
+    id :    DICT | LIST[DICT]
+                The result of .find(....) where one station (DICT) is found or 
+                multiple stations (LIST[DICT])
         
-    id : STR | LIST[STR]
-        A single string or a list of strings containing one or more stilt
-        station ids.
+            STR | LIST[STR]
+                A single string or a list of strings containing one or more
+                stilt station ids.
 
     Returns
     -------
     LIST[stiltstation]
 
     """
-    from icoscp.stilt.stiltstation import StiltStation
-    obj = []
+    
+    stationslist = []
 
-    if isinstance(id,str) or isinstance(id,list):
+    if isinstance(id,str):
         st = find(id=id)
+        if not st:
+            return None
         for s in st:
-            obj.append(StiltStation(st[s]))
+            stationslist.append(StiltStation(st[s]))
     
-    if isinstance(stations,dict):  
-        for s in stations:
-            obj.append(StiltStation(stations[s]))
+    if isinstance(id,dict):  
+        for s in id:
+            stationslist.append(StiltStation(id[s]))
+            
+    if isinstance(id, list):
+        if isinstance(id[0],dict):
+           for s in id:
+               stationslist.append(StiltStation(id[s]))
     
-    return obj  
+        if isinstance(id[0], str):            
+            st = find(id=id)
+            if not st:
+                return None
+            for s in st:
+                stationslist.append(StiltStation(st[s]))
+                
+    if len(stationslist) == 1:
+        return stationslist[0]
+    else:
+        return stationslist
