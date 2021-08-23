@@ -30,11 +30,17 @@ def _id(kwargs, stations):
     return stations
 
 def _outfmt(kwargs, stations):
+    if not stations:
+        # no search restult found, return empty
+        return None
+    
     if 'outfmt' in kwargs: 
         fmt = kwargs['outfmt']
     else:
-        fmt = 'dict'    
-        
+        #default return format
+        return stations
+    
+    
     if fmt == 'pandas':
         df = pd.DataFrame().from_dict(stations)
         df = df.transpose()
@@ -44,10 +50,6 @@ def _outfmt(kwargs, stations):
         print('fn convert dict to stilt objects needs to be implemented')
         #stnlist = __get_object(stations)
         return stations
-
-    # by default stations is a dict..
-    return stations    
-
 
         
 def _country(kwargs, stations):
@@ -264,6 +266,7 @@ def get(stations=None, id=None):
     
     return obj  
 
+test = find(country='greece')
 #test = find(pinpoint=[55.7,13.1,300])
 test = find(country=['nor','Sweden'])
 

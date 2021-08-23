@@ -50,11 +50,15 @@ def _id(kwargs, stations):
     return stations
 
 def _outfmt(kwargs, stations):
-
+    if not stations:
+        # no search restult found, return empty
+        return None
+    
     if 'outfmt' in kwargs:
         fmt = kwargs['outfmt']
     else:
-        fmt = 'dict'
+        # by default return stations is a dict..
+        return stations
 
     if fmt == 'pandas':
         df = pd.DataFrame().from_dict(stations)
@@ -66,9 +70,6 @@ def _outfmt(kwargs, stations):
 
     if fmt == 'map':
         return fmap.get(stations)
-
-    # by default return stations is a dict..
-    return stations
 
 def _country(kwargs, stations):
     countries = kwargs['country']
