@@ -63,12 +63,6 @@ def get(stations, fmt='map', cluster=True):
         lons.append(lon)
         msg = _pretty_html(stations[k])
         markers.append(folium.Marker(location=[lat, lon], popup=msg))
-        
-        
-#    myMap.fit_bounds(lats,lons)
-    
-    #re-centre the map
-    myMap.location = _find_centre(lats, lons)
     
     if cluster:
         mc = MarkerCluster(name='StiltStations')
@@ -78,14 +72,14 @@ def get(stations, fmt='map', cluster=True):
     else:
         for m in markers:
             myMap.add_child(m)
-    
+
+    #re-centre the map
+    sw = [min(lats), min(lons)]
+    ne = [max(lats), max(lons)]
+    myMap.fit_bounds(sw,ne)
+
     folium.LayerControl().add_to(myMap)    
     return myMap
-
-def _find_centre(lats, lons):
-    lat = sum(lats) / len(lats)
-    lon = sum(lons) / len(lons)
-    return lat,lon
 
 def _pretty_html(station):
     # create a html table for the popup 
