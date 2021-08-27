@@ -40,13 +40,10 @@ def get(stations, fmt='map', cluster=True):
     if not isinstance(stations, dict):
         return 'input needs to be dictionary'
     
-    center = [43, 5]
     zoom = 4
 
     #create the map
-    myMap = folium.Map(location=center, 
-                       zoom_start=zoom,
-                       no_wrap=True)
+    myMap = folium.Map(zoom_start=zoom,no_wrap=True)
     
     # add tiles, to see what kind of basemap you like
     # tile layers will be displayed in the top right
@@ -56,13 +53,23 @@ def get(stations, fmt='map', cluster=True):
     folium.TileLayer('stamentoner').add_to(myMap)
     folium.TileLayer('stamenterrain').add_to(myMap)
     
-    markers = []
+    markers = []    # keep all the markers for clustering
+    lats = []       # keep lat, lon vector to calculate the center of the map
+    lons = []       # keep lat, lon vector to calculate the center of the map
     for k in stations:
         lat = float(stations[k]['lat'])
+        lats.append(lat)
         lon = float(stations[k]['lon'])
+        lons.append(lon)
         msg = _pretty_html(stations[k])
         markers.append(folium.Marker(location=[lat, lon], popup=msg))
-            
+        
+        
+#    myMap.fit_bounds(lats,lons)
+    
+    #re-centre the map
+    myMap.location = _find_centre(lats, lons)
+    
     if cluster:
         mc = MarkerCluster(name='StiltStations')
         for m in markers:
@@ -74,6 +81,11 @@ def get(stations, fmt='map', cluster=True):
     
     folium.LayerControl().add_to(myMap)    
     return myMap
+
+def _find_centre(lats, lons):
+    lat = sum(lats) / len(lats)
+    lon = sum(lons) / len(lons)
+    return lat,lon
 
 def _pretty_html(station):
     # create a html table for the popup 

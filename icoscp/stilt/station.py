@@ -59,6 +59,16 @@ def _id(kwargs, stations):
     return stations
 
 def _outfmt(kwargs, stations):
+    '''
+    Parameters
+    ----------
+    kwargs : STR
+        Define the output format. by default a 'DICT' is returned
+        Possible arguments are:            
+            - pandas
+            - list 
+            - map (folium)
+    '''
     if not stations:
         # no search restult found, return empty
         stations={'empty':'no stiltstations found'}

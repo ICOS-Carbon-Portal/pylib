@@ -10,6 +10,8 @@ import requests
 import pandas as pd
 from icoscp.stilt import timefuncs as tf
 from icoscp.stilt.stiltstation import StiltStation
+import icoscp.stilt.fmap as fmap
+
     
 def _id(kwargs, stations):
     ids = kwargs['id']
@@ -37,27 +39,37 @@ def _id(kwargs, stations):
     return stations
 
 def _outfmt(kwargs, stations):
+    '''
+    Parameters
+    ----------
+    kwargs : STR
+        Define the output format. by default a 'DICT' is returned
+        Possible arguments are:            
+            - pandas
+            - list DEFAULT
+            - map (folium)
+    '''
     if not stations:
         # no search restult found, return empty
-        return None
+        stations={'empty':'no stiltstations found'}
     
-    if 'outfmt' in kwargs: 
+    if 'outfmt' in kwargs:
         fmt = kwargs['outfmt']
     else:
-        #default return format
-        return stations
-    
-    
-    if fmt == 'pandas':
-        df = pd.DataFrame().from_dict(stations)
-        df = df.transpose()
-        return df
-        
-    if fmt == 'list':
-        print('fn convert dict to stilt objects needs to be implemented')
-        #stnlist = __get_object(stations)
+        # by default return stations is a dict..
         return stations
 
+    if fmt == 'pandas':
+        df = pd.DataFrame().from_dict(stations)
+        return df.transpose()
+
+    if fmt == 'list':
+        stnlist = __get_object(stations)
+        return stnlist
+
+    if fmt == 'map':
+        return fmap.get(stations)
+    
         
 def _country(kwargs, stations):
     countries = kwargs['country']
@@ -219,6 +231,9 @@ def find(**kwargs):
 
     return _outfmt(kwargs, stations)
     
+def __get_object(stations):
+
+    return [StiltStation().get_info(stations[st]) for st in stations.keys()]
         
 def __country(latlon,id):
     """ return country information based on lat lon wgs84"""  
@@ -305,13 +320,16 @@ def get(id=None):
 #test = find(pinpoint=[55.7,13.1,300])
 #test = find(country=['nor','Sweden'])
 
+test = find(country=['nor','Sweden'], outfmt ='map')
 
-print(find(id='HTm030'))
 
-"""
-g = get('KITTY')
+#print(find(id='HTm030'))
+
+#g = get('KITTY')
+
 g1 = get('HTM030')
 print(g1)
+"""
 g2 = get(['HTM030','HTM150'])
 for g in g2:
     print(g)
