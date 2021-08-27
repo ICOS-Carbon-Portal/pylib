@@ -306,7 +306,7 @@ def get(id=None):
 #test = find(country=['nor','Sweden'])
 
 
-print(find(id='htm030'))
+print(find(id='HTm030'))
 
 """
 g = get('KITTY')
