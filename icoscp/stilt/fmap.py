@@ -74,9 +74,9 @@ def get(stations, fmt='map', cluster=True):
             myMap.add_child(m)
 
     #re-centre the map
-    sw = [min(lats), min(lons)]
-    ne = [max(lats), max(lons)]
-    myMap.fit_bounds(sw,ne)
+    bounds = [(min(lats), min(lons)), (max(lats), max(lons))]
+    folium.FitBounds(bounds).add_to(myMap)
+    #myMap.fit_bounds(sw,ne)
 
     folium.LayerControl().add_to(myMap)    
     return myMap
