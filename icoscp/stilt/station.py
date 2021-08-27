@@ -33,11 +33,18 @@ from icoscp.stilt import timefuncs as tf
 # --- START KEYWORD FUNCTIONS ---
 
 def _id(kwargs, stations):
+
     ids = kwargs['id']
     if isinstance(ids,str):
         ids=[ids]
     if not isinstance(ids,list):
         ids=list(ids)
+
+    # to make the search not case sensitive we need to convert all
+    # id's to CAPITAL LETTERS. The stilt on demand calculator
+    # allows only captial letters.
+    
+    ids = [id.upper() for id in ids]
 
     # check stilt id
     flt = list(set(ids).intersection(stations))

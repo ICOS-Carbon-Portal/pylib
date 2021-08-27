@@ -17,8 +17,14 @@ def _id(kwargs, stations):
         ids=[ids]
     if not isinstance(ids,list):
         ids=list(ids)
+
+    # to make the search not case sensitive we need to convert all
+    # id's to CAPITAL LETTERS. The stilt on demand calculator
+    # allows only captial letters.
     
-    # check stilt id
+    ids = [id.upper() for id in ids]        
+    
+    # get all stilt id
     flt = list(set(ids).intersection(stations))
     
     #check icos id
@@ -299,8 +305,10 @@ def get(id=None):
 #test = find(pinpoint=[55.7,13.1,300])
 #test = find(country=['nor','Sweden'])
 
-#htm = find(id='HTM030')
 
+print(find(id='htm030'))
+
+"""
 g = get('KITTY')
 g1 = get('HTM030')
 print(g1)
@@ -312,3 +320,4 @@ print(g3)
 g4 = get(find(search='KIT'))
 for g in g4:
     print(g)
+"""
