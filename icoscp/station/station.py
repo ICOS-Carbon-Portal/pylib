@@ -561,42 +561,109 @@ def get(stationId):
     #myStn._setData()        
     return myStn
 
-    
-def getIdList(project='ICOS', sort='name'):
-    """
-    Returns a list with all station id's. By default only only ICOS stations
-    will be returned. If filter is set to 'all',  all known station id's are retured.
-    Please be aware, that the usage of data associated with non-ICOS station
-    might be different then the CCBY 4.0 Licence at ICOS.
+
+def getIdList(project='ICOS', sort='name', outfmt='pandas'):
+    """Retrieves a list of stations where data is collected using a
+    specific format.
+
+    Returns a list with all station id's. By default only ICOS stations
+    will be returned. If `project` is set to 'all', all known station
+    id's are returned.
+    Please be aware, that the usage of data associated with non-ICOS
+    station might be different then the CCBY 4.0 Licence at ICOS.
 
     Parameters
     ----------
-    project : str, optional. The default is 'ICOS'. If you provide the
-                set project to "all" for all known stations
-                or provide a project name (see getIdList.project)                
-                             
-    sort : str, optional. The default is 'name'.
-    
+    project : str, optional. The default is 'ICOS'. If you set
+        `project` to 'all', all known stations are returned.
+
+    sort : str, optional. The default is 'name'. A user can `sort` by
+        any of the dataframe's columns: ['uri' | 'id' | 'name' |
+        'country' | 'lat' | 'lon' | 'elevation' | 'project' | 'theme']
+
+    outfmt: str, optional. The default is 'pandas'. If you provide
+        'map' to the `outfmt` argument a folium map is created with
+        all known stations that have valid longitude and latitude
+        values. Be advised that in this case, stations without a fixed
+        location (like measurements that belong to stations collected
+        from instrumented Ships of Opportunity) will not be included.
+
     Returns
     -------
-    Pandas data frame with station id's, name and country.
-    """    
-    
-    project = project.upper()
-    
-    query = sparqls.getStations()    
-    stn = RunSparql(query,'pandas').run()
+    queried_stations : pandas.Dataframe
+        `queried_stations` dataframe includes station id's, name,
+        country, and landing page (or uri) among others.
 
-    stn['project'] = stn.apply(lambda x : __project(x['uri']), axis=1)
-    stn['theme'] = stn.apply(lambda x: x['uri'].split('/')[-1].split('_')[0], axis=1)
-    
+    stations_map : folium.Map
+        `stations_map` is an interactive folium map with the available
+        stations provided by `project` argument.
+
+    Examples
+    --------
+    >>> stations_dataframe = getIdList(project='ICOS').head()
+    >>> print(stations_dataframe)
+            uri 	 id 	name 	...   elevation   project	theme
+    40 	http...  SE-Sto  Abis... 	... 	351.893      ICOS 	   ES
+    35 	http...  IT-Noe  Arca... 	... 	25.0 	     ICOS 	   ES
+    102 http...  UK-AMo  Auch... 	... 	270.0 	     ICOS 	   ES
+    48 	http...  FR-Aur  Aura...	... 	250.0 	     ICOS 	   ES
+    127 http...  1199 	 BE-F... 	... 	None 	     ICOS 	   OS
+
+    """
+
+    project = project.upper()
+
+    query = sparqls.getStations()
+    queried_stations = RunSparql(query, 'pandas').run()
+
+    queried_stations['project'] = queried_stations.apply(lambda x: __project(x['uri']), axis=1)
+    queried_stations['theme'] = queried_stations.apply(lambda x: x['uri'].
+                                                       split('/')[-1].split('_')[0], axis=1)
+
     if not project == 'ALL':
-        stn = stn[stn.project == project.upper()]
-    # we may have double entries....drop 
-    stn.drop
-    stn.sort_values(by=sort, inplace=True)
-    
-    return stn
+        queried_stations = queried_stations[queried_stations.project == project.upper()]
+    # Drop any existing double entries.
+    queried_stations.drop
+    # Sort queried stations by given sort argument.
+    queried_stations.sort_values(by=sort, inplace=True)
+
+    if outfmt == 'map':
+        import folium
+        stations_map = folium.Map()
+        # Use the stations at the most southwest and northeast
+        # locations and bind the map within these stations.
+        sw_loc = queried_stations[['lat', 'lon']].dropna(axis=0).min().values.tolist()
+        ne_loc = queried_stations[['lat', 'lon']].dropna(axis=0).max().values.tolist()
+        stations_map.fit_bounds([sw_loc, ne_loc])
+        # Iterate over pandas stations. (Warning! Pandas dataframes
+        # shouldn't be iterated unless absolutely necessary.
+        for index, station_info in queried_stations.iterrows():
+            latitude = station_info[4]
+            longitude = station_info[5]
+            # Some stations in the dataframe appear to have None
+            # assigned values in latitude and longitude. For now don't
+            # add them to the folium map.
+            if latitude is not None and longitude is not None:
+                # Create the html popup message for each station. Maybe
+                # use templates for this.
+                station_info[2] = station_info[2].replace(' ', '&nbsp;')
+                popup = '<p>Station&nbsp;name:&nbsp;{name}<br>Country:&nbsp;{country}<br>Elevation:&nbsp;{elevation}<br>Project&nbsp;-&nbsp;Theme:&nbsp;{project}&nbsp;-&nbsp;{theme}</p>'.format(
+                    name=station_info[2],
+                    country=station_info[3],
+                    elevation=station_info[6],
+                    project=station_info[7],
+                    theme=station_info[8]
+                )
+                # Add a marker for each station at the station's
+                # location along with the popup and the tooltip.
+                folium.Marker(
+                    location=[float(latitude), float(longitude)],
+                    tooltip='<b>' + station_info[1] + '</b>',
+                    popup=popup
+                ).add_to(stations_map)
+        return stations_map
+    else:
+        return queried_stations
     
 def __project(uri):
     """
