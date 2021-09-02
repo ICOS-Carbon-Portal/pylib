@@ -28,6 +28,7 @@ import pandas as pd
 from icoscp.sparql.runsparql import RunSparql
 from icoscp.sparql import sparqls
 from tqdm import tqdm
+from fmap import generate_html
 
 # ----------------------------------------------
 class Station():
@@ -612,58 +613,53 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas'):
     """
 
     project = project.upper()
-
     query = sparqls.getStations()
     queried_stations = RunSparql(query, 'pandas').run()
-
     queried_stations['project'] = queried_stations.apply(lambda x: __project(x['uri']), axis=1)
     queried_stations['theme'] = queried_stations.apply(lambda x: x['uri'].
                                                        split('/')[-1].split('_')[0], axis=1)
-
     if not project == 'ALL':
         queried_stations = queried_stations[queried_stations.project == project.upper()]
     # Drop any existing double entries.
     queried_stations.drop
-    # Sort queried stations by given sort argument.
+    # Sort queried stations by the given sort argument.
     queried_stations.sort_values(by=sort, inplace=True)
 
     if outfmt == 'map':
         import folium
+        from folium.plugins import MarkerCluster
         stations_map = folium.Map()
+        marker_cluster = MarkerCluster()
         # Use the stations at the most southwest and northeast
         # locations and bind the map within these stations.
         sw_loc = queried_stations[['lat', 'lon']].dropna(axis=0).min().values.tolist()
         ne_loc = queried_stations[['lat', 'lon']].dropna(axis=0).max().values.tolist()
         stations_map.fit_bounds([sw_loc, ne_loc])
         # Iterate over pandas stations. (Warning! Pandas dataframes
-        # shouldn't be iterated unless absolutely necessary.
+        # shouldn't be iterated unless absolutely necessary. This
+        # implementation might change.
         for index, station_info in queried_stations.iterrows():
             latitude = station_info[4]
             longitude = station_info[5]
-            # Some stations in the dataframe appear to have None
-            # assigned values in latitude and longitude. For now don't
-            # add them to the folium map.
+            # Measurements collected from instrumented Ships of
+            # Opportunity don't have a fixed location and thus are
+            # excluded from the folium map.
             if latitude is not None and longitude is not None:
-                # Create the html popup message for each station. Maybe
-                # use templates for this.
-                station_info[2] = station_info[2].replace(' ', '&nbsp;')
-                popup = '<p>Station&nbsp;name:&nbsp;{name}<br>Country:&nbsp;{country}<br>Elevation:&nbsp;{elevation}<br>Project&nbsp;-&nbsp;Theme:&nbsp;{project}&nbsp;-&nbsp;{theme}</p>'.format(
-                    name=station_info[2],
-                    country=station_info[3],
-                    elevation=station_info[6],
-                    project=station_info[7],
-                    theme=station_info[8]
-                )
+                # Create the html popup message for each station.
+                popup = folium.Popup(generate_html(station_info), max_width=2000)
                 # Add a marker for each station at the station's
                 # location along with the popup and the tooltip.
-                folium.Marker(
-                    location=[float(latitude), float(longitude)],
-                    tooltip='<b>' + station_info[1] + '</b>',
-                    popup=popup
-                ).add_to(stations_map)
+                station_marker = folium.Marker(location=[float(latitude), float(longitude)],
+                                               tooltip='<b>' + station_info[1] + '</b>',
+                                               popup=popup)
+                # Populate the cluster with station markers.
+                marker_cluster.add_child(station_marker)
+        # Add the cluster to the folium map.
+        stations_map.add_child(marker_cluster)
         return stations_map
     else:
         return queried_stations
+
     
 def __project(uri):
     """
