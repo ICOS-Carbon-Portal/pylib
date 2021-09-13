@@ -626,8 +626,21 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas'):
     queried_stations.sort_values(by=sort, inplace=True)
 
     if outfmt == 'map':
+        import json
+        import requests
         import folium
         from folium.plugins import MarkerCluster
+        # Use the https://restcountries.eu RESTful API to request data
+        # for each country.
+        rest_response = requests.get('https://restcountries.eu/rest/v2/all?'
+                                     'fields=flag;alpha2Code;name')
+        json_countries = json.loads(rest_response.text)
+        # Use the requested data to create a dictionary of country
+        # names, codes, and flags.
+        countries_data = {}
+        for dict_item in json_countries:
+            countries_data[dict_item['alpha2Code']] = {'name': dict_item['name'],
+                                                       'flag': dict_item['flag']}
         stations_map = folium.Map()
         marker_cluster = MarkerCluster()
         # Add built-in tile layers. Default is 'openstreetmap'.
@@ -666,12 +679,16 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas'):
             if station_info.lat is None or station_info.lon is None:
                 continue
             # Create the html popup message for each station.
-            popup = folium.Popup(generate_html(station_info))
+            popup = folium.Popup(generate_html(station_info, countries_data))
+            # Set the icon for each marker according to country's code.
+            icon = folium.CustomIcon(icon_image=countries_data[station_info[3]]['flag'],
+                                     icon_size=(20, 14))
             # Add a marker for each station at the station's location
             # along with the popup and the tooltip.
             station_marker = folium.Marker(location=[station_info.lat, station_info.lon],
                                            tooltip='<b>' + station_info.id + '</b>',
-                                           popup=popup)
+                                           popup=popup,
+                                           icon=icon)
             # Add the station marker to the cluster.
             marker_cluster.add_child(station_marker)
         # Add the cluster and the layer control to the folium map.
