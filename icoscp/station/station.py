@@ -630,32 +630,53 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas'):
         from folium.plugins import MarkerCluster
         stations_map = folium.Map()
         marker_cluster = MarkerCluster()
+        # Add built-in tile layers. Default is 'openstreetmap'.
+        stations_map.add_child(folium.TileLayer('cartodbpositron'))
+        stations_map.add_child(folium.TileLayer('cartodbdark_matter'))
+        stations_map.add_child(folium.TileLayer('stamenwatercolor'))
+        stations_map.add_child(folium.TileLayer('stamentoner'))
+        stations_map.add_child(folium.TileLayer('stamenterrain'))
+        # Add another layer with satellite images from ESRI.
+        stations_map.add_child(folium.TileLayer(
+            tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
+                  '/tile/{z}/{y}/{x}',
+            attr='Esri',
+            name='Esri Satellite',
+            overlay=False,
+            opacity=1.0,
+            control=True))
         # Use the stations at the most southwest and northeast
         # locations and bind the map within these stations.
         sw_loc = queried_stations[['lat', 'lon']].dropna(axis=0).min().values.tolist()
         ne_loc = queried_stations[['lat', 'lon']].dropna(axis=0).max().values.tolist()
+        # Increase the map's bounds to visually include all the map's
+        # markers.
+        sw_loc = [float(sw_loc[0]), float(sw_loc[1]) + 1.3]
+        ne_loc = [float(ne_loc[0]) + 1.3, float(ne_loc[1])]
         stations_map.fit_bounds([sw_loc, ne_loc])
         # Iterate over pandas stations. (Warning! Pandas dataframes
         # shouldn't be iterated unless absolutely necessary. This
         # implementation might change.
-        for index, station_info in queried_stations.iterrows():
-            latitude = station_info[4]
-            longitude = station_info[5]
+        for idx in queried_stations.index.values:
+            # Station to be processed.
+            station_info = queried_stations.iloc[idx]
             # Measurements collected from instrumented Ships of
             # Opportunity don't have a fixed location and thus are
             # excluded from the folium map.
-            if latitude is not None and longitude is not None:
-                # Create the html popup message for each station.
-                popup = folium.Popup(generate_html(station_info), max_width=2000)
-                # Add a marker for each station at the station's
-                # location along with the popup and the tooltip.
-                station_marker = folium.Marker(location=[float(latitude), float(longitude)],
-                                               tooltip='<b>' + station_info[1] + '</b>',
-                                               popup=popup)
-                # Populate the cluster with station markers.
-                marker_cluster.add_child(station_marker)
-        # Add the cluster to the folium map.
+            if station_info.lat is None or station_info.lon is None:
+                continue
+            # Create the html popup message for each station.
+            popup = folium.Popup(generate_html(station_info))
+            # Add a marker for each station at the station's location
+            # along with the popup and the tooltip.
+            station_marker = folium.Marker(location=[station_info.lat, station_info.lon],
+                                           tooltip='<b>' + station_info.id + '</b>',
+                                           popup=popup)
+            # Add the station marker to the cluster.
+            marker_cluster.add_child(station_marker)
+        # Add the cluster and the layer control to the folium map.
         stations_map.add_child(marker_cluster)
+        stations_map.add_child(folium.LayerControl())
         return stations_map
     else:
         return queried_stations
