@@ -1,7 +1,7 @@
 import folium
 
 
-def generate_html(station_info, countries_data):
+def generate_html(station_info):
     # Format station's html string using data extracted from the dataframe.
     station_html = \
         """
@@ -31,7 +31,7 @@ def generate_html(station_info, countries_data):
             <tr><td style="padding:4px">Theme</td><td style="padding:4px">{theme}</td></tr>
         </table>
         """.format(uri=station_info[0], name=station_info[2], id=station_info[1],
-                   country_name=countries_data[station_info[3]]['name'],
+                   country_name=station_info[9],
                    country_code=station_info[3], latitude=station_info[4],
                    longitude=station_info[5],
                    elevation=station_info[6], project=station_info[7], theme=station_info[8])

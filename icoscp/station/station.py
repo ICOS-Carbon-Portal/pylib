@@ -626,15 +626,18 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas'):
     queried_stations.sort_values(by=sort, inplace=True)
 
     if outfmt == 'map':
-        import json
         import requests
         import folium
         from folium.plugins import MarkerCluster
         # Use the https://restcountries.eu RESTful API to request data
         # for each country.
-        rest_response = requests.get('https://restcountries.eu/rest/v2/all?'
+        response = requests.get('https://restcountries.eu/rest/v2/all?'
                                      'fields=flag;alpha2Code;name')
-        json_countries = json.loads(rest_response.text)
+        try:
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            return "Restcountries request error: " + str(e)
+        json_countries = json.loads(response.text)
         # Use the requested data to create a dictionary of country
         # names, codes, and flags.
         countries_data = {}
@@ -671,6 +674,9 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas'):
         # shouldn't be iterated unless absolutely necessary. This
         # implementation might change.
         for idx in queried_stations.index.values:
+            code = queried_stations.iloc[idx]['country']
+            queried_stations['country_name'] = countries_data[code]['name']
+            queried_stations['flag'] = countries_data[code]['flag']
             # Station to be processed.
             station_info = queried_stations.iloc[idx]
             # Measurements collected from instrumented Ships of
@@ -679,7 +685,7 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas'):
             if station_info.lat is None or station_info.lon is None:
                 continue
             # Create the html popup message for each station.
-            popup = folium.Popup(generate_html(station_info, countries_data))
+            popup = folium.Popup(generate_html(station_info))
             # Set the icon for each marker according to country's code.
             icon = folium.CustomIcon(icon_image=countries_data[station_info[3]]['flag'],
                                      icon_size=(20, 14))
@@ -697,7 +703,6 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas'):
         return stations_map
     else:
         return queried_stations
-
     
 def __project(uri):
     """
