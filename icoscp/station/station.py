@@ -14,21 +14,24 @@
     myList = station.getList('AS') #  returns a list of Atmospheric stations
 """
 
-__author__      = ["Claudio D'Onofrio"]
-__credits__     = "ICOS Carbon Portal"
-__license__     = "GPL-3.0"
-__version__     = "0.1.2"
-__maintainer__  = "ICOS Carbon Portal, elaborated products team"
-__email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
-__status__      = "rc1"
-__date__        = "2020-11-05"
+__author__ = ["Claudio D'Onofrio"]
+__credits__ = "ICOS Carbon Portal"
+__license__ = "GPL-3.0"
+__version__ = "0.1.2"
+__maintainer__ = "ICOS Carbon Portal, elaborated products team"
+__email__ = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
+__status__ = "rc1"
+__date__ = "2020-11-05"
 
 import json
+
 import pandas as pd
-from icoscp.sparql.runsparql import RunSparql
-from icoscp.sparql import sparqls
 from tqdm import tqdm
-from fmap import generate_html
+
+from icoscp.sparql import sparqls
+from icoscp.sparql.runsparql import RunSparql
+import icoscp.station.fmap as fmap
+
 
 # ----------------------------------------------
 class Station():
@@ -45,7 +48,7 @@ class Station():
         # extract single attribute
         station.lat -> returns latitude as float
     """
-    
+
     def __init__(self):
         """
         Initialize your Station. If you have a list of attributes,
@@ -53,162 +56,175 @@ class Station():
       
         """
 
-        self._stationId = None      # shortName like HTM or SE-NOR   
-        self._valid = False         # if stationId is set and valid, return True            
-        self._name = None           # longName
-        self._theme = None          # AS | ES | OS
-        self._icosclass = None      # 1 | 2 
-        self._siteType = None       # description of site
-        
-        #locations
-        self._lat = None            # latitude
-        self._lon = None            # longitude
-        self._eas = None            # elevation above sea level
-        self._eag = None            # elevation above ground, height of tower
-        
-        #pi information
-        self._firstName = None      # Station PI first name
-        self._lastName = None       # Station PI last name
-        self._email = None          # Station PI email
-        
+        self._stationId = None  # shortName like HTM or SE-NOR
+        self._valid = False  # if stationId is set and valid, return True
+        self._name = None  # longName
+        self._theme = None  # AS | ES | OS
+        self._icosclass = None  # 1 | 2
+        self._siteType = None  # description of site
+
+        # locations
+        self._lat = None  # latitude
+        self._lon = None  # longitude
+        self._eas = None  # elevation above sea level
+        self._eag = None  # elevation above ground, height of tower
+
+        # pi information
+        self._firstName = None  # Station PI first name
+        self._lastName = None  # Station PI last name
+        self._email = None  # Station PI email
+
         # other information
         self._country = None
-        self._project = None        # list, project affiliation, 
-        self._uri = None            # list, links to ressources, landing pages
-        
+        self._project = None  # list, project affiliation,
+        self._uri = None  # list, links to ressources, landing pages
+
         # data and products
-        self._datacheck = False    # check if data and products have been asked for already
-        self._data = None           # list of associated dataobjects
-        self._products = None       # list of available products
-        
-            
-    #super().__init__() # for subclasses
-    #-------------------------------------
+        self._datacheck = False  # check if data and products have been asked for already
+        self._data = None  # list of associated dataobjects
+        self._products = None  # list of available products
+
+    # super().__init__() # for subclasses
+    # -------------------------------------
     @property
     def stationId(self):
         return self._stationId
-    
+
     @stationId.setter
     def stationId(self, stationId):
         self._stationId = stationId
-    #-------------------------------------
+
+    # -------------------------------------
     @property
     def valid(self):
         return self._valid
-    
+
     @valid.setter
     def valid(self, valid):
         self._valid = valid
-    #-------------------------------------
+
+    # -------------------------------------
     @property
     def theme(self):
         return self._theme
-    
+
     @theme.setter
     def theme(self, theme):
         self._theme = theme
-     #-------------------------------------
+
+    # -------------------------------------
     @property
     def icosclass(self):
         return self._icosclass
-    
+
     @icosclass.setter
     def icosclass(self, icosclass):
         self._icosclass = icosclass
-     #-------------------------------------    
+
+    # -------------------------------------
     @property
     def name(self):
         return self._name
-    
+
     @name.setter
     def name(self, name):
-        self._name = name    
-    #-------------------------------------
+        self._name = name
+        # -------------------------------------
+
     @property
     def lat(self):
         return self._lat
-    
+
     @lat.setter
     def lat(self, lat):
-        self._lat = lat    
-    #-------------------------------------
+        self._lat = lat
+        # -------------------------------------
+
     @property
     def lon(self):
         return self._lon
-    
+
     @lon.setter
     def lon(self, lon):
-        self._lon = lon    
-    #-------------------------------------
+        self._lon = lon
+        # -------------------------------------
+
     @property
     def eas(self):
         return self._eas
-    
+
     @eas.setter
     def eas(self, eas):
-        self._eas = eas    
-    #-------------------------------------
+        self._eas = eas
+        # -------------------------------------
+
     @property
     def eag(self):
         return self._eag
-    
+
     @eag.setter
     def eag(self, eag):
-        self._eag = eag    
-    #-------------------------------------
+        self._eag = eag
+        # -------------------------------------
+
     @property
     def firstName(self):
         return self._firstName
-    
+
     @firstName.setter
     def firstName(self, firstName):
-        self._firstName = firstName    
-    #-------------------------------------
+        self._firstName = firstName
+        # -------------------------------------
+
     @property
     def lastName(self):
         return self._lastName
-    
+
     @lastName.setter
     def lastName(self, lastName):
         self._lastName = lastName
-    #-------------------------------------
+
+    # -------------------------------------
     @property
     def email(self):
         return self._email
-    
+
     @email.setter
     def email(self, email):
         self._email = email
-    #-------------------------------------     
+
+    # -------------------------------------
     @property
     def country(self):
         return self._country
-    
+
     @country.setter
     def country(self, country):
         self._country = country
-    #-------------------------------------
+
+    # -------------------------------------
     @property
     def project(self):
         return self._project
-    
+
     @project.setter
     def project(self, project):
         self._project = project
-    #-------------------------------------
+
+    # -------------------------------------
     @property
     def uri(self):
         return self._uri
-    
+
     @uri.setter
     def uri(self, uri):
         self._uri = uri
-    #-------------------------------------
 
-    def __str__(self):          
+    # -------------------------------------
+
+    def __str__(self):
         return self.info('json')
-       
-        
+
     def data(self, level=None):
         """
         return a list of digital objects for the station
@@ -222,18 +238,18 @@ class Station():
         if not self._datacheck:
             self._setData()
             self._datacheck = True
-            
+
         if not isinstance(self._data, pd.DataFrame):
             # _data is not a dataframe but contains a string...
             return self._data
 
         if level:
             # if level is provided, filter pandas data frame
-            return self._data[self._data['datalevel']==str(level)]
+            return self._data[self._data['datalevel'] == str(level)]
         else:
             # return complete pandas data fram
             return self._data
-    
+
     def products(self, fmt='pandas'):
         """
         Parameters
@@ -252,16 +268,15 @@ class Station():
         if not self._datacheck:
             self._setData()
             self._datacheck = True
-        
+
         if not isinstance(self._products, pd.DataFrame):
             return self._products
-        
+
         if fmt == 'dict':
             return self._products.to_dict()
         else:
             return self._products
-    
-    
+
     def setStation(self, attrib=None):
         """
         You can set attributes for the station by providing a dictionary        
@@ -291,34 +306,32 @@ class Station():
         -------
         None
         """
-        
-        if not isinstance(attrib, dict):            
+
+        if not isinstance(attrib, dict):
             return
-        
+
         # minimal sanity check
-        checkFloat = ['lat','lon','eag','eas']
+        checkFloat = ['lat', 'lon', 'eag', 'eas']
         checkList = ['project', 'uri']
-                                
-        #create 'keys' without the underscore
-        keys = [k.strip('_') for k in list(self.__dict__)]        
+
+        # create 'keys' without the underscore
+        keys = [k.strip('_') for k in list(self.__dict__)]
         for a in attrib:
             a = a.strip('_')
             if a in keys and a in checkFloat:
                 try:
-                    self.__setattr__('_'+a, float(attrib[a]))
+                    self.__setattr__('_' + a, float(attrib[a]))
                 except:
                     continue
             elif a in keys and a in checkList:
                 try:
-                    self.__setattr__('_'+a, list(attrib[a]))
+                    self.__setattr__('_' + a, list(attrib[a]))
                 except:
                     continue
             else:
                 self.__setattr__('_' + a, attrib[a])
-                
 
-
-    def info(self, fmt = 'dict'):
+    def info(self, fmt='dict'):
         """
         Parameters
         ----------
@@ -332,74 +345,76 @@ class Station():
         All attributes for the Station
 
         """
-        #create new 'keys' without the underscore
+        # create new 'keys' without the underscore
         newKeys = [k.strip('_') for k in list(self.__dict__)]
-        values =  self.__dict__.values()
-        dictionary = dict(zip(newKeys,values))
-        
+        values = self.__dict__.values()
+        dictionary = dict(zip(newKeys, values))
+
         # remove some of the __dictionary__ keys to get a shorter
         # summary of information about the station
-        
+
         remove = ['data', 'products', 'valid', 'datacheck']
         dictionary = {key: value for key, value in dictionary.items() if key not in remove}
-        
-        
+
         if fmt == 'dict':
             return dictionary
-        
+
         if fmt == 'json':
             return json.dumps(dictionary, indent=4)
-                        
+
         if fmt == 'list':
             return (list(dictionary.keys()), list(dictionary.values()))
-        
-        if fmt == 'pandas':            
+
+        if fmt == 'pandas':
             return pd.DataFrame(dictionary, index=[0])
-        
+
         if fmt == 'html':
-	    
-	    #Create and initialize variable to store station info in html table:            
+
+            # Create and initialize variable to store station info in html table:
             html_table = """<meta content="text/html; charset=UTF-8">
                             <style>td{padding: 3px;}</style><table>"""
 
-            #Loop through all keys of station dictionary:
+            # Loop through all keys of station dictionary:
             for k in dictionary.keys():
 
-                #Check if current dict key holds the the long name of the station and
-                #if the key to the URL of the station landing page is included:
-                if((k=='name') & ('uri' in dictionary.keys())):
-                    
-                    #Create table row and add link with URL to station landing page:
-                    html_table = html_table+'<tr><td>'+k+'</td><td><b><a href="'+str(dictionary['uri'][0])+'"target="_blank">'+str(dictionary[k])+'</a></b></td></tr>'           
-                
-                #Skip creating table row for 'uri' key:
-                elif(k=='uri'):
+                # Check if current dict key holds the the long name of the station and
+                # if the key to the URL of the station landing page is included:
+                if ((k == 'name') & ('uri' in dictionary.keys())):
+
+                    # Create table row and add link with URL to station landing page:
+                    html_table = html_table + '<tr><td>' + k + '</td><td><b><a href="' + str(
+                        dictionary['uri'][0]) + '"target="_blank">' + str(
+                        dictionary[k]) + '</a></b></td></tr>'
+
+                    # Skip creating table row for 'uri' key:
+                elif (k == 'uri'):
                     continue
-                
-                #Dict key 'project' returns a list. Print all comma-sep items as string.
-                elif(k=='project'):
+
+                # Dict key 'project' returns a list. Print all comma-sep items as string.
+                elif (k == 'project'):
 
                     project_str = ', '.join(dictionary[k])
-                    html_table = html_table+'<tr><td>'+k+'</td><td><b>'+project_str+'</b></td></tr>'
-                
-                #Add table row with station info for current key:
+                    html_table = html_table + '<tr><td>' + k + '</td><td><b>' + project_str + '</b></td></tr>'
+
+                # Add table row with station info for current key:
                 else:
-                    html_table = html_table+'<tr><td>'+k+'</td><td><b>'+str(dictionary[k])+'</b></td></tr>'
-            
-            #Add html closing tag for table:
-            html_table = html_table +'</table>'
-            
-            #Return station info as html table:
+                    html_table = html_table + '<tr><td>' + k + '</td><td><b>' + str(
+                        dictionary[k]) + '</b></td></tr>'
+
+            # Add html closing tag for table:
+            html_table = html_table + '</table>'
+
+            # Return station info as html table:
             return html_table
-        
+
     def _setData(self):
-        
+
         """
         Query the sparql endpoint for data products submitted by this station
         adjust latitude and longitude and store a list of data specifications
         and data objects (PID's)
         """
-        
+
         if not self.stationId:
             return
         """      
@@ -410,37 +425,36 @@ class Station():
             self.url = val[0][0]
             self.lat = float(val[0][2])
             self.lon = float(val[0][3])
-        """            
-        
+        """
+
         # it is possible, that a station id has multiple URI
         # ask for all URI
-        query = sparqls.stationData(self.uri,'all')
+        query = sparqls.stationData(self.uri, 'all')
         data = RunSparql(query, 'pandas').run()
-        
-        if not data.empty:
-            self._data = data            
-        else:
-             self._data = 'no data available'            
-         
-         # check if data is available and extract the 'unique' data products        
-        if isinstance(self._data, pd.DataFrame):
-             p = self._data['specLabel'].unique()            
-             self._products = pd.DataFrame(p)
-             
-             # replace samplingheight=None with empty string
-             self._data.samplingheight.replace(to_replace=[None], value="", inplace=True)
-        else:
-             self._products = 'no data available'
 
-            
-    def sh(self, product = None):
+        if not data.empty:
+            self._data = data
+        else:
+            self._data = 'no data available'
+
+            # check if data is available and extract the 'unique' data products
+        if isinstance(self._data, pd.DataFrame):
+            p = self._data['specLabel'].unique()
+            self._products = pd.DataFrame(p)
+
+            # replace samplingheight=None with empty string
+            self._data.samplingheight.replace(to_replace=[None], value="", inplace=True)
+        else:
+            self._products = 'no data available'
+
+    def sh(self, product=None):
         """        
         This function is a short cut to return the getSamplingHeight()        
         for documentation, please refer to .getSamplingHeight()
         """
         return self.getSamplingHeight(product)
-    
-    def getSamplingHeight(self, product = None):
+
+    def getSamplingHeight(self, product=None):
         """        
         a list of unique values for sampling heights for the specified data product
         in case of no sampling hights or the product is not found for this
@@ -458,29 +472,29 @@ class Station():
         """
         # default return empty list
         sh = ['']
-        
+
         # check if product is availabe for station
         if not product in self._data.values:
             return sh
-        
+
         # if product is available but no sampling height is defined, return
         # count returns zero, if no sampling heights found
         if not self._data['samplingheight'][self._data.specLabel.str.match(product)].count():
             return sh
-        
+
         # finally get all sampling heights and create a unique list        
-        sh = self._data.samplingheight[self._data.specLabel == product].unique()        
+        sh = self._data.samplingheight[self._data.specLabel == product].unique()
         sh = list(filter(None, sh))
         if not sh:
-            return['']
-        
+            return ['']
+
         # at this point we have to assume we have an unsorted list of
         # samplingheights as strings. cast to float and sort.
         sh = [float(s) for s in sh]
         sh.sort()
         return sh
-        
-        
+
+
 # --EOF Station Class-----------------------------------------            
 # ------------------------------------------------------------
 def get(stationId):
@@ -496,28 +510,28 @@ def get(stationId):
     station : object Returns a station object (if stationId is found)
 
     """
-    
+
     # create the station instance
-    myStn = Station()  
-    
-    query = sparqls.getStations(stationId)    
-    stn = RunSparql(query,'pandas').run()
-    
+    myStn = Station()
+
+    query = sparqls.getStations(stationId)
+    stn = RunSparql(query, 'pandas').run()
+
     if not isinstance(stn, pd.DataFrame) or stn.empty:
         myStn.stationId = stationId
-        myStn.valid = False        
+        myStn.valid = False
         return myStn
     else:
-        stn['project'] = stn.apply(lambda x : __project(x['uri']), axis=1)
+        stn['project'] = stn.apply(lambda x: __project(x['uri']), axis=1)
 
     # we have found a valid id
     myStn.stationId = stn.id.values[0]
     myStn.valid = True
-    
+
     # it is possible that more than one station has the same id
     # we will give precedence to the icos project
     # but provide a list of URI and projects affiliations
-    
+
     # get lat, lon, eas from icos entry
     if not stn[stn.project.str.upper() == "ICOS"].empty:
         if stn.lat.any():
@@ -526,29 +540,27 @@ def get(stationId):
             myStn.lon = float(stn.lon[stn.project.str.upper() == 'ICOS'])
         if stn.elevation.any():
             myStn.eas = float(stn.elevation[stn.project.str.upper() == 'ICOS'])
-    else: 
+    else:
         if stn.lat.any():
             myStn.lat = float(stn.lat.values[0])
         if stn.lon.any():
             myStn.lon = float(stn.lon.values[0])
         if stn.elevation.any():
             myStn.eas = float(stn.elevation.values[0])
-        
-    
+
     myStn.name = stn.name.iloc[0]
     myStn.country = stn.country.iloc[0]
     myStn.project = stn.project.tolist()
     myStn.uri = stn.uri.tolist()
-        
-    
+
     # if the station belongs to ICOS
     # add information from the labeling app.
     # this is an interim step and should be removed after the full meta data
     # flow from the thematic centres is achieved.        
-    
-    if 'ICOS' in myStn.project:            
+
+    if 'ICOS' in myStn.project:
         query = sparqls.stations_with_pi(stationId)
-        lstn = RunSparql(query,'pandas').run()
+        lstn = RunSparql(query, 'pandas').run()
         if not lstn.empty:
             myStn.theme = lstn['stationTheme'].values[0]
             myStn.icosclass = lstn['class'].values[0]
@@ -559,7 +571,7 @@ def get(stationId):
             myStn.siteType = lstn['siteType'].values[0]
             myStn.eag = lstn['eag'].values[0]
 
-    #myStn._setData()        
+    # myStn._setData()
     return myStn
 
 
@@ -569,9 +581,9 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas'):
 
     Returns a list with all station id's. By default only ICOS stations
     will be returned. If `project` is set to 'all', all known station
-    id's are returned.
-    Please be aware, that the usage of data associated with non-ICOS
-    station might be different then the CCBY 4.0 Licence at ICOS.
+    id's are returned. Please be aware, that the usage of data
+    associated with non-ICOS station might be different than the
+    CCBY 4.0 Licence at ICOS.
 
     Parameters
     ----------
@@ -626,84 +638,13 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas'):
     queried_stations.sort_values(by=sort, inplace=True)
 
     if outfmt == 'map':
-        import requests
-        import folium
-        from folium.plugins import MarkerCluster
-        # Use the https://restcountries.eu RESTful API to request data
-        # for each country.
-        response = requests.get('https://restcountries.eu/rest/v2/all?'
-                                     'fields=flag;alpha2Code;name')
-        try:
-            response.raise_for_status()
-        except requests.exceptions.HTTPError as e:
-            return "Restcountries request error: " + str(e)
-        json_countries = json.loads(response.text)
-        # Use the requested data to create a dictionary of country
-        # names, codes, and flags.
-        countries_data = {}
-        for dict_item in json_countries:
-            countries_data[dict_item['alpha2Code']] = {'name': dict_item['name'],
-                                                       'flag': dict_item['flag']}
-        stations_map = folium.Map()
-        marker_cluster = MarkerCluster()
-        # Add built-in tile layers. Default is 'openstreetmap'.
-        stations_map.add_child(folium.TileLayer('cartodbpositron'))
-        stations_map.add_child(folium.TileLayer('cartodbdark_matter'))
-        stations_map.add_child(folium.TileLayer('stamenwatercolor'))
-        stations_map.add_child(folium.TileLayer('stamentoner'))
-        stations_map.add_child(folium.TileLayer('stamenterrain'))
-        # Add another layer with satellite images from ESRI.
-        stations_map.add_child(folium.TileLayer(
-            tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
-                  '/tile/{z}/{y}/{x}',
-            attr='Esri',
-            name='Esri Satellite',
-            overlay=False,
-            opacity=1.0,
-            control=True))
-        # Use the stations at the most southwest and northeast
-        # locations and bind the map within these stations.
-        sw_loc = queried_stations[['lat', 'lon']].dropna(axis=0).min().values.tolist()
-        ne_loc = queried_stations[['lat', 'lon']].dropna(axis=0).max().values.tolist()
-        # Increase the map's bounds to visually include all the map's
-        # markers.
-        sw_loc = [float(sw_loc[0]), float(sw_loc[1]) + 1.3]
-        ne_loc = [float(ne_loc[0]) + 1.3, float(ne_loc[1])]
-        stations_map.fit_bounds([sw_loc, ne_loc])
-        # Iterate over pandas stations. (Warning! Pandas dataframes
-        # shouldn't be iterated unless absolutely necessary. This
-        # implementation might change.
-        for idx in queried_stations.index.values:
-            code = queried_stations.iloc[idx]['country']
-            queried_stations['country_name'] = countries_data[code]['name']
-            queried_stations['flag'] = countries_data[code]['flag']
-            # Station to be processed.
-            station_info = queried_stations.iloc[idx]
-            # Measurements collected from instrumented Ships of
-            # Opportunity don't have a fixed location and thus are
-            # excluded from the folium map.
-            if station_info.lat is None or station_info.lon is None:
-                continue
-            # Create the html popup message for each station.
-            popup = folium.Popup(generate_html(station_info))
-            # Set the icon for each marker according to country's code.
-            icon = folium.CustomIcon(icon_image=countries_data[station_info[3]]['flag'],
-                                     icon_size=(20, 14))
-            # Add a marker for each station at the station's location
-            # along with the popup and the tooltip.
-            station_marker = folium.Marker(location=[station_info.lat, station_info.lon],
-                                           tooltip='<b>' + station_info.id + '</b>',
-                                           popup=popup,
-                                           icon=icon)
-            # Add the station marker to the cluster.
-            marker_cluster.add_child(station_marker)
-        # Add the cluster and the layer control to the folium map.
-        stations_map.add_child(marker_cluster)
-        stations_map.add_child(folium.LayerControl())
-        return stations_map
+        stations_folium_map = fmap.get(queried_stations)
+        return stations_folium_map
+
     else:
         return queried_stations
-    
+
+
 def __project(uri):
     """
     internal use, do not call directly. Lambda function
@@ -720,20 +661,21 @@ def __project(uri):
     """
     uri = uri.lower().split('/')[-1].split('_')[0]
     project = {
-        'as' : "ICOS",
-        'es' : "ICOS",
-        'os' : "ICOS", 
-        'neon' : 'NEON', 
-        'ingos' : 'INGOS' ,   
-        'fluxnet' : 'FLUXNET'
-        }
-    
+        'as': "ICOS",
+        'es': "ICOS",
+        'os': "ICOS",
+        'neon': 'NEON',
+        'ingos': 'INGOS',
+        'fluxnet': 'FLUXNET'
+    }
+
     if uri in project:
         return project.get(uri)
     else:
         return 'other'
-    
-def getList(theme=['AS','ES','OS'], ids=None):
+
+
+def getList(theme=['AS', 'ES', 'OS'], ids=None):
     """
     Query the SPARQL endpoint for stations, create an object for each Station
     and return the list of stations.
@@ -765,20 +707,20 @@ def getList(theme=['AS','ES','OS'], ids=None):
     stationList : list of station objects
     
     """
-    
+
     stationList = []
-    
+
     # if a list of id's is provided, ignore theme and class.    
     if ids:
         for s in tqdm(ids):
             stationList.append(get(s))
-            
+
         return stationList
-    
-    defaulttheme=['AS','ES','OS']    
-    
+
+    defaulttheme = ['AS', 'ES', 'OS']
+
     # make sure input is a list and in uppercase    
-    
+
     if isinstance(theme, str):
         theme = [theme.upper()]
     elif isinstance(theme, list):
@@ -786,19 +728,20 @@ def getList(theme=['AS','ES','OS'], ids=None):
     if not isinstance(theme, list) or not (set(defaulttheme) & set(theme)):
         # looks like input is not a theme.
         # Revert to default values, return all certified stations.
-        theme=defaulttheme
-    
+        theme = defaulttheme
+
     # get station list, by default returns all icos stations
     stations = getIdList()
     # filter by theme
     stations = stations[stations.theme.isin(theme)]
-    
-    
+
     stationList = []
     for s in tqdm(stations.id):
         stationList.append(get(s))
-            
+
     return stationList
+
+
 # ------------------------------------------------------------    
 if __name__ == "__main__":
     """
@@ -821,5 +764,6 @@ if __name__ == "__main__":
     stationList = station.getList(['OS']) 
     """
     print(msg)
+
 
 # ------------------------------------------------------------
