@@ -50,15 +50,19 @@ def get(queried_stations):
     sw_loc = [float(sw_loc[0]), float(sw_loc[1]) + 1.3]
     ne_loc = [float(ne_loc[0]) + 1.3, float(ne_loc[1])]
     stations_map.fit_bounds([sw_loc, ne_loc])
-    # Iterate over pandas stations. (Warning! Pandas dataframes
-    # shouldn't be iterated unless absolutely necessary. This
-    # implementation might change.
-    for idx in queried_stations.index.values:
-        code = queried_stations.iloc[idx]['country']
-        queried_stations['country_name'] = countries_data[code]['name']
-        queried_stations['flag'] = countries_data[code]['flag']
-        # Station to be processed.
-        station_info = queried_stations.iloc[idx]
+    # Transpose the requested stations dataframe and iterate each
+    # station.
+    queried_stations = queried_stations.transpose()
+    for station_index in queried_stations:
+        # Collect each station's info from the sparql query.
+        station_info = queried_stations[station_index]
+        # Add new labels and data (using the rest-countries API) and
+        # update existing labels of the dataframe to better represent
+        # the station's information.
+        station_info['country_code'] = station_info.pop('country')
+        station_info['station_name'] = station_info.pop('name')
+        station_info['country'] = countries_data[station_info.country_code]['name']
+        station_info['flag'] = countries_data[station_info.country_code]['flag']
         # Measurements collected from instrumented Ships of
         # Opportunity don't have a fixed location and thus are
         # excluded from the folium map.
@@ -67,8 +71,7 @@ def get(queried_stations):
         # Create the html popup message for each station.
         popup = folium.Popup(generate_html(station_info))
         # Set the icon for each marker according to country's code.
-        icon = folium.CustomIcon(icon_image=countries_data[station_info[3]]['flag'],
-                                 icon_size=(20, 14))
+        icon = folium.CustomIcon(icon_image=station_info.flag, icon_size=(20, 14))
         # Add a marker for each station at the station's location
         # along with the popup and the tooltip.
         station_marker = folium.Marker(location=[station_info.lat, station_info.lon],
