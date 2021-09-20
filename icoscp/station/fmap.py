@@ -1,3 +1,25 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""    
+    this file is intended to provide a folium map object
+    for a station selection. Please do not use directly, 
+    but import station and change the output format.
+    
+    from icoscp.station import station
+    station.getIdList(.......outfmt='map')
+"""
+
+__author__ = ["Zois Zogopoulos"]
+__credits__ = "ICOS Carbon Portal"
+__license__ = "GPL-3.0"
+__version__ = "0.1.0"
+__maintainer__ = "ICOS Carbon Portal, elaborated products team"
+__email__ = ['info@icos-cp.eu', 'zois.zogopoulos@nateko.lu.se']
+__status__ = "rc1"
+__date__ = "2021-09-20"
+
+
 import json
 
 import folium
