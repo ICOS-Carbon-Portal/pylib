@@ -29,7 +29,7 @@ def get(queried_stations):
     ------
     HTTPError
         An HTTPError exception is raised if the requested REST
-        countries data is unavailable.
+        countries data is unavailable (https://restcountries.eu/).
 
     """
 
@@ -59,10 +59,6 @@ def get(queried_stations):
     # locations and bind the map within these stations.
     sw_loc = queried_stations[['lat', 'lon']].dropna(axis=0).min().values.tolist()
     ne_loc = queried_stations[['lat', 'lon']].dropna(axis=0).max().values.tolist()
-    # Increase the map's bounds to visually include all the map's
-    # markers.
-    sw_loc = [float(sw_loc[0]), float(sw_loc[1]) + 1.3]
-    ne_loc = [float(ne_loc[0]) + 1.3, float(ne_loc[1])]
     stations_map.fit_bounds([sw_loc, ne_loc])
     # Transpose the requested stations dataframe and iterate each
     # station.
