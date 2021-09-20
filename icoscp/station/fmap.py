@@ -6,9 +6,36 @@ import requests
 
 
 def get(queried_stations):
+    """Generates a folium map of stations.
+
+    Uses the requested stations dataframe along with the REST countries
+    API to generate an interactive folium map. Each marker in the
+    folium map represents a station of observations.
+
+    Parameters
+    ----------
+    queried_stations : pandas.Dataframe
+        `queried_stations` dataframe includes each station's landing
+        page or (uri), id, name, country, lat, lon, elevation, project,
+        and theme.
+
+    Returns
+    -------
+    stations_map : folium.Map
+        `stations_map` is an interactive map used for visualizing
+        geospatial data.
+
+    Raises
+    ------
+    HTTPError
+        An HTTPError exception is raised if the requested REST
+        countries data is unavailable.
+
+    """
+
     # Use the https://restcountries.eu REST-ful API to request data
     # for each country.
-    response = requests.get('https://restcountries.eu/rest/v2/all? '
+    response = requests.get('https://restcountries.eu/rest/v2/all?'
                             'fields=flag;alpha2Code;name')
     try:
         response.raise_for_status()
@@ -26,21 +53,8 @@ def get(queried_stations):
     countries_data['UK'] = countries_data['GB']
     stations_map = folium.Map()
     marker_cluster = MarkerCluster()
-    # Add built-in tile layers. Default is 'openstreetmap'.
-    stations_map.add_child(folium.TileLayer('cartodbpositron'))
-    stations_map.add_child(folium.TileLayer('cartodbdark_matter'))
-    stations_map.add_child(folium.TileLayer('stamenwatercolor'))
-    stations_map.add_child(folium.TileLayer('stamentoner'))
-    stations_map.add_child(folium.TileLayer('stamenterrain'))
-    # Add another layer with satellite images from ESRI.
-    stations_map.add_child(folium.TileLayer(
-        tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
-              '/tile/{z}/{y}/{x}',
-        attr='Esri',
-        name='Esri Satellite',
-        overlay=False,
-        opacity=1.0,
-        control=True))
+    # Add tile layers to the folium map. Default is 'openstreetmap'.
+    add_tile_layers(stations_map)
     # Use the stations at the most southwest and northeast
     # locations and bind the map within these stations.
     sw_loc = queried_stations[['lat', 'lon']].dropna(axis=0).min().values.tolist()
@@ -69,7 +83,7 @@ def get(queried_stations):
         if station_info.lat is None or station_info.lon is None:
             continue
         # Create the html popup message for each station.
-        popup = folium.Popup(generate_html(station_info))
+        popup = folium.Popup(generate_popup_html(station_info))
         # Set the icon for each marker according to country's code.
         icon = folium.CustomIcon(icon_image=station_info.flag, icon_size=(20, 14))
         # Add a marker for each station at the station's location
@@ -86,7 +100,29 @@ def get(queried_stations):
     return stations_map
 
 
-def generate_html(station_info):
+def generate_popup_html(station_info):
+    """Generates an html popup for an interactive folium map.
+
+    For each station being processed creates an html popup with useful
+    information.
+
+    Parameters
+    ----------
+    station_info : pandas.Series
+        `station_info` series contains an extended version of the
+        station series in the `queried_stations` collection. This
+        version includes a landing page or (uri), id, lat, lon,
+        elevation, project, theme, country_code, station_name, country,
+        and flag.
+
+    Returns
+    -------
+    folium_html : branca.Html
+        `folium_html` contains all the necessary data to visualize a
+        station's information as a popup within the folium map.
+
+    """
+
     # Format station's html string using data extracted from the dataframe.
     station_html = \
         """
@@ -97,13 +133,13 @@ def generate_html(station_info):
             <tr style='background-color:#f8f4f4'>
                 <td style="padding:4px"><nobr>Station name</nobr></td>
                 <td style="padding:4px"><nobr><a title="{uri}" href="{uri}">
-                    {name}
+                    {station_name}
                 </a></nobr></td>
             </tr>
             <tr><td style="padding:4px">Station ID</td><td style="padding:4px">{id}</td></tr>
             <tr style='background-color:#f8f4f4'>
                 <td style="padding:4px">Country, Country code</td>
-                <td style="padding:4px"><nobr>{country_name} - {country_code}</nobr></td>
+                <td style="padding:4px"><nobr>{country} - {country_code}</nobr></td>
             </tr>
             <tr>
                 <td style="padding:4px"><nobr>Latitude, Longitude, Elevation</nobr></td>
@@ -115,11 +151,45 @@ def generate_html(station_info):
             </tr>
             <tr><td style="padding:4px">Theme</td><td style="padding:4px">{theme}</td></tr>
         </table>
-        """.format(uri=station_info[0], name=station_info[2], id=station_info[1],
-                   country_name=station_info[9],
-                   country_code=station_info[3], latitude=station_info[4],
-                   longitude=station_info[5],
-                   elevation=station_info[6], project=station_info[7], theme=station_info[8])
+        """.format(uri=station_info.uri, station_name=station_info.station_name,
+                   id=station_info.id, country=station_info.country,
+                   country_code=station_info.country_code, latitude=station_info.lat,
+                   longitude=station_info.lon, elevation=station_info.elevation,
+                   project=station_info.project, theme=station_info.theme)
     # Render html from string.
     folium_html = folium.Html(station_html, script=True)
     return folium_html
+
+
+def add_tile_layers(folium_map):
+    """Adds multiple layers to a folium map.
+
+    Parameters
+    ----------
+    folium_map : folium.Map
+        `folium_map` is the parent element to which all tile layers
+        (children elements) will be added.
+
+    Returns
+    -------
+    folium_map : folium.Map
+        Returns an updated version of the `folium_map`.
+
+    """
+
+    # Add built-in tile layers.
+    folium_map.add_child(folium.TileLayer('cartodbpositron'))
+    folium_map.add_child(folium.TileLayer('cartodbdark_matter'))
+    folium_map.add_child(folium.TileLayer('stamenwatercolor'))
+    folium_map.add_child(folium.TileLayer('stamentoner'))
+    folium_map.add_child(folium.TileLayer('stamenterrain'))
+    # Add another layer with satellite images from ESRI.
+    folium_map.add_child(folium.TileLayer(
+        tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
+              '/tile/{z}/{y}/{x}',
+        attr='Esri',
+        name='Esri Satellite',
+        overlay=False,
+        opacity=1.0,
+        control=True))
+    return folium_map

@@ -576,30 +576,32 @@ def get(stationId):
 
 
 def getIdList(project='ICOS', sort='name', outfmt='pandas'):
-    """Retrieves a list of stations where data is collected using a
-    specific format.
+    """Retrieves a list of stations using a specific format.
 
     Returns a list with all station id's. By default only ICOS stations
     will be returned. If `project` is set to 'all', all known station
     id's are returned. Please be aware, that the usage of data
-    associated with non-ICOS station might be different than the
+    associated with non-ICOS stations might be different than the
     CCBY 4.0 Licence at ICOS.
 
     Parameters
     ----------
-    project : str, optional. The default is 'ICOS'. If you set
-        `project` to 'all', all known stations are returned.
+    project : str, optional.
+        The default is 'ICOS'. If you set `project` to 'all', all known
+        stations are returned.
 
-    sort : str, optional. The default is 'name'. A user can `sort` by
-        any of the dataframe's columns: ['uri' | 'id' | 'name' |
-        'country' | 'lat' | 'lon' | 'elevation' | 'project' | 'theme']
+    sort : str, optional.
+        The default is 'name'. A user can `sort` by any of the
+        dataframe's columns: uri, id, name, country, lat, lon,
+        elevation, project, theme.
 
-    outfmt: str, optional. The default is 'pandas'. If you provide
-        'map' to the `outfmt` argument a folium map is created with
-        all known stations that have valid longitude and latitude
-        values. Be advised that in this case, stations without a fixed
-        location (like measurements that belong to stations collected
-        from instrumented Ships of Opportunity) will not be included.
+    outfmt: str, optional.
+        The default is 'pandas'. If you provide 'map' to the `outfmt`
+        argument a folium map is created with all known stations that
+        have valid longitude and latitude values. Be advised that in
+        this case, stations without a fixed location (like measurements
+        that belong to stations collected from instrumented Ships of
+        Opportunity) will not be included.
 
     Returns
     -------
