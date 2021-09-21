@@ -126,66 +126,67 @@ def _pinpoint(kwargs, stations):
     box = {'bbox':[(lat1, lon1),(lat2, lon2)]}
     return _bbox(box, stations)
 
-def _sdate(kwargs, stations):
-    
-    # Check if both start-date and end-date have been provided:
-    if(('sdate' in kwargs.keys()) & ('edate' in kwargs.keys())):
-        #Check that end-date is set to a later date that start-date:
-        if not(tf.check_dates(tf.str_to_date(kwargs['sdate']), tf.str_to_date(kwargs['edate']))):
-            # print('Error! Start-date is set to a later date than end-date... ')
-            stations = {}
-            return stations
 
+def __daterange(kwargs, stations):
+    """
+    Check availability for a date range.
+    sdate AND edate is provided in the arguments
+    """
+    sdate =  tf.str_to_date(kwargs['daterange'][0])
+    edate =  tf.str_to_date(kwargs['daterange'][1])
+    
+    # return and empyt dict, if date is not a date object
+    if not sdate or not edate:
+        return {}
+    
+    #Check that end-date is set to a later date that start-date:
+    if not(tf.check_dates(tf.str_to_date(kwargs['daterange'][0]), tf.str_to_date(kwargs['daterange'][1]))):
+        # print('Error! Start-date is set to a later date than end-date... ')
+        stations = {}
+        return stations
+
+    flt = []
+    for st in stations:
+        if tf.check_daterange(sdate, edate, stations[st]):
+           flt.append(st)
+    stations =  {k: stations[k] for k in flt}
+    return stations
+
+def _sdate(kwargs, stations):
     #Convert date-string to date obj:
     sdate =  tf.str_to_date(kwargs['sdate'])
-
-    #Check if date-string could be converted to date obj:
-    if sdate is not None:
-
-        #Filter stations by sdate:
-        stations = {st:stations[st] for st in stations
-                    if ((tf.check_dates(sdate, tf.get_st_dates(stations[st])[1]))&
-                        ((tf.check_smonth(sdate, stations[st])) or
-                         (True in [sdate.year < y
-                                   for y in list(map(int, stations[st]['years']))])))}
-    #If input is in wrong format:
-    else:
+    
+    # return and empyt dict, if sdate is not a date object
+    if not sdate:
         #Prompt error message:
         print("Wrong date format! Expected 'sdate' expressed as YYYY-MM-DD")
+        return {}
 
-        stations = {}
-
+    flt = []
+    for st in stations:
+        if tf.check_smonth(sdate, stations[st]):
+           flt.append(st)
+    
+    stations =  {k: stations[k] for k in flt}
     return stations
 
 
 def _edate(kwargs, stations):
-    # Check if both start-date and end-date have been provided:
-    if(('sdate' in kwargs.keys()) & ('edate' in kwargs.keys())):
-        #Check that end-date is set to a later date that start-date:
-        if not(tf.check_dates(tf.str_to_date(kwargs['sdate']), tf.str_to_date(kwargs['edate']))):
-            # print('Error! Start-date is set to a later date than end-date... ')
-            stations = {}
-            return stations
-
     #Convert date-string to date obj:
     edate =  tf.str_to_date(kwargs['edate'])
-
-    #Check if date-string could be converted to date obj:
-    if edate is not None:
-
-        #Filter stations by sdate:
-        stations = {st:stations[st] for st in stations
-                    if ((tf.check_dates(tf.get_st_dates(stations[st])[0], edate))&
-                        ((tf.check_emonth(edate, stations[st])) or
-                         (True in [edate.year > y
-                                   for y in list(map(int, stations[st]['years']))])))}
-
-    #If input is in wrong format:
-    else:
+    
+    # return and empyt dict, if sdate is not a date object
+    if not edate:
         #Prompt error message:
         print("Wrong date format! Expected 'edate' expressed as YYYY-MM-DD")
-        stations = {}
+        return {}
 
+    flt = []
+    for st in stations:
+        if tf.check_emonth(edate, stations[st]):
+           flt.append(st)
+    
+    stations =  {k: stations[k] for k in flt}
     return stations
 
 
@@ -193,8 +194,9 @@ def _hours(kwargs, stations):
     print(kwargs)  
     return stations
 
+"""
 def _search(kwargs, stations):
-    """ search for arbitrary string in complete dict"""
+    # search for arbitrary string in complete dict
     idx = []
     for k in stations:
         if kwargs['search'] in json.dumps(stations[k]):
@@ -203,17 +205,39 @@ def _search(kwargs, stations):
     flt = list(set(idx).intersection(stations))
     stations =  {k: stations[k] for k in flt}
     return stations
-    
+"""
+
+def _search(kwargs, stations):
+    """ search for arbitrary string"""
+    idx = []
+    for k in stations:
+        txt = json.dumps(stations[k])
+        if kwargs['search'].lower() in txt.lower():
+            idx.append(k)
+
+    flt = list(set(idx).intersection(stations))
+    return {k: stations[k] for k in flt}  
 
 def find(**kwargs):
-    import json
     
-    with open('stations.json') as json_file:
-        stations = json.load(json_file)
+    if 'stations' in kwargs:
+        stations = kwargs['stations']
+    else:
+        import json
+        
+        with open('stations.json') as json_file:
+            stations = json.load(json_file)
     
     # convert all keywords to lower case
     kwargs =  {k.lower(): v for k, v in kwargs.items()}
     
+    # check if sdate AND edate is provided. If yes, 
+    # create a date_range entry:
+    if 'sdate' in kwargs.keys() and 'edate' in kwargs.keys():
+        kwargs['daterange'] = [kwargs['sdate'], kwargs['edate']]
+        del kwargs['sdate']
+        del kwargs['edate']
+        
     # valid key words. Make surea all are lower capital:
     fun = {'id': _id,                      
            'country': _country, 
@@ -221,6 +245,7 @@ def find(**kwargs):
            'pinpoint': _pinpoint,
            'sdate':_sdate,
            'edate':_edate,
+           'daterange': __daterange,
            'hours':_hours,
            'search':_search
            }
@@ -316,19 +341,23 @@ def get(id=None):
     else:
         return stationslist
 
-#test = find(country='greece')
-#test = find(pinpoint=[55.7,13.1,300])
+#greece = find(search='sweden')
+#test = find(stations=greece, search='norunda')
 #test = find(country=['nor','Sweden'])
 
-test = find(country=['nor','Sweden'], outfmt ='map')
+#test = find(sdate='2019-01-01')
+#test = find(edate='2005-01-01')
+#myStations = find(sdate= '2018-01-01', edate='2018-05-30')
+myStations = find(sdate='2017-03-15', edate='2017-05-28')
 
-
+for m in myStations:
+    print(myStations[m]['2017'])
 #print(find(id='HTm030'))
 
 #g = get('KITTY')
 
-g1 = get('HTM030')
-print(g1)
+#g1 = get('HTM030')
+#print(g1)
 """
 g2 = get(['HTM030','HTM150'])
 for g in g2:

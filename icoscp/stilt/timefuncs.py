@@ -21,6 +21,7 @@ __date__        = "2021-04-21"
 #Import modules:
 import re
 from datetime import datetime, date
+import pandas as pd
 ###############################################################################
 
 
@@ -186,42 +187,72 @@ def str_to_date(d_string):
     return date_obj  
 ###############################################################################
 
-
-#Function that checks if STILT model output is available for the months after
-#the month specified in a start-date (for the same year as start-date):
 def check_smonth(sdate, st_dict):
+    """
+    Function that checks if STILT model output is available for >= start date
+    the check is for year and month only. 
+    Example sdate = '2017-03-15' will return all stations which have data 
+    for March 2017 or newer.
+    """
     
-    #Create & initialize check variable:
-    check = False
+    # if data exists in a year after sdate.year....True
+    years = [int(y) for y in st_dict['years']]
+    if any(y > sdate.year for y in years):
+        return True 
     
-    #Check if the year of start-date is included
-    #in the STILT-station output period:
-    if(str(sdate.year) in st_dict['years']):
-        
-        #Check if the STILT-station output includes results for months later in the start-date year:
-        if(True in [sdate.month <= m for m in list(map(int,st_dict[str(sdate.year)]['months']))]):
-            check = True
-    
-    #Return check variable:
-    return check
+    # if sdate.year is in years..check sdate.month 
+    if sdate.year in years:
+        months = [int(m) for m in st_dict[str(sdate.year)]['months']]
+        if any(m >= sdate.month for m in months):
+            return True
+    return False
+
 ###############################################################################
 
 
 #Function that checks if STILT model output is available for the months before
 #the month specified in a end-date (for the same year as end-date):
 def check_emonth(edate, st_dict):
+    """
+    Function that checks if STILT model output is available for <= end date
+    the check is for year and month only. 
+    Example edate = '2017-03-15' will return all stations which have data 
+    before or equal to March 2017.
+    """
     
-    #Create & initialize check variable:
-    check = False
+    # if data exists in a year before edate.year....True
+    years = [int(y) for y in st_dict['years']]    
+    if any(y < edate.year for y in years):
+        return True 
     
-    #Check if the year of end-date is included
-    #in the STILT-station output period:
-    if(str(edate.year) in st_dict['years']):
-        
-        #Check if the STILT-station output includes results for months earlier in the end-date year:
-        if(True in [edate.month >= m for m in list(map(int,st_dict[str(edate.year)]['months']))]):
-            check = True
     
-    #Return check variable:
-    return check
+    # if sdate.year is in years..check sdate.month 
+    if edate.year in years:
+        months = [int(m) for m in st_dict[str(edate.year)]['months']]
+        if any(m <= edate.month for m in months):
+            return True
+    return False
+    
+###############################################################################
+
+
+#Function that checks if STILT model output is available for the months before
+#the month specified in a end-date (for the same year as end-date):
+def check_daterange(sdate, edate, st_dict):
+    """
+    Function that checks if STILT model output is available for
+    >= sdate and <= edate
+    the check is for year and month only. 
+    Example daterange = ['2017-03-15','2017-05-28']' 
+    will return all stations which have data >= March, 2017 and <= May 2017    
+    """
+    
+    reflist = pd.date_range(start=sdate, end=edate, freq='MS').to_list()
+    checklist = []            
+    for y in st_dict['years']:
+        for m in st_dict[y]['months']:
+            checklist.append(pd.to_datetime(y + '-' + m))
+    
+    if list(set(checklist) & set(reflist)):
+        return True
     

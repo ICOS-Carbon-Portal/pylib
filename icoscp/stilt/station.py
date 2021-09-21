@@ -3,8 +3,10 @@
 
 """
     Extract all STILT stations from the ICOS Carbon Portal Server
-    The main function is station.get() to filter and search. See
-    Description of keyword arguments.
+    The main function is 
+    station.find() to search and filter STILT stations and
+    station.get() to create a STILT station object with access to the data.
+    
 """
 
 __credits__     = "ICOS Carbon Portal"
@@ -29,7 +31,7 @@ import icoscp.const as CPC
 import icoscp.country
 
 from icoscp.stilt import timefuncs as tf
-#from icoscp.stilt import stiltstation
+
 # --- START KEYWORD FUNCTIONS ---
 
 def _id(kwargs, stations):
@@ -91,6 +93,13 @@ def _outfmt(kwargs, stations):
         return fmap.get(stations)
 
 def _country(kwargs, stations):
+    """
+    Find all stations belonging to a country based on information from
+    alpha2Code', 'alpha3Code', 'name', 'nativeName', 'altSpellings', 'demonym'
+    Be aware, that STILT stations can have arbitrary lat/lon which 
+    are in international waters and hence not associated with a country
+
+    """
     countries = kwargs['country']
     if isinstance(countries,str):
         countries=[countries]
@@ -100,12 +109,13 @@ def _country(kwargs, stations):
     idx = []
     for k in stations:
         if stations[k]['geoinfo'] == False:
-            # if there is no geoinfo, skip
+            # if there is no geoinfo, skip            
             continue
 
         for c in countries:
             g = stations[k]['geoinfo']
-            searchKeys = {'alpha2Code', 'alpha3Code', 'name', 'nativeName', 'altSpellings', 'demonym'}
+            searchKeys = {'alpha2Code', 'alpha3Code', 'name', 'nativeName',
+                          'altSpellings', 'demonym'}
 
             # make sure we have only valid search keys...add two sets
             for sk in (searchKeys & g.keys()):
@@ -119,6 +129,12 @@ def _country(kwargs, stations):
 
 
 def _bbox(kwargs, stations):
+    """
+    Find all stations within a lat/lon bounding box. Expected keyword argument
+    input is bbox=[Topleft NorthWest (lat,lon),
+                   BottomRight South East(lat,lon)]
+
+    """
     bbox=kwargs['bbox']
     lat1 = float(bbox[1][0])
     lat2 = float(bbox[0][0])
@@ -145,9 +161,39 @@ def _pinpoint(kwargs, stations):
     box = {'bbox':[(lat1, lon1),(lat2, lon2)]}
     return _bbox(box, stations)
 
+def __daterange(kwargs, stations):
+    """
+    Check availability for a date range.
+    sdate AND edate is provided in the arguments. Daterange is PRIVATE
+    function...and cant be called directly, but is called if
+    sdate AND edate is provided in the arguments
+    """
+    sdate =  tf.str_to_date(kwargs['daterange'][0])
+    edate =  tf.str_to_date(kwargs['daterange'][1])
+    
+    # return and empyt dict, if date is not a date object
+    if not sdate or not edate:
+        return {}
+    
+    #Check that end-date is set to a later date than start-date:
+    if not(tf.check_dates(tf.str_to_date(kwargs['daterange'][0]), tf.str_to_date(kwargs['daterange'][1]))):
+        # print('Error! Start-date is set to a later date than end-date... ')
+        stations = {}
+        return stations
 
+    flt = []
+    for st in stations:
+        if tf.check_daterange(sdate, edate, stations[st]):
+           flt.append(st)
+    stations =  {k: stations[k] for k in flt}
+    return stations
+
+
+    
 def _sdate(kwargs, stations):
-
+    """
+    Find all stations with valid data for >= sdate (year and month only)
+    """
     #Convert date-string to date obj:
     sdate =  tf.str_to_date(kwargs['sdate'])
 
@@ -171,6 +217,10 @@ def _sdate(kwargs, stations):
 
 
 def _edate(kwargs, stations):
+    """
+    Find all stations with valid data for <= edate (year and month only)
+    """
+
 
     #Convert date-string to date obj:
     edate =  tf.str_to_date(kwargs['edate'])
@@ -392,6 +442,16 @@ def find(**kwargs):
     # convert all keywords to lower case
     kwargs =  {k.lower(): v for k, v in kwargs.items()}
 
+
+    # check if sdate AND edate is provided. If yes, 
+    # create a date_range entry and remove sdate and edate:
+    if 'sdate' in kwargs.keys() and 'edate' in kwargs.keys():
+        kwargs['daterange'] = [kwargs['sdate'], kwargs['edate']]
+        del kwargs['sdate']
+        del kwargs['edate']
+    
+        
+        
     # valid key words. Make sure all are lower capital and that
     # the function has been defined above and that outfmt is the very
     # last call:
@@ -401,6 +461,7 @@ def find(**kwargs):
            'pinpoint': _pinpoint,
            'sdate':_sdate,
            'edate':_edate,
+           'daterange':__daterange,
            'search':_search}
 
     for k in kwargs.keys():
