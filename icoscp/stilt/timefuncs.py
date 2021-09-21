@@ -11,16 +11,16 @@
 __author__      = ["Karolina Pantazatou"]
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.0.1"
+__version__     = "0.0.2"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'karolina.pantazatou@nateko.lu.se']
-__date__        = "2021-04-21"
-
+__date__        = "2021-09-20"
+__lastchange__  = ["Claudio DOnofrio"]
 ###############################################################################
 
 #Import modules:
 import re
-from datetime import datetime, date
+from datetime import date
 import pandas as pd
 ###############################################################################
 
@@ -44,29 +44,6 @@ def get_st_dates(st_dict):
     #Return tuple with STILT station start-date & end-date:
     return (stilt_s_date, stilt_e_date)
 ###############################################################################
-
-
-#Function that checks if a start-date refers to an earlier date than an end-date:
-def check_dates(s_date, e_date):
-    
-    #Define and initialize control variable:
-    check = False
-    
-    #Check if input parameters are valid:
-    if((isinstance(s_date, date)& isinstance(e_date, date))):
-        
-        #Compute the difference between end_date and start_date:
-        diff = e_date - s_date
-
-        #If start_date corresponds to a later date than end_date:
-        if(diff.days>=0):
-            
-            check = True
-    
-    #Return control variable:
-    return check
-###############################################################################
-
 
 def check_hours(ls):
      
@@ -128,65 +105,39 @@ def check_hours(ls):
     return check
 ###############################################################################
 
+def parse(date):
+    """
+    convert date from different input formats:        
 
-#Function that takes a date-string as input and
-#checks if it follows a valid format:
-def check_datestring_format(d_str):
+    Parameters
+    ----------
+    date :  STR 
+            FLOAT (unix timestamp) 
+            Python native datetime.date object
+            pandas datetime object
+
+    Returns
+    -------
+    datetime.date
+    """
+    out = False
+    try:
+        if isinstance(date, str):
+            date = pd.to_datetime(date).date()
+            out = True
+        if isinstance(date, float) or isinstance(date, int):
+            date = pd.to_datetime(date, unit='s').date()
+            out = True
+        
+        if not out:            
+            date = pd.to_datetime(date).date()
+        
+    except:
+        date = None
     
-    #Create control variables:
-    month_check = False
-    day_check = False
-
-    #Check if date-string follows the pattern "YYYY-MM-DD":
-    matched = re.match("[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]", d_str)
-
-    #Check if input variable is a string:
-    if(isinstance(d_str, str)):
-        
-        #Check the length of the date-string:
-        if(len(d_str)==10):
-            
-            #Check month-input:
-            if((int(d_str[5:7])>0) & (int(d_str[5:7])<=12)):
-                month_check = True
-            else:
-                print('Invalid entry! Valid month-values: "01", "02", ..., "12"')
-            
-            #Check day-input:
-            if((int(d_str[8:10])>0) & (int(d_str[8:10])<=31)):
-                day_check = True
-            else:
-                print('Invalid entry! Valid day-values: "01", "02", ..., "31"')
-
-        else:
-            print('Invalid date entry! Expected an entry following the format YYYY-MM-DD...')
-    else:
-        print('Error! Expected a string as input...')
-        
-    #Control all check-values:
-    if (bool(matched) & month_check & day_check):
-        return True
-    else:
-        return False
-###############################################################################    
-
-
-#Function that takes a date-string as input
-#and returns a date-datetime object:
-def str_to_date(d_string):
+    return date
     
-    if(check_datestring_format(d_string)):
-        
-        #Convert string with date info to date object:
-        date_obj = datetime.strptime(d_string, '%Y-%m-%d').date()
-        
-    else:
-        date_obj = None
-        
-    #Return date object:
-    return date_obj  
-###############################################################################
-
+    
 def check_smonth(sdate, st_dict):
     """
     Function that checks if STILT model output is available for >= start date
@@ -207,11 +158,7 @@ def check_smonth(sdate, st_dict):
             return True
     return False
 
-###############################################################################
 
-
-#Function that checks if STILT model output is available for the months before
-#the month specified in a end-date (for the same year as end-date):
 def check_emonth(edate, st_dict):
     """
     Function that checks if STILT model output is available for <= end date
@@ -233,11 +180,7 @@ def check_emonth(edate, st_dict):
             return True
     return False
     
-###############################################################################
 
-
-#Function that checks if STILT model output is available for the months before
-#the month specified in a end-date (for the same year as end-date):
 def check_daterange(sdate, edate, st_dict):
     """
     Function that checks if STILT model output is available for

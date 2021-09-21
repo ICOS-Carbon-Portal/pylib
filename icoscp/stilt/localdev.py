@@ -132,16 +132,18 @@ def __daterange(kwargs, stations):
     Check availability for a date range.
     sdate AND edate is provided in the arguments
     """
-    sdate =  tf.str_to_date(kwargs['daterange'][0])
-    edate =  tf.str_to_date(kwargs['daterange'][1])
+    sdate = tf.parse(kwargs['daterange'][0])
+    edate =  tf.parse(kwargs['daterange'][1])
+    #sdate =  tf.str_to_date(kwargs['daterange'][0])
+    #edate =  tf.str_to_date(kwargs['daterange'][1])
     
-    # return and empyt dict, if date is not a date object
+    # return an empyt dict, if date is not a date object
     if not sdate or not edate:
         return {}
     
     #Check that end-date is set to a later date that start-date:
-    if not(tf.check_dates(tf.str_to_date(kwargs['daterange'][0]), tf.str_to_date(kwargs['daterange'][1]))):
-        # print('Error! Start-date is set to a later date than end-date... ')
+    if edate < sdate:
+        print('Start-date is set to a later date than end-date... ')
         stations = {}
         return stations
 
@@ -154,12 +156,11 @@ def __daterange(kwargs, stations):
 
 def _sdate(kwargs, stations):
     #Convert date-string to date obj:
-    sdate =  tf.str_to_date(kwargs['sdate'])
+    sdate =  tf.parse(kwargs['sdate'])
     
     # return and empyt dict, if sdate is not a date object
-    if not sdate:
-        #Prompt error message:
-        print("Wrong date format! Expected 'sdate' expressed as YYYY-MM-DD")
+    if not sdate:        
+        print("Check date format")
         return {}
 
     flt = []
@@ -172,13 +173,12 @@ def _sdate(kwargs, stations):
 
 
 def _edate(kwargs, stations):
-    #Convert date-string to date obj:
-    edate =  tf.str_to_date(kwargs['edate'])
     
-    # return and empyt dict, if sdate is not a date object
-    if not edate:
-        #Prompt error message:
-        print("Wrong date format! Expected 'edate' expressed as YYYY-MM-DD")
+    edate =  tf.parse(kwargs['edate'])
+    
+    # return an empyt dict, if sdate is not a date object
+    if not edate:    
+        print("Check date format")
         return {}
 
     flt = []
@@ -232,7 +232,7 @@ def find(**kwargs):
     kwargs =  {k.lower(): v for k, v in kwargs.items()}
     
     # check if sdate AND edate is provided. If yes, 
-    # create a date_range entry:
+    # create a date_range entry and remove sdata and edate:
     if 'sdate' in kwargs.keys() and 'edate' in kwargs.keys():
         kwargs['daterange'] = [kwargs['sdate'], kwargs['edate']]
         del kwargs['sdate']
@@ -347,11 +347,8 @@ def get(id=None):
 
 #test = find(sdate='2019-01-01')
 #test = find(edate='2005-01-01')
-#myStations = find(sdate= '2018-01-01', edate='2018-05-30')
-myStations = find(sdate='2017-03-15', edate='2017-05-28')
-
-for m in myStations:
-    print(myStations[m]['2017'])
+myStations = find(sdate= '2018-01-01', edate='2018-05-30')
+#myStations = find(sdate= '2018-05-01', edate='2018-08-01')
 #print(find(id='HTm030'))
 
 #g = get('KITTY')

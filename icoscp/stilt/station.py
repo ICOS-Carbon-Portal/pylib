@@ -168,18 +168,17 @@ def __daterange(kwargs, stations):
     function...and cant be called directly, but is called if
     sdate AND edate is provided in the arguments
     """
-    sdate =  tf.str_to_date(kwargs['daterange'][0])
-    edate =  tf.str_to_date(kwargs['daterange'][1])
     
-    # return and empyt dict, if date is not a date object
+    sdate = tf.parse(kwargs['daterange'][0])
+    edate =  tf.parse(kwargs['daterange'][1])
+    
+    # return an empyt dict, if date is not a date object
     if not sdate or not edate:
         return {}
     
-    #Check that end-date is set to a later date than start-date:
-    if not(tf.check_dates(tf.str_to_date(kwargs['daterange'][0]), tf.str_to_date(kwargs['daterange'][1]))):
-        # print('Error! Start-date is set to a later date than end-date... ')
-        stations = {}
-        return stations
+    if edate < sdate:
+        print('Start-date is set to a later date than end-date... ')        
+        return {}
 
     flt = []
     for st in stations:
@@ -195,24 +194,19 @@ def _sdate(kwargs, stations):
     Find all stations with valid data for >= sdate (year and month only)
     """
     #Convert date-string to date obj:
-    sdate =  tf.str_to_date(kwargs['sdate'])
+    sdate =  tf.parse(kwargs['sdate'])
+    
+    # return and empyt dict, if sdate is not a date object
+    if not sdate:        
+        print("Check date format")
+        return {}
 
-    #Check if date-string could be converted to date obj:
-    if sdate is not None:
-
-        #Filter stations by sdate:
-        stations = {st:stations[st] for st in stations
-                    if ((tf.check_dates(sdate, tf.get_st_dates(stations[st])[1]))&
-                        ((tf.check_smonth(sdate, stations[st])) or
-                         (True in [sdate.year < y
-                                   for y in list(map(int, stations[st]['years']))])))}
-    #If input is in wrong format:
-    else:
-        #Prompt error message:
-        print("Wrong date format! Expected 'sdate' expressed as YYYY-MM-DD")
-
-        stations = {}
-
+    flt = []
+    for st in stations:
+        if tf.check_smonth(sdate, stations[st]):
+           flt.append(st)
+    
+    stations =  {k: stations[k] for k in flt}
     return stations
 
 
@@ -220,27 +214,19 @@ def _edate(kwargs, stations):
     """
     Find all stations with valid data for <= edate (year and month only)
     """
+    edate =  tf.parse(kwargs['edate'])
+    
+    # return an empyt dict, if sdate is not a date object
+    if not edate:    
+        print("Check date format")
+        return {}
 
-
-    #Convert date-string to date obj:
-    edate =  tf.str_to_date(kwargs['edate'])
-
-    #Check if date-string could be converted to date obj:
-    if edate is not None:
-
-        #Filter stations by sdate:
-        stations = {st:stations[st] for st in stations
-                    if ((tf.check_dates(tf.get_st_dates(stations[st])[0], edate))&
-                        ((tf.check_emonth(edate, stations[st])) or
-                         (True in [edate.year > y
-                                   for y in list(map(int, stations[st]['years']))])))}
-
-    #If input is in wrong format:
-    else:
-        #Prompt error message:
-        print("Wrong date format! Expected 'edate' expressed as YYYY-MM-DD")
-        stations = {}
-
+    flt = []
+    for st in stations:
+        if tf.check_emonth(edate, stations[st]):
+           flt.append(st)
+    
+    stations =  {k: stations[k] for k in flt}
     return stations
 
 
@@ -361,7 +347,6 @@ def find(**kwargs):
     return a complete list of all stations. You can filter the result by
     by providing the following keywords:
 
-
     Parameters
     ----------
 
@@ -374,7 +359,6 @@ def find(**kwargs):
     search STR:
         Arbitrary string search keyword
         
-
     stations DICT
         all actions are performed on this dictionary, rather than
         dynamically search for all stilt station on our server.
@@ -396,23 +380,37 @@ def find(**kwargs):
     pinpoint LIST: [lat, lon, distanceKM]
         spatial filter by pinpoint location plus distance in KM
         distance in km is use to create a bounding box
-        We use a very rough estimate of 1degree = 100 km
+        We use a very rough estimate of 1degree ~ 100 km
 
-    # Temporal keywords:
+    # Temporal search keywords:
+    Be aware, that the granularity for all temporal keywords is year and month
+    (days are not considered in the search): input format for the dates entry
+    MUST be convertible to data time object throug pandas.
+    -> pandas.to_datetime(date) 
+        
     sdate Input formats:
            - datetime.date objs
            - unix timestamp
            - pandas.datetime
            - STR: "YYYY-MM-DD":
-        where 'sdate' is a list of dates.
-        single list-item refers to start date (if edate is also provided) of a period or a single date
-        single list-item refers (if edate is not provided)
-        multiple items for list of single dates option
+        where 'sdate' (Start Date) is a single entry. If you provide ONLY
+        sdate, stations with any data available for >= sdate is returned        
 
     edate Input format see sdata:
-        where 'sdate' is a single date
-
-
+        - datetime.date objs
+           - unix timestamp
+           - pandas.datetime
+           - STR: "YYYY-MM-DD":
+        where 'edate' (End Date) is a single entry. If you provide ONLY
+        edate, stations with any data available  <= edate is returned
+        
+    If you provide sdate AND edate, any station with available data
+    within that date range is retured sdate >= AND edate <=
+    
+    dates [] is a list of dates.
+        This will return a list of
+    
+    
     outfmt STR ['pandas' | 'dict' | 'list' | 'map']:
         the result is returned as
             pandas,  dataframe with some key information
