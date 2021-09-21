@@ -317,20 +317,20 @@ class Dobj():
             # we need to select ALL columns
             self._colSelected = None             
             self.__getPayload()
-            return self.__unpackRawData(content)  
+            
             
         else:
             self._islocal = False
             r = requests.post(self._server, json=self._json, stream=True) 
             try:
                 r.raise_for_status()
+                content = r.content
             except requests.exceptions.HTTPError as e:
                 raise Exception(e)
 
-            #track data usage
-            self.__portalUse()
-            
-            return self.__unpackRawData(r.content)                    
+        #track data usage
+        self.__portalUse()            
+        return self.__unpackRawData(content)                    
 
     def __unpackRawData(self, rawData):
         # unpack the binary data
@@ -386,19 +386,14 @@ class Dobj():
     def __portalUse(self):
         
         """ private function to track data usage """    
-        #check if used on our own jupyter hub servers
-        if os.path.isdir(self._localpath):
-            internal = 'True'
-        else: 
-            internal = 'False'
-        
+
         counter = {'BinaryFileDownload':{
         'params':{
             'objId':self._dobj,
             'columns': self.colNames.tolist(),            
             'library':__name__, 
             'version':__version__,
-            'internal': internal}
+            'internal': str(self._islocal)}
             }
         }
         server = 'https://cpauth.icos-cp.eu/logs/portaluse'        
