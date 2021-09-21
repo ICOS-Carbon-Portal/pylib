@@ -3,10 +3,10 @@
 
 """
     Extract all STILT stations from the ICOS Carbon Portal Server
-    The main function is 
+    The main function is
     station.find() to search and filter STILT stations and
     station.get() to create a STILT station object with access to the data.
-    
+
 """
 
 __credits__     = "ICOS Carbon Portal"
@@ -18,15 +18,16 @@ __status__      = "rc1"
 __date__        = "2021-04-12"
 
 import os
+import json
 import numpy as np
 import pandas as pd
-import json
+
 from tqdm.notebook import tqdm
 
 from icoscp.station import station as cpstation
 from icoscp.stilt.stiltstation import StiltStation
-import icoscp.stilt.geoinfo as geoinfo
-import icoscp.stilt.fmap as fmap
+from icoscp.stilt import geoinfo
+from icoscp.stilt import fmap
 import icoscp.const as CPC
 import icoscp.country
 
@@ -45,7 +46,7 @@ def _id(kwargs, stations):
     # to make the search not case sensitive we need to convert all
     # id's to CAPITAL LETTERS. The stilt on demand calculator
     # allows only captial letters.
-    
+
     ids = [id.upper() for id in ids]
 
     # check stilt id
@@ -66,15 +67,15 @@ def _outfmt(kwargs, stations):
     ----------
     kwargs : STR
         Define the output format. by default a 'DICT' is returned
-        Possible arguments are:            
+        Possible arguments are:
             - pandas
-            - list 
+            - list
             - map (folium)
     '''
     if not stations:
         # no search restult found, return empty
         stations={'empty':'no stiltstations found'}
-    
+
     if 'outfmt' in kwargs:
         fmt = kwargs['outfmt']
     else:
@@ -96,7 +97,7 @@ def _country(kwargs, stations):
     """
     Find all stations belonging to a country based on information from
     alpha2Code', 'alpha3Code', 'name', 'nativeName', 'altSpellings', 'demonym'
-    Be aware, that STILT stations can have arbitrary lat/lon which 
+    Be aware, that STILT stations can have arbitrary lat/lon which
     are in international waters and hence not associated with a country
 
     """
@@ -108,8 +109,8 @@ def _country(kwargs, stations):
 
     idx = []
     for k in stations:
-        if stations[k]['geoinfo'] == False:
-            # if there is no geoinfo, skip            
+        if stations[k]['geoinfo'] is False:
+            # if there is no geoinfo, skip
             continue
 
         for c in countries:
@@ -118,7 +119,7 @@ def _country(kwargs, stations):
                           'altSpellings', 'demonym'}
 
             # make sure we have only valid search keys...add two sets
-            for sk in (searchKeys & g.keys()):
+            for sk in searchKeys & g.keys():
                 if c.lower() in str(g[sk]).lower():
                     idx.append(k)
                     break
@@ -161,6 +162,36 @@ def _pinpoint(kwargs, stations):
     box = {'bbox':[(lat1, lon1),(lat2, lon2)]}
     return _bbox(box, stations)
 
+def _dates(kwargs, stations):
+    """
+    Check availability for specific dates.
+    input needs to be a list. Stations are returned which have data
+    for any dates in the list. Remember, only year and month is checked
+    NOT single days.
+    """
+
+    # return empyt if dates is not a list
+    if not isinstance(kwargs['dates'],list):
+        return {}
+
+    # parse all dates to a clean list
+    dates = [tf.parse(d) for d in kwargs['dates']]
+    # remove Nones
+    dates = [d for d in dates if d]
+    if not dates:
+        return {}
+
+    flt = []
+    for st in stations:
+        # check each station for all dates...
+        # use daterange with sdate and edate set to the same.
+        for d in dates:
+            if tf.check_daterange(d, d, stations[st]):
+                flt.append(st)
+
+    stations =  {k: stations[k] for k in flt}
+    return stations
+
 def __daterange(kwargs, stations):
     """
     Check availability for a date range.
@@ -168,36 +199,36 @@ def __daterange(kwargs, stations):
     function...and cant be called directly, but is called if
     sdate AND edate is provided in the arguments
     """
-    
+
     sdate = tf.parse(kwargs['daterange'][0])
     edate =  tf.parse(kwargs['daterange'][1])
-    
+
     # return an empyt dict, if date is not a date object
     if not sdate or not edate:
         return {}
-    
+
     if edate < sdate:
-        print('Start-date is set to a later date than end-date... ')        
+        print('Start-date is set to a later date than end-date... ')
         return {}
 
     flt = []
     for st in stations:
         if tf.check_daterange(sdate, edate, stations[st]):
-           flt.append(st)
+            flt.append(st)
     stations =  {k: stations[k] for k in flt}
     return stations
 
 
-    
+
 def _sdate(kwargs, stations):
     """
     Find all stations with valid data for >= sdate (year and month only)
     """
     #Convert date-string to date obj:
     sdate =  tf.parse(kwargs['sdate'])
-    
+
     # return and empyt dict, if sdate is not a date object
-    if not sdate:        
+    if not sdate:
         print("Check date format")
         return {}
 
@@ -205,7 +236,7 @@ def _sdate(kwargs, stations):
     for st in stations:
         if tf.check_smonth(sdate, stations[st]):
            flt.append(st)
-    
+
     stations =  {k: stations[k] for k in flt}
     return stations
 
@@ -215,9 +246,9 @@ def _edate(kwargs, stations):
     Find all stations with valid data for <= edate (year and month only)
     """
     edate =  tf.parse(kwargs['edate'])
-    
+
     # return an empyt dict, if sdate is not a date object
-    if not edate:    
+    if not edate:
         print("Check date format")
         return {}
 
@@ -225,7 +256,7 @@ def _edate(kwargs, stations):
     for st in stations:
         if tf.check_emonth(edate, stations[st]):
            flt.append(st)
-    
+
     stations =  {k: stations[k] for k in flt}
     return stations
 
@@ -270,12 +301,13 @@ def __get_all():
     stations = {}
 
     # fill dictionary with ICOS station id, latitude, longitude and altitude
-    for ist in tqdm(sorted(allStations)):        
+    for ist in tqdm(sorted(allStations)):
         if not ist in df['STILT id'].values:
             continue
 
         stations[ist] = {}
-        # get filename of link (original stiltweb directory structure) and extract location information
+        # get filename of link (original stiltweb directory structure) and
+        # extract location information
 
         loc_ident = os.readlink(CPC.STILTPATH+ist)
         clon = loc_ident[-13:-6]
@@ -358,7 +390,7 @@ def find(**kwargs):
 
     search STR:
         Arbitrary string search keyword
-        
+
     stations DICT
         all actions are performed on this dictionary, rather than
         dynamically search for all stilt station on our server.
@@ -386,31 +418,33 @@ def find(**kwargs):
     Be aware, that the granularity for all temporal keywords is year and month
     (days are not considered in the search): input format for the dates entry
     MUST be convertible to data time object throug pandas.
-    -> pandas.to_datetime(date) 
-        
+    -> pandas.to_datetime(date)
+
     sdate Input formats:
-           - datetime.date objs
-           - unix timestamp
-           - pandas.datetime
-           - STR: "YYYY-MM-DD":
+        - datetime.date objs
+        - FLOAT or INT unix timestamp
+        - pandas.datetime
+        - STR: "YYYY-MM-DD" , "YYYY", "YYYY/MM/DD":
         where 'sdate' (Start Date) is a single entry. If you provide ONLY
-        sdate, stations with any data available for >= sdate is returned        
+        sdate, stations with any data available for >= sdate is returned
 
     edate Input format see sdata:
         - datetime.date objs
-           - unix timestamp
-           - pandas.datetime
-           - STR: "YYYY-MM-DD":
+        - FLOAT or INT unix timestamp
+        - pandas.datetime
+        - STR: "YYYY-MM-DD" , "YYYY", "YYYY/MM/DD":
         where 'edate' (End Date) is a single entry. If you provide ONLY
         edate, stations with any data available  <= edate is returned
-        
+
     If you provide sdate AND edate, any station with available data
-    within that date range is retured sdate >= AND edate <=
-    
+    within that date range is retured.
+
     dates [] is a list of dates.
-        This will return a list of
-    
-    
+        This will return a list of stations where data is available for
+        for any of the provided dates. Input format, see sdate,edate.
+        Remember, that only year and month is checked.
+
+
     outfmt STR ['pandas' | 'dict' | 'list' | 'map']:
         the result is returned as
             pandas,  dataframe with some key information
@@ -421,7 +455,7 @@ def find(**kwargs):
 
     Returns
     -------
-    List of Stiltstation in the form of outfmt=format, see above. 
+    List of Stiltstation in the form of outfmt=format, see above.
     Default DICT
 
     """
@@ -441,15 +475,15 @@ def find(**kwargs):
     kwargs =  {k.lower(): v for k, v in kwargs.items()}
 
 
-    # check if sdate AND edate is provided. If yes, 
+    # check if sdate AND edate is provided. If yes,
     # create a date_range entry and remove sdate and edate:
     if 'sdate' in kwargs.keys() and 'edate' in kwargs.keys():
         kwargs['daterange'] = [kwargs['sdate'], kwargs['edate']]
         del kwargs['sdate']
         del kwargs['edate']
-    
-        
-        
+
+
+
     # valid key words. Make sure all are lower capital and that
     # the function has been defined above and that outfmt is the very
     # last call:
@@ -465,35 +499,35 @@ def find(**kwargs):
     for k in kwargs.keys():
         if k in fun.keys():
             stations = fun[k](kwargs, stations)
-            
+
     return _outfmt(kwargs, stations)
 
 def get(id=None):
     """
     This function returns a stilt station object or a list of
-    stiltstation objects. 
+    stiltstation objects.
     A stilt station object, gives access to the underlying data
     (timeseries and footprints)
-    You may provide a str or list of STILT id's or the 'result' of a .find() 
-    
+    You may provide a str or list of STILT id's or the 'result' of a .find()
+
     Example: .get('HTM030')
             .get(['HTM030'])
                 returns one stiltobject for HTM030
-             
+
              .get(['HTM030','HTM150'])
                  returns a list of two stiltobjects
-        
-            .get('KIT') 
+
+            .get('KIT')
                 returns a list of stiltstations based on .find(search='KIT')
-                
+
             .get(find(country=['Sweden','Finland']))
                 returns a list of stilstations found in Sweden and Finland
     Parameters
     ----------
     id :    DICT | LIST[DICT]
-                The result of .find(....) where one station (DICT) is found or 
+                The result of .find(....) where one station (DICT) is found or
                 multiple stations (LIST[DICT])
-        
+
             STR | LIST[STR]
                 A single string or a list of strings containing one or more
                 stilt station ids.
@@ -503,7 +537,7 @@ def get(id=None):
     LIST[stiltstation]
 
     """
-    
+
     stationslist = []
 
     if isinstance(id,str):
@@ -512,24 +546,25 @@ def get(id=None):
             return None
         for s in st:
             stationslist.append(StiltStation(st[s]))
-    
-    if isinstance(id,dict):  
+
+    if isinstance(id,dict):
         for s in id:
             stationslist.append(StiltStation(id[s]))
-            
+
     if isinstance(id, list):
         if isinstance(id[0],dict):
            for s in id:
                stationslist.append(StiltStation(id[s]))
-    
-        if isinstance(id[0], str):            
+
+        if isinstance(id[0], str):
             st = find(id=id)
             if not st:
                 return None
             for s in st:
                 stationslist.append(StiltStation(st[s]))
-                
+
     if len(stationslist) == 1:
         return stationslist[0]
     else:
         return stationslist
+

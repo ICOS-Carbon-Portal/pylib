@@ -126,6 +126,29 @@ def _pinpoint(kwargs, stations):
     box = {'bbox':[(lat1, lon1),(lat2, lon2)]}
     return _bbox(box, stations)
 
+def _dates(kwargs, stations):
+    
+    # return empyt if dates is not a list
+    if not isinstance(kwargs['dates'],list):
+        return {}
+    
+    # parse all dates to a clean list
+    dates = [tf.parse(d) for d in kwargs['dates']]
+    # remove Nones
+    dates = [d for d in dates if d]
+    if not dates:
+        return {}
+    
+    flt = []
+    for st in stations:
+        # check each station for all dates...
+        # use daterange with sdate and edate set to the same.
+        for d in dates:
+            if tf.check_daterange(d, d, stations[st]):
+                flt.append(st)
+                
+    stations =  {k: stations[k] for k in flt}
+    return stations
 
 def __daterange(kwargs, stations):
     """
@@ -246,6 +269,7 @@ def find(**kwargs):
            'sdate':_sdate,
            'edate':_edate,
            'daterange': __daterange,
+           'dates': _dates,
            'hours':_hours,
            'search':_search
            }
@@ -347,7 +371,9 @@ def get(id=None):
 
 #test = find(sdate='2019-01-01')
 #test = find(edate='2005-01-01')
-myStations = find(sdate= '2018-01-01', edate='2018-05-30')
+#myStations = find(sdate= '2018-01-01', edate='2018-05-30')
+#myStations = find(dates=['2016', '2016-01', '2016-25-01', '2016/01/24'])
+myStations = find(dates=['2016-05'])
 #myStations = find(sdate= '2018-05-01', edate='2018-08-01')
 #print(find(id='HTm030'))
 
