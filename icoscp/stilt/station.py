@@ -494,6 +494,7 @@ def find(**kwargs):
            'pinpoint': _pinpoint,
            'sdate':_sdate,
            'edate':_edate,
+           'dates':_dates,
            'daterange':__daterange,
            'search':_search}
 
