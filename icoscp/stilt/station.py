@@ -73,8 +73,9 @@ def _outfmt(kwargs, stations):
             - map (folium)
     '''
     if not stations:
-        # no search restult found, return empty
+        # no search result, return empty
         stations={'empty':'no stiltstations found'}
+        return stations
 
     if 'outfmt' in kwargs:
         fmt = kwargs['outfmt']
