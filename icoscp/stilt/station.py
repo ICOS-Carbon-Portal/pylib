@@ -172,6 +172,7 @@ def _dates(kwargs, stations):
 
     # return empyt if dates is not a list
     if not isinstance(kwargs['dates'],list):
+        print('Dates must be a list')
         return {}
 
     # parse all dates to a clean list
