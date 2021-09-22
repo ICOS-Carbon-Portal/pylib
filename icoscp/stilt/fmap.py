@@ -98,7 +98,8 @@ def _pretty_html(station):
         
     body += '<tr><td>lat: </td><td>' + str(station['lat']) + '</td></tr>'
     body += '<tr><td>lon: </td><td>' + str(station['lon']) + '</td></tr>'    
-    body += '<tr><td colspan="2"><a href="https://stilt.icos-cp.eu/viewer/">\
+    body += '<tr><td colspan="2">\
+        <a href="https://stilt.icos-cp.eu/viewer/" target="_blank">\
         https://stilt.icos-cp.eu/viewer/</a></td></tr>'    
     footer = "</table></div></body></html>"
     html = header + body + footer
