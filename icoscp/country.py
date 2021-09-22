@@ -4,11 +4,15 @@
 """
     Define global (to icoscp) common tool to search for
     country information based on
-    https://restcountries.eu/
+    local file country.json
     https://nominatim.openstreetmap.org (for reverse geocoding).
 """
 
+
+import importlib.resources as pkgres
+import icoscp
 import requests
+import json
 
 
 def get(**kwargs):
@@ -53,48 +57,61 @@ def get(**kwargs):
 
     if not kwargs:
         return False
-
-    if 'code' in kwargs.keys():
-        country = _c_code(kwargs['code'])
-        if country:
-            return country
+    
+    
+    countries = pkgres.read_text(icoscp, 'countries.json')
+    countries  = json.loads(countries)
+    
+        
+    if 'code' in kwargs.keys():        
+        return _c_code(kwargs['code'], countries)
+        
 
     if 'name' in kwargs.keys():
-        country = _c_name(kwargs['name'])
-        if country:
-            return country
+        return _c_name(kwargs['name'], countries)
+
 
     if 'latlon' in kwargs.keys():
         latlon = kwargs['latlon']
         if isinstance(latlon, list) and len(latlon) == 2:
             country = _c_reverse(latlon)
         if country:
-            country = _c_code(country)
-        if country:
-            return country
+            return _c_code(kwargs['code'], countries)
 
     return False
 
 
-def _c_code(code):
-    # API to reterive country information using country code.
-    url = 'https://restcountries.eu/rest/v2/alpha/' + code
-    response = requests.get(url=url)
-    c_info = response.json()
-    if len(c_info) > 2:
-        return c_info
-    return False
+def _c_code(code, countries):        
+    country = []
+    for c in countries:
+        if code.lower() == str(c['cca2']).lower() or \
+            code.lower() == str(c['cca3']).lower():
+                country.append(c)
+    if not country:
+        return False
+    
+    if len(country) ==1 :
+        #return the dictionary rather than the list
+        return country[0]
+    else:
+        return country
 
-
-def _c_name(name):
-    # API to reterive country information using country code.
-    url = 'https://restcountries.eu/rest/v2/name/' + name
-    response = requests.get(url=url)
-    c_info = response.json()
-    if isinstance(c_info, list):
-        return c_info
-    return False
-
+def _c_name(name, countries):
+    country = []
+    for c in countries:
+         if name.lower() in str(c['name']).lower() \
+             or name.lower() in str(c['altSpellings']).lower():
+                 country.append(c)
+            
+            
+    if not country:
+        return False
+    
+    if len(country) ==1 :
+        #return the dictionary rather than the list
+        return country[0]
+    else:
+        return country
 
 def _c_reverse(latlon):
     # revers geocoding
@@ -110,10 +127,11 @@ def _c_reverse(latlon):
 
 if __name__ == "__main__":
     # in case it is run standalone
-    g = get(latlon=[42,0])
-    a = get(code='se')
-    c = get(name='chruesimuesy')
+    
+    a = get()
+    b = get(code='abW')
+    c = get(name='republic')
     d = get(name='lithuania')
     e = get(code='lithuania')
     f = get(latlon=[42,0],name='schweiz')
-    h = get(code='fr', latlon=[56.6,2.9])
+    g = get(code='fr', latlon=[56.6,2.9])
