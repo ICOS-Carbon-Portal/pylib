@@ -9,7 +9,7 @@ def readme():
 
 setuptools.setup(
     name='icoscp',
-    version='0.1.8',
+    version='0.1.9a',
 	license='GPLv3+',
     author="Claudio D'Onofrio, Zois Zogopoulos, ICOS Carbon Portal",
     author_email='claudio.donofrio@nateko.lu.se, zois.zogopoulos@nateko.lu.se, info@icos-cp.eu',

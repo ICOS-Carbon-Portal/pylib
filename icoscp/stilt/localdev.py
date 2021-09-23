@@ -50,8 +50,9 @@ def _outfmt(kwargs, stations):
             - map (folium)
     '''
     if not stations:
-        # no search restult found, return empty
+        # no search result, return empty
         stations={'empty':'no stiltstations found'}
+        return stations
     
     if 'outfmt' in kwargs:
         fmt = kwargs['outfmt']
@@ -130,6 +131,7 @@ def _dates(kwargs, stations):
     
     # return empyt if dates is not a list
     if not isinstance(kwargs['dates'],list):
+        print('Dates is not a list.')
         return {}
     
     # parse all dates to a clean list
@@ -373,7 +375,8 @@ def get(id=None):
 #test = find(edate='2005-01-01')
 #myStations = find(sdate= '2018-01-01', edate='2018-05-30')
 #myStations = find(dates=['2016', '2016-01', '2016-25-01', '2016/01/24'])
-myStations = find(dates=['2016-05'])
+myStations = find(sdate= '2018', edate='2018', dates=['2020'])
+#myStations = find(dates=['2016-05'])
 #myStations = find(sdate= '2018-05-01', edate='2018-08-01')
 #print(find(id='HTm030'))
 

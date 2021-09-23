@@ -3,17 +3,16 @@
 
 """
     Define global (to icoscp) common tool to search for
-    country information based on
-    local file country.json
-    https://nominatim.openstreetmap.org (for reverse geocoding).
+    country information based on a static local file
+    country.json credit to https://github.com/mledoze/countries
+    and for reverse geocoding:
+    https://nominatim.openstreetmap.org 
 """
-
 
 import importlib.resources as pkgres
 import icoscp
 import requests
 import json
-
 
 def get(**kwargs):
     """
