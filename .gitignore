@@ -2,6 +2,6 @@ site/
 build/
 examples/
 __pycache__/
-*.egg-info/
-*.ipynb_checkpoints/	
-.pylint*
+*.egg-info
+*.pylint.d/
+.idea/
