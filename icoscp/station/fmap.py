@@ -23,6 +23,7 @@ __date__ = "2021-09-20"
 import json
 
 import folium
+import pandas as pd
 from folium.plugins import MarkerCluster
 import requests
 
@@ -47,63 +48,33 @@ def get(queried_stations):
         `stations_map` is an interactive map used for visualizing
         geospatial data.
 
-    Raises
-    ------
-    HTTPError
-        An HTTPError exception is raised if the requested REST
-        countries data is unavailable (https://restcountries.eu/).
-
     """
 
-    # Use the https://restcountries.eu REST-ful API to request data
-    # for each country.
-    response = requests.get('https://restcountries.eu/rest/v2/all?'
-                            'fields=flag;alpha2Code;name')
-    try:
-        response.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        return "Restcountries request error: " + str(e)
-    json_countries = json.loads(response.text)
-    # Use the requested data to create a dictionary of country
-    # names, codes, and flags.
-    countries_data = {}
-    for dict_item in json_countries:
-        countries_data[dict_item['alpha2Code']] = {'name': dict_item['name'],
-                                                   'flag': dict_item['flag']}
-    # Include the 'UK' alpha2code which is missing from
-    # restcountries API.
-    countries_data['UK'] = countries_data['GB']
+    # Request countries data online.
+    response = request_rest_countries()
+    # Edit the requested data.
+    countries_data = edit_rest_countries(response)
+    stations = edit_queried_stations(queried_stations, countries_data)
     stations_map = folium.Map()
     marker_cluster = MarkerCluster()
     # Add tile layers to the folium map. Default is 'openstreetmap'.
     add_tile_layers(stations_map)
     # Use the stations at the most southwest and northeast
     # locations and bind the map within these stations.
-    sw_loc = queried_stations[['lat', 'lon']].dropna(axis=0).min().values.tolist()
-    ne_loc = queried_stations[['lat', 'lon']].dropna(axis=0).max().values.tolist()
+    sw_loc = stations[['lat', 'lon']].dropna(axis=0).min().values.tolist()
+    ne_loc = stations[['lat', 'lon']].dropna(axis=0).max().values.tolist()
     stations_map.fit_bounds([sw_loc, ne_loc])
-    # Transpose the requested stations dataframe and iterate each
-    # station.
-    queried_stations = queried_stations.transpose()
-    for station_index in queried_stations:
+    stations = stations.transpose()
+    for station_index in stations:
         # Collect each station's info from the sparql query.
-        station_info = queried_stations[station_index]
-        # Add new labels and data (using the rest-countries API) and
-        # update existing labels of the dataframe to better represent
-        # the station's information.
-        station_info['country_code'] = station_info.pop('country')
-        station_info['station_name'] = station_info.pop('name')
-        station_info['country'] = countries_data[station_info.country_code]['name']
-        station_info['flag'] = countries_data[station_info.country_code]['flag']
-        # Measurements collected from instrumented Ships of
-        # Opportunity don't have a fixed location and thus are
-        # excluded from the folium map.
-        if station_info.lat is None or station_info.lon is None:
-            continue
+        station_info = stations[station_index]
         # Create the html popup message for each station.
-        popup = folium.Popup(generate_popup_html(station_info))
-        # Set the icon for each marker according to country's code.
-        icon = folium.CustomIcon(icon_image=station_info.flag, icon_size=(20, 14))
+        popup = folium.Popup(generate_popup_html(station_info, response))
+        if response:
+            # Set the icon for each marker according to country's code.
+            icon = folium.CustomIcon(icon_image=station_info.flag, icon_size=(20, 14))
+        else:
+            icon = folium.Icon(color='blue', icon_color='white', icon='info_sign')
         # Add a marker for each station at the station's location
         # along with the popup and the tooltip.
         station_marker = folium.Marker(location=[station_info.lat, station_info.lon],
@@ -118,7 +89,7 @@ def get(queried_stations):
     return stations_map
 
 
-def generate_popup_html(station_info):
+def generate_popup_html(station_info, response):
     """Generates an html popup for an interactive folium map.
 
     For each station being processed creates an html popup with useful
@@ -142,38 +113,72 @@ def generate_popup_html(station_info):
     """
 
     # Format station's html string using data extracted from the dataframe.
-    station_html = \
-        """
-        <table border='0'>
-            <caption style='font-weight:bold;font-size:18px;padding:15px;'>
-                Station Information
-            </caption>
-            <tr style='background-color:#f8f4f4'>
-                <td style="padding:4px"><nobr>Station name</nobr></td>
-                <td style="padding:4px"><nobr><a title="{uri}" href="{uri}">
-                    {station_name}
-                </a></nobr></td>
-            </tr>
-            <tr><td style="padding:4px">Station ID</td><td style="padding:4px">{id}</td></tr>
-            <tr style='background-color:#f8f4f4'>
-                <td style="padding:4px">Country, Country code</td>
-                <td style="padding:4px"><nobr>{country} - {country_code}</nobr></td>
-            </tr>
-            <tr>
-                <td style="padding:4px"><nobr>Latitude, Longitude, Elevation</nobr></td>
-                <td style="padding:4px"><nobr>{latitude}, {longitude}, {elevation}</nobr></td>
-            </tr>
-            <tr style='background-color:#f8f4f4'>
-                <td style="padding:4px">Project</td>
-                <td style="padding:4px">{project}</td>
-            </tr>
-            <tr><td style="padding:4px">Theme</td><td style="padding:4px">{theme}</td></tr>
-        </table>
-        """.format(uri=station_info.uri, station_name=station_info.station_name,
-                   id=station_info.id, country=station_info.country,
-                   country_code=station_info.country_code, latitude=station_info.lat,
-                   longitude=station_info.lon, elevation=station_info.elevation,
-                   project=station_info.project, theme=station_info.theme)
+    if response:
+        station_html = \
+            """
+            <table border='0'>
+                <caption style='font-weight:bold;font-size:18px;padding:15px;'>
+                    Station Information
+                </caption>
+                <tr style='background-color:#f8f4f4'>
+                    <td style="padding:4px"><nobr>Station name</nobr></td>
+                    <td style="padding:4px"><nobr><a title="{uri}" href="{uri}">
+                        {station_name}
+                    </a></nobr></td>
+                </tr>
+                <tr><td style="padding:4px">Station ID</td><td style="padding:4px">{id}</td></tr>
+                <tr style='background-color:#f8f4f4'>
+                    <td style="padding:4px">Country, Country code</td>
+                    <td style="padding:4px"><nobr>{country} - {country_code}</nobr></td>
+                </tr>
+                <tr>
+                    <td style="padding:4px"><nobr>Latitude, Longitude, Elevation</nobr></td>
+                    <td style="padding:4px"><nobr>{latitude}, {longitude}, {elevation}</nobr></td>
+                </tr>
+                <tr style='background-color:#f8f4f4'>
+                    <td style="padding:4px">Project</td>
+                    <td style="padding:4px">{project}</td>
+                </tr>
+                <tr><td style="padding:4px">Theme</td><td style="padding:4px">{theme}</td></tr>
+            </table>
+            """.format(uri=station_info.uri, station_name=station_info.station_name,
+                       id=station_info.id, country=station_info.country,
+                       country_code=station_info.country_code, latitude=station_info.lat,
+                       longitude=station_info.lon, elevation=station_info.elevation,
+                       project=station_info.project, theme=station_info.theme)
+    else:
+        station_html = \
+            """
+            <table border='0'>
+                <caption style='font-weight:bold;font-size:18px;padding:15px;'>
+                    Station Information
+                </caption>
+                <tr style='background-color:#f8f4f4'>
+                    <td style="padding:4px"><nobr>Station name</nobr></td>
+                    <td style="padding:4px"><nobr><a title="{uri}" href="{uri}">
+                        {station_name}
+                    </a></nobr></td>
+                </tr>
+                <tr><td style="padding:4px">Station ID</td><td style="padding:4px">{id}</td></tr>
+                <tr style='background-color:#f8f4f4'>
+                    <td style="padding:4px">Country code</td>
+                    <td style="padding:4px"><nobr>{country_code}</nobr></td>
+                </tr>
+                <tr>
+                    <td style="padding:4px"><nobr>Latitude, Longitude, Elevation</nobr></td>
+                    <td style="padding:4px"><nobr>{latitude}, {longitude}, {elevation}</nobr></td>
+                </tr>
+                <tr style='background-color:#f8f4f4'>
+                    <td style="padding:4px">Project</td>
+                    <td style="padding:4px">{project}</td>
+                </tr>
+                <tr><td style="padding:4px">Theme</td><td style="padding:4px">{theme}</td></tr>
+            </table>
+            """.format(uri=station_info.uri, station_name=station_info['name'],
+                       id=station_info.id, country_code=station_info.country,
+                       latitude=station_info.lat, longitude=station_info.lon,
+                       elevation=station_info.elevation, project=station_info.project,
+                       theme=station_info.theme)
     # Render html from string.
     folium_html = folium.Html(station_html, script=True)
     return folium_html
@@ -211,3 +216,135 @@ def add_tile_layers(folium_map):
         opacity=1.0,
         control=True))
     return folium_map
+
+
+def request_rest_countries():
+    """Requests data from rest-countries API.
+
+    This function uses first https://restcountries.com/ and then
+    https://restcountries.eu/ API to request data (names,
+    country-codes and flags) for countries.
+
+    Returns
+    -------
+    response : dict
+        Returns a dictionary with countries data obtained from
+        rest-countries API. The `service` key validates the source of
+        the data ('com', 'eu' or False). If both requests fail the
+        `service` key has a value of False.
+
+    Raises
+    ------
+    HTTPError
+        An HTTPError exception is raised if the requested REST
+        countries data is unavailable.
+    SSLError
+        An SSLError exception is raised if the requested resources have
+        an untrusted SSL certificate.
+
+    """
+
+    response = {'service': False}
+    response_eu = None
+    response_com = None
+    try:
+        # Try to request countries data from
+        # https://restcountries.com/ REST-ful API.
+        response_com = requests.get(
+            'https://restcountries.com/v2/all?fields=name,flags,alpha2Code')
+        response_com.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.SSLError) as e:
+        print("Restcountries .com request error: " + str(e))
+        try:
+            # If the first request fails try from
+            # https://restcountries.eu REST-ful API
+            response_eu = requests.get(
+                'https://restcountries.eu/rest/v2/all?fields=name;flag;alpha2Code')
+            response_eu.raise_for_status()
+        except (requests.exceptions.HTTPError, requests.exceptions.SSLError) as e:
+            print("Restcountries .eu request error: " + str(e))
+
+    if response_com:
+        response = {'service': 'com', 'data': response_com}
+    elif response_eu:
+        response = {'service': 'eu', 'data': response_eu}
+    # If both requests failed the response will contain a False service
+    # value.
+    return response
+
+
+def edit_rest_countries(response):
+    """Edits rest-countries data.
+
+    This function uses first https://restcountries.com/ and then
+    https://restcountries.eu/ API to request data (names,
+    country-codes and flags) for countries.
+
+    Returns
+    -------
+    response : dict
+        Returns a dictionary with countries data obtained from
+        rest-countries API. The `service` key validates the source of
+        the data ('com', 'eu' or False). If both requests fail the
+        `service` key has a value of False.
+
+    Raises
+    ------
+    HTTPError
+        An HTTPError exception is raised if the requested REST
+        countries data is unavailable.
+    SSLError
+        An SSLError exception is raised if the requested resources have
+        an untrusted SSL certificate.
+
+    """
+
+    if response['service']:
+        json_countries = json.loads(response['data'].text)
+        countries_data = {}
+        # Use the requested data to create a dictionary of country
+        # names, codes, and flags.
+        for country in json_countries:
+            code = country['alpha2Code']
+            country_name = country['name']
+            if response['service'] == 'com':
+                country_flag = country['flags'][1]
+            else:
+                country_flag = country['flag']
+            countries_data[code] = {'name': country_name, 'flag': country_flag}
+        # Include the 'UK' alpha2code which is missing from
+        # restcountries API.
+        countries_data['UK'] = countries_data['GB']
+        print(countries_data)
+        return countries_data
+    else:
+        return False
+
+
+
+def edit_queried_stations(queried_stations, countries_data):
+    pd.set_option("display.max_rows", None, "display.max_columns", None)
+    edited_stations = pd.DataFrame()
+    # Transpose the requested stations dataframe and iterate each
+    # station.
+    queried_stations = queried_stations.transpose()
+    for station_index in queried_stations:
+        # Collect each station's info from the sparql query.
+        station_info = queried_stations[station_index]
+        # Measurements collected from instrumented Ships of
+        # Opportunity don't have a fixed location and thus are
+        # excluded from the folium map.
+        if station_info.lat is None or station_info.lon is None:
+            continue
+        if countries_data:
+            # Add new labels and data (using the rest-countries API) and
+            # update existing labels of the dataframe to better represent
+            # the station's information.
+            station_info['country_code'] = station_info.pop('country')
+            station_info['station_name'] = station_info.pop('name')
+            station_info['country'] = countries_data[station_info.country_code]['name']
+            station_info['flag'] = countries_data[station_info.country_code]['flag']
+        edited_stations = edited_stations.append(other=station_info)
+    return edited_stations
+
+
