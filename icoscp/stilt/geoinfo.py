@@ -22,7 +22,7 @@ import os
 import pandas as pd
 from tqdm import tqdm
 import numpy as np
-import icoscp.country as country
+from icoscp import country
 
 
 STN = 'stations.json'

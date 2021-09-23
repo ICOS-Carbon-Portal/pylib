@@ -75,7 +75,7 @@ def get(**kwargs):
         if isinstance(latlon, list) and len(latlon) == 2:
             country = _c_reverse(latlon)
         if country:
-            return _c_code(kwargs['code'], countries)
+            return _c_code(country, countries)
 
     return False
 
