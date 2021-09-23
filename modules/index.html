@@ -14,7 +14,7 @@
 
   <link rel="stylesheet" href="../css/theme.css" />
   <link rel="stylesheet" href="../css/theme_extra.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
   
   <script>
     // Current page data
@@ -25,9 +25,8 @@
   
   <script src="../js/jquery-2.1.1.min.js" defer></script>
   <script src="../js/modernizr-2.8.3.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
-  
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -41,7 +40,7 @@
         <a href=".." class="icon icon-home"> ICOS Carbon Portal pylib</a>
         <div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
@@ -224,6 +223,7 @@
   
   <hr/>
 </div>
+
           <div role="main">
             <div class="section">
               
@@ -236,7 +236,7 @@
 <li><code>from icoscp.sparql.runsparql import RunSparql</code></li>
 <li><code>from icoscp.sparql import sparqls</code></li>
 </ul>
-<p><hr><hr></p>
+<hr>
 <h2 id="dobj">Dobj</h2>
 <p>This is the basic module to load a <strong>d</strong>igital <strong>obj</strong>ect (data set) into memory. You need to know a valid persistent identifier (PID/URL) to access the data. Either you can browse the <a href="https://data.icos-cp.eu">data portal</a> to find PID's or you can use the 'station' package to find PID's programatically (see section <a href="#station">station</a>). In essence each data object is linked to a unique and persistent identifier in the form of a URL. Hence each data object has an on-line landing page. If you select any data object on <a href="https://data.icos-cp.eu">https://data.icos-cp.eu</a> and then navigate to the PID link (which looks like 11676/j7-Lxlln8_ysi4DEV8qine_v ) you end up on the 'landing' page of the document. If you look at the address bar of your browser, you will see an URL similar to <a href="https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v">https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v</a>. To access the data you need to know this URL or the last part of the URL (j7-Lxlln8_ysi4DEV8qine_v).</p>
 <p>Load the module with:<br>
@@ -251,8 +251,7 @@ myDobj = Dobj('j7-Lxlln8_ysi4DEV8qine_v')
 myDobj.dobj = "j7-Lxlln8_ysi4DEV8qine_v"
 </code></pre>
 <p><br></p>
-<h2>Attributes:</h2>
-
+<hr><h2>Attributes:</h2>
 <hr>
 
 <h3 id="dobjcitation"><strong>Dobj.citation</strong></h3>
@@ -332,7 +331,7 @@ info[2] -&gt; information about the station, where the data was obtained. Name, 
 <ul>
 <li>Return TUPLE (int32, STR), where int32 represents the size and STR the unit. Example output looks like: (4.353, 'MB')</li>
 </ul>
-<p><hr><hr></p>
+<hr>
 <h2 id="station">Station</h2>
 <p>The station module provides a search facility to explore ICOS stations and find associated data objects and data products. There is a lot of information available abouthe the ICOS stations, partner countries, measured variables and much more in the <a href="https://www.icos-cp.eu/sites/default/files/cmis/ICOS%20Handbook%202020.pdf">ICOS Handbook</a>. </p>
 <p>load the module with:</p>
@@ -340,8 +339,7 @@ info[2] -&gt; information about the station, where the data was obtained. Name, 
 </code></pre>
 <p>classmethod <strong>station.Station()</strong><br>
 The station object is primarily a data structure to store the associated meta data. The meta data is provided with specific and complex Sparql queries. It is possible to instantiate this class on its own, but we recommend to use the convenience functions <code>station.getIdList()</code> <code>station.get('StationID')</code> <code>station.getList()</code>  as described further below to create the station object. Once you have a created valid station object a list attributes are available:</p>
-<h2>Attributes:</h2>
-
+<hr><h2>Attributes:</h2>
 <hr>
 
 <h3 id="stationcountry"><strong>Station.country</strong></h3>
@@ -467,15 +465,14 @@ OS for Ocean Stations
 <ul>
 <li>Return LIST[Station Objects]</li>
 </ul>
-<p><hr><hr></p>
+<hr>
 <h2 id="collection">Collection</h2>
 <p>This module supports to load a collection of digital objects. Data products ( <a href="https://www.icos-cp.eu/data-products">https://www.icos-cp.eu/data-products</a> ) or collections are an assembly for a specific theme, or project. For example the ICOS community assembled data to provide a base for the Drought anomaly in 2018. This dataset was then used to study the impact of this extreme event, which ultimately led to a series of publications available as 'theme issue' in <a href="https://royalsocietypublishing.org/toc/rstb/2020/375/1810">The Royal Society</a>. Subsequently the data sets are now public available at the ICOS Carbon Portal ( <a href="https://www.icos-cp.eu/data-products/YVR0-4898">Drought-2018 ecosystem eddy covariance flux product for 52 stations</a> and <a href="https://www.icos-cp.eu/data-products/ERE9-9D85">Drought-2018 atmospheric CO2 Mole Fraction product for 48 stations (96 sample heights)</a>. <br></p>
 <p>Load the module with:<br>
     from icoscp.collection import collection</p>
 <p>classmethod <strong>Collection(coll)</strong><br>
 (where <code>coll</code> represents a pandas data frame, similar to the output from .getIdList()). BUT only similar. We do <strong>NOT Recommend</strong> to instantiate this class directly. Please <strong>use</strong> the function <strong>.get(CollectionId)</strong>. The Purpose of the class documentation is to provide you a list of attributes available, after the .get(CollectionId) return a collection object.</p>
-<h2>Attributes:</h2>
-
+<hr><h2>Attributes:</h2>
 <hr>
 
 <h3 id="collectionid"><strong>Collection.id</strong></h3>
@@ -547,7 +544,7 @@ myCollection = get('10.18160/ry7n-3r04')
 <ul>
 <li>Returns Collection</li>
 </ul>
-<p><hr><hr></p>
+<hr>
 <h2 id="sparql">Sparql</h2>
 <p>At the ICOS Carbon Portal we store all data and meta data as linked data in a triple store. For more information about this approach refer to <a href="https://www.w3.org/standards/semanticweb/">Semantic Web</a>, <a href="https://www.w3.org/RDF/">Resource Description Framework (RDF)</a>, and <a href="https://en.wikipedia.org/wiki/Triplestore">Triple Stores</a>.</p>
 <p>This module is a simple interface to the <a href="https://meta.icos-cp.eu/sparqlclient/?type=CSV">SPARQL endpoint</a> at the Carbon Portal. You can write your own queries and use the module to query the database or use some of the provided built in queries. </p>
@@ -555,8 +552,7 @@ myCollection = get('10.18160/ry7n-3r04')
 <code>from icoscp.sparql.runsparql import RunSparql</code></p>
 <p>classmethod <strong>RunSparql(sparql_query='', output_format='txt')</strong><br>
 sparql_query needs to be a valid query. You can test a query directly at the online SPARQL endpoint at <a href="https://meta.icos-cp.eu/sparqlclient/?type=CSV">https://meta.icos-cp.eu/sparqlclient/?type=CSV</a>. The ouput format is by default (txt/json) but you can adjust with the following formats ['json', 'csv', 'dict', 'pandas', 'array', 'html'].</p>
-<h2>Attributes:</h2>
-
+<hr><h2>Attributes:</h2>
 <hr>
 
 <h3 id="runsparqldata"><strong>RunSparql.data</strong></h3>
@@ -614,17 +610,18 @@ sparql_query needs to be a valid query. You can test a query directly at the onl
   </div>
 
   <div class="rst-versions" role="note" aria-label="versions">
-    <span class="rst-current-version" data-toggle="rst-current-version">
-      
-      
-        <span><a href="../install/" style="color: #fcfcfc;">&laquo; Previous</a></span>
-      
-      
-        <span style="margin-left: 15px"><a href="../examples/" style="color: #fcfcfc">Next &raquo;</a></span>
-      
-    </span>
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../install/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../examples/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
 </div>
     <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
     <script src="../js/theme.js" defer></script>
       <script src="../search/main.js" defer></script>
     <script defer>
