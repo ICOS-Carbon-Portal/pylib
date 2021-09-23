@@ -114,30 +114,6 @@ def __save_all():
         stations[ist]['alt']=alt
         stations[ist]['locIdent']=os.path.split(loc_ident)[-1]
 
-        # set the name and id         
-        stations[ist]['id'] = df.loc[df['STILT id'] == ist]['STILT id'].item()        
-        stationName = str(df.loc[df['STILT id'] == ist]['STILT name'].item())        
-        stations[ist]['name'] = __stationName(stations[ist]['id'], stationName, stations[ist]['alt'])        
-
-        # set a flag if it is an ICOS station
-        stn = stations[ist]['id'][0:3].upper()
-        if stn in icosStations:
-            stations[ist]['icos'] = cpstation.get(stn).info()
-        else:
-            stations[ist]['icos'] = False
-        
-        # set years and month of available data
-        years = os.listdir(CPC.STILTPATH+'/'+ist)
-        stations[ist]['years'] = years
-        for yy in sorted(stations[ist]['years']):
-            stations[ist][yy] = {}
-            months = os.listdir(CPC.STILTPATH+'/'+ist+'/'+yy)
-            # remove cache txt entry
-            sub = 'cache'
-            months = sorted([m for m in months if not sub.lower() in m.lower()])
-            stations[ist][yy]['months'] = months
-            stations[ist][yy]['nmonths'] = len(stations[ist][yy]['months'])
-    
     for s in tqdm(stations):
         stations[s]['geoinfo'] = country.get(latlon=[stations[s]['lat'],stations[s]['lon']])
         
