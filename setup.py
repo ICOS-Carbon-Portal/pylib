@@ -9,10 +9,10 @@ def readme():
 
 setuptools.setup(
     name='icoscp',
-    version='0.1.7',
+    version='0.1.8',
 	license='GPLv3+',
-    author="Claudio D'Onofrio, ICOS Carbon Portal",
-    author_email='claudio.donofrio@nateko.lu.se, info@icos-cp.eu',
+    author="Claudio D'Onofrio, Zois Zogopoulos, ICOS Carbon Portal",
+    author_email='claudio.donofrio@nateko.lu.se, zois.zogopoulos@nateko.lu.se, info@icos-cp.eu',
     description='Access to ICOS data objects hosted at https://data.icos-cp.eu',
     long_description=readme(),
     long_description_content_type='text/markdown',
