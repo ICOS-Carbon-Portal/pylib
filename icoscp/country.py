@@ -4,71 +4,74 @@
 """
     Define global (to icoscp) common tool to search for
     country information based on a static local file
-    country.json credit to https://github.com/mledoze/countries
-    and for reverse geocoding:
-    https://nominatim.openstreetmap.org 
+    country.json  -> credit to https://github.com/mledoze/countries
+    and for reverse geocoding -> credit to
+    https://nominatim.openstreetmap.org
 """
 
 import importlib.resources as pkgres
-import icoscp
-import requests
 import json
+import requests
+import icoscp
 
 def get(**kwargs):
     """
-    Search country information is based on
-    https://restcountries.eu/ and https://nominatim.openstreetmap.org
-    (for reverse geocoding).
+    Search country information.
     Please note: in case you provide more than one parameter, the order
     of keywords is not respected. The execution order is always like
     the function signature and as soon as a result is found, it will be
     returned and the search is stopped.
 
-    Accepted keywords: code='', name='', latlon=[]
+    Accepted keywords: code='', name='', latlon=[], search=''
 
     Example:
-        country(code='se')  -> returns a dict with Sweden
-        country(name='se')  -> returns a list of dict with ~10 countries
-        country(latlon=[45.5,3.15])
+        .get()                      list of dict: all countries
+        .get(code='CH')             dict: Switzerland
+        .get(name='greece')         dict: Greece
+        .get(latlon=[48.85, 2.35])  dict:
+        .get(search='europe')
 
     Parameters
     ----------
     code : STR
         Search by ISO 3166-1 2-letter or 3-letter country codes
+
     name : STR
-        search by country name. It can be the native name or partial name
+        search by country name, including alternativ spellings.
+        It can be the native name or a partial name.
+
     latlon : List[]
-        List containing  two integer or floating point numbers representing
-        latitude and longitude. Example [48.85, 2.35]
+        List with two integer or floating point numbers representing
+        latitude and longitude. BE AWARE: using an external service
+        from openstreetmap for reverse geocoding
 
-        If a list with latitude and longitude is provided, a reverse
-        geocoding is applied. If the provided point is within a country
-        a code='' search is performed as explained above.
-
+    search : STR
+        arbitrary text search, not case sensitiv, search in all fields
 
     Returns
     -------
-    DICT: for positive results for searching code or latlon
-    LIST[DICT]: for positive results for name search
+    DICT: if a single country is found
+    LIST[DICT]: list of dicts if more than one countre
     BOOL (False) if no result
 
     """
 
-    if not kwargs:
-        return False
-    
-    
+    # create a ressource file and read
     countries = pkgres.read_text(icoscp, 'countries.json')
     countries  = json.loads(countries)
-    
-        
-    if 'code' in kwargs.keys():        
+
+    if not kwargs:
+        return countries
+
+    if 'code' in kwargs.keys():
         return _c_code(kwargs['code'], countries)
-        
+
 
     if 'name' in kwargs.keys():
         return _c_name(kwargs['name'], countries)
 
+    if 'search' in kwargs.keys():
+        return _c_search(kwargs['search'], countries)
 
     if 'latlon' in kwargs.keys():
         latlon = kwargs['latlon']
@@ -79,38 +82,55 @@ def get(**kwargs):
 
     return False
 
-
-def _c_code(code, countries):        
+def _c_search(search, countries):
     country = []
-    for c in countries:
-        if code.lower() == str(c['cca2']).lower() or \
-            code.lower() == str(c['cca3']).lower():
-                country.append(c)
+    for ctn in countries:
+        if search.lower() in str(ctn).lower():
+            country.append(ctn)
+
     if not country:
         return False
-    
+
     if len(country) ==1 :
         #return the dictionary rather than the list
         return country[0]
-    else:
-        return country
+
+    return country
+
+
+def _c_code(code, countries):
+    country = []
+    for ctn in countries:
+        if code.lower() == str(ctn['cca2']).lower() or \
+            code.lower() == str(ctn['cca3']).lower():
+
+            country.append(ctn)
+    if not country:
+        return False
+
+    if len(country) ==1 :
+        #return the dictionary rather than the list
+        return country[0]
+
+    return country
 
 def _c_name(name, countries):
     country = []
-    for c in countries:
-         if name.lower() in str(c['name']).lower() \
-             or name.lower() in str(c['altSpellings']).lower():
-                 country.append(c)
-            
-            
+    for ctn in countries:
+        if name.lower() in str(ctn['name']).lower() \
+             or name.lower() in str(ctn['altSpellings']).lower():
+
+            country.append(ctn)
+
+
     if not country:
         return False
-    
+
     if len(country) ==1 :
         #return the dictionary rather than the list
         return country[0]
-    else:
-        return country
+
+    return country
 
 def _c_reverse(latlon):
     # revers geocoding
@@ -125,12 +145,27 @@ def _c_reverse(latlon):
 
 
 if __name__ == "__main__":
-    # in case it is run standalone
-    
-    a = get()
-    b = get(code='abW')
-    c = get(name='republic')
-    d = get(name='lithuania')
-    e = get(code='lithuania')
-    f = get(latlon=[42,0],name='schweiz')
-    g = get(code='fr', latlon=[56.6,2.9])
+
+    MSG = """
+
+    # find country information from a static file with the icoscp library.
+    # you can import this file with:
+
+    from icoscp import country
+
+    # arbitrary text search
+    a = get(search='Europe')
+
+    # search by country code (alpha2 & alpha3)
+    b = get(code='SE')      # returns Sweden
+    c = get(code='CHE')     # returns Switzerland
+
+    # search by name, includes alternative spellings
+    d = get(name = 'greece') # returns Greece
+    e = get(name = 'helle' ) # returns Greece and Seychelles
+
+    # search by lat lon...!! BE AWARE this is using an external
+    # rest API from OpenStreeMap https://nominatim.openstreetmap.org
+    f = get(latlon=[42.5,13.8]) # returns Italy
+    """
+    print(MSG)
