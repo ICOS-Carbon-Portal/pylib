@@ -120,22 +120,22 @@ def request_rest_countries():
     response = {'service': False}
     response_eu = None
     response_com = None
-    # try:
-    #     # Try to request countries data from
-    #     # https://restcountries.com/ REST-ful API.
-    #     response_com = requests.get(
-    #         'https://restcountries.com/v2/all?fields=name,flags,alpha2Code')
-    #     response_com.raise_for_status()
-    # except (requests.exceptions.HTTPError, requests.exceptions.SSLError) as e:
-    #     print("Restcountries .com request error: " + str(e))
-    #     try:
-    #         # If the first request fails try from
-    #         # https://restcountries.eu REST-ful API
-    #         response_eu = requests.get(
-    #             'https://restcountries.eu/rest/v2/all?fields=name;flag;alpha2Code')
-    #         response_eu.raise_for_status()
-    #     except (requests.exceptions.HTTPError, requests.exceptions.SSLError) as e:
-    #         print("Restcountries .eu request error: " + str(e))
+    try:
+        # Try to request countries data from
+        # https://restcountries.com/ REST-ful API.
+        response_com = requests.get(
+            'https://restcountries.com/v2/all?fields=name,flags,alpha2Code')
+        response_com.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.SSLError) as e:
+        print("Restcountries .com request error: " + str(e))
+        try:
+            # If the first request fails try from
+            # https://restcountries.eu REST-ful API
+            response_eu = requests.get(
+                'https://restcountries.eu/rest/v2/all?fields=name;flag;alpha2Code')
+            response_eu.raise_for_status()
+        except (requests.exceptions.HTTPError, requests.exceptions.SSLError) as e:
+            print("Restcountries .eu request error: " + str(e))
 
     if response_com:
         response = {'service': 'com', 'data': response_com}
