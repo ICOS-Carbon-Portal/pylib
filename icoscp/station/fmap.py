@@ -53,25 +53,27 @@ def get(queried_stations):
     # Request countries data online.
     response = request_rest_countries()
     # Edit the requested data.
-    countries_data = edit_rest_countries(response)
-    stations = edit_queried_stations(queried_stations, countries_data)
+    edited_response = collect_rest_data(response)
+    # Apply countries data on the queried stations and remove stations
+    # without a fixed location.
+    stations = edit_queried_stations(queried_stations, edited_response)
     stations_map = folium.Map()
     marker_cluster = MarkerCluster()
     # Add tile layers to the folium map. Default is 'openstreetmap'.
     add_tile_layers(stations_map)
-    # Use the stations at the most southwest and northeast
-    # locations and bind the map within these stations.
+    # Use the stations at the most southwest and northeast locations
+    # and bind the map within these stations.
     sw_loc = stations[['lat', 'lon']].dropna(axis=0).min().values.tolist()
     ne_loc = stations[['lat', 'lon']].dropna(axis=0).max().values.tolist()
     stations_map.fit_bounds([sw_loc, ne_loc])
     stations = stations.transpose()
     for station_index in stations:
-        # Collect each station's info from the sparql query.
+        # Collect each station's info.
         station_info = stations[station_index]
         # Create the html popup message for each station.
         popup = folium.Popup(generate_popup_html(station_info, response))
-        if response:
-            # Set the icon for each marker according to country's code.
+        if response['service']:
+            # Set the icon for each marker using the country's flag.
             icon = folium.CustomIcon(icon_image=station_info.flag, icon_size=(20, 14))
         else:
             icon = folium.Icon(color='blue', icon_color='white', icon='info_sign')
@@ -89,6 +91,192 @@ def get(queried_stations):
     return stations_map
 
 
+def request_rest_countries():
+    """Requests data from rest-countries API.
+
+    This function uses first https://restcountries.com/ and then
+    https://restcountries.eu/ API to request data (names,
+    country-codes and flags) for countries.
+
+    Returns
+    -------
+    response : dict
+        Returns a dictionary with countries data obtained from
+        rest-countries API. The `service` key validates the source of
+        the data ('com', 'eu' or False). If both requests fail the
+        `service` key has a value of False.
+
+    Raises
+    ------
+    HTTPError
+        An HTTPError exception is raised if the requested REST
+        countries data is unavailable.
+    SSLError
+        An SSLError exception is raised if the requested resources have
+        an untrusted SSL certificate.
+
+    """
+
+    response = {'service': False}
+    response_eu = None
+    response_com = None
+    # try:
+    #     # Try to request countries data from
+    #     # https://restcountries.com/ REST-ful API.
+    #     response_com = requests.get(
+    #         'https://restcountries.com/v2/all?fields=name,flags,alpha2Code')
+    #     response_com.raise_for_status()
+    # except (requests.exceptions.HTTPError, requests.exceptions.SSLError) as e:
+    #     print("Restcountries .com request error: " + str(e))
+    #     try:
+    #         # If the first request fails try from
+    #         # https://restcountries.eu REST-ful API
+    #         response_eu = requests.get(
+    #             'https://restcountries.eu/rest/v2/all?fields=name;flag;alpha2Code')
+    #         response_eu.raise_for_status()
+    #     except (requests.exceptions.HTTPError, requests.exceptions.SSLError) as e:
+    #         print("Restcountries .eu request error: " + str(e))
+
+    if response_com:
+        response = {'service': 'com', 'data': response_com}
+    elif response_eu:
+        response = {'service': 'eu', 'data': response_eu}
+    # If both requests failed the response will contain a False service
+    # value.
+    return response
+
+
+def collect_rest_data(response):
+    """Extracts raw rest-countries data from requested resources.
+
+    Parameters
+    ----------
+    response : dict
+        If the requested resources were available the `response`
+        dictionary will contain the raw rest-countries data along with
+        the origin of the resource.
+
+    Returns
+    -------
+    response : dict
+        Returns an updated version of the `response` dictionary
+        obtained from `request_rest_countries()` function. If any of
+        HTTP requests were successful, this version will include the
+        rest-countries data that was extracted from the requests.
+
+    """
+
+    # Rest-countries resources are available.
+    if response['service']:
+        json_countries = json.loads(response['data'].text)
+        countries_data = {}
+        # Use the requested data to create a dictionary of country
+        # names, codes, and flags.
+        for country in json_countries:
+            code = country['alpha2Code']
+            country_name = country['name']
+            if response['service'] == 'com':
+                country_flag = country['flags'][1]
+            else:
+                country_flag = country['flag']
+            countries_data[code] = {'name': country_name, 'flag': country_flag}
+        # Include the 'UK' alpha2code which is missing from
+        # restcountries API.
+        countries_data['UK'] = countries_data['GB']
+        # Add the created dictionary to the response.
+        response['countries_data'] = countries_data
+    return response
+
+
+def edit_queried_stations(queried_stations, edited_response):
+    """Applies new data on queried stations.
+
+    Uses the `edited_response` dictionary to add data to the queried
+    stations which are then appended to a new dataframe.
+
+    Parameters
+    ----------
+    queried_stations : pandas.Dataframe
+        `queried_stations` dataframe includes each station's landing
+        page or (uri), id, name, country, lat, lon, elevation, project,
+        and theme.
+    edited_response: dict
+        `edited_response` is an updated version of the `response`
+        dictionary obtained from `request_rest_countries()` function.
+        If any of HTTP requests were successful, this version will
+        include the rest-countries data that was extracted using the
+        `collect_rest_data()` function.
+
+    Returns
+    -------
+    edited_stations : pandas.Dataframe
+        `edited_stations` is an updated version of the
+        `queried_stations` dataframe which was obtained using a sparql
+        query. Also this edited version is stripped off stations
+        without a fixed position (Instrumented ships of opportunity).
+
+    """
+
+    edited_stations = pd.DataFrame()
+    # Transpose the requested stations dataframe and iterate each
+    # station.
+    queried_stations = queried_stations.transpose()
+    for station_index in queried_stations:
+        # Collect each station's info from the sparql query.
+        station_info = queried_stations[station_index]
+        # Measurements collected from instrumented Ships of
+        # Opportunity don't have a fixed location and thus are
+        # excluded from the folium map.
+        if station_info.lat is None or station_info.lon is None:
+            continue
+        # The requested resources are available.
+        if edited_response['service']:
+            countries_data = edited_response['countries_data']
+            # Add new labels and data (using the rest-countries API) and
+            # update existing labels of the dataframe to better represent
+            # the station's information.
+            station_info['country_code'] = station_info.pop('country')
+            station_info['station_name'] = station_info.pop('name')
+            station_info['country'] = countries_data[station_info.country_code]['name']
+            station_info['flag'] = countries_data[station_info.country_code]['flag']
+        edited_stations = edited_stations.append(other=station_info)
+    return edited_stations
+
+
+def add_tile_layers(folium_map):
+    """Adds multiple layers to a folium map.
+
+    Parameters
+    ----------
+    folium_map : folium.Map
+        `folium_map` is the parent element to which all tile layers
+        (children elements) will be added.
+
+    Returns
+    -------
+    folium_map : folium.Map
+        Returns an updated version of the `folium_map`.
+
+    """
+
+    # Add built-in tile layers.
+    folium_map.add_child(folium.TileLayer('cartodbpositron'))
+    folium_map.add_child(folium.TileLayer('cartodbdark_matter'))
+    folium_map.add_child(folium.TileLayer('stamenwatercolor'))
+    folium_map.add_child(folium.TileLayer('stamentoner'))
+    folium_map.add_child(folium.TileLayer('stamenterrain'))
+    # Add another layer with satellite images from ESRI.
+    folium_map.add_child(folium.TileLayer(
+        tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
+              '/tile/{z}/{y}/{x}',
+        attr='Esri',
+        name='Esri Satellite',
+        overlay=False,
+        opacity=1.0,
+        control=True))
+    return folium_map
+
+
 def generate_popup_html(station_info, response):
     """Generates an html popup for an interactive folium map.
 
@@ -103,6 +291,11 @@ def generate_popup_html(station_info, response):
         version includes a landing page or (uri), id, lat, lon,
         elevation, project, theme, country_code, station_name, country,
         and flag.
+    response : dict
+        An updated version of the `response` dictionary
+        obtained from `request_rest_countries()` function. If any of
+        HTTP requests were successful, this version will include the
+        rest-countries data that was extracted from the requests.
 
     Returns
     -------
@@ -113,7 +306,7 @@ def generate_popup_html(station_info, response):
     """
 
     # Format station's html string using data extracted from the dataframe.
-    if response:
+    if response['service']:
         station_html = \
             """
             <table border='0'>
@@ -184,167 +377,7 @@ def generate_popup_html(station_info, response):
     return folium_html
 
 
-def add_tile_layers(folium_map):
-    """Adds multiple layers to a folium map.
-
-    Parameters
-    ----------
-    folium_map : folium.Map
-        `folium_map` is the parent element to which all tile layers
-        (children elements) will be added.
-
-    Returns
-    -------
-    folium_map : folium.Map
-        Returns an updated version of the `folium_map`.
-
-    """
-
-    # Add built-in tile layers.
-    folium_map.add_child(folium.TileLayer('cartodbpositron'))
-    folium_map.add_child(folium.TileLayer('cartodbdark_matter'))
-    folium_map.add_child(folium.TileLayer('stamenwatercolor'))
-    folium_map.add_child(folium.TileLayer('stamentoner'))
-    folium_map.add_child(folium.TileLayer('stamenterrain'))
-    # Add another layer with satellite images from ESRI.
-    folium_map.add_child(folium.TileLayer(
-        tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
-              '/tile/{z}/{y}/{x}',
-        attr='Esri',
-        name='Esri Satellite',
-        overlay=False,
-        opacity=1.0,
-        control=True))
-    return folium_map
 
 
-def request_rest_countries():
-    """Requests data from rest-countries API.
-
-    This function uses first https://restcountries.com/ and then
-    https://restcountries.eu/ API to request data (names,
-    country-codes and flags) for countries.
-
-    Returns
-    -------
-    response : dict
-        Returns a dictionary with countries data obtained from
-        rest-countries API. The `service` key validates the source of
-        the data ('com', 'eu' or False). If both requests fail the
-        `service` key has a value of False.
-
-    Raises
-    ------
-    HTTPError
-        An HTTPError exception is raised if the requested REST
-        countries data is unavailable.
-    SSLError
-        An SSLError exception is raised if the requested resources have
-        an untrusted SSL certificate.
-
-    """
-
-    response = {'service': False}
-    response_eu = None
-    response_com = None
-    try:
-        # Try to request countries data from
-        # https://restcountries.com/ REST-ful API.
-        response_com = requests.get(
-            'https://restcountries.com/v2/all?fields=name,flags,alpha2Code')
-        response_com.raise_for_status()
-    except (requests.exceptions.HTTPError, requests.exceptions.SSLError) as e:
-        print("Restcountries .com request error: " + str(e))
-        try:
-            # If the first request fails try from
-            # https://restcountries.eu REST-ful API
-            response_eu = requests.get(
-                'https://restcountries.eu/rest/v2/all?fields=name;flag;alpha2Code')
-            response_eu.raise_for_status()
-        except (requests.exceptions.HTTPError, requests.exceptions.SSLError) as e:
-            print("Restcountries .eu request error: " + str(e))
-
-    if response_com:
-        response = {'service': 'com', 'data': response_com}
-    elif response_eu:
-        response = {'service': 'eu', 'data': response_eu}
-    # If both requests failed the response will contain a False service
-    # value.
-    return response
-
-
-def edit_rest_countries(response):
-    """Edits rest-countries data.
-
-    This function uses first https://restcountries.com/ and then
-    https://restcountries.eu/ API to request data (names,
-    country-codes and flags) for countries.
-
-    Returns
-    -------
-    response : dict
-        Returns a dictionary with countries data obtained from
-        rest-countries API. The `service` key validates the source of
-        the data ('com', 'eu' or False). If both requests fail the
-        `service` key has a value of False.
-
-    Raises
-    ------
-    HTTPError
-        An HTTPError exception is raised if the requested REST
-        countries data is unavailable.
-    SSLError
-        An SSLError exception is raised if the requested resources have
-        an untrusted SSL certificate.
-
-    """
-
-    if response['service']:
-        json_countries = json.loads(response['data'].text)
-        countries_data = {}
-        # Use the requested data to create a dictionary of country
-        # names, codes, and flags.
-        for country in json_countries:
-            code = country['alpha2Code']
-            country_name = country['name']
-            if response['service'] == 'com':
-                country_flag = country['flags'][1]
-            else:
-                country_flag = country['flag']
-            countries_data[code] = {'name': country_name, 'flag': country_flag}
-        # Include the 'UK' alpha2code which is missing from
-        # restcountries API.
-        countries_data['UK'] = countries_data['GB']
-        print(countries_data)
-        return countries_data
-    else:
-        return False
-
-
-
-def edit_queried_stations(queried_stations, countries_data):
-    pd.set_option("display.max_rows", None, "display.max_columns", None)
-    edited_stations = pd.DataFrame()
-    # Transpose the requested stations dataframe and iterate each
-    # station.
-    queried_stations = queried_stations.transpose()
-    for station_index in queried_stations:
-        # Collect each station's info from the sparql query.
-        station_info = queried_stations[station_index]
-        # Measurements collected from instrumented Ships of
-        # Opportunity don't have a fixed location and thus are
-        # excluded from the folium map.
-        if station_info.lat is None or station_info.lon is None:
-            continue
-        if countries_data:
-            # Add new labels and data (using the rest-countries API) and
-            # update existing labels of the dataframe to better represent
-            # the station's information.
-            station_info['country_code'] = station_info.pop('country')
-            station_info['station_name'] = station_info.pop('name')
-            station_info['country'] = countries_data[station_info.country_code]['name']
-            station_info['flag'] = countries_data[station_info.country_code]['flag']
-        edited_stations = edited_stations.append(other=station_info)
-    return edited_stations
 
 
