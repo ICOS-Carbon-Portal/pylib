@@ -336,7 +336,19 @@ def get(id=None):
     LIST[stiltstation]
 
     """
+    '''localdev
+    '''
     
+    import json
+    with open('stns.json') as json_file:
+            stations = json.load(json_file)
+    
+    return stations
+    
+        
+    '''
+    end of localdev
+    '''            
     stationslist = []
 
     if isinstance(id,str):
@@ -375,14 +387,14 @@ def get(id=None):
 #test = find(edate='2005-01-01')
 #myStations = find(sdate= '2018-01-01', edate='2018-05-30')
 #myStations = find(dates=['2016', '2016-01', '2016-25-01', '2016/01/24'])
-myStations = find(sdate= '2018', edate='2018', dates=['2020'])
+#myStations = find(sdate= '2018', edate='2018', dates=['2020'])
 #myStations = find(dates=['2016-05'])
 #myStations = find(sdate= '2018-05-01', edate='2018-08-01')
 #print(find(id='HTm030'))
 
 #g = get('KITTY')
 
-#g1 = get('HTM030')
+g1 = get('HTM030')
 #print(g1)
 """
 g2 = get(['HTM030','HTM150'])

@@ -8,7 +8,7 @@
     
 """
 
-__author__      = ["Karolina Pantazatou"]
+__author__      = ["Karolina Pantazatou", "Claudio DOnofrio"]
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
 __version__     = "0.0.2"
@@ -19,7 +19,6 @@ __lastchange__  = ["Claudio DOnofrio"]
 ###############################################################################
 
 #Import modules:
-import re
 from datetime import date
 import pandas as pd
 ###############################################################################
@@ -45,64 +44,39 @@ def get_st_dates(st_dict):
     return (stilt_s_date, stilt_e_date)
 ###############################################################################
 
-def check_hours(ls):
-     
-    def check_hour_str(h_str):
-        
-        #Create & initialize control-variables:
-        check_hour = False
-        check_mins = False
-        
-        #Check if input variable is a string:
-        if(isinstance(h_str, str)):
-            
-            #Check if input time-string follows the format "HH:MM":
-            matched = re.match("[0-9][0-9]:[0-9][0-9]", h_str)
-            
-            #If the input time-string follows the format "HH:MM"
-            if(bool(matched)):
-                
-                #Check hour-values:
-                if((int(h_str[0:2])>=0) & (int(h_str[0:2])<=23)):
-                    check_hour = True
-                    
-                else:
-                    print('Invalid entry! Valid hour-values range from "00" to "23"...')
-                    
-                #Check minute-values:
-                if((int(h_str[3:5])>=0) & (int(h_str[3:5])<=59)):
-                    check_mins = True
-                    
-                else:
-                    print('Invalid entry! Valid minute-values range from "00" to "59"...')
-            
-            else:
-                print('Invalid input parameter! Expected a string entry with the format "HH:MM"...')
-                
-        else:
-            print('Error! Expected hour-value to be inserted as a string...')
-        
-        if(check_hour & check_mins):
-            return True
-        else:
-            return False
-            
+def get_hours(hours):
+    """
+    STILT results are availabe in 3 hour times slots: 0 3 6 9 12 15 18 21
+    You may choose to return only results for a specific time slot.
+    Selection of hours: Input is expected to be a list or convertible to a list
+    where each item can be casted to integer in the range of 0 to 23.
     
-    #Create & initialize control-variable:    
-    check = False
+    If hours is empty or None, ALL Timeslots are returned.
+    Valid results are returned as result with LOWER BOUND values.
+    Example:    hours = [2,3,4] will return Timeslots for 0, 3 
+                hours = [2,3,4,5,6] will return Timeslots for 0,3 and 6
+                hours = [] return ALL
+                hours = [10] returns timeslot 9
+    """
+    valid = [0,3,6,9,12,15,18,21,24]
+    valid_hours = []
+    for h in hours:
+        h = int(h)
+        if h < 0 or h > 24:
+            pass
+        for i in range(0,8):
+            if h >= valid[i] and h < valid[i+1]:
+                valid_hours.append(valid[i])
+                break                
+    # make sure we have unique values
+    valid_hours = list(set(valid_hours))
     
-    #Check if input variable is a list:
-    if (isinstance(ls, list)):
-        
-        check_ls = [check_hour_str(hour_string) for hour_string in ls]
-        
-        if(False not in check_ls):
-            check = True
-            
+    if not hours:
+        # return ALL in case no hours or only invalid hours are provided
+        return valid[0:8]
     else:
-        print('Invalid input parameter! Expected a list...')
+        return valid_hours
     
-    return check
 ###############################################################################
 
 def parse(date):

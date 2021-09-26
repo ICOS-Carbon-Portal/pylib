@@ -98,8 +98,8 @@ class StiltStation():
         return json.dumps(out)
         
     #----------------------------------------------------------------------------------------------------------
-    def get_ts(self, sdate, edate, hours=['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00'], columns='default'):
-
+    def get_ts(self, start_date, end_date, hours=[], columns='default'):
+        
         """
         Project:         'ICOS Carbon Portal'
         Created:          Mon Oct 08 10:30:00 2018
@@ -112,7 +112,10 @@ class StiltStation():
                           returns the available STILT concentration time series in a
                           pandas dataframe.
 
-
+        Input: 
+            columns, STR, "default", "co2", "co", "rn", "wind", "latlon", "all"
+            
+            default return ["isodate","co2.stilt","co2.fuel","co2.bio", "co2.background"]
 
         Output:           Pandas Dataframe
 
@@ -125,141 +128,199 @@ class StiltStation():
         """
 
         #Convert date-strings to date objs:
-        s_date = tf.str_to_date(sdate)
-        e_date = tf.str_to_date(edate)
+        s_date = tf.parse(start_date)        
+        e_date = tf.parse(end_date)
+        hours = tf.get_hours(hours)
+
+        # Check input parameters:
+        if e_date < s_date:
+            return False
+        
+        if not hours:
+            return False
 
         #Create an empty dataframe to store the timeseries:
         df=pd.DataFrame({'A' : []})
 
-        #Check date input parameters:
-        if (tf.check_dates(s_date, e_date) & checks.check_stilt_hours(hours) & (len(checks.check_columns(columns))>0)):
+        #Add headers:
+        headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
 
-            #Add headers:
-            headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
+        #Create an empty list, to store the new time range with available STILT model results:
+        new_range=[]
 
-            #Create an empty list, to store the new time range with available STILT model results:
-            new_range=[]
+        #Create a pandas dataframe containing one column of datetime objects with 3-hour intervals:
+        #date_range = pd.date_range(start_date, end_date+dt.timedelta(hours=24), freq='3H')
+        date_range = pd.date_range(s_date, e_date, freq='3H')
+        
+        #Loop through every Datetime object in the dataframe:
+        for zDate in date_range:
 
-            #Create a pandas dataframe containing one column of datetime objects with 3-hour intervals:
-            #date_range = pd.date_range(start_date, end_date+dt.timedelta(hours=24), freq='3H')
-            date_range = pd.date_range(s_date, e_date, freq='3H')
+            #Check if STILT results exist:
+            if os.path.exists(self._path_fp + self.locIdent + '/' +
+                              str(zDate.year)+'/'+str(zDate.month).zfill(2)+'/'+
+                              str(zDate.year)+'x'+str(zDate.month).zfill(2)+'x'+str(zDate.day).zfill(2)+'x'+
+                              str(zDate.hour).zfill(2)+'/'):
 
-            #Loop through every Datetime object in the dataframe:
-            for zDate in date_range:
+                #If STILT-results exist for the current Datetime object, append current Datetime object to list:
+                new_range.append(zDate)
 
-                #Check if STILT results exist:
-                if os.path.exists(self._path_fp + self.locIdent + '/' +
-                                  str(zDate.year)+'/'+str(zDate.month).zfill(2)+'/'+
-                                  str(zDate.year)+'x'+str(zDate.month).zfill(2)+'x'+str(zDate.day).zfill(2)+'x'+
-                                  str(zDate.hour).zfill(2)+'/'):
+        #If the list is not empty:
+        if len(new_range) > 0:
 
-                    #If STILT-results exist for the current Datetime object, append current Datetime object to list:
-                    new_range.append(zDate)
+            #Assign the new time range to date_range:
+            date_range = new_range
 
-            #If the list is not empty:
-            if len(new_range) > 0:
+            #Get new starting date:
+            fromDate = date_range[0].strftime('%Y-%m-%d')
 
-                #Assign the new time range to date_range:
-                date_range = new_range
+            #Get new ending date:
+            toDate = date_range[-1].strftime('%Y-%m-%d')
 
-                #Get new starting date:
-                fromDate = date_range[0].strftime('%Y-%m-%d')
+            #Store the STILT result column names to a variable:            
+            columns  = self.__columns(columns)
 
-                #Get new ending date:
-                toDate = date_range[-1].strftime('%Y-%m-%d')
+            #Store the STILT result data column names to a variable:
+            data = '{"columns": '+columns+', "fromDate": "'+fromDate+'", "toDate": "'+toDate+'", "stationId": "'+self.id+'"}'
 
-                #Store the STILT result column names to a variable:
-                #Obs! Check if cols is empty - if so prompt error msg and break, else continue
-                columns = (checks.check_columns(columns))
+            #Send request to get STILT results:
+            response = requests.post(self._url, headers=headers, data=data)
 
-                #Store the STILT result data column names to a variable:
-                data = '{"columns": '+columns+', "fromDate": "'+fromDate+'", "toDate": "'+toDate+'", "stationId": "'+self.id+'"}'
+            #Check if response is successful:
+            if response.status_code != 500:
 
-                #Send request to get STILT results:
-                response = requests.post(self._url, headers=headers, data=data)
+                #Get response in json-format and read it in to a numpy array:
+                output=np.asarray(response.json())
 
-                #Check if response is successful:
-                if response.status_code != 500:
+                #Convert numpy array with STILT results to a pandas dataframe:
+                df = pd.DataFrame(output[:,:], columns=eval(columns))
 
-                    #Get response in json-format and read it in to a numpy array:
-                    output=np.asarray(response.json())
+                #Replace 'null'-values with numpy NaN-values:
+                df = df.replace('null',np.NaN)
 
-                    #Convert numpy array with STILT results to a pandas dataframe:
-                    df = pd.DataFrame(output[:,:], columns=eval(columns))
+                #Set dataframe data type to float:
+                df = df.astype(float)
 
-                    #Replace 'null'-values with numpy NaN-values:
-                    df = df.replace('null',np.NaN)
+                #Convert the data type of the 'date'-column to Datetime Object:
+                df['date'] = pd.to_datetime(df['isodate'], unit='s')
 
-                    #Set dataframe data type to float:
-                    df = df.astype(float)
+                #Set 'date'-column as index:
+                df.set_index(['date'],inplace=True)
 
-                    #Convert the data type of the 'date'-column to Datetime Object:
-                    df['date'] = pd.to_datetime(df['isodate'], unit='s')
+                #Filter dataframe values by timeslots:
+                hours = [str(h).zfill(2) for h in hours]
+                df = df.loc[df.index.strftime('%H').isin(hours)]
 
-                    #Set 'date'-column as index:
-                    df.set_index(['date'],inplace=True)
+            else:
 
-                    #Filter dataframe values by timeslots:
-                    df = df.loc[df.index.strftime('%H:%M').isin(hours)]
-
-                else:
-
-                    #Print message:
-                    print("\033[0;31;1m Error...\nToo big STILT dataset!\nSelect data for a shorter time period.\n\n")
+                #Print message:
+                print("\033[0;31;1m Error...\nToo big STILT dataset!\nSelect data for a shorter time period.\n\n")
 
         #Return dataframe:
         return df
     #----------------------------------------------------------------------------------------------------------
 
 
-    def get_fp(self, start_date, end_date, hours=['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00']):
+    def get_fp(self, start_date, end_date, hours=[]):
 
         #Convert date-strings to date objs:
-        s_date = tf.str_to_date(start_date)
-        e_date = tf.str_to_date(end_date)
+        s_date = tf.parse(start_date)        
+        e_date = tf.parse(end_date)
+        hours = tf.get_hours(hours)
 
+        # Check input parameters:
+        if e_date < s_date:
+            return False
+        
+        if not hours:
+            return False
+        
         #Define & initialize footprint variable:
         fp = xr.DataArray()
 
-        #Check date input parameters:
-        if (tf.check_dates(s_date, e_date) & checks.check_stilt_hours(hours)):
+        #Create a pandas dataframe containing one column of datetime objects with 3-hour intervals:
+        date_range = pd.date_range(start_date, end_date, freq='3H')
 
-            #Create a pandas dataframe containing one column of datetime objects with 3-hour intervals:
-            date_range = pd.date_range(start_date, end_date, freq='3H')
+        #Filter date_range by timeslots:
+        date_range = [t for t in date_range if int(t.strftime('%H')) in hours]
 
-            #Filter date_range by timeslots:
-            date_range = [t for t in date_range if t.strftime('%H:%M') in hours]
+        #Loop over all dates and store the corresponding fp filenames in a list:
+        fp_files = [(self._path_fp + self.locIdent +'/'+
+                     str(dd.year)+'/'+str(dd.month).zfill(2)+'/'+
+                     str(dd.year)+'x'+str(dd.month).zfill(2)+'x'+
+                     str(dd.day).zfill(2)+'x'+str(dd.hour).zfill(2)+'/foot')
+                    for dd in date_range
+                    if os.path.isfile(self._path_fp + self.locIdent +'/'+
+                                      str(dd.year)+'/'+str(dd.month).zfill(2)+'/'+
+                                      str(dd.year)+'x'+str(dd.month).zfill(2)+'x'+
+                                      str(dd.day).zfill(2)+'x'+str(dd.hour).zfill(2)+'/foot')]
 
-            #Loop over all dates and store the corresponding fp filenames in a list:
-            fp_files = [(self._path_fp + self.locIdent +'/'+
-                         str(dd.year)+'/'+str(dd.month).zfill(2)+'/'+
-                         str(dd.year)+'x'+str(dd.month).zfill(2)+'x'+
-                         str(dd.day).zfill(2)+'x'+str(dd.hour).zfill(2)+'/foot')
-                        for dd in date_range
-                        if os.path.isfile(self._path_fp + self.locIdent +'/'+
-                                          str(dd.year)+'/'+str(dd.month).zfill(2)+'/'+
-                                          str(dd.year)+'x'+str(dd.month).zfill(2)+'x'+
-                                          str(dd.day).zfill(2)+'x'+str(dd.hour).zfill(2)+'/foot')]
+        #Concatenate xarrays on time axis:
+        fp = xr.open_mfdataset(fp_files, concat_dim="time",
+                               data_vars='minimal', coords='minimal',
+                               compat='override', parallel=True)
 
-            #Concatenate xarrays on time axis:
-            fp = xr.open_mfdataset(fp_files, concat_dim="time",
-                                   data_vars='minimal', coords='minimal',
-                                   compat='override', parallel=True)
+        #Format time attributes:
+        fp.time.attrs["standard_name"] = "time"
+        fp.time.attrs["axis"] = "T"
 
-            #Format time attributes:
-            fp.time.attrs["standard_name"] = "time"
-            fp.time.attrs["axis"] = "T"
+        #Format latitude attributes:
+        fp.lat.attrs["axis"] = "Y"
+        fp.lat.attrs["standard_name"] = "latitude"
 
-            #Format latitude attributes:
-            fp.lat.attrs["axis"] = "Y"
-            fp.lat.attrs["standard_name"] = "latitude"
-
-            #Format longitude attributes:
-            fp.lon.attrs["axis"] = "X"
-            fp.lon.attrs["standard_name"] = "longitude"
+        #Format longitude attributes:
+        fp.lon.attrs["axis"] = "X"
+        fp.lon.attrs["standard_name"] = "longitude"
 
         #Return footprint array:
         return fp
+
+    #Function that checks the selection of columns that are to be 
+    #returned with the STILT timeseries model output:
+    def __columns(self, cols):
+        
+        # check for a valid entry. If not...return default
+        valid = ["default", "co2", "co", "rn", "wind", "latlon", "all"]
+        if cols not in valid:
+            cols = 'default'
+        
+        #Check columns-input:
+        if cols=='default':
+            columns = ('["isodate","co2.stilt","co2.fuel","co2.bio", "co2.background"]')
+                
+        elif cols=='co2':
+            columns = ('["isodate","co2.stilt","co2.fuel","co2.bio","co2.fuel.coal",'+
+                    '"co2.fuel.oil","co2.fuel.gas","co2.fuel.bio","co2.energy",'+
+                    '"co2.transport", "co2.industry","co2.others", "co2.cement",'+
+                    '"co2.background"]')
+                
+        elif cols=='co':
+            columns = ('["isodate", "co.stilt","co.fuel","co.bio","co.fuel.coal",'+
+                    '"co.fuel.oil", "co.fuel.gas","co.fuel.bio","co.energy",'+
+                    '"co.transport","co.industry", "co.others", "co.cement",'+
+                    '"co.background"]')
+                
+        elif cols=='rn':
+            columns = ('["isodate", "rn", "rn.era", "rn.noah"]')
+                
+        elif cols=='wind':
+            columns = ('["isodate", "wind.dir", "wind.u", "wind.v"]')
+            
+        elif cols=='latlon':
+            columns = ('["isodate", "latstart", "lonstart"]')
+                
+        elif cols=='all':
+            columns = ('["isodate","co2.stilt","co2.fuel","co2.bio","co2.fuel.coal",'+
+                    '"co2.fuel.oil","co2.fuel.gas","co2.fuel.bio","co2.energy",'+
+                    '"co2.transport", "co2.industry","co2.others", "co2.cement",'+
+                    '"co2.background", "co.stilt","co.fuel","co.bio","co.fuel.coal",'+
+                    '"co.fuel.oil","co.fuel.gas","co.fuel.bio","co.energy",'+
+                    '"co.transport","co.industry","co.others", "co.cement",'+
+                    '"co.background","rn", "rn.era","rn.noah","wind.dir",'+
+                    '"wind.u","wind.v","latstart","lonstart"]')
+
+        
+        #Return variable:
+        return columns
 
 # ----------------------------------- End of STILT Station Class ------------------------------------- #
 
