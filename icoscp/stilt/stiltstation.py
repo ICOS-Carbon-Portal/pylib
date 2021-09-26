@@ -25,7 +25,6 @@ import icoscp.const as CPC
 import xarray as xr
 
 from icoscp.stilt import timefuncs as tf
-from icoscp.stilt import checks
 ##############################################################################
 
 class StiltStation():
