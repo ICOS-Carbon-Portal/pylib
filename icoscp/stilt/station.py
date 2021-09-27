@@ -85,11 +85,15 @@ def _outfmt(kwargs, stations):
     else:
         fmt = 'dict'
     
-    # make sure we have a valid keyword, else set default
+    # make sure we have a valid keyword, else set default dict
     valid = ['dict', 'list', 'pandas', 'map']
     if not fmt in valid:
             fmt = 'dict'
-
+    
+    if fmt == 'dict':        
+        #default
+        return stations
+    
     if fmt == 'pandas':
         df = pd.DataFrame().from_dict(stations)
         return df.transpose()

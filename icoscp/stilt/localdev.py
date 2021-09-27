@@ -400,8 +400,9 @@ def get(id=None):
         return stationslist[0]
     else:
         return stationslist
-"""
+
 test = find(search='sweden', outfmt='dict')
+"""
 test = find(search='sweden', outfmt='list')
 test = find(search='sweden', outfmt='pandas')
 test = find(search='sweden', outfmt='')
