@@ -154,6 +154,7 @@ def _dates(kwargs, stations):
         print('Dates is not a list.')
         return {}
     
+    
     # parse all dates to a clean list
     dates = [tf.parse(d) for d in kwargs['dates']]
     # remove Nones
@@ -179,8 +180,6 @@ def __daterange(kwargs, stations):
     """
     sdate = tf.parse(kwargs['daterange'][0])
     edate =  tf.parse(kwargs['daterange'][1])
-    #sdate =  tf.str_to_date(kwargs['daterange'][0])
-    #edate =  tf.str_to_date(kwargs['daterange'][1])
     
     # return an empyt dict, if date is not a date object
     if not sdate or not edate:
@@ -360,10 +359,13 @@ def get(id=None):
     '''
     
     import json
-    with open('stns.json') as json_file:
+    with open('stations.json') as json_file:
             stations = json.load(json_file)
     
-    return stations
+    stationslist = []
+    for s in id:
+        stationslist.append(StiltStation(stations[s]))
+    return stationslist
     
         
     '''
@@ -399,24 +401,24 @@ def get(id=None):
     else:
         return stationslist
 """
-greece = find(search='sweden', outfmt='dict')
-greece = find(search='sweden', outfmt='list')
-greece = find(search='sweden', outfmt='pandas')
-greece = find(search='sweden', outfmt='')
-greece = find(search='sweden', outfmt='something')
-greece = find(search='sweden')
+test = find(search='sweden', outfmt='dict')
+test = find(search='sweden', outfmt='list')
+test = find(search='sweden', outfmt='pandas')
+test = find(search='sweden', outfmt='')
+test = find(search='sweden', outfmt='something')
+test = find(search='sweden')
+
+test = find(id='KIT030', outfmt='list')
+test = find(id='KIT030', outfmt='pandas')
+test = find(id='KIT030', outfmt='')
+test = find(id='KIT030', outfmt='something')
+test = find(id='KIT030')
 """
-#greece = find(id='KIT030', outfmt='list')
-greece = find(id='KIT030', outfmt='pandas')
-greece = find(id='KIT030', outfmt='')
-greece = find(id='KIT030', outfmt='something')
-greece = find(id='KIT030')
 
 
-
-#test = find(stations=greece, search='norunda')
+#test = find(stations=test, search='norunda')
 #test = find(country=['nor','Sweden'])
-test = find(pinpoint=[42.5,-3,400])
+#test = find(pinpoint=[42.5,-3,400])
 
 #test = find(sdate='2019-01-01')
 #test = find(edate='2005-01-01')
@@ -429,7 +431,10 @@ test = find(pinpoint=[42.5,-3,400])
 
 #g = get('KITTY')
 
-g1 = get('HTM030')
+g1 = get(id=['HTM030'])
+
+a = g1[0]
+ts = a.get_ts('2018-01-01', '2018-03-01', hours=['03:00','05:00', 6])
 #print(g1)
 """
 g2 = get(['HTM030','HTM150'])

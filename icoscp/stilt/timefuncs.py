@@ -21,6 +21,7 @@ __lastchange__  = ["Claudio DOnofrio"]
 #Import modules:
 from datetime import date
 import pandas as pd
+import regex as re
 ###############################################################################
 
 
@@ -58,9 +59,17 @@ def get_hours(hours):
                 hours = [] return ALL
                 hours = [10] returns timeslot 9
     """
+    
+    
     valid = [0,3,6,9,12,15,18,21,24]
     valid_hours = []
     for h in hours:
+        # for back compatibility, we need to check input for str format
+        # hh:mm -> convert to int
+        if isinstance(h, str):
+            if re.match('[0-9][0-9]:[0-9][0-9]', h):
+                h = h[0:2]
+                
         h = int(h)
         if h < 0 or h > 24:
             pass
