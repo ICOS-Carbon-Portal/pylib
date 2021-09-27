@@ -21,7 +21,7 @@ __lastchange__  = ["Claudio DOnofrio"]
 #Import modules:
 from datetime import date
 import pandas as pd
-import regex as re
+import re
 ###############################################################################
 
 
