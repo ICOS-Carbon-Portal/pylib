@@ -44,9 +44,11 @@ def _outfmt(kwargs, stations):
     ----------
     kwargs : STR
         Define the output format. by default a 'DICT' is returned
-        Possible arguments are:            
+        Possible arguments are:   
+            - dict (default), with Station ID as key
             - pandas
-            - list DEFAULT
+            - list , provide a list of stilstation objects, equivalent to 
+                    station.get([list of ids])
             - map (folium)
     '''
     if not stations:
@@ -54,12 +56,19 @@ def _outfmt(kwargs, stations):
         stations={'empty':'no stiltstations found'}
         return stations
     
-    if 'outfmt' in kwargs:
-        fmt = kwargs['outfmt']
+    if 'outfmt' in kwargs:        
+        fmt = kwargs['outfmt'].lower()
     else:
-        # by default return stations is a dict..
+        fmt = 'dict'
+    
+    # make sure we have a valid keyword, else set default
+    valid = ['dict', 'list', 'pandas', 'map']
+    if not fmt in valid:
+            fmt = 'dict'
+            
+    if fmt == 'dict':        
+        #default
         return stations
-
     if fmt == 'pandas':
         df = pd.DataFrame().from_dict(stations)
         return df.transpose()
@@ -87,7 +96,7 @@ def _country(kwargs, stations):
         
         for c in countries:
             # the search keys are a combination of keys from the online
-            # serach at restcountries.eu and the static country file
+            # seaach at restcountries.eu and the static country file
             if len(c) < 4:
                 searchKeys = {'alpha2Code', 'alpha3Code', 'cca2', 'cca3','ccn3', 'cioc'}
             else:
@@ -122,6 +131,11 @@ def _bbox(kwargs, stations):
     return stations
 
 def _pinpoint(kwargs, stations):
+    # the user MUST provide lat, lon, but only optional
+    # the distance in KM to create the boundding box.
+    # set default 200km bounding box..
+    if len(kwargs['pinpoint']) == 2:
+        kwargs['pinpoint'].append(200)
     
     lat = kwargs['pinpoint'][0]
     lon = kwargs['pinpoint'][1]
@@ -290,7 +304,7 @@ def find(**kwargs):
     
 def __get_object(stations):
 
-    return [StiltStation().get_info(stations[st]) for st in stations.keys()]
+    return [StiltStation(stations[st]) for st in stations.keys()]
         
 def __country(latlon,id):
     """ return country information based on lat lon wgs84"""  
@@ -384,10 +398,25 @@ def get(id=None):
         return stationslist[0]
     else:
         return stationslist
+"""
+greece = find(search='sweden', outfmt='dict')
+greece = find(search='sweden', outfmt='list')
+greece = find(search='sweden', outfmt='pandas')
+greece = find(search='sweden', outfmt='')
+greece = find(search='sweden', outfmt='something')
+greece = find(search='sweden')
+"""
+#greece = find(id='KIT030', outfmt='list')
+greece = find(id='KIT030', outfmt='pandas')
+greece = find(id='KIT030', outfmt='')
+greece = find(id='KIT030', outfmt='something')
+greece = find(id='KIT030')
 
-#greece = find(search='sweden')
+
+
 #test = find(stations=greece, search='norunda')
-test = find(country=['nor','Sweden'])
+#test = find(country=['nor','Sweden'])
+test = find(pinpoint=[42.5,-3,400])
 
 #test = find(sdate='2019-01-01')
 #test = find(edate='2005-01-01')

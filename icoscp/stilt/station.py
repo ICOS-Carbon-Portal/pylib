@@ -15,7 +15,7 @@ __version__     = "0.1.0"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "rc1"
-__date__        = "2021-04-12"
+__date__        = "2021-09-27"
 
 import os
 import json
@@ -67,21 +67,28 @@ def _outfmt(kwargs, stations):
     ----------
     kwargs : STR
         Define the output format. by default a 'DICT' is returned
-        Possible arguments are:
+        Possible arguments are:   
+            - dict (default), with Station ID as key
             - pandas
-            - list
+            - list , provide a list of stilstation objects, equivalent to 
+                    station.get([list of ids])
             - map (folium)
     '''
+    
     if not stations:
         # no search result, return empty
         stations={'empty':'no stiltstations found'}
         return stations
 
-    if 'outfmt' in kwargs:
-        fmt = kwargs['outfmt']
+    if 'outfmt' in kwargs:        
+        fmt = kwargs['outfmt'].lower()
     else:
-        # by default return stations is a dict..
-        return stations
+        fmt = 'dict'
+    
+    # make sure we have a valid keyword, else set default
+    valid = ['dict', 'list', 'pandas', 'map']
+    if not fmt in valid:
+            fmt = 'dict'
 
     if fmt == 'pandas':
         df = pd.DataFrame().from_dict(stations)
@@ -158,6 +165,11 @@ def _bbox(kwargs, stations):
     return stations
 
 def _pinpoint(kwargs, stations):
+    # the user MUST provide lat, lon, but only optional
+    # the distance in KM to create the boundding box.
+    # set default 200km bounding box..
+    if len(kwargs['pinpoint']) == 2:
+        kwargs['pinpoint'].append(200)
     lat = kwargs['pinpoint'][0]
     lon = kwargs['pinpoint'][1]
     deg = kwargs['pinpoint'][2]*0.01
@@ -392,35 +404,39 @@ def find(**kwargs):
     id STR, list of STR:
         Provide station id or list of id's. You can provide
         either stilt or icos id's mixed together.
-        Example:    station.get(id='HTM')
-                    station.get(id=['NOR', 'GAT344'])
+        Example:    station.find(id='HTM')
+                    station.find(id=['NOR', 'GAT344'])
 
     search STR:
         Arbitrary string search keyword
+         Example:    station.find(search='north')
 
     stations DICT
         all actions are performed on this dictionary, rather than
         dynamically search for all stilt station on our server.
         Can be useful for creating a map, or getting a subset of stations
         from an existing search.
+        Example: myStations = station.find(search='north')
+                 refined = station.find(stations=myStations, country='Finland')
 
     # Spatial search keywords:
 
     country STR, list of STR:
         Provide country code either fullname, 2 or 3 digit
         where country is e.g "SE", "SWE" or "Sweden"
-        Example:    station.get(country='Sweden')
+        Example:    station.find(country='Sweden')
 
     bbox LIST of Tuples:
-        spatial filter by bounding box where bbox=[Topleft(lat,lon), BR(lat,lon)]
+        spatial filter by bounding box where
+        bbox=[Topleft(lat,lon), BottomRight(lat,lon)]
         The following example is approximately covering scandinavia
-        Example:    station.get(bbox=[(70,5),(55,32)])
+        Example:    station.find(bbox=[(70,5),(55,32)])
 
     pinpoint LIST: [lat, lon, distanceKM]
         spatial filter by pinpoint location plus distance in KM
         distance in km is use to create a bounding box
         We use a very rough estimate of 1degree ~ 100 km
-
+        Example: stations.find(pinpoint = [40.42, -3.70, 500]
     # Temporal search keywords:
     Be aware, that the granularity for all temporal keywords is year and month
     (days are not considered in the search): input format for the dates entry
@@ -434,6 +450,7 @@ def find(**kwargs):
         - STR: "YYYY-MM-DD" , "YYYY", "YYYY/MM/DD":
         where 'sdate' (Start Date) is a single entry. If you provide ONLY
         sdate, stations with any data available for >= sdate is returned
+    Example: station.find(sdate= '2018-05-01')
 
     edate Input format see sdata:
         - datetime.date objs
@@ -442,6 +459,7 @@ def find(**kwargs):
         - STR: "YYYY-MM-DD" , "YYYY", "YYYY/MM/DD":
         where 'edate' (End Date) is a single entry. If you provide ONLY
         edate, stations with any data available  <= edate is returned
+    Example: station.find(edate='2018-06-01')
 
     If you provide sdate AND edate, any station with available data
     within that date range is retured.
@@ -450,12 +468,14 @@ def find(**kwargs):
         This will return a list of stations where data is available for
         for any of the provided dates. Input format, see sdate,edate.
         Remember, that only year and month is checked.
+    Example: station.find(dates=['2020-01-01', '2020/05/23'])
 
-
-    outfmt STR ['pandas' | 'dict' | 'list' | 'map']:
+    outfmt STR ['dict'| 'pandas' | 'list' | 'map']:
         the result is returned as
-            pandas,  dataframe with some key information
+        
             dict:       dictionary with full metadata for each station
+                        Stiltstation ID is the 'key' for the dict entries
+            pandas:     dataframe with some key information    
             list:       list of stilt station objects
             map:        folium map, can be displayed directly in notebooks
                         or save to a static (leaflet) .html webpage
