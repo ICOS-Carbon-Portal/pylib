@@ -86,8 +86,14 @@ def _country(kwargs, stations):
             continue
         
         for c in countries:
-            g = stations[k]['geoinfo']            
-            searchKeys = {'alpha2Code', 'alpha3Code', 'name', 'nativeName', 'altSpellings', 'demonym'}
+            # the search keys are a combination of keys from the online
+            # serach at restcountries.eu and the static country file
+            if len(c) < 4:
+                searchKeys = {'alpha2Code', 'alpha3Code', 'cca2', 'cca3','ccn3', 'cioc'}
+            else:
+                searchKeys = {'name', 'nativeName', 'altSpellings', 'demonym', 'demonyms'}
+            
+            g = stations[k]['geoinfo']
             
             # make sure we have only valid search keys...add two sets
             for sk in (searchKeys & g.keys()):
@@ -381,7 +387,7 @@ def get(id=None):
 
 #greece = find(search='sweden')
 #test = find(stations=greece, search='norunda')
-#test = find(country=['nor','Sweden'])
+test = find(country=['nor','Sweden'])
 
 #test = find(sdate='2019-01-01')
 #test = find(edate='2005-01-01')
