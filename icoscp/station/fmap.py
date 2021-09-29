@@ -94,17 +94,16 @@ def get(queried_stations):
 def request_rest_countries():
     """Requests data from rest-countries API.
 
-    This function uses first https://restcountries.com/ and then
-    https://restcountries.eu/ API to request data (names,
-    country-codes and flags) for countries.
+    This function https://restcountries.com/ API to request data (names
+    ,country-codes and flags) for countries.
 
     Returns
     -------
     response : dict
         Returns a dictionary with countries data obtained from
         rest-countries API. The `service` key validates the source of
-        the data ('com', 'eu' or False). If both requests fail the
-        `service` key has a value of False.
+        the data ('com', or False). If the request fails the `service`
+        key has a value of False.
 
     Raises
     ------
@@ -118,7 +117,6 @@ def request_rest_countries():
     """
 
     response = {'service': False}
-    response_eu = None
     response_com = None
     try:
         # Try to request countries data from
@@ -127,22 +125,13 @@ def request_rest_countries():
             'https://restcountries.com/v2/all?fields=name,flags,alpha2Code')
         response_com.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.SSLError) as e:
-        print("Restcountries .com request error: " + str(e))
-        try:
-            # If the first request fails try from
-            # https://restcountries.eu REST-ful API
-            response_eu = requests.get(
-                'https://restcountries.eu/rest/v2/all?fields=name;flag;alpha2Code')
-            response_eu.raise_for_status()
-        except (requests.exceptions.HTTPError, requests.exceptions.SSLError) as e:
-            print("Restcountries .eu request error: " + str(e))
+        print('Restcountries \'.com\' request error: ' + str(e))
 
     if response_com:
         response = {'service': 'com', 'data': response_com}
-    elif response_eu:
-        response = {'service': 'eu', 'data': response_eu}
-    # If both requests failed the response will contain a False service
-    # value.
+    # If the request failed, the response will contain a False service
+    # value which is then used by the caller function to generate the
+    # folium map without any errors but with less information.
     return response
 
 
@@ -153,16 +142,15 @@ def collect_rest_data(response):
     ----------
     response : dict
         If the requested resources were available the `response`
-        dictionary will contain the raw rest-countries data along with
-        the origin of the resource.
+        dictionary will contain the raw rest-countries data.
 
     Returns
     -------
     response : dict
         Returns an updated version of the `response` dictionary
-        obtained from `request_rest_countries()` function. If any of
-        HTTP requests were successful, this version will include the
-        rest-countries data that was extracted from the requests.
+        obtained from `request_rest_countries()` function. If the
+        request was successful, this version will include the
+        rest-countries data that was extracted from the request.
 
     """
 
@@ -175,10 +163,7 @@ def collect_rest_data(response):
         for country in json_countries:
             code = country['alpha2Code']
             country_name = country['name']
-            if response['service'] == 'com':
-                country_flag = country['flags'][1]
-            else:
-                country_flag = country['flag']
+            country_flag = country['flags']['svg']
             countries_data[code] = {'name': country_name, 'flag': country_flag}
         # Include the 'UK' alpha2code which is missing from
         # restcountries API.
@@ -203,8 +188,8 @@ def edit_queried_stations(queried_stations, edited_response):
     edited_response: dict
         `edited_response` is an updated version of the `response`
         dictionary obtained from `request_rest_countries()` function.
-        If any of HTTP requests were successful, this version will
-        include the rest-countries data that was extracted using the
+        If the request was successful, this version will include the
+        rest-countries data that was extracted using the
         `collect_rest_data()` function.
 
     Returns
