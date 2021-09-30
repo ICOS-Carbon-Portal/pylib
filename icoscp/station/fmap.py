@@ -19,9 +19,9 @@ __email__ = ['info@icos-cp.eu', 'zois.zogopoulos@nateko.lu.se']
 __status__ = "rc1"
 __date__ = "2021-09-20"
 
-
+# Standard library imports.
 import json
-
+# Related third party imports.
 import folium
 import pandas as pd
 from folium.plugins import MarkerCluster
@@ -94,8 +94,8 @@ def get(queried_stations):
 def request_rest_countries():
     """Requests data from rest-countries API.
 
-    This function https://restcountries.com/ API to request data (names
-    ,country-codes and flags) for countries.
+    This function uses https://restcountries.com/ API to request data
+    (names ,country-codes and flags) for countries.
 
     Returns
     -------
