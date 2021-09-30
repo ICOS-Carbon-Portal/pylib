@@ -2,10 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-    
-    Description:      Python functions that process time in STILT model outputs.
-                      
-    
+    Description:      Python functions that process time in STILT model outputs.    
 """
 
 __author__      = ["Karolina Pantazatou", "Claudio DOnofrio"]
