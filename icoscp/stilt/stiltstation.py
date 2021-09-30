@@ -30,7 +30,6 @@ class StiltStation():
 
     """
     Attributes: id:              STILT station ID (e.g. 'HTM150')
-                siteID:          Station ID as 3-character station code (e.g 'HTM')
                 locIdent:        String with latitude-longitude-altitude
                                  of STILT station (e.g. '35.34Nx025.67Ex00150')
                 alt:             Station altitude (in meters above ground level)
@@ -99,7 +98,7 @@ class StiltStation():
     def get_ts(self, start_date, end_date, hours=[], columns=''):
         """
         STILT concentration time series for a given time period,
-        with optional selection of specifuc hours and columns.
+        with optional selection of specific hours and columns.
         Returns time series in a pandas dataframe.
 
         Parameters

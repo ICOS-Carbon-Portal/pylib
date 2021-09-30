@@ -5,6 +5,7 @@ The following modules are available in the library to find and access data hoste
 - `from icoscp.cpb.dobj import Dobj`
 - `from icoscp.station import station`
 - `from icoscp.collection import collection`
+- `from icoscp.stilt import stiltstation`
 - `from icoscp.sparql.runsparql import RunSparql`
 - `from icoscp.sparql import sparqls`
 
@@ -284,7 +285,7 @@ If available, the official DOI in form of '10.18160/ry7n-3r04'.
 - Return Str
 
 ### **Collection.citation**
-For convenience the citation string provided from [https://citation.crosscite.org/](https://citation.crosscite.org/) is stored in this attribute. If you like to have a different format, please have a look at .getCitation description below.
+For convenience the citation string provided from [https://citation.crosscite.org/] is stored in this attribute. If you like to have a different format, please have a look at .getCitation description below.
 
 - Return STR
 
@@ -347,8 +348,212 @@ The `CollectionId` must be either the full ICOS URI of the collection landing pa
 
 - Returns Collection
 
-<hr><hr>
+<hr>
+## Stilt
+At the ICOS Carbon Portal we offer a service to calculate your own STILT footprints and visualize the results. Find out more on our website  [https://www.icos-cp.eu/data-services/tools/stilt-footprint](https://www.icos-cp.eu/data-services/tools/stilt-footprint). The calculated footprints and time series results are also available through this python library. Please be aware, that the calculated footprints are only available on our servers, including our virtual computational environments. Please read about our public available Jupyter Hub [here](https://icos-carbon-portal.github.io/jupyter/).
+Time series can be accessed from outside our servers as well.
 
+load the module with:
+
+	from icoscp.stilt import station
+
+Two functions are available: one to find STILT stations and one to extract the STILT station as an object, which gives access to the data (time series and footprints).
+
+### station.find(\*\*kwargs)
+This is the main function to find STILT stations. By default it returns a dictionary where each station id is the key to access meta data about the station. The order how you provide keywords is respected and you can influence the result. Keyword arguments are applied sequentially (the result from the first keyword is provides as input to the second and so on). With no keyword provided `station.find()`, a dictionary with ALL Stilt stations is returned.
+
+The following keywords are available:
+
+##### id='STR' | ['STR','STR',...]
+Provide a single id as string, or a list of strings.<br>. You can provide either STILT or ICOS id's mixed together.
+	
+	station.find(id=['NOR', 'GAT344'])
+	station.find(id='KIT030')
+
+##### search='STR'
+Arbitrary string search will find any occurrence of STR in the station metadata.
+
+	station.find(search='south')
+
+##### stations=DICT
+all actions are performed on this dictionary, rather than dynamically search for all stilt station on our server.
+Can be useful for creating a subset of stations from an existing search.
+
+	myStations = station.find(search='north')
+    refined = station.find(stations=myStations, country='Finland')
+				 
+<br><h2>Spatial keywords</h2><br>
+
+##### country='STR' | ['STR','STR',...]
+Provide a single country id as string, or a list of strings. You can provide alpha-2, alpha-3 code (ISO 3166) or the full country name (some translations are available as well). To find all STILT stations with geolocation in Norway you can search for either NO, NOR, Norway, Norge.
+
+	station.find(country=['Swe','norge', 'IT'])
+
+##### bbox=[(lat,lon),(lat,lon)]
+Bounding Box. Provide two tuples (wgs84), where the box is defined as TopLeftCorner (NorthWest) and BottomRightCorner (SouthEast). The following example returns approximately all stations in Scandinavia.
+
+	station.find(bbox=[(70,5),(55,32)])
+
+##### pinpoint=[lat,lon,distanceKM]
+Provide a single point (lat, lon) and the Distance in KM, which creates a bounding box. Distance is very roughly translated with 1 degree = 1 km. The bounding box is calculated as distance in all directions. For example `distance=200` will create a bounding box of 400 x 400 km with pinpoint in the centre. If you don't provide a distance, a default value of 200 is used.
+
+	station.find(pinpoint=[55.7,13.1,500]) 	# bounding box ~ 1000km x 1000km
+	station.find(pinpoint=[55.7,13.1]) 		# bounding box ~ 400km x 400km
+
+
+<br><h2>Temporal keywords</h2><br>
+
+Be aware, that the granularity for all temporal keywords is year and month, days are not considered in the search. Input format for the dates entry MUST be convertible to data time object through pandas.to_datetime().  Accepted formats are:
+
+- datetime.date objs
+- FLOAT or INT representing a unix timestamp (seconds since 1970-01-01)
+- pandas.datetime
+- STR: "YYYY-MM-DD" , "YYYY", "YYYY/MM/DD"
+
+#### sdate='start date'
+Stations are returned where results are available for >= start date. 'sdate' is a single entry. If you provide sdate AND edate, any station with available data within that date range is returned. (accepted formats see above)
+
+    station.find(sdate= '2018-05-01')
+
+#### edate='end date'
+Stations are returned where results are available for <= end date. 'edate' is a single entry. If you provide sdate AND edate, any station with available data within that date range is returned. (accepted formats see above)
+
+	station.find(edate='2018-06-01')
+
+#### dates=[]
+This will return a list of stations where data is available for any of the provided dates. Input format, see sdate,edate. Remember, that only year and month is checked.
+
+	station.find(dates=['2020-01-01', '2020/05/23'])
+
+#### outfmt = 'STR'
+where string is `dict` | `pandas` | `list` | `map`.
+This keyword is ALWAYS executed last, regardless of the position within keyword arguments. By default a `dictionary` is returned. With `pandas` a pandas data frame is returned where the station id is indexed, each row contains one station with the same metadata as is available in the dictionary [https://pandas.pydata.org/docs/](https://pandas.pydata.org/docs/). List however returns a list of STILT station objects. Please see the documentation about `station.get(id="")`. Lastly you can choose `map`, which returns a folium map [https://python-visualization.github.io/folium/](https://python-visualization.github.io/folium/). The map can be displayed directly in a Jupyter Notebook, or you can save the map to a html file.
+
+	station.find(country='Italy', outfmt='pandas') 
+	station.find(country='Italy', outfmt='pandas').save('mymap.html')
+
+### station.get(id='')
+Returns a stilt station object or a list of stilt station objects. A stilt station object, gives access to the underlying data (timeseries and footprints). You may provide a STR or LIST[STR] of STILT id's or the 'result' of a .find() query. The properties of the returned stilt object is listed further below.
+
+	# return stilt stations based on station.find(id='STR')
+    station.get('HTM')		    
+	station.get(['KIT','HTM150'])
+
+	# return stilt stations based on dictionary or list of dict
+	a = station.find(search='north')
+	station.get(a)
+    OR
+	station.get(station.find(...))
+
+### STILT Object
+classmethod **StiltSation(dict)**<br>
+Please do not use this class directly. You should load `from icoscp.stilt import station` and then use the function `obj = station.get('HTM150)` which will return stilt station objects. Once you have the object, the following attributes and methods are available:
+
+<h2>Attributes:</h2>
+
+#### .id
+Return STILT station ID (e.g. 'HTM150') as string.
+
+#### .locIdent
+String with latitude-longitude-altitude of STILT station (e.g. '35.34Nx025.67Ex00150')
+
+#### .alt
+Station altitude (in meters above ground level)
+
+#### .lat
+Station latitude
+
+#### .lon
+Station longitude
+
+#### .name
+STILT station long name
+
+#### .icos
+None | Dict. If the station is an ICOS station, a dictionary with ICOS meta data is available.
+
+#### .years
+List of years for which STILT results are available. Be aware that even if only one day is calculated for a year, `year` will be listed.
+
+#### .info
+Returns the diction with all metadata.
+
+#### .geoinfo
+Dictionary with geographical (country) information, if the station is within a country border.
+
+<h2>Methods:</h2>
+
+#### get_ts(start_date, end_date, hours=[], columns=''):
+STILT concentration time series for a given time period, with optional selection of specific hours and columns.
+Returns time series as a pandas data frame.
+
+- start_date : STR, FLOAT/INT (Unix timestamp), datetime object
+	- start_date = '2018-01-01'
+- end_date : STR, FLOAT/INT (Unix timestamp), datetime object
+	- end_date = '2018-01-31'
+- hours : STR | INT, optional. If hours is empty or None, ALL Timeslots are returned. For backwards compatibility, input of str format hh:mm is accepted
+	- hours = [0,3,6,9,12,15,18,21]
+	
+			Valid results are returned with LOWER BOUND values.
+			Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
+						hours = [2,3,4,5,6] will return Timeslots for 0,3 and 6
+						hours = [] return ALL
+						hours = ["10", "10:00", 10] returns timeslot 9
+
+- columns : STR, optional
+	- Valid entries are `"default", "co2", "co", "rn", "wind", "latlon", "all"`
+
+			default:
+				isodate,co2.stilt,co2.fuel,co2.bio, co2.background
+
+			co2
+				isodate,co2.stilt,co2.fuel,co2.bio,co2.fuel.coal,
+				co2.fuel.oil,co2.fuel.gas,co2.fuel.bio,co2.energy
+				co2.transport, co2.industry,co2.others, co2.cement,
+				co2.background
+
+			co
+				isodate, co.stilt,co.fuel,co.bio,co.fuel.coal
+				co.fuel.oil, co.fuel.gas,co.fuel.bio,co.energy
+				co.transport,co.industry, co.others, co.cement,
+				co.background
+
+			rn
+				isodate, rn, rn.era, rn.noah
+
+			wind
+				isodate, wind.dir, wind.u, wind.v
+
+			latlon
+				isodate, latstart, lonstart
+
+			all
+				isodate,co2.stilt,co2.fuel,co2.bio,co2.fuel.coal,
+				co2.fuel.oil,co2.fuel.gas,co2.fuel.bio,co2.energy,
+				co2.transport, co2.industry,co2.others, co2.cement,
+				co2.background, co.stilt,co.fuel,co.bio,co.fuel.coal,
+				co.fuel.oil,co.fuel.gas,co.fuel.bio,co.energy,
+				co.transport,co.industry,co.others, co.cement,
+				co.background,rn, rn.era,rn.noah,wind.dir,
+				wind.u,wind.v,latstart,lonstart
+
+#### get_fp(start_date, end_date, hours=[]):
+STILT footprints for a given time period, with optional selection of specific hours.
+`Returns` the footprints as `xarray` [http://xarray.pydata.org/en/stable/](http://xarray.pydata.org/en/stable/)   with latitude, longitude, time, and ppm per (micromol m-2 s-1).
+
+- start_date : STR, FLOAT/INT (Unix timestamp), datetime object.
+	- start_date = '2018-01-01'
+- end_date : STR, FLOAT/INT (Unix timestamp), datetime object.
+	- end_date = '2018-01-31'
+- hours : STR | INT, optional. If hours is empty or None, ALL Timeslots are returned. For backwards compatibility, input of str format hh:mm is accepted
+	- hours = [0,3,6,9,12,15,18,21]
+	
+			Valid results are returned with LOWER BOUND values.
+			Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
+						hours = [2,3,4,5,6] will return Timeslots for 0,3 and 6
+						hours = [] return ALL
+						hours = ["10", "10:00", 10] returns timeslot 9
+<hr>
 ## Sparql
 At the ICOS Carbon Portal we store all data and meta data as linked data in a triple store. For more information about this approach refer to [Semantic Web](https://www.w3.org/standards/semanticweb/), [Resource Description Framework (RDF)](https://www.w3.org/RDF/), and [Triple Stores](https://en.wikipedia.org/wiki/Triplestore).
 
@@ -386,3 +591,6 @@ Retrieve or set the output format.
 This method actually executes the query and formats the result to the output format. If the sparql query is not executable because of syntax errors, for example, a TUPLE is returned (False, 'Bad Request')
 
 - Return TUPLE | FMT
+
+
+
