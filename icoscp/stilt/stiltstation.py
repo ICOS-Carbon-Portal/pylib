@@ -96,7 +96,7 @@ class StiltStation():
         return json.dumps(out)
 
     #----------------------------------------------------------------------------------------------------------
-    def get_ts(self, start_date, end_date, hours=[0,3,6,9,12,15,18,21], columns='def'):
+    def get_ts(self, start_date, end_date, hours=[], columns=''):
         """
         STILT concentration time series for a given time period,
         with optional selection of specifuc hours and columns.
@@ -110,6 +110,8 @@ class StiltStation():
             Example: end_date = '2018-01-31'
         hours : STR | INT, optional
             If hours is empty or None, ALL Timeslots are returned.
+            [0,3,6,9,12,15,18,21]
+            
             Valid results are returned as result with LOWER BOUND values.
             For backwards compatibility, input for str format hh:mm is accepted
             Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
@@ -118,7 +120,9 @@ class StiltStation():
                         hours = ["10", "10:00", 10] returns timeslot 9
 
         columns : TYPE, optional
-            Valid entries are "default", "co2", "co", "rn", "wind", "latlon", "all"
+            Valid entries are "default", "co2", "co", "rn", "wind", "latlon", "all"            
+            default (or empty) will return
+            ["isodate","co2.stilt","co2.fuel","co2.bio", "co2.background"]
             A full description of the 'columns' can be found at
             https://icos-carbon-portal.github.io/pylib/modules/#stilt
 
@@ -220,7 +224,7 @@ class StiltStation():
         return df
     #----------------------------------------------------------------------------------------------------------
 
-    def get_fp(self, start_date, end_date, hours=[0,3,6,9,12,15,18,21]):
+    def get_fp(self, start_date, end_date, hours=[]):
         """
         STILT footprints for a given time period,
         with optional selection of specific hours.
@@ -237,6 +241,8 @@ class StiltStation():
             Example: end_date = '2018-01-31'
         hours : STR | INT, optional
             If hours is empty or None, ALL Timeslots are returned.
+            [0,3,6,9,12,15,18,21]
+            
             Valid results are returned as result with LOWER BOUND values.
             For backwards compatibility, input for str format hh:mm is accepted
             Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
