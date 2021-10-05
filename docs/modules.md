@@ -13,7 +13,7 @@ The following modules are available in the library to find and access data hoste
 
 ## Dobj
 
-This is the basic module to load a **d**igital **obj**ect (data set) into memory. You need to know a valid persistent identifier (PID/URL) to access the data. Either you can browse the [data portal](https://data.icos-cp.eu) to find PID's or you can use the 'station' package to find PID's programatically (see section [station](#station)). In essence each data object is linked to a unique and persistent identifier in the form of a URL. Hence each data object has an on-line landing page. If you select any data object on [https://data.icos-cp.eu](https://data.icos-cp.eu) and then navigate to the PID link (which looks like 11676/j7-Lxlln8_ysi4DEV8qine_v ) you end up on the 'landing' page of the document. If you look at the address bar of your browser, you will see an URL similar to [https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v](https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v). To access the data you need to know this URL or the last part of the URL (j7-Lxlln8_ysi4DEV8qine_v).
+This is the basic module to load a **d**igital **obj**ect (data set) into memory. You need to know a valid persistent identifier (PID/URL) to access the data. Either you can browse the [data portal](https://data.icos-cp.eu) to find PID's or you can use the 'station' package to find PID's programmatically (see section [station](#station)). In essence each data object is linked to a unique and persistent identifier in the form of a URL. Hence each data object has an on-line landing page. If you select any data object on [https://data.icos-cp.eu](https://data.icos-cp.eu) and then navigate to the PID link (which looks like 11676/j7-Lxlln8_ysi4DEV8qine_v ) you end up on the 'landing' page of the document. If you look at the address bar of your browser, you will see an URL similar to [https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v](https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v). To access the data you need to know this URL or the last part of the URL (j7-Lxlln8_ysi4DEV8qine_v).
 
 Load the module with:<br>
 	from icoscp.cpb.dobj import Dobj
@@ -349,17 +349,16 @@ The `CollectionId` must be either the full ICOS URI of the collection landing pa
 - Returns Collection
 
 <hr>
-## Stilt
-At the ICOS Carbon Portal we offer a service to calculate your own STILT footprints and visualize the results. Find out more on our website  [https://www.icos-cp.eu/data-services/tools/stilt-footprint](https://www.icos-cp.eu/data-services/tools/stilt-footprint). The calculated footprints and time series results are also available through this python library. Please be aware, that the calculated footprints are only available on our servers, including our virtual computational environments. Please read about our public available Jupyter Hub [here](https://icos-carbon-portal.github.io/jupyter/).
-Time series can be accessed from outside our servers as well.
+## STILT
+At the ICOS Carbon Portal we offer a service to calculate your own STILT footprints and visualize the results. Find out more on our website  [https://www.icos-cp.eu/data-services/tools/stilt-footprint](https://www.icos-cp.eu/data-services/tools/stilt-footprint). The calculated footprints and time series results are also available through this python library. Please be aware, that the calculated **footprints are only available on our servers**, including our virtual computational environments. Please read about our public available Jupyter Hub [here](https://icos-carbon-portal.github.io/jupyter/). Time series can be accessed from outside our servers as well.
 
 load the module with:
 
-	from icoscp.stilt import station
+	from icoscp.stilt import stiltstation
 
 Two functions are available: one to find STILT stations and one to extract the STILT station as an object, which gives access to the data (time series and footprints).
 
-### station.find(\*\*kwargs)
+### stiltstation.find(\*\*kwargs)
 This is the main function to find STILT stations. By default it returns a dictionary where each station id is the key to access meta data about the station. The order how you provide keywords is respected and you can influence the result. Keyword arguments are applied sequentially (the result from the first keyword is provides as input to the second and so on). With no keyword provided `station.find()`, a dictionary with ALL Stilt stations is returned.
 
 The following keywords are available:
@@ -367,38 +366,38 @@ The following keywords are available:
 ##### id='STR' | ['STR','STR',...]
 Provide a single id as string, or a list of strings.<br>. You can provide either STILT or ICOS id's mixed together.
 	
-	station.find(id=['NOR', 'GAT344'])
-	station.find(id='KIT030')
+	stiltstation.find(id=['NOR', 'GAT344'])
+	stiltstation.find(id='KIT030')
 
 ##### search='STR'
 Arbitrary string search will find any occurrence of STR in the station metadata.
 
-	station.find(search='south')
+	stiltstation.find(search='south')
 
 ##### stations=DICT
 all actions are performed on this dictionary, rather than dynamically search for all stilt station on our server.
 Can be useful for creating a subset of stations from an existing search.
 
-	myStations = station.find(search='north')
-    refined = station.find(stations=myStations, country='Finland')
+	myStations = stiltstation.find(search='north')
+    refined = stiltstation.find(stations=myStations, country='Finland')
 				 
 <br><h2>Spatial keywords</h2><br>
 
 ##### country='STR' | ['STR','STR',...]
 Provide a single country id as string, or a list of strings. You can provide alpha-2, alpha-3 code (ISO 3166) or the full country name (some translations are available as well). To find all STILT stations with geolocation in Norway you can search for either NO, NOR, Norway, Norge.
 
-	station.find(country=['Swe','norge', 'IT'])
+	stiltstation.find(country=['Swe','norge', 'IT'])
 
 ##### bbox=[(lat,lon),(lat,lon)]
 Bounding Box. Provide two tuples (wgs84), where the box is defined as TopLeftCorner (NorthWest) and BottomRightCorner (SouthEast). The following example returns approximately all stations in Scandinavia.
 
-	station.find(bbox=[(70,5),(55,32)])
+	stiltstation.find(bbox=[(70,5),(55,32)])
 
 ##### pinpoint=[lat,lon,distanceKM]
 Provide a single point (lat, lon) and the Distance in KM, which creates a bounding box. Distance is very roughly translated with 1 degree = 1 km. The bounding box is calculated as distance in all directions. For example `distance=200` will create a bounding box of 400 x 400 km with pinpoint in the centre. If you don't provide a distance, a default value of 200 is used.
 
-	station.find(pinpoint=[55.7,13.1,500]) 	# bounding box ~ 1000km x 1000km
-	station.find(pinpoint=[55.7,13.1]) 		# bounding box ~ 400km x 400km
+	stiltstation.find(pinpoint=[55.7,13.1,500]) 	# bounding box ~ 1000km x 1000km
+	stiltstation.find(pinpoint=[55.7,13.1]) 		# bounding box ~ 400km x 400km
 
 
 <br><h2>Temporal keywords</h2><br>
@@ -413,37 +412,37 @@ Be aware, that the granularity for all temporal keywords is year and month, days
 #### sdate='start date'
 Stations are returned where results are available for >= start date. 'sdate' is a single entry. If you provide sdate AND edate, any station with available data within that date range is returned. (accepted formats see above)
 
-    station.find(sdate= '2018-05-01')
+    stiltstation.find(sdate= '2018-05-01')
 
 #### edate='end date'
 Stations are returned where results are available for <= end date. 'edate' is a single entry. If you provide sdate AND edate, any station with available data within that date range is returned. (accepted formats see above)
 
-	station.find(edate='2018-06-01')
+	stiltstation.find(edate='2018-06-01')
 
 #### dates=[]
 This will return a list of stations where data is available for any of the provided dates. Input format, see sdate,edate. Remember, that only year and month is checked.
 
-	station.find(dates=['2020-01-01', '2020/05/23'])
+	stiltstation.find(dates=['2020-01-01', '2020/05/23'])
 
 #### outfmt = 'STR'
 where string is `dict` | `pandas` | `list` | `map`.
-This keyword is ALWAYS executed last, regardless of the position within keyword arguments. By default a `dictionary` is returned. With `pandas` a pandas data frame is returned where the station id is indexed, each row contains one station with the same metadata as is available in the dictionary [https://pandas.pydata.org/docs/](https://pandas.pydata.org/docs/). List however returns a list of STILT station objects. Please see the documentation about `station.get(id="")`. Lastly you can choose `map`, which returns a folium map [https://python-visualization.github.io/folium/](https://python-visualization.github.io/folium/). The map can be displayed directly in a Jupyter Notebook, or you can save the map to a html file.
+This keyword is ALWAYS executed last, regardless of the position within keyword arguments. By default a `dictionary` is returned. With `pandas` a pandas data frame is returned where the station id is indexed, each row contains one station with the same metadata as is available in the dictionary [https://pandas.pydata.org/docs/](https://pandas.pydata.org/docs/). List however returns a list of STILT station objects. Please see the documentation about `stiltstation.get(id="")`. Lastly you can choose `map`, which returns a folium map [https://python-visualization.github.io/folium/](https://python-visualization.github.io/folium/). The map can be displayed directly in a Jupyter Notebook, or you can save the map to a html file.
 
-	station.find(country='Italy', outfmt='pandas') 
-	station.find(country='Italy', outfmt='pandas').save('mymap.html')
+	stiltstation.find(country='Italy', outfmt='pandas') 
+	stiltstation.find(country='Italy', outfmt='pandas').save('mymap.html')
 
-### station.get(id='')
+### stiltstation.get(id='')
 Returns a stilt station object or a list of stilt station objects. A stilt station object, gives access to the underlying data (timeseries and footprints). You may provide a STR or LIST[STR] of STILT id's or the 'result' of a .find() query. The properties of the returned stilt object is listed further below.
 
-	# return stilt stations based on station.find(id='STR')
-    station.get('HTM')		    
-	station.get(['KIT','HTM150'])
+	# return stilt stations based on stiltstation.find(id='STR')
+    stiltstation.get('HTM')		    
+	stiltstation.get(['KIT','HTM150'])
 
 	# return stilt stations based on dictionary or list of dict
-	a = station.find(search='north')
-	station.get(a)
+	a = stiltstation.find(search='north')
+	stiltstation.get(a)
     OR
-	station.get(station.find(...))
+	stiltstation.get(stiltstation.find(...))
 
 ### STILT Object
 classmethod **StiltSation(dict)**<br>
@@ -483,7 +482,7 @@ Dictionary with geographical (country) information, if the station is within a c
 
 <h2>Methods:</h2>
 
-#### get_ts(start_date, end_date, hours=[], columns=''):
+#### .get_ts(start_date, end_date, hours=[], columns=''):
 STILT concentration time series for a given time period, with optional selection of specific hours and columns.
 Returns time series as a pandas data frame.
 
@@ -537,7 +536,7 @@ Returns time series as a pandas data frame.
 				co.background,rn, rn.era,rn.noah,wind.dir,
 				wind.u,wind.v,latstart,lonstart
 
-#### get_fp(start_date, end_date, hours=[]):
+#### .get_fp(start_date, end_date, hours=[]):
 STILT footprints for a given time period, with optional selection of specific hours.
 `Returns` the footprints as `xarray` [http://xarray.pydata.org/en/stable/](http://xarray.pydata.org/en/stable/)   with latitude, longitude, time, and ppm per (micromol m-2 s-1).
 

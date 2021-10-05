@@ -9,7 +9,7 @@ import json
 import requests
 import pandas as pd
 from icoscp.stilt import timefuncs as tf
-from icoscp.stilt.stiltstation import StiltStation
+from icoscp.stilt.stiltobj import StiltStation
 import icoscp.stilt.fmap as fmap
 
     
