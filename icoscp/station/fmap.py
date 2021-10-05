@@ -61,7 +61,12 @@ def get(queried_stations, project):
     # without a fixed location.
     stations = edit_queried_stations(queried_stations, edited_response)
     stations_map = folium.Map()
-    marker_cluster = MarkerCluster(name=project)
+    # Provide the map name within the top right menu.
+    if project == 'ALL':
+        cluster_name = ', '.join(['ICOS', 'NEON', 'INGOS', 'FLUXNET'])
+    else:
+        cluster_name = project
+    marker_cluster = MarkerCluster(name=cluster_name)
     # Add tile layers to the folium map. Default is 'openstreetmap'.
     add_tile_layers(stations_map)
     # Use the stations at the most southwest and northeast locations
