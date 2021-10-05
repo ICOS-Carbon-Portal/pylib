@@ -28,7 +28,7 @@ from folium.plugins import MarkerCluster
 import requests
 
 
-def get(queried_stations):
+def get(queried_stations, project):
     """Generates a folium map of stations.
 
     Uses the requested stations dataframe along with the REST countries
@@ -42,6 +42,10 @@ def get(queried_stations):
         page or (uri), id, name, country, lat, lon, elevation, project,
         and theme.
 
+    project : str
+        The name of the project that the user inserted in the caller
+        function in order to search for stations.
+
     Returns
     -------
     stations_map : folium.Map
@@ -49,7 +53,6 @@ def get(queried_stations):
         geospatial data.
 
     """
-
     # Request countries data online.
     response = request_rest_countries()
     # Edit the requested data.
@@ -58,7 +61,7 @@ def get(queried_stations):
     # without a fixed location.
     stations = edit_queried_stations(queried_stations, edited_response)
     stations_map = folium.Map()
-    marker_cluster = MarkerCluster()
+    marker_cluster = MarkerCluster(name=project)
     # Add tile layers to the folium map. Default is 'openstreetmap'.
     add_tile_layers(stations_map)
     # Use the stations at the most southwest and northeast locations

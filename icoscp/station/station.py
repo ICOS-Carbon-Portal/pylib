@@ -586,16 +586,16 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas'):
 
     Parameters
     ----------
-    project : str, optional.
+    project : str, optional
         The default is 'ICOS'. If you set `project` to 'all', all known
         stations are returned.
 
-    sort : str, optional.
+    sort : str, optional
         The default is 'name'. A user can `sort` by any of the
         dataframe's columns: uri, id, name, country, lat, lon,
         elevation, project, theme.
 
-    outfmt: str, optional.
+    outfmt: str, optional
         The default is 'pandas'. If you provide 'map' to the `outfmt`
         argument a folium map is created with all known stations that
         have valid longitude and latitude values. Be advised that in
@@ -636,11 +636,11 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas'):
         queried_stations = queried_stations[queried_stations.project == project.upper()]
     # Drop any existing double entries.
     queried_stations.drop
-    # Sort queried stations by the given sort argument.
+    # Sort queried stations by the given sort argument if any.
     queried_stations.sort_values(by=sort, inplace=True)
 
-    if outfmt == 'map':
-        stations_folium_map = fmap.get(queried_stations)
+    if outfmt == 'map' and not queried_stations.empty:
+        stations_folium_map = fmap.get(queried_stations, project)
         return stations_folium_map
 
     else:
