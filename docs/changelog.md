@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.9
+- add folium map extension to `getIdList()` function.
+
 ## 0.1.8
 - change licence on https://pypi.org/project/icoscp/ to https://www.icos-cp.eu/data-services/about-data-portal/data-license
 - adjust portal use internal flag
