@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.8
+- change licence on https://pypi.org/project/icoscp/ to https://www.icos-cp.eu/data-services/about-data-portal/data-license
+- adjust portal use internal flag
+
 ## 0.1.7
 - add licence attribute to Dobj()
 - handle single str input to station.getList()

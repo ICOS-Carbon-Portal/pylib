@@ -1,0 +1,34 @@
+cff-version: 1.1.0
+message: If you use this software, please cite it as below.
+authors:
+  - family-names: "D'Onofrio"
+    given-names: Claudio
+	email: claudio.donofrio@nateko.lu.se
+    affiliation: "ICOS Carbon Portal, Lund University
+    orcid: https://orcid.org/0000-0002-1982-3889
+
+  - name: "ICOS Carbon Portal"
+	address: "Dept. Phys. Geography & Ecosystem Science Sölvegatan 12"
+    city: Lund
+	post-code: 223 62   
+    country: SE    
+    email: info@icos-cp.eu  
+    website: "https://www.icos-cp.eu"  
+
+contact:
+  - mail: info@icos-cp.eu
+	name: "ICOS Carbon Portal"	
+
+url: https://pypi.org/project/icoscp/
+repository-code: https://github.com/ICOS-Carbon-Portal/pylib	
+license: GPLv3+
+
+title: ICOS Carbon-Portal python library
+
+abstract: This Python package allows you to have direct access to data objects from the Integrated Carbon Observation System ICOS. At the CarbonPortal all observation and measurments are openly available ( https://data.icos-cp.eu/ ). This package gives you an easy access to time series data objects, were a "preview" is available. By using this library you can load data files directly into memory. Please be aware, that by either downloading data, or accessing data directly through this library, you agree and accept, that all ICOS data is provided under a CC BY 4.0 licence.
+
+keywords: [python, ICOS, Carbon Portal]
+
+version: "1.0"
+
+date-released: 2021-09-15
