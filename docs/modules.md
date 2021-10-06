@@ -243,6 +243,7 @@ queried stations provided by the `project` argument. Stations without a fixed lo
 measurements collected from instrumented Ships of Opportunity) will not be included in the map. 
 Each marker in the map represents a station and contains station related information.
 
+- Return Folium Map
 
 #### station.get()
 
