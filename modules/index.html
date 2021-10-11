@@ -167,6 +167,64 @@
     </li>
         </ul>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#stilt">STILT</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#stiltstationfindkwargs">stiltstation.find(**kwargs)</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#idstr-strstr">id='STR' | ['STR','STR',...]</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#searchstr">search='STR'</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#stationsdict">stations=DICT</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#countrystr-strstr">country='STR' | ['STR','STR',...]</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#bboxlatlonlatlon">bbox=[(lat,lon),(lat,lon)]</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pinpointlatlondistancekm">pinpoint=[lat,lon,distanceKM]</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#sdatestart-date">sdate='start date'</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#edateend-date">edate='end date'</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dates">dates=[]</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#outfmt-str">outfmt = 'STR'</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stiltstationgetid">stiltstation.get(id='')</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-object">STILT Object</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#id">.id</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#locident">.locIdent</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#alt">.alt</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#lat">.lat</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#lon">.lon</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#name">.name</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#icos">.icos</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#years">.years</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#info">.info</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#geoinfo">.geoinfo</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#get_tsstart_date-end_date-hours-columns">.get_ts(start_date, end_date, hours=[], columns=''):</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#get_fpstart_date-end_date-hours">.get_fp(start_date, end_date, hours=[]):</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#sparql">Sparql</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#runsparqldata">RunSparql.data</a>
@@ -233,12 +291,13 @@
 <li><code>from icoscp.cpb.dobj import Dobj</code></li>
 <li><code>from icoscp.station import station</code></li>
 <li><code>from icoscp.collection import collection</code></li>
+<li><code>from icoscp.stilt import stiltstation</code></li>
 <li><code>from icoscp.sparql.runsparql import RunSparql</code></li>
 <li><code>from icoscp.sparql import sparqls</code></li>
 </ul>
 <hr>
 <h2 id="dobj">Dobj</h2>
-<p>This is the basic module to load a <strong>d</strong>igital <strong>obj</strong>ect (data set) into memory. You need to know a valid persistent identifier (PID/URL) to access the data. Either you can browse the <a href="https://data.icos-cp.eu">data portal</a> to find PID's or you can use the 'station' package to find PID's programatically (see section <a href="#station">station</a>). In essence each data object is linked to a unique and persistent identifier in the form of a URL. Hence each data object has an on-line landing page. If you select any data object on <a href="https://data.icos-cp.eu">https://data.icos-cp.eu</a> and then navigate to the PID link (which looks like 11676/j7-Lxlln8_ysi4DEV8qine_v ) you end up on the 'landing' page of the document. If you look at the address bar of your browser, you will see an URL similar to <a href="https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v">https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v</a>. To access the data you need to know this URL or the last part of the URL (j7-Lxlln8_ysi4DEV8qine_v).</p>
+<p>This is the basic module to load a <strong>d</strong>igital <strong>obj</strong>ect (data set) into memory. You need to know a valid persistent identifier (PID/URL) to access the data. Either you can browse the <a href="https://data.icos-cp.eu">data portal</a> to find PID's or you can use the 'station' package to find PID's programmatically (see section <a href="#station">station</a>). In essence each data object is linked to a unique and persistent identifier in the form of a URL. Hence each data object has an on-line landing page. If you select any data object on <a href="https://data.icos-cp.eu">https://data.icos-cp.eu</a> and then navigate to the PID link (which looks like 11676/j7-Lxlln8_ysi4DEV8qine_v ) you end up on the 'landing' page of the document. If you look at the address bar of your browser, you will see an URL similar to <a href="https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v">https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v</a>. To access the data you need to know this URL or the last part of the URL (j7-Lxlln8_ysi4DEV8qine_v).</p>
 <p>Load the module with:<br>
     from icoscp.cpb.dobj import Dobj</p>
 <p>classmethod <strong>Dobj(digitalObject='')</strong><br>
@@ -435,15 +494,25 @@ OS for Ocean Stations
 <li>Return BOOL</li>
 </ul>
 <h3 id="convenience-functions"><strong>Convenience functions</strong></h3>
-<p>The following three functions are recommend to get information about the available stations at the Carbon Portal and how to get a valid station object (or list of):</p>
+<p>The following three functions are recommended to get information about the available 
+stations at the Carbon Portal and how to get a valid station object (or list of):</p>
 <h4 id="stationgetidlist">station.getIdList()</h4>
 <pre><code>station.getIdList(project='ICOS', sort='name')
 </code></pre>
 <p>This returns a DataFrame with columns:</p>
 <p><code>['uri', 'id', 'name', 'country', 'lat', 'lon', 'elevation', 'project', 'theme']</code></p>
-<p>By default ICOS certified stations are returned. If project is set to 'all', all known  stations (to the Carbon Portal) are returned. By default the DataFrame is sorted by name. You can provide any column name as sorting parameter. The 'id' of the record, can be used to instantiate  a station. Hence it is easy to adjust and filter these records and use the column 'id' as input for station.get()</p>
+<p>By default, ICOS certified stations are returned. If project is set to 'all', all known  stations (to the Carbon Portal) are returned. By default the DataFrame is sorted by name. You can provide any column name as sorting parameter. The 'id' of the record, can be used to instantiate  a station. Hence it is easy to adjust and filter these records and use the column 'id' as input for station.get()</p>
 <ul>
-<li>Return Pandas DataFrame</li>
+<li>Return Pandas DataFrame  </li>
+</ul>
+<pre><code>station.getIdList(project='ALL', outfmt='map')
+</code></pre>
+<p>If the optional argument <code>outfmt='map'</code> is given, a folium map is created with all the 
+queried stations provided by the <code>project</code> argument. Stations without a fixed location (like 
+measurements collected from instrumented Ships of Opportunity) will not be included in the map. 
+Each marker in the map represents a station and contains station related information.</p>
+<ul>
+<li>Return Folium Map</li>
 </ul>
 <h4 id="stationget">station.get()</h4>
 <pre><code>station.get('stationID')
@@ -455,7 +524,8 @@ OS for Ocean Stations
 <h4 id="stationgetlist">station.getList()</h4>
 <pre><code> station.getList(theme=['AS','ES','OS'], ids=None)
 </code></pre>
-<p>This is the easiest way to get a list of ICOS stations. By default a full list of all certified ICOS stations is returned. You can filter the output by provided a list of themes OR you can provide a list of station id's. NOTE: If you provide a list of id's, the theme filter is ignored. </p>
+<p>This is the easiest way to get a list of ICOS stations. By default, a full list of all 
+certified ICOS stations is returned. You can filter the output by provided a list of themes OR you can provide a list of station id's. NOTE: If you provide a list of id's, the theme filter is ignored. </p>
 <pre><code>station.getList(['as', 'os'])
 </code></pre>
 <p>list with ICOS atmospheric and ocean stations</p>
@@ -486,7 +556,7 @@ OS for Ocean Stations
 <li>Return Str</li>
 </ul>
 <h3 id="collectioncitation"><strong>Collection.citation</strong></h3>
-<p>For convenience the citation string provided from <a href="https://citation.crosscite.org/">https://citation.crosscite.org/</a> is stored in this attribute. If you like to have a different format, please have a look at .getCitation description below.</p>
+<p>For convenience the citation string provided from [https://citation.crosscite.org/] is stored in this attribute. If you like to have a different format, please have a look at .getCitation description below.</p>
 <ul>
 <li>Return STR</li>
 </ul>
@@ -545,6 +615,202 @@ myCollection = get('10.18160/ry7n-3r04')
 <li>Returns Collection</li>
 </ul>
 <hr>
+<h2 id="stilt">STILT</h2>
+<p>At the ICOS Carbon Portal we offer a service to calculate your own STILT footprints and visualize the results. Find out more on our website  <a href="https://www.icos-cp.eu/data-services/tools/stilt-footprint">https://www.icos-cp.eu/data-services/tools/stilt-footprint</a>. The calculated footprints and time series results are also available through this python library. Please be aware, that the calculated <strong>footprints are only available on our servers</strong>, including our virtual computational environments. Please read about our public available Jupyter Hub <a href="https://icos-carbon-portal.github.io/jupyter/">here</a>. Time series can be accessed from outside our servers as well.</p>
+<p>load the module with:</p>
+<pre><code>from icoscp.stilt import stiltstation
+</code></pre>
+<p>Two functions are available: one to find STILT stations and one to extract the STILT station as an object, which gives access to the data (time series and footprints).</p>
+<h3 id="stiltstationfindkwargs">stiltstation.find(**kwargs)</h3>
+<p>This is the main function to find STILT stations. By default it returns a dictionary where each 
+station id is the key to access meta data about the station. The order how you provide keywords 
+is respected and you can influence the result. Keyword arguments are applied sequentially (the 
+result from the first keyword is provided as input to the second and so on). With no keyword 
+provided <code>stiltstation.find()</code> returns a dictionary with ALL Stilt stations.</p>
+<p>The following keywords are available:</p>
+<h5 id="idstr-strstr">id='STR' | ['STR','STR',...]</h5>
+<p>Provide a single id as string, or a list of strings.<br>You can provide either STILT or ICOS id's mixed together.</p>
+<pre><code>stiltstation.find(id=['NOR', 'GAT344'])
+stiltstation.find(id='KIT030')
+</code></pre>
+<h5 id="searchstr">search='STR'</h5>
+<p>Arbitrary string search will find any occurrence of STR in the station metadata.</p>
+<pre><code>stiltstation.find(search='south')
+</code></pre>
+<h5 id="stationsdict">stations=DICT</h5>
+<p>all actions are performed on this dictionary, rather than dynamically search for all stilt station on our server.
+Can be useful for creating a subset of stations from an existing search.</p>
+<pre><code>myStations = stiltstation.find(search='north')
+refined = stiltstation.find(stations=myStations, country='Finland')
+</code></pre>
+<p><br><h2>Spatial keywords</h2><br></p>
+<h5 id="countrystr-strstr">country='STR' | ['STR','STR',...]</h5>
+<p>Provide a single country id as string, or a list of strings. You can provide alpha-2, alpha-3 code (ISO 3166) or the full country name (some translations are available as well). To find all STILT stations with geolocation in Norway you can search for either NO, NOR, Norway, Norge.</p>
+<pre><code>stiltstation.find(country=['Swe','norge', 'IT'])
+</code></pre>
+<h5 id="bboxlatlonlatlon">bbox=[(lat,lon),(lat,lon)]</h5>
+<p>Bounding Box. Provide two tuples (wgs84), where the box is defined as TopLeftCorner (NorthWest) and BottomRightCorner (SouthEast). The following example returns approximately all stations in Scandinavia.</p>
+<pre><code>stiltstation.find(bbox=[(70,5),(55,32)])
+</code></pre>
+<h5 id="pinpointlatlondistancekm">pinpoint=[lat,lon,distanceKM]</h5>
+<p>Provide a single point (lat, lon) and the Distance in KM, which creates a bounding box. Distance is very roughly translated with 1 degree = 1 km. The bounding box is calculated as distance in all directions. For example <code>distance=200</code> will create a bounding box of 400 x 400 km with pinpoint in the centre. If you don't provide a distance, a default value of 200 is used.</p>
+<pre><code>stiltstation.find(pinpoint=[55.7,13.1,500])     # bounding box ~ 1000km x 1000km
+stiltstation.find(pinpoint=[55.7,13.1])         # bounding box ~ 400km x 400km
+</code></pre>
+<p><br><h2>Temporal keywords</h2><br></p>
+<p>Be aware, that the granularity for all temporal keywords is year and month, days are not considered in the search. Input format for the dates entry MUST be convertible to data time object through pandas.to_datetime().  Accepted formats are:</p>
+<ul>
+<li>datetime.date objs</li>
+<li>FLOAT or INT representing a unix timestamp (seconds since 1970-01-01)</li>
+<li>pandas.datetime</li>
+<li>STR: "YYYY-MM-DD" , "YYYY", "YYYY/MM/DD"</li>
+</ul>
+<h4 id="sdatestart-date">sdate='start date'</h4>
+<p>Stations are returned where results are available for &gt;= start date. 'sdate' is a single entry. If you provide sdate AND edate, any station with available data within that date range is returned. (accepted formats see above)</p>
+<pre><code>stiltstation.find(sdate= '2018-05-01')
+</code></pre>
+<h4 id="edateend-date">edate='end date'</h4>
+<p>Stations are returned where results are available for &lt;= end date. 'edate' is a single entry. If you provide sdate AND edate, any station with available data within that date range is returned. (accepted formats see above)</p>
+<pre><code>stiltstation.find(edate='2018-06-01')
+</code></pre>
+<h4 id="dates">dates=[]</h4>
+<p>This will return a list of stations where data is available for any of the provided dates. Input format, see sdate,edate. Remember, that only year and month is checked.</p>
+<pre><code>stiltstation.find(dates=['2020-01-01', '2020/05/23'])
+</code></pre>
+<h4 id="outfmt-str">outfmt = 'STR'</h4>
+<p>where string is <code>dict</code> | <code>pandas</code> | <code>list</code> | <code>map</code>.
+This keyword is ALWAYS executed last, regardless of the position within keyword arguments. By default a <code>dictionary</code> is returned. With <code>pandas</code> a pandas data frame is returned where the station id is indexed, each row contains one station with the same metadata as is available in the dictionary <a href="https://pandas.pydata.org/docs/">https://pandas.pydata.org/docs/</a>. List however returns a list of STILT station objects. Please see the documentation about <code>stiltstation.get(id="")</code>. Lastly you can choose <code>map</code>, which returns a folium map <a href="https://python-visualization.github.io/folium/">https://python-visualization.github.io/folium/</a>. The map can be displayed directly in a Jupyter Notebook, or you can save the map to a html file.</p>
+<pre><code>stiltstation.find(country='Italy', outfmt='pandas') 
+stiltstation.find(country='Italy', outfmt='pandas').save('mymap.html')
+</code></pre>
+<h3 id="stiltstationgetid">stiltstation.get(id='')</h3>
+<p>Returns a stilt station object or a list of stilt station objects. A stilt station object, gives access to the underlying data (timeseries and footprints). You may provide a STR or LIST[STR] of STILT id's or the 'result' of a .find() query. The properties of the returned stilt object is listed further below.</p>
+<pre><code># return stilt stations based on stiltstation.find(id='STR')
+stiltstation.get('HTM')         
+stiltstation.get(['KIT','HTM150'])
+
+# return stilt stations based on dictionary or list of dict
+a = stiltstation.find(search='north')
+stiltstation.get(a)
+OR
+stiltstation.get(stiltstation.find(...))
+</code></pre>
+<h3 id="stilt-object">STILT Object</h3>
+<p>classmethod <strong>StiltSation(dict)</strong><br>
+Please do not use this class directly. You should load <code>from icoscp.stilt import stiltstation</code> and then use the function <code>obj = stiltstation.get('HTM150)</code> which will return a stilt station object. Once you have the object, the following attributes and methods are available:</p>
+<h2>Attributes:</h2>
+
+<h4 id="id">.id</h4>
+<p>Return STILT station ID (e.g. 'HTM150') as string.</p>
+<h4 id="locident">.locIdent</h4>
+<p>String with latitude-longitude-altitude of STILT station (e.g. '35.34Nx025.67Ex00150')</p>
+<h4 id="alt">.alt</h4>
+<p>Station altitude (in meters above ground level)</p>
+<h4 id="lat">.lat</h4>
+<p>Station latitude</p>
+<h4 id="lon">.lon</h4>
+<p>Station longitude</p>
+<h4 id="name">.name</h4>
+<p>STILT station long name</p>
+<h4 id="icos">.icos</h4>
+<p>None | Dict. If the station is an ICOS station, a dictionary with ICOS meta data is available.</p>
+<h4 id="years">.years</h4>
+<p>List of years for which STILT results are available. Be aware that even if only one day is calculated for a year, <code>year</code> will be listed.</p>
+<h4 id="info">.info</h4>
+<p>Returns the diction with all metadata.</p>
+<h4 id="geoinfo">.geoinfo</h4>
+<p>Dictionary with geographical (country) information, if the station is within a country border.</p>
+<h2>Methods:</h2>
+
+<h4 id="get_tsstart_date-end_date-hours-columns">.get_ts(start_date, end_date, hours=[], columns=''):</h4>
+<p>STILT concentration time series for a given time period, with optional selection of specific hours and columns.
+Returns time series as a pandas data frame.</p>
+<ul>
+<li>start_date : STR, FLOAT/INT (Unix timestamp), datetime object<ul>
+<li>start_date = '2018-01-01'</li>
+</ul>
+</li>
+<li>end_date : STR, FLOAT/INT (Unix timestamp), datetime object<ul>
+<li>end_date = '2018-01-31'</li>
+</ul>
+</li>
+<li>
+<p>hours : STR | INT, optional. If hours is empty or None, ALL Timeslots are returned. For backwards compatibility, input of str format hh:mm is accepted</p>
+<ul>
+<li>hours = [0,3,6,9,12,15,18,21]<pre><code>Valid results are returned with LOWER BOUND values.
+Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
+            hours = [2,3,4,5,6] will return Timeslots for 0,3 and 6
+            hours = [] return ALL
+            hours = ["10", "10:00", 10] returns timeslot 9
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>columns : STR, optional</p>
+<ul>
+<li>Valid entries are <code>"default", "co2", "co", "rn", "wind", "latlon", "all"</code><pre><code>default:
+    isodate,co2.stilt,co2.fuel,co2.bio, co2.background
+
+co2
+    isodate,co2.stilt,co2.fuel,co2.bio,co2.fuel.coal,
+    co2.fuel.oil,co2.fuel.gas,co2.fuel.bio,co2.energy
+    co2.transport, co2.industry,co2.others, co2.cement,
+    co2.background
+
+co
+    isodate, co.stilt,co.fuel,co.bio,co.fuel.coal
+    co.fuel.oil, co.fuel.gas,co.fuel.bio,co.energy
+    co.transport,co.industry, co.others, co.cement,
+    co.background
+
+rn
+    isodate, rn, rn.era, rn.noah
+
+wind
+    isodate, wind.dir, wind.u, wind.v
+
+latlon
+    isodate, latstart, lonstart
+
+all
+    isodate,co2.stilt,co2.fuel,co2.bio,co2.fuel.coal,
+    co2.fuel.oil,co2.fuel.gas,co2.fuel.bio,co2.energy,
+    co2.transport, co2.industry,co2.others, co2.cement,
+    co2.background, co.stilt,co.fuel,co.bio,co.fuel.coal,
+    co.fuel.oil,co.fuel.gas,co.fuel.bio,co.energy,
+    co.transport,co.industry,co.others, co.cement,
+    co.background,rn, rn.era,rn.noah,wind.dir,
+    wind.u,wind.v,latstart,lonstart
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="get_fpstart_date-end_date-hours">.get_fp(start_date, end_date, hours=[]):</h4>
+<p>STILT footprints for a given time period, with optional selection of specific hours.
+<code>Returns</code> the footprints as <code>xarray</code> <a href="http://xarray.pydata.org/en/stable/">http://xarray.pydata.org/en/stable/</a>   with latitude, longitude, time, and ppm per (micromol m-2 s-1).</p>
+<ul>
+<li>start_date : STR, FLOAT/INT (Unix timestamp), datetime object.<ul>
+<li>start_date = '2018-01-01'</li>
+</ul>
+</li>
+<li>end_date : STR, FLOAT/INT (Unix timestamp), datetime object.<ul>
+<li>end_date = '2018-01-31'</li>
+</ul>
+</li>
+<li>hours : STR | INT, optional. If hours is empty or None, ALL Timeslots are returned. For backwards compatibility, input of str format hh:mm is accepted<ul>
+<li>hours = [0,3,6,9,12,15,18,21]<pre><code>Valid results are returned with LOWER BOUND values.
+Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
+            hours = [2,3,4,5,6] will return Timeslots for 0,3 and 6
+            hours = [] return ALL
+            hours = ["10", "10:00", 10] returns timeslot 9
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
 <h2 id="sparql">Sparql</h2>
 <p>At the ICOS Carbon Portal we store all data and meta data as linked data in a triple store. For more information about this approach refer to <a href="https://www.w3.org/standards/semanticweb/">Semantic Web</a>, <a href="https://www.w3.org/RDF/">Resource Description Framework (RDF)</a>, and <a href="https://en.wikipedia.org/wiki/Triplestore">Triple Stores</a>.</p>
 <p>This module is a simple interface to the <a href="https://meta.icos-cp.eu/sparqlclient/?type=CSV">SPARQL endpoint</a> at the Carbon Portal. You can write your own queries and use the module to query the database or use some of the provided built in queries. </p>
@@ -552,7 +818,7 @@ myCollection = get('10.18160/ry7n-3r04')
 <code>from icoscp.sparql.runsparql import RunSparql</code></p>
 <p>classmethod <strong>RunSparql(sparql_query='', output_format='txt')</strong><br>
 sparql_query needs to be a valid query. You can test a query directly at the online SPARQL endpoint at <a href="https://meta.icos-cp.eu/sparqlclient/?type=CSV">https://meta.icos-cp.eu/sparqlclient/?type=CSV</a>. The ouput format is by default (txt/json) but you can adjust with the following formats ['json', 'csv', 'dict', 'pandas', 'array', 'html'].</p>
-<hr><h2>Attributes:</h2>
+<h2>Attributes:</h2>
 <hr>
 
 <h3 id="runsparqldata"><strong>RunSparql.data</strong></h3>
