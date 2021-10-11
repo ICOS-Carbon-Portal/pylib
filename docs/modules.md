@@ -221,19 +221,30 @@ True if stationId is found.
 - Return BOOL
 
 ### **Convenience functions**
-The following three functions are recommend to get information about the available stations at the Carbon Portal and how to get a valid station object (or list of):
+The following three functions are recommended to get information about the available 
+stations at the Carbon Portal and how to get a valid station object (or list of):
 
 #### station.getIdList()
-
-	station.getIdList(project='ICOS', sort='name')
+```
+station.getIdList(project='ICOS', sort='name')
+```
 
 This returns a DataFrame with columns:
 
 `['uri', 'id', 'name', 'country', 'lat', 'lon', 'elevation', 'project', 'theme']`
 
-By default ICOS certified stations are returned. If project is set to 'all', all known  stations (to the Carbon Portal) are returned. By default the DataFrame is sorted by name. You can provide any column name as sorting parameter. The 'id' of the record, can be used to instantiate  a station. Hence it is easy to adjust and filter these records and use the column 'id' as input for station.get()
+By default, ICOS certified stations are returned. If project is set to 'all', all known  stations (to the Carbon Portal) are returned. By default the DataFrame is sorted by name. You can provide any column name as sorting parameter. The 'id' of the record, can be used to instantiate  a station. Hence it is easy to adjust and filter these records and use the column 'id' as input for station.get()
 
-- Return Pandas DataFrame
+- Return Pandas DataFrame  
+```
+station.getIdList(project='ALL', outfmt='map')
+```
+If the optional argument `outfmt='map'` is given, a folium map is created with all the 
+queried stations provided by the `project` argument. Stations without a fixed location (like 
+measurements collected from instrumented Ships of Opportunity) will not be included in the map. 
+Each marker in the map represents a station and contains station related information.
+
+- Return Folium Map
 
 #### station.get()
 
@@ -248,7 +259,8 @@ Provide a valid station id (see getIdList()) to create a Station object. NOTE: s
 
 	 station.getList(theme=['AS','ES','OS'], ids=None)
 
-This is the easiest way to get a list of ICOS stations. By default a full list of all certified ICOS stations is returned. You can filter the output by provided a list of themes OR you can provide a list of station id's. NOTE: If you provide a list of id's, the theme filter is ignored. 
+This is the easiest way to get a list of ICOS stations. By default, a full list of all 
+certified ICOS stations is returned. You can filter the output by provided a list of themes OR you can provide a list of station id's. NOTE: If you provide a list of id's, the theme filter is ignored. 
 
 	station.getList(['as', 'os'])
 list with ICOS atmospheric and ocean stations
