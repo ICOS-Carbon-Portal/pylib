@@ -359,7 +359,11 @@ load the module with:
 Two functions are available: one to find STILT stations and one to extract the STILT station as an object, which gives access to the data (time series and footprints).
 
 ### stiltstation.find(\*\*kwargs)
-This is the main function to find STILT stations. By default it returns a dictionary where each station id is the key to access meta data about the station. The order how you provide keywords is respected and you can influence the result. Keyword arguments are applied sequentially (the result from the first keyword is provides as input to the second and so on). With no keyword provided `station.find()`, a dictionary with ALL Stilt stations is returned.
+This is the main function to find STILT stations. By default it returns a dictionary where each 
+station id is the key to access meta data about the station. The order how you provide keywords 
+is respected and you can influence the result. Keyword arguments are applied sequentially (the 
+result from the first keyword is provided as input to the second and so on). With no keyword 
+provided `stiltstation.find()` returns a dictionary with ALL Stilt stations.
 
 The following keywords are available:
 
