@@ -1,5 +1,6 @@
 import setuptools
 
+
 def readme():
     try:
         with open('readme.md') as f:
@@ -13,6 +14,7 @@ setuptools.setup(
 	license='GPLv3+',
     author="Claudio D'Onofrio, Zois Zogopoulos, ICOS Carbon Portal",
     author_email='claudio.donofrio@nateko.lu.se, zois.zogopoulos@nateko.lu.se, info@icos-cp.eu',
+    include_package_data=True,
     description='Access to ICOS data objects hosted at https://data.icos-cp.eu',
     long_description=readme(),
     long_description_content_type='text/markdown',

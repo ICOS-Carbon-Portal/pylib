@@ -15,9 +15,9 @@
 
 __credits__     = "ICOS Carbon Portal"
 __license__     = ['Software: GPL-3.0','ICSO Data accessed with this library CC BY 4.0']
-__version__     = "0.1.7"
+__version__     = "0.1.9"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
-__status__      = "r1"
-__date__        = "2021-06-23"
+__status__      = "stable"
+__date__        = "2021-10-11"
 
