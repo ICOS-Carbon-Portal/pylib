@@ -385,6 +385,8 @@ def __get_all():
 
 
 def __country(latlon):
+    # be aware, that by providing latlon
+    # triggers an external reverse geocoder.
     return icoscp.country.get(latlon=latlon)
 
 

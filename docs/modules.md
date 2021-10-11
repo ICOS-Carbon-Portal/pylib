@@ -364,7 +364,7 @@ This is the main function to find STILT stations. By default it returns a dictio
 The following keywords are available:
 
 ##### id='STR' | ['STR','STR',...]
-Provide a single id as string, or a list of strings.<br>. You can provide either STILT or ICOS id's mixed together.
+Provide a single id as string, or a list of strings.<br>You can provide either STILT or ICOS id's mixed together.
 	
 	stiltstation.find(id=['NOR', 'GAT344'])
 	stiltstation.find(id='KIT030')
@@ -446,7 +446,7 @@ Returns a stilt station object or a list of stilt station objects. A stilt stati
 
 ### STILT Object
 classmethod **StiltSation(dict)**<br>
-Please do not use this class directly. You should load `from icoscp.stilt import station` and then use the function `obj = station.get('HTM150)` which will return stilt station objects. Once you have the object, the following attributes and methods are available:
+Please do not use this class directly. You should load `from icoscp.stilt import stiltstation` and then use the function `obj = stiltstation.get('HTM150)` which will return a stilt station object. Once you have the object, the following attributes and methods are available:
 
 <h2>Attributes:</h2>
 
