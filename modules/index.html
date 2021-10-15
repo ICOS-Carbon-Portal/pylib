@@ -237,6 +237,18 @@
     </li>
         </ul>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#country">Country</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#countrygetkwargs">country.get(**kwargs)</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#returns">Returns</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
     </ul>
                     </li>
                 </ul>
@@ -286,7 +298,9 @@
             <div class="section">
               
                 <h1 id="content">Content</h1>
-<p>The following modules are available in the library to find and access data hosted at the Carbon Portal. After a successful installation into your python environment you should be able to load the modules with:</p>
+<p>The following modules are available in the library to find and access data hosted at the Carbon 
+Portal. After a successful installation into your python environment you should be able to load 
+the modules with:</p>
 <ul>
 <li><code>from icoscp.cpb.dobj import Dobj</code></li>
 <li><code>from icoscp.station import station</code></li>
@@ -297,7 +311,17 @@
 </ul>
 <hr>
 <h2 id="dobj">Dobj</h2>
-<p>This is the basic module to load a <strong>d</strong>igital <strong>obj</strong>ect (data set) into memory. You need to know a valid persistent identifier (PID/URL) to access the data. Either you can browse the <a href="https://data.icos-cp.eu">data portal</a> to find PID's or you can use the 'station' package to find PID's programmatically (see section <a href="#station">station</a>). In essence each data object is linked to a unique and persistent identifier in the form of a URL. Hence each data object has an on-line landing page. If you select any data object on <a href="https://data.icos-cp.eu">https://data.icos-cp.eu</a> and then navigate to the PID link (which looks like 11676/j7-Lxlln8_ysi4DEV8qine_v ) you end up on the 'landing' page of the document. If you look at the address bar of your browser, you will see an URL similar to <a href="https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v">https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v</a>. To access the data you need to know this URL or the last part of the URL (j7-Lxlln8_ysi4DEV8qine_v).</p>
+<p>This is the basic module to load a <strong>d</strong>igital <strong>obj</strong>ect (data set) into memory. You need to 
+know a valid persistent identifier (PID/URL) to access the data. Either you can browse the 
+<a href="https://data.icos-cp.eu">data portal</a> to find PID's or you can use the 'station' package to 
+find PID's programmatically (see section <a href="#station">station</a>). In essence each data object is 
+linked to a unique and persistent identifier in the form of a URL. Hence, each data object has 
+an on-line landing page. If you select any data object on 
+<a href="https://data.icos-cp.eu">https://data.icos-cp.eu</a> and then navigate to the PID link (which 
+looks like <code>11676/j7-Lxlln8_ysi4DEV8qine_v</code> ) you end up on the 'landing' page of the document. 
+If you look at the address bar of your browser, you will see a URL similar to 
+<a href="https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v">https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v</a>. To access the data you need to know 
+this URL or the last part of the URL (<code>j7-Lxlln8_ysi4DEV8qine_v</code>).</p>
 <p>Load the module with:<br>
     from icoscp.cpb.dobj import Dobj</p>
 <p>classmethod <strong>Dobj(digitalObject='')</strong><br>
@@ -324,19 +348,25 @@ myDobj.dobj = "j7-Lxlln8_ysi4DEV8qine_v"
 <li>Return DICT</li>
 </ul>
 <h3 id="dobjcolnames"><strong>Dobj.colNames</strong></h3>
-<p>Available column names. This information is part of the Dobj.info, which holds all the available meta data.</p>
+<p>Available column names. This information is part of the Dobj.info, which holds all the 
+available metadata.</p>
 <ul>
 <li>Return pandas.core.series.Series</li>
 </ul>
 <h3 id="dobjdatetimeconvert-true"><strong>Dobj.dateTimeConvert = True</strong></h3>
-<p>Set or retrieve. Default <strong>True</strong>. The binary data representation provides a UTC Timestamp as Unixtimestamp. By default this is converted to a DateTimeObject (<strong>pandas._libs.tslibs.timestamps.Timestamp</strong>). If you prefer to have the raw Unixtimestamp (<strong>numpy.float64</strong>), set Dobj.dateTimeConvert = False prior to issue the .get() command.</p>
+<p>Set or retrieve. Default <strong>True</strong>. The binary data representation provides a UTC Timestamp as 
+Unixtimestamp. By default, this is converted to a DateTimeObject
+(<strong>pandas._libs.tslibs.timestamps.Timestamp</strong>). If you prefer to have the raw Unixtimestamp 
+(<strong>numpy.float64</strong>), set Dobj.dateTimeConvert = False prior to issue the .get() command.</p>
 <ul>
 <li>Return BOOL</li>
 </ul>
 <h3 id="dobjdobj-pid"><strong>Dobj.dobj = PID</strong></h3>
 <p>See Dobj.id</p>
 <h3 id="dobjid-pid"><strong>Dobj.id = PID</strong></h3>
-<p>Set or retrieve the PID for the Dobj, default is empty (""). If a PID is set, an automatic chekck is performed to find the meta data for the object. If this is successful, the 'valid' property is set to <strong>True</strong></p>
+<p>Set or retrieve the PID for the Dobj, default is empty (""). If a PID is set, an automatic 
+check is performed to find the metadata for the object. If this is successful, the 'valid' 
+property is set to <strong>True</strong></p>
 <ul>
 <li>Return STR</li>
 </ul>
@@ -355,9 +385,9 @@ myDobj.dobj = "j7-Lxlln8_ysi4DEV8qine_v"
 <ul>
 <li>Return BOOL</li>
 </ul>
-<p>All Dobj related meta data is available in the following properties.</p>
+<p>All Dobj related metadata is available in the following properties.</p>
 <h3 id="dobjinfo"><strong>Dobj.info</strong></h3>
-<p>This will return a list of three pandas data frames which contain meta data.</p>
+<p>This will return a list of three pandas data frames which contain metadata.</p>
 <pre><code>info[0] -&gt; information about the dobj like, url, specification, number of rows, related file name.
 info[1] -&gt; information about the data like colName, value type, unit, kind
 info[2] -&gt; information about the station, where the data was obtained. Name, id, lat, lon etc..
@@ -371,12 +401,13 @@ info[2] -&gt; information about the station, where the data was obtained. Name, 
 <li>Return FLOAT</li>
 </ul>
 <h3 id="dobjlon"><strong>Dobj.lon</strong></h3>
-<p>Longitute for station</p>
+<p>Longitude for station</p>
 <ul>
 <li>Return FLOAT</li>
 </ul>
 <h3 id="dobjelevation"><strong>Dobj.elevation</strong></h3>
-<p>Elevation above sea level for station. Be aware, this is NOT the sampling height for the data points.</p>
+<p>Elevation above sea level for station. Be aware, this is NOT the sampling height for the data 
+points.</p>
 <ul>
 <li>Return FLOAT</li>
 </ul>
@@ -386,18 +417,27 @@ info[2] -&gt; information about the station, where the data was obtained. Name, 
 <li>Return STR</li>
 </ul>
 <h3 id="dobjsize"><strong>Dobj.size()</strong></h3>
-<p>The real size of the dobj in [bytes, KB, MB, TB]. Since this object may contain the data, it is no longer just a pointer to data.</p>
+<p>The real size of the dobj in [bytes, KB, MB, TB]. Since this object may contain the data, it is 
+no longer just a pointer to data.</p>
 <ul>
-<li>Return TUPLE (int32, STR), where int32 represents the size and STR the unit. Example output looks like: (4.353, 'MB')</li>
+<li>Return TUPLE (int32, STR), where int32 represents the size and STR the unit. Example output 
+  looks like: (4.353, 'MB')</li>
 </ul>
 <hr>
 <h2 id="station">Station</h2>
-<p>The station module provides a search facility to explore ICOS stations and find associated data objects and data products. There is a lot of information available abouthe the ICOS stations, partner countries, measured variables and much more in the <a href="https://www.icos-cp.eu/sites/default/files/cmis/ICOS%20Handbook%202020.pdf">ICOS Handbook</a>. </p>
+<p>The station module provides a search facility to explore ICOS stations and find associated data 
+objects and data products. There is a lot of information available about the ICOS stations, 
+partner countries, measured variables and much more in the 
+<a href="https://www.icos-cp.eu/sites/default/files/cmis/ICOS%20Handbook%202020.pdf">ICOS Handbook</a>. </p>
 <p>load the module with:</p>
 <pre><code>from icoscp.station import station
 </code></pre>
 <p>classmethod <strong>station.Station()</strong><br>
-The station object is primarily a data structure to store the associated meta data. The meta data is provided with specific and complex Sparql queries. It is possible to instantiate this class on its own, but we recommend to use the convenience functions <code>station.getIdList()</code> <code>station.get('StationID')</code> <code>station.getList()</code>  as described further below to create the station object. Once you have a created valid station object a list attributes are available:</p>
+The station object is primarily a data structure to store the associated metadata. The metadata 
+is provided with specific and complex Sparql queries. It is possible to instantiate this 
+class on its own, but we recommend using the convenience functions <code>station.getIdList()</code> 
+<code>station.get('StationID')</code> <code>station.getList()</code>  as described further below to create the 
+station object. Once you have a created valid station object a list attributes are available:</p>
 <hr><h2>Attributes:</h2>
 <hr>
 
@@ -407,7 +447,8 @@ The station object is primarily a data structure to store the associated meta da
 <li>Return STR</li>
 </ul>
 <h3 id="stationdatalevelnone"><strong>Station.data(level=None)</strong></h3>
-<p>All associated data object for the station are returned. ICOS distinguishes data in terms of how processed they are.</p>
+<p>All associated data object for the station are returned. ICOS distinguishes data in terms of 
+how processed they are.</p>
 <pre><code>- Data level 1: Near Real Time Data (NRT) or Internal Work data (IW).
 - Data level 2: The final quality checked ICOS RI data set, published by the CFs, 
                 to be distributed through the Carbon Portal. 
@@ -419,7 +460,8 @@ The station object is primarily a data structure to store the associated meta da
 <li>Return Pandas DataFrame</li>
 </ul>
 <h3 id="stationeag"><strong>Station.eag</strong></h3>
-<p>Elevation above <strong>ground</strong>, if available. Please note, this is a general information  about the height of the tower. This is NOT a sampling height and it is not guranteed to be accurate.</p>
+<p>Elevation above <strong>ground</strong>, if available. Please note, this is general information about the 
+height of the tower. This is NOT a sampling height, and it is not guaranteed to be accurate.</p>
 <ul>
 <li>Return FLOAT</li>
 </ul>
@@ -429,7 +471,9 @@ The station object is primarily a data structure to store the associated meta da
 <li>Return FLOAT</li>
 </ul>
 <h3 id="stationicosclass"><strong>Station.icosclass</strong></h3>
-<p>Classification for certified ICOS stations. Please consult the <a href="https://www.icos-cp.eu/sites/default/files/cmis/ICOS%20Handbook%202020.pdf">ICOS Handbook</a> for further information about the Class 1&amp;2 certificate.</p>
+<p>Classification for certified ICOS stations. Please consult the 
+<a href="https://www.icos-cp.eu/sites/default/files/cmis/ICOS%20Handbook%202020.pdf">ICOS Handbook</a> for 
+further information about the Class 1&amp;2 certificate.</p>
 <ul>
 <li>Return STR</li>
 </ul>
@@ -464,7 +508,8 @@ The station object is primarily a data structure to store the associated meta da
 <li>Return STR</li>
 </ul>
 <h3 id="stationproject"><strong>Station.project</strong></h3>
-<p>ICOS Carbon Portal is a data portal from and for the ICOS community. However, the data portal does host more than ICOS data. The station association is listed here (if available)</p>
+<p>ICOS Carbon Portal is a data portal from and for the ICOS community. However, the data portal 
+does host more than ICOS data. The station association is listed here (if available)</p>
 <ul>
 <li>Return LIST</li>
 </ul>
@@ -474,8 +519,10 @@ The station object is primarily a data structure to store the associated meta da
 <li>Return STR</li>
 </ul>
 <h3 id="stationtheme"><strong>Station.theme</strong></h3>
-<p>For ICOS stations a 'theme' is provided. Please note that, a station may belong to more than one theme, but with different themes. For example the stationId "NOR" (Norunda, Sweden), will give you access to the atmospheric data products, whereas the stationId
- "SE-Nor" will return the Ecosystem data products.</p>
+<p>For ICOS stations a 'theme' is provided. Please note that, a station may belong to more than 
+one theme, but with different themes. For example the stationId "NOR" (Norunda, Sweden), will 
+give you access to the atmospheric data products, whereas the stationId "SE-Nor" will return 
+the Ecosystem data products.</p>
 <pre><code>AS for Atmospheric Stations
 ES for Ecosystem Stations
 OS for Ocean Stations
@@ -484,7 +531,8 @@ OS for Ocean Stations
 <li>Return STR</li>
 </ul>
 <h3 id="stationuri"><strong>Station.uri</strong></h3>
-<p>Link to the landing page for the station. Because a station ID may be associated with more than one 'project' this returns a list of URI's</p>
+<p>Link to the landing page for the station. Because a station ID may be associated with more than 
+one 'project' this returns a list of URI's</p>
 <ul>
 <li>Return LIST</li>
 </ul>
@@ -501,14 +549,18 @@ stations at the Carbon Portal and how to get a valid station object (or list of)
 </code></pre>
 <p>This returns a DataFrame with columns:</p>
 <p><code>['uri', 'id', 'name', 'country', 'lat', 'lon', 'elevation', 'project', 'theme']</code></p>
-<p>By default, ICOS certified stations are returned. If project is set to 'all', all known  stations (to the Carbon Portal) are returned. By default the DataFrame is sorted by name. You can provide any column name as sorting parameter. The 'id' of the record, can be used to instantiate  a station. Hence it is easy to adjust and filter these records and use the column 'id' as input for station.get()</p>
+<p>By default, ICOS certified stations are returned. If project is set to 'all', all known 
+stations (to the Carbon Portal) are returned. By default, the DataFrame is sorted by name. You 
+can provide any column name as sorting parameter. The 'id' of the record, can be used to 
+instantiate  a station. Hence, it is easy to adjust and filter these records and use the column 
+'id' as input for station.get()</p>
 <ul>
 <li>Return Pandas DataFrame  </li>
 </ul>
 <pre><code>station.getIdList(project='ALL', outfmt='map')
 </code></pre>
-<p>If the optional argument <code>outfmt='map'</code> is given, a folium map is created with all the 
-queried stations provided by the <code>project</code> argument. Stations without a fixed location (like 
+<p>If the optional argument <code>outfmt='map'</code> is given, a folium map is created with all the queried 
+stations provided by the <code>project</code> argument. Stations without a fixed location (like 
 measurements collected from instrumented Ships of Opportunity) will not be included in the map. 
 Each marker in the map represents a station and contains station related information.</p>
 <ul>
@@ -517,7 +569,8 @@ Each marker in the map represents a station and contains station related informa
 <h4 id="stationget">station.get()</h4>
 <pre><code>station.get('stationID')
 </code></pre>
-<p>Provide a valid station id (see getIdList()) to create a Station object. NOTE: stationId is CaseSensitive.</p>
+<p>Provide a valid station id (see getIdList()) to create a Station object. NOTE: stationId is 
+CaseSensitive.</p>
 <ul>
 <li>Return Station Object</li>
 </ul>
@@ -525,7 +578,9 @@ Each marker in the map represents a station and contains station related informa
 <pre><code> station.getList(theme=['AS','ES','OS'], ids=None)
 </code></pre>
 <p>This is the easiest way to get a list of ICOS stations. By default, a full list of all 
-certified ICOS stations is returned. You can filter the output by provided a list of themes OR you can provide a list of station id's. NOTE: If you provide a list of id's, the theme filter is ignored. </p>
+certified ICOS stations is returned. You can filter the output by provided a list of themes OR 
+you can provide a list of station id's. NOTE: If you provide a list of id's, the theme filter 
+is ignored. </p>
 <pre><code>station.getList(['as', 'os'])
 </code></pre>
 <p>list with ICOS atmospheric and ocean stations</p>
@@ -537,11 +592,22 @@ certified ICOS stations is returned. You can filter the output by provided a lis
 </ul>
 <hr>
 <h2 id="collection">Collection</h2>
-<p>This module supports to load a collection of digital objects. Data products ( <a href="https://www.icos-cp.eu/data-products">https://www.icos-cp.eu/data-products</a> ) or collections are an assembly for a specific theme, or project. For example the ICOS community assembled data to provide a base for the Drought anomaly in 2018. This dataset was then used to study the impact of this extreme event, which ultimately led to a series of publications available as 'theme issue' in <a href="https://royalsocietypublishing.org/toc/rstb/2020/375/1810">The Royal Society</a>. Subsequently the data sets are now public available at the ICOS Carbon Portal ( <a href="https://www.icos-cp.eu/data-products/YVR0-4898">Drought-2018 ecosystem eddy covariance flux product for 52 stations</a> and <a href="https://www.icos-cp.eu/data-products/ERE9-9D85">Drought-2018 atmospheric CO2 Mole Fraction product for 48 stations (96 sample heights)</a>. <br></p>
+<p>This module supports to load a collection of digital objects. Data products 
+(<a href="https://www.icos-cp.eu/data-products">https://www.icos-cp.eu/data-products</a>) or collections 
+are an assembly for a specific theme, or project. For example the ICOS community assembled data 
+to provide a base for the Drought anomaly in 2018. This dataset was then used to study the 
+impact of this extreme event, which ultimately led to a series of publications available as 
+'theme issue' in <a href="https://royalsocietypublishing.org/toc/rstb/2020/375/1810">The Royal Society</a>.
+Subsequently, the data sets are now public available at the ICOS Carbon Portal 
+(<a href="https://www.icos-cp.eu/data-products/YVR0-4898">Drought-2018 ecosystem eddy covariance flux product for 52 stations</a> and 
+<a href="https://www.icos-cp.eu/data-products/ERE9-9D85">Drought-2018 atmospheric CO2 Mole Fraction product for 48 stations (96 sample heights)</a>. <br></p>
 <p>Load the module with:<br>
     from icoscp.collection import collection</p>
 <p>classmethod <strong>Collection(coll)</strong><br>
-(where <code>coll</code> represents a pandas data frame, similar to the output from .getIdList()). BUT only similar. We do <strong>NOT Recommend</strong> to instantiate this class directly. Please <strong>use</strong> the function <strong>.get(CollectionId)</strong>. The Purpose of the class documentation is to provide you a list of attributes available, after the .get(CollectionId) return a collection object.</p>
+(where <code>coll</code> represents a <code>pandas</code> data frame, similar to the output from .getIdList()). BUT 
+only similar. We do <strong>NOT Recommend</strong> to instantiate this class directly. Please <strong>use</strong> the 
+function <strong>.get(CollectionId)</strong>. The Purpose of the class documentation is to provide you a 
+list of attributes available, after the .get(CollectionId) return a collection object.</p>
 <hr><h2>Attributes:</h2>
 <hr>
 
@@ -556,7 +622,9 @@ certified ICOS stations is returned. You can filter the output by provided a lis
 <li>Return Str</li>
 </ul>
 <h3 id="collectioncitation"><strong>Collection.citation</strong></h3>
-<p>For convenience the citation string provided from [https://citation.crosscite.org/] is stored in this attribute. If you like to have a different format, please have a look at .getCitation description below.</p>
+<p>For convenience the citation string provided from [https://citation.crosscite.org/] is stored 
+in this attribute. If you like to have a different format, please have a look at .getCitation 
+description below.</p>
 <ul>
 <li>Return STR</li>
 </ul>
@@ -569,8 +637,8 @@ certified ICOS stations is returned. You can filter the output by provided a lis
 <li>Return STR</li>
 </ul>
 <h3 id="collectioninfo"><strong>Collection.info()</strong></h3>
-<p>For convenience all the attributes above <code>(id, doi, citation, title, description)</code>. You can choose the output format
-with fmt=["dict" | "pandas" | "html"]. The default is "dict".</p>
+<p>For convenience all the attributes above <code>(id, doi, citation, title, description)</code>. You can 
+choose the output format with fmt=["dict" | "pandas" | "html"]. The default is "dict".</p>
 <pre><code>info(self, fmt='dict')
 </code></pre>
 <ul>
@@ -582,22 +650,35 @@ with fmt=["dict" | "pandas" | "html"]. The default is "dict".</p>
 <li>Return LIST[STR]</li>
 </ul>
 <h3 id="collectiondata"><strong>Collection.data</strong></h3>
-<p>This returns a list of Dobj associated to the collection. Please refer to the module Digital Object above.</p>
+<p>This returns a list of Dobj associated to the collection. Please refer to the module Digital
+Object above.</p>
 <ul>
 <li>Return LIST[Dobj]</li>
 </ul>
 <h3 id="collectiongetcitation"><strong>Collection.getCitation()</strong></h3>
 <pre><code>Collection.getCitation(format='apa', lang='en-GB')**
 </code></pre>
-<p>If the collection has a DOI, you will get a citation string from <a href="https://citation.crosscite.org/">https://citation.crosscite.org/</a>. You may provide any style &amp; language parameters found on the website. Our default style is <em>apa</em> and language <em>en-GB</em>, which is stored in the attribute <code>collection.citation</code>. Use the function getCitation(), if you need a specific format &amp; language adaption. Example to get a Bibtex styled citation: <code>.getCitation('bibtex','de-CH')</code></p>
+<p>If the collection has a DOI, you will get a citation string from 
+<a href="https://citation.crosscite.org/">https://citation.crosscite.org/</a>. You may provide any style &amp; 
+language parameters found on the website. Our default style is <em>apa</em> and language <em>en-GB</em>, 
+which  is stored in the attribute <code>collection.citation</code>. Use the function getCitation(), if you 
+need a specific format &amp; language adaption. Example to get a Bibtex styled citation:
+<code>.getCitation('bibtex','de-CH')</code></p>
 <h3 id="convenience-functions_1"><strong>Convenience functions</strong></h3>
-<p>The following functions are recommended to get information about the available collections as well as creating an instance of a collection.</p>
+<p>The following functions are recommended to get information about the available collections as 
+well  as creating an instance of a collection.</p>
 <h4 id="collectiongetidlist">collection.getIdList()</h4>
 <pre><code>collection.getIdList()
 </code></pre>
-<p>This will return a pandas data frame, listing all available collections at the data portal. The data frame contains the following columns: <code>['collection', 'doi', 'title', 'description', 'dobj', 'count']</code>. We would recommend that you pay close attention to the <code>count</code>. We have collections with many data objects associated. If you just want to play around, select a collection with less than 10 objects.</p>
+<p>This will return a <code>pandas</code> data frame, listing all available collections at the data portal. The 
+data frame contains the following columns: 
+<code>['collection', 'doi', 'title', 'description', 'dobj', 'count']</code>. We would recommend that you 
+pay close attention to the <code>count</code>. We have collections with many data objects associated. If 
+you just want to play around, select a collection with less than 10 objects.</p>
 <ul>
-<li><code>collection</code> contains the PID/URI for the collection. This is the ID you need to provide for the .get(CollectionId) function. Please be aware that you need to provide the full URI.<br> Example: .get('https://meta.icos-cp.eu/collections/n7cIMHIyqHJKBeF_3jjgptHP')<br></li>
+<li><code>collection</code> contains the PID/URI for the collection. This is the ID you need to provide for 
+the .get(CollectionId) function. Please be aware that you need to provide the full URI.<br>
+Example: .get('https://meta.icos-cp.eu/collections/n7cIMHIyqHJKBeF_3jjgptHP')</li>
 <li><code>dobj</code> contains a list (LIST[STR]) of all PID/URI associated data objects.<br></li>
 <li><code>count</code> tells you how many data objects are associated with this collection.
 <br><br></li>
@@ -606,8 +687,11 @@ with fmt=["dict" | "pandas" | "html"]. The default is "dict".</p>
 <h4 id="collectionget">collection.get()</h4>
 <pre><code>collection.get(CollectionId)
 </code></pre>
-<p>Create a collection object. See the class method above for the attributes available in the collection object.
-The <code>CollectionId</code> must be either the full ICOS URI of the collection landing page or the DOI (if one is available). Not all collections have a DOI. Both information can be extracted with the function .getIdList() .The following to lines to create 'myCollection' yield the <strong>same result</strong>:</p>
+<p>Create a collection object. See the class method above for the attributes available in the 
+collection object. The <code>CollectionId</code> must be either the full ICOS URI of the collection 
+landing page or the DOI (if one is available). Not all collections have a DOI. Both information 
+can be extracted with the function .getIdList() .The following to lines to create 
+'myCollection' yield the <strong>same result</strong>:</p>
 <pre><code>myCollection = get('https://meta.icos-cp.eu/collections/n7cIMHIyqHJKBeF_3jjgptHP')
 myCollection = get('10.18160/ry7n-3r04')
 </code></pre>
@@ -615,21 +699,31 @@ myCollection = get('10.18160/ry7n-3r04')
 <li>Returns Collection</li>
 </ul>
 <hr>
+
 <h2 id="stilt">STILT</h2>
-<p>At the ICOS Carbon Portal we offer a service to calculate your own STILT footprints and visualize the results. Find out more on our website  <a href="https://www.icos-cp.eu/data-services/tools/stilt-footprint">https://www.icos-cp.eu/data-services/tools/stilt-footprint</a>. The calculated footprints and time series results are also available through this python library. Please be aware, that the calculated <strong>footprints are only available on our servers</strong>, including our virtual computational environments. Please read about our public available Jupyter Hub <a href="https://icos-carbon-portal.github.io/jupyter/">here</a>. Time series can be accessed from outside our servers as well.</p>
+<p>At the ICOS Carbon Portal we offer a service to calculate your own STILT footprints and 
+visualize the results. Find out more on our website
+<a href="https://www.icos-cp.eu/data-services/tools/stilt-footprint">https://www.icos-cp.eu/data-services/tools/stilt-footprint</a>. The calculated footprints and time 
+series results are also available through this python library. Please be aware, that the 
+calculated <strong>footprints are only available on our servers</strong>, including our virtual 
+computational environments. Please read about our public available Jupyter Hub 
+<a href="https://icos-carbon-portal.github.io/jupyter/">here</a>. Time series can be accessed from outside 
+our servers as well.</p>
 <p>load the module with:</p>
 <pre><code>from icoscp.stilt import stiltstation
 </code></pre>
-<p>Two functions are available: one to find STILT stations and one to extract the STILT station as an object, which gives access to the data (time series and footprints).</p>
+<p>Two functions are available: one to find STILT stations and one to extract the STILT station as 
+an object, which gives access to the data (time series and footprints).</p>
 <h3 id="stiltstationfindkwargs">stiltstation.find(**kwargs)</h3>
-<p>This is the main function to find STILT stations. By default it returns a dictionary where each 
-station id is the key to access meta data about the station. The order how you provide keywords 
+<p>This is the main function to find STILT stations. By default, it returns a dictionary where each 
+station id is the key to access metadata about the station. The order how you provide keywords 
 is respected and you can influence the result. Keyword arguments are applied sequentially (the 
 result from the first keyword is provided as input to the second and so on). With no keyword 
 provided <code>stiltstation.find()</code> returns a dictionary with ALL Stilt stations.</p>
 <p>The following keywords are available:</p>
 <h5 id="idstr-strstr">id='STR' | ['STR','STR',...]</h5>
-<p>Provide a single id as string, or a list of strings.<br>You can provide either STILT or ICOS id's mixed together.</p>
+<p>Provide a single id as string, or a list of strings.<br>You can provide either STILT or ICOS 
+id's mixed together.</p>
 <pre><code>stiltstation.find(id=['NOR', 'GAT344'])
 stiltstation.find(id='KIT030')
 </code></pre>
@@ -638,27 +732,36 @@ stiltstation.find(id='KIT030')
 <pre><code>stiltstation.find(search='south')
 </code></pre>
 <h5 id="stationsdict">stations=DICT</h5>
-<p>all actions are performed on this dictionary, rather than dynamically search for all stilt station on our server.
-Can be useful for creating a subset of stations from an existing search.</p>
+<p>all actions are performed on this dictionary, rather than dynamically search for all stilt 
+station on our server. Can be useful for creating a subset of stations from an existing search.</p>
 <pre><code>myStations = stiltstation.find(search='north')
 refined = stiltstation.find(stations=myStations, country='Finland')
 </code></pre>
 <p><br><h2>Spatial keywords</h2><br></p>
 <h5 id="countrystr-strstr">country='STR' | ['STR','STR',...]</h5>
-<p>Provide a single country id as string, or a list of strings. You can provide alpha-2, alpha-3 code (ISO 3166) or the full country name (some translations are available as well). To find all STILT stations with geolocation in Norway you can search for either NO, NOR, Norway, Norge.</p>
+<p>Provide a single country id as string, or a list of strings. You can provide alpha-2, alpha-3 
+code (ISO 3166) or the full country name (some translations are available as well). To find all 
+STILT stations with geolocation in Norway you can search for either NO, NOR, Norway, Norge.</p>
 <pre><code>stiltstation.find(country=['Swe','norge', 'IT'])
 </code></pre>
 <h5 id="bboxlatlonlatlon">bbox=[(lat,lon),(lat,lon)]</h5>
-<p>Bounding Box. Provide two tuples (wgs84), where the box is defined as TopLeftCorner (NorthWest) and BottomRightCorner (SouthEast). The following example returns approximately all stations in Scandinavia.</p>
+<p>Bounding Box. Provide two tuples (wgs84), where the box is defined as TopLeftCorner (NorthWest) 
+and BottomRightCorner (SouthEast). The following example returns approximately all stations in 
+Scandinavia.</p>
 <pre><code>stiltstation.find(bbox=[(70,5),(55,32)])
 </code></pre>
 <h5 id="pinpointlatlondistancekm">pinpoint=[lat,lon,distanceKM]</h5>
-<p>Provide a single point (lat, lon) and the Distance in KM, which creates a bounding box. Distance is very roughly translated with 1 degree = 1 km. The bounding box is calculated as distance in all directions. For example <code>distance=200</code> will create a bounding box of 400 x 400 km with pinpoint in the centre. If you don't provide a distance, a default value of 200 is used.</p>
+<p>Provide a single point (lat, lon) and the Distance in KM, which creates a bounding box. 
+Distance is very roughly translated with 1 degree = 1 km. The bounding box is calculated as 
+distance in all directions. For example <code>distance=200</code> will create a bounding box of 400 x 400 
+km with pinpoint in the centre. If you don't provide a distance, a default value of 200 is used.</p>
 <pre><code>stiltstation.find(pinpoint=[55.7,13.1,500])     # bounding box ~ 1000km x 1000km
 stiltstation.find(pinpoint=[55.7,13.1])         # bounding box ~ 400km x 400km
 </code></pre>
 <p><br><h2>Temporal keywords</h2><br></p>
-<p>Be aware, that the granularity for all temporal keywords is year and month, days are not considered in the search. Input format for the dates entry MUST be convertible to data time object through pandas.to_datetime().  Accepted formats are:</p>
+<p>Be aware, that the granularity for all temporal keywords is year and month, days are not 
+considered in the search. Input format for the dates entry MUST be convertible to data time 
+object through pandas.to_datetime().  Accepted formats are:</p>
 <ul>
 <li>datetime.date objs</li>
 <li>FLOAT or INT representing a unix timestamp (seconds since 1970-01-01)</li>
@@ -666,25 +769,40 @@ stiltstation.find(pinpoint=[55.7,13.1])         # bounding box ~ 400km x 400km
 <li>STR: "YYYY-MM-DD" , "YYYY", "YYYY/MM/DD"</li>
 </ul>
 <h4 id="sdatestart-date">sdate='start date'</h4>
-<p>Stations are returned where results are available for &gt;= start date. 'sdate' is a single entry. If you provide sdate AND edate, any station with available data within that date range is returned. (accepted formats see above)</p>
+<p>Stations are returned where results are available for &gt;= start date. 'sdate' is a single entry. 
+If you provide sdate AND edate, any station with available data within that date range is 
+returned. (accepted formats see above)</p>
 <pre><code>stiltstation.find(sdate= '2018-05-01')
 </code></pre>
 <h4 id="edateend-date">edate='end date'</h4>
-<p>Stations are returned where results are available for &lt;= end date. 'edate' is a single entry. If you provide sdate AND edate, any station with available data within that date range is returned. (accepted formats see above)</p>
+<p>Stations are returned where results are available for &lt;= end date. 'edate' is a single entry. 
+If you provide sdate AND edate, any station with available data within that date range is 
+returned. (accepted formats see above)</p>
 <pre><code>stiltstation.find(edate='2018-06-01')
 </code></pre>
 <h4 id="dates">dates=[]</h4>
-<p>This will return a list of stations where data is available for any of the provided dates. Input format, see sdate,edate. Remember, that only year and month is checked.</p>
+<p>This will return a list of stations where data is available for any of the provided dates. 
+Input format, see sdate,edate. Remember, that only year and month is checked.</p>
 <pre><code>stiltstation.find(dates=['2020-01-01', '2020/05/23'])
 </code></pre>
 <h4 id="outfmt-str">outfmt = 'STR'</h4>
 <p>where string is <code>dict</code> | <code>pandas</code> | <code>list</code> | <code>map</code>.
-This keyword is ALWAYS executed last, regardless of the position within keyword arguments. By default a <code>dictionary</code> is returned. With <code>pandas</code> a pandas data frame is returned where the station id is indexed, each row contains one station with the same metadata as is available in the dictionary <a href="https://pandas.pydata.org/docs/">https://pandas.pydata.org/docs/</a>. List however returns a list of STILT station objects. Please see the documentation about <code>stiltstation.get(id="")</code>. Lastly you can choose <code>map</code>, which returns a folium map <a href="https://python-visualization.github.io/folium/">https://python-visualization.github.io/folium/</a>. The map can be displayed directly in a Jupyter Notebook, or you can save the map to a html file.</p>
+This keyword is ALWAYS executed last, regardless of the position within keyword arguments. By 
+default, a <code>dictionary</code> is returned. With <code>pandas</code> a pandas data frame is returned where the 
+station id is indexed, each row contains one station with the same metadata as is available in 
+the dictionary <a href="https://pandas.pydata.org/docs/">https://pandas.pydata.org/docs/</a>. List however 
+returns a list of STILT station objects. Please see the documentation about<br>
+<code>stiltstation.get(id="")</code>. Lastly you can choose <code>map</code>, which returns a folium map 
+<a href="https://python-visualization.github.io/folium/">https://python-visualization.github.io/folium/</a>.
+The map can be displayed directly in a Jupyter Notebook, or you can save the map to a html file.</p>
 <pre><code>stiltstation.find(country='Italy', outfmt='pandas') 
 stiltstation.find(country='Italy', outfmt='pandas').save('mymap.html')
 </code></pre>
 <h3 id="stiltstationgetid">stiltstation.get(id='')</h3>
-<p>Returns a stilt station object or a list of stilt station objects. A stilt station object, gives access to the underlying data (timeseries and footprints). You may provide a STR or LIST[STR] of STILT id's or the 'result' of a .find() query. The properties of the returned stilt object is listed further below.</p>
+<p>Returns a stilt station object or a list of stilt station objects. A stilt station object, 
+gives access to the underlying data (timeseries and footprints). You may provide a STR or
+LIST[STR] of STILT id's or the 'result' of a .find() query. The properties of the returned stilt 
+object is listed further below.</p>
 <pre><code># return stilt stations based on stiltstation.find(id='STR')
 stiltstation.get('HTM')         
 stiltstation.get(['KIT','HTM150'])
@@ -696,8 +814,10 @@ OR
 stiltstation.get(stiltstation.find(...))
 </code></pre>
 <h3 id="stilt-object">STILT Object</h3>
-<p>classmethod <strong>StiltSation(dict)</strong><br>
-Please do not use this class directly. You should load <code>from icoscp.stilt import stiltstation</code> and then use the function <code>obj = stiltstation.get('HTM150)</code> which will return a stilt station object. Once you have the object, the following attributes and methods are available:</p>
+<p>classmethod <strong>StiltStation(dict)</strong><br>
+Please do not use this class directly. You should load <code>from icoscp.stilt import stiltstation</code> 
+and then use the function <code>obj = stiltstation.get('HTM150)</code> which will return a stilt station 
+object. Once you have the object, the following attributes and methods are available:</p>
 <h2>Attributes:</h2>
 
 <h4 id="id">.id</h4>
@@ -713,9 +833,10 @@ Please do not use this class directly. You should load <code>from icoscp.stilt i
 <h4 id="name">.name</h4>
 <p>STILT station long name</p>
 <h4 id="icos">.icos</h4>
-<p>None | Dict. If the station is an ICOS station, a dictionary with ICOS meta data is available.</p>
+<p>None | Dict. If the station is an ICOS station, a dictionary with ICOS metadata is available.</p>
 <h4 id="years">.years</h4>
-<p>List of years for which STILT results are available. Be aware that even if only one day is calculated for a year, <code>year</code> will be listed.</p>
+<p>List of years for which STILT results are available. Be aware that even if only one day is 
+calculated for a year, <code>year</code> will be listed.</p>
 <h4 id="info">.info</h4>
 <p>Returns the diction with all metadata.</p>
 <h4 id="geoinfo">.geoinfo</h4>
@@ -723,8 +844,8 @@ Please do not use this class directly. You should load <code>from icoscp.stilt i
 <h2>Methods:</h2>
 
 <h4 id="get_tsstart_date-end_date-hours-columns">.get_ts(start_date, end_date, hours=[], columns=''):</h4>
-<p>STILT concentration time series for a given time period, with optional selection of specific hours and columns.
-Returns time series as a pandas data frame.</p>
+<p>STILT concentration time series for a given time period, with optional selection of specific 
+hours and columns. Returns time series as a <code>pandas</code> data frame.</p>
 <ul>
 <li>start_date : STR, FLOAT/INT (Unix timestamp), datetime object<ul>
 <li>start_date = '2018-01-01'</li>
@@ -735,7 +856,8 @@ Returns time series as a pandas data frame.</p>
 </ul>
 </li>
 <li>
-<p>hours : STR | INT, optional. If hours is empty or None, ALL Timeslots are returned. For backwards compatibility, input of str format hh:mm is accepted</p>
+<p>hours : STR | INT, optional. If hours is empty or None, ALL Timeslots are returned. For 
+  backwards compatibility, input of str format hh:mm is accepted</p>
 <ul>
 <li>hours = [0,3,6,9,12,15,18,21]<pre><code>Valid results are returned with LOWER BOUND values.
 Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
@@ -789,7 +911,9 @@ all
 </ul>
 <h4 id="get_fpstart_date-end_date-hours">.get_fp(start_date, end_date, hours=[]):</h4>
 <p>STILT footprints for a given time period, with optional selection of specific hours.
-<code>Returns</code> the footprints as <code>xarray</code> <a href="http://xarray.pydata.org/en/stable/">http://xarray.pydata.org/en/stable/</a>   with latitude, longitude, time, and ppm per (micromol m-2 s-1).</p>
+<code>Returns</code> the footprints as <code>xarray</code> 
+<a href="http://xarray.pydata.org/en/stable/">http://xarray.pydata.org/en/stable/</a> with latitude, 
+longitude, time, and ppm per (micromole m-2 s-1).</p>
 <ul>
 <li>start_date : STR, FLOAT/INT (Unix timestamp), datetime object.<ul>
 <li>start_date = '2018-01-01'</li>
@@ -799,7 +923,8 @@ all
 <li>end_date = '2018-01-31'</li>
 </ul>
 </li>
-<li>hours : STR | INT, optional. If hours is empty or None, ALL Timeslots are returned. For backwards compatibility, input of str format hh:mm is accepted<ul>
+<li>hours : STR | INT, optional. If hours is empty or None, ALL Timeslots are returned. For 
+  backwards compatibility, input of str format hh:mm is accepted<ul>
 <li>hours = [0,3,6,9,12,15,18,21]<pre><code>Valid results are returned with LOWER BOUND values.
 Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
             hours = [2,3,4,5,6] will return Timeslots for 0,3 and 6
@@ -811,18 +936,31 @@ Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
 </li>
 </ul>
 <hr>
+
 <h2 id="sparql">Sparql</h2>
-<p>At the ICOS Carbon Portal we store all data and meta data as linked data in a triple store. For more information about this approach refer to <a href="https://www.w3.org/standards/semanticweb/">Semantic Web</a>, <a href="https://www.w3.org/RDF/">Resource Description Framework (RDF)</a>, and <a href="https://en.wikipedia.org/wiki/Triplestore">Triple Stores</a>.</p>
-<p>This module is a simple interface to the <a href="https://meta.icos-cp.eu/sparqlclient/?type=CSV">SPARQL endpoint</a> at the Carbon Portal. You can write your own queries and use the module to query the database or use some of the provided built in queries. </p>
+<p>At the ICOS Carbon Portal we store all data and metadata as linked data in a triple store. For 
+more information about this approach refer to 
+<a href="https://www.w3.org/standards/semanticweb/">Semantic Web</a>, 
+<a href="https://www.w3.org/RDF/">Resource Description Framework (RDF)</a>, and 
+<a href="https://en.wikipedia.org/wiki/Triplestore">Triple Stores</a>.</p>
+<p>This module is a simple interface to the 
+<a href="https://meta.icos-cp.eu/sparqlclient/?type=CSV">SPARQL endpoint</a> at the Carbon Portal. You can 
+write your own queries and use the module to query the database or use some of the provided 
+built-in queries. </p>
 <p>Load the module with:<br>
 <code>from icoscp.sparql.runsparql import RunSparql</code></p>
 <p>classmethod <strong>RunSparql(sparql_query='', output_format='txt')</strong><br>
-sparql_query needs to be a valid query. You can test a query directly at the online SPARQL endpoint at <a href="https://meta.icos-cp.eu/sparqlclient/?type=CSV">https://meta.icos-cp.eu/sparqlclient/?type=CSV</a>. The ouput format is by default (txt/json) but you can adjust with the following formats ['json', 'csv', 'dict', 'pandas', 'array', 'html'].</p>
+sparql_query needs to be a valid query. You can test a query directly at the online SPARQL 
+endpoint at 
+<a href="https://meta.icos-cp.eu/sparqlclient/?type=CSV">https://meta.icos-cp.eu/sparqlclient/?type=CSV</a>.
+The output format is by default (txt/json) but you can adjust with the following formats ['json',
+'csv', 'dict', 'pandas', 'array', 'html'].</p>
 <h2>Attributes:</h2>
 <hr>
 
 <h3 id="runsparqldata"><strong>RunSparql.data</strong></h3>
-<p>If a query is set and the method .run() was executed, it returns the result from the SPARQL endpoint. If no data is available the method returns False (BOOL).</p>
+<p>If a query is set and the method .run() was executed, it returns the result from the SPARQL 
+endpoint. If no data is available the method returns False (BOOL).</p>
 <ul>
 <li>Return BOOL | STR</li>
 </ul>
@@ -839,9 +977,52 @@ sparql_query needs to be a valid query. You can test a query directly at the onl
 <li>Return STR</li>
 </ul>
 <h3 id="runsparqlrun"><strong>RunSparql.run()</strong></h3>
-<p>This method actually executes the query and formats the result to the output format. If the sparql query is not executable because of syntax errors, for example, a TUPLE is returned (False, 'Bad Request')</p>
+<p>This method actually executes the query and formats the result to the output format. If the 
+sparql query is not executable because of syntax errors, for example, a TUPLE is returned 
+(False, 'Bad Request')</p>
 <ul>
 <li>Return TUPLE | FMT</li>
+</ul>
+<h2 id="country">Country</h2>
+<p>Search country information, define global (to icoscp) a common tool to search for country 
+information based on a static local file within the library (<code>country.json</code>). Search is 
+facilitated through Alphanumeric 2 &amp; 3 Code characters and arbitrary text search. Credit to<br />
+<a href="https://github.com/mledoze/countries">https://github.com/mledoze/countries</a>. Further a reverse 
+geocoder search is provided through OSM. (credit to 
+<a href="https://nominatim.openstreetmap.org">https://nominatim.openstreetmap.org</a>). </p>
+<p>Please note: in case you provide more than one parameter, the order of keywords is not 
+respected. The execution order is always like the function signature and as soon as a result is 
+found, it will be returned and the search is stopped.</p>
+<h3 id="countrygetkwargs">country.get(**kwargs)</h3>
+<p>Accepted keywords: code='', name='', latlon=[], search=''</p>
+<pre><code>Examples:
+.get()                      list of dict: all countries
+.get(code='CH')             dict: Switzerland
+.get(name='greece')         dict: Greece
+.get(latlon=[48.85, 2.35])  dict:
+.get(search='europe')
+</code></pre>
+<h4 id="parameters">Parameters</h4>
+<pre><code>code : STR
+    Search by ISO 3166-1 2-letter or 3-letter country codes
+
+name : STR
+    search by country name, including alternativ spellings.
+    It can be the native name or a partial name.
+
+latlon : List[]
+    List with two integer or floating point numbers representing
+    latitude and longitude. BE AWARE: using an external service
+    from openstreetmap for reverse geocoding
+
+search : STR
+    arbitrary text search, not case sensitiv, search in all fields
+</code></pre>
+<h4 id="returns">Returns</h4>
+<ul>
+<li>DICT: if a single country is found</li>
+<li>LIST[DICT]: list of dictionaries if more than one country is found</li>
+<li>BOOL (False) if no result</li>
 </ul>
               
             </div>
