@@ -608,4 +608,42 @@ This method actually executes the query and formats the result to the output for
 - Return TUPLE | FMT
 
 
+## Country
+Search country information, define global (to icoscp) a common tool to search for country information based on a static local file within the library (`country.json`). Search is facilitated through Alphanumeric 2 & 3 Code characters and arbitrary text search. Credit to  [https://github.com/mledoze/countries](https://github.com/mledoze/countries). Further a reverse geocoder search is provided through OSM. (credit to [https://nominatim.openstreetmap.org](https://nominatim.openstreetmap.org)). 
+
+Please note: in case you provide more than one parameter, the order of keywords is not respected. The execution order is always like
+the function signature and as soon as a result is found, it will be returned and the search is stopped.
+
+### country.get(\*\*kwargs)
+Accepted keywords: code='', name='', latlon=[], search=''
+
+    Examples:
+	.get()                      list of dict: all countries
+	.get(code='CH')             dict: Switzerland
+	.get(name='greece')         dict: Greece
+	.get(latlon=[48.85, 2.35])  dict:
+	.get(search='europe')
+
+#### Parameters
+    
+    code : STR
+        Search by ISO 3166-1 2-letter or 3-letter country codes
+
+    name : STR
+        search by country name, including alternativ spellings.
+        It can be the native name or a partial name.
+
+    latlon : List[]
+        List with two integer or floating point numbers representing
+        latitude and longitude. BE AWARE: using an external service
+        from openstreetmap for reverse geocoding
+
+    search : STR
+        arbitrary text search, not case sensitiv, search in all fields
+
+#### Returns
+
+- DICT: if a single country is found
+- LIST[DICT]: list of dictionaries if more than one country is found
+- BOOL (False) if no result
 
