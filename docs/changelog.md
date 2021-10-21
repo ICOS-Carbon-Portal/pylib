@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.10
+- adjust pylib version reported to the back-end
+- include non-code files to distribution
+- inform users when wrongly accessing the Stilt module locally
+
 ## 0.1.9
 - add Stilt module and documentation
 - add local country information

@@ -21,9 +21,11 @@ import struct
 import pandas as pd
 import re
 
+from icoscp import __version__ as release_version
+from icoscp.cpb import dtype_dict
 from icoscp.sparql.runsparql import RunSparql
 import icoscp.sparql.sparqls as sparqls
-from icoscp.cpb import dtype_dict
+
 
 class Dobj():
     """ Use an ICOS digital object id to query the sparql endpoint
@@ -391,12 +393,12 @@ class Dobj():
         'params':{
             'objId':self._dobj,
             'columns': self.colNames.tolist(),            
-            'library':__name__, 
-            'version':__version__,
+            'library':__name__,
+            'version':release_version,  # Grabbed from '__init__.py'.
             'internal': str(self._islocal)}
             }
         }
-        server = 'https://cpauth.icos-cp.eu/logs/portaluse'        
+        server = 'https://cpauth.icos-cp.eu/logs/portaluse'
         requests.post(server, json=counter)
         
     # -------------------------------------------------                       
