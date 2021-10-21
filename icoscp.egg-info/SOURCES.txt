@@ -2,6 +2,7 @@ README.md
 setup.py
 icoscp/__init__.py
 icoscp/const.py
+icoscp/countries.json
 icoscp/country.py
 icoscp.egg-info/PKG-INFO
 icoscp.egg-info/SOURCES.txt

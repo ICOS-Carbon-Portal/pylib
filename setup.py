@@ -14,7 +14,9 @@ setuptools.setup(
 	license='GPLv3+',
     author="Claudio D'Onofrio, Zois Zogopoulos, ICOS Carbon Portal",
     author_email='claudio.donofrio@nateko.lu.se, zois.zogopoulos@nateko.lu.se, info@icos-cp.eu',
+    packages=setuptools.find_packages(),
     include_package_data=True,
+    data_files=[('icoscp/.', ['icoscp/countries.json'])],
     description='Access to ICOS data objects hosted at https://data.icos-cp.eu',
     long_description=readme(),
     long_description_content_type='text/markdown',
@@ -24,7 +26,6 @@ setuptools.setup(
 			'Documentation':'https://icos-carbon-portal.github.io/pylib/',
             'DataPortal':'https://data.icos-cp.eu/portal/',
             'SparqlEndpoint':'https://meta.icos-cp.eu/sparqlclient/?type=CSV'},
-    packages=setuptools.find_packages(),
     install_requires=['pandas','requests','tqdm'],
     classifiers=[
         'Programming Language :: Python :: 3',
