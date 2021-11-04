@@ -584,7 +584,7 @@ def get(id=None):
 
     if isinstance(id,str):
         # assuming str is a station id
-        st = __get_stations(list(id))
+        st = __get_stations([id])
         if not st:
             return None
         for s in st:
@@ -603,7 +603,7 @@ def get(id=None):
 
         if isinstance(id[0], str):
             # assuming we have a list of valid station id's
-            st = __get_stations(list(id))
+            st = __get_stations([id])
             if not st:
                 return None
             for s in st:
