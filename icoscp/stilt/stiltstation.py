@@ -11,11 +11,11 @@
 
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.1.0"
+__version__     = "0.1.1"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "rc1"
-__date__        = "2021-09-27"
+__date__        = "2021-11-04"
 
 import os
 import json
@@ -303,14 +303,22 @@ def __get_object(stations):
     return [StiltStation().get_info(stations[st]) for st in stations.keys()]
 
 
-def __get_all():
+def __get_stations(ids=[]):
     """ get all stilt stations available on the server
         return dictionary with meta data, keys are stilt station id's
     """
 
     # use directory listing from siltweb data
     allStations = os.listdir(CPC.STILTPATH)
+    
+    # if ids are provided, select only valid ids from allstations
+    if ids:
+        # make sure they are all upper case
+        ids = [i.upper() for i in ids]
+        #select only valid id from allstations
+        allStations = list(set(ids).intersection(allStations))
 
+        
     # add information on station name (and new STILT station id)
     # from stations.csv file used in stiltweb.
     # this is available from the backend through a url
@@ -497,7 +505,7 @@ def find(**kwargs):
         stations = kwargs['stations']
     else:
         # start with getting all stations
-        stations = __get_all()
+        stations = __get_stations()
 
     # with no keyword arguments, return all stations
     # in default format (see _outfmt())
@@ -575,27 +583,32 @@ def get(id=None):
     stationslist = []
 
     if isinstance(id,str):
-        st = find(id=id)
+        # assuming str is a station id
+        st = __get_stations(list(id))
         if not st:
             return None
         for s in st:
             stationslist.append(StiltStation(st[s]))
 
     if isinstance(id,dict):
+        # assuming dict is coming from .find....call
         for s in id:
             stationslist.append(StiltStation(id[s]))
 
     if isinstance(id, list):
         if isinstance(id[0],dict):
-           for s in id:
+            # assuming dict is coming from .find....call
+            for s in id:
                stationslist.append(StiltStation(id[s]))
 
         if isinstance(id[0], str):
-            st = find(id=id)
+            # assuming we have a list of valid station id's
+            st = __get_stations(list(id))
             if not st:
                 return None
             for s in st:
                 stationslist.append(StiltStation(st[s]))
+                
 
     if len(stationslist) == 1:
         return stationslist[0]
