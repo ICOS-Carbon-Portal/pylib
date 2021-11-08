@@ -308,10 +308,6 @@ def __get_stations(ids=[], progress=True):
         return dictionary with meta data, keys are stilt station id's
     """
 
-    # invert the progress parameter, tqdm interpretation is
-    # DEUAULT disable = False -> progressbar is visible
-    progress != progress
-    
     # use directory listing from siltweb data
     allStations = os.listdir(CPC.STILTPATH)
     
