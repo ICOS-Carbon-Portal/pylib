@@ -332,6 +332,7 @@ def __get_stations(ids=[]):
     stations = {}
 
     # fill dictionary with ICOS station id, latitude, longitude and altitude
+	# implement progress True/False
     for ist in tqdm(sorted(allStations)):
         if not ist in df['STILT id'].values:
             continue
