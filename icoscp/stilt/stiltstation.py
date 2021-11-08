@@ -33,8 +33,8 @@ import icoscp.country
 
 from icoscp.stilt import timefuncs as tf
 
-# --- START KEYWORD FUNCTIONS ---
 
+# --- START KEYWORD FUNCTIONS ---
 def _id(kwargs, stations):
 
     ids = kwargs['id']
@@ -303,11 +303,15 @@ def __get_object(stations):
     return [StiltStation().get_info(stations[st]) for st in stations.keys()]
 
 
-def __get_stations(ids=[]):
+def __get_stations(ids=[], progress=True):
     """ get all stilt stations available on the server
         return dictionary with meta data, keys are stilt station id's
     """
 
+    # invert the progress parameter, tqdm interpretation is
+    # DEUAULT disable = False -> progressbar is visible
+    progress != progress
+    
     # use directory listing from siltweb data
     allStations = os.listdir(CPC.STILTPATH)
     
@@ -332,8 +336,8 @@ def __get_stations(ids=[]):
     stations = {}
 
     # fill dictionary with ICOS station id, latitude, longitude and altitude
-	# implement progress True/False
-    for ist in tqdm(sorted(allStations)):
+	 # implement progress True/False
+    for ist in tqdm(sorted(allStations), disable=progress):
         if not ist in df['STILT id'].values:
             continue
 
@@ -485,6 +489,10 @@ def find(**kwargs):
         Remember, that only year and month is checked.
     Example: station.find(dates=['2020-01-01', '2020/05/23'])
 
+    progress BOOL 
+        By default progress is set to True, which returns a progressbar
+        while searching the catalogue of STILT stations.    
+    
     outfmt STR ['dict'| 'pandas' | 'list' | 'map']:
         the result is returned as
         
@@ -494,7 +502,7 @@ def find(**kwargs):
             list:       list of stilt station objects
             map:        folium map, can be displayed directly in notebooks
                         or save to a static (leaflet) .html webpage
-
+    
     Returns
     -------
     List of Stiltstation in the form of outfmt=format, see above.
@@ -502,19 +510,25 @@ def find(**kwargs):
 
     """
 
+    # convert all keywords to lower case
+    if kwargs:
+        kwargs =  {k.lower(): v for k, v in kwargs.items()}
+    
     if 'stations' in kwargs:
         stations = kwargs['stations']
     else:
         # start with getting all stations
-        stations = __get_stations()
+        # check if progressbar should be visible or not, default True, visible
+        progress = True
+        if 'progress' in kwargs.keys():
+            progress = kwargs['progress']
+    
+        stations = __get_stations(progress=progress)
 
     # with no keyword arguments, return all stations
     # in default format (see _outfmt())
     if not kwargs:
         return _outfmt(kwargs, stations)
-
-    # convert all keywords to lower case
-    kwargs =  {k.lower(): v for k, v in kwargs.items()}
 
 
     # check if sdate AND edate is provided. If yes,
@@ -545,7 +559,7 @@ def find(**kwargs):
 
     return _outfmt(kwargs, stations)
 
-def get(id=None):
+def get(id=None, progress=False):
     """
     This function returns a stilt station object or a list of
     stiltstation objects.
@@ -575,6 +589,11 @@ def get(id=None):
                 A single string or a list of strings containing one or more
                 stilt station ids.
 
+    progress: BOOL
+            You can display a progressbar, for long running tasks. For
+            example when you get a long list of id's. By default the
+            progressbar is not visible.
+            
     Returns
     -------
     LIST[stiltstation]
@@ -583,9 +602,10 @@ def get(id=None):
 
     stationslist = []
 
+
     if isinstance(id,str):
         # assuming str is a station id
-        st = __get_stations([id])
+        st = __get_stations([id], progress)
         if not st:
             return None
         for s in st:
@@ -604,7 +624,7 @@ def get(id=None):
 
         if isinstance(id[0], str):
             # assuming we have a list of valid station id's
-            st = __get_stations(id)
+            st = __get_stations(id, progress)
             if not st:
                 return None
             for s in st:
