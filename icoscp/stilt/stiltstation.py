@@ -309,7 +309,7 @@ def __get_stations(ids=[], progress=True):
     """
 
     # invert the progress parameter, tqdm interpretation is
-    # DEUAULT disable = False -> progressbar is visible
+    # DEFAULT disable = False -> progressbar is visible
     progress = not progress
     
     # use directory listing from siltweb data
