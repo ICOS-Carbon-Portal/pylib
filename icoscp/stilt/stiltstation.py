@@ -592,7 +592,8 @@ def get(id=None, progress=False):
     progress: BOOL
             You can display a progressbar, for long running tasks. For
             example when you get a long list of id's. By default the
-            progressbar is not visible.
+            progressbar is not visible. This parameter is only applicable
+            while providing id's, but NOT for dictionaries.
             
     Returns
     -------
