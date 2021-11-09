@@ -11,11 +11,11 @@
 
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.1.0"
+__version__     = "0.1.1"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "rc1"
-__date__        = "2021-09-27"
+__date__        = "2021-11-04"
 
 import os
 import json
@@ -33,8 +33,8 @@ import icoscp.country
 
 from icoscp.stilt import timefuncs as tf
 
-# --- START KEYWORD FUNCTIONS ---
 
+# --- START KEYWORD FUNCTIONS ---
 def _id(kwargs, stations):
 
     ids = kwargs['id']
@@ -303,14 +303,26 @@ def __get_object(stations):
     return [StiltStation().get_info(stations[st]) for st in stations.keys()]
 
 
-def __get_all():
+def __get_stations(ids=[], progress=True):
     """ get all stilt stations available on the server
         return dictionary with meta data, keys are stilt station id's
     """
 
+    # invert the progress parameter, tqdm interpretation is
+    # DEFAULT disable = False -> progressbar is visible
+    progress = not progress
+    
     # use directory listing from siltweb data
     allStations = os.listdir(CPC.STILTPATH)
+    
+    # if ids are provided, select only valid ids from allstations
+    if ids:
+        # make sure they are all upper case
+        ids = [i.upper() for i in ids]
+        #select only valid id from allstations
+        allStations = list(set(ids).intersection(allStations))
 
+        
     # add information on station name (and new STILT station id)
     # from stations.csv file used in stiltweb.
     # this is available from the backend through a url
@@ -324,7 +336,8 @@ def __get_all():
     stations = {}
 
     # fill dictionary with ICOS station id, latitude, longitude and altitude
-    for ist in tqdm(sorted(allStations)):
+	 # implement progress True/False
+    for ist in tqdm(sorted(allStations), disable=progress):
         if not ist in df['STILT id'].values:
             continue
 
@@ -476,6 +489,10 @@ def find(**kwargs):
         Remember, that only year and month is checked.
     Example: station.find(dates=['2020-01-01', '2020/05/23'])
 
+    progress BOOL 
+        By default progress is set to True, which returns a progressbar
+        while searching the catalogue of STILT stations.    
+    
     outfmt STR ['dict'| 'pandas' | 'list' | 'map']:
         the result is returned as
         
@@ -485,7 +502,7 @@ def find(**kwargs):
             list:       list of stilt station objects
             map:        folium map, can be displayed directly in notebooks
                         or save to a static (leaflet) .html webpage
-
+    
     Returns
     -------
     List of Stiltstation in the form of outfmt=format, see above.
@@ -493,19 +510,25 @@ def find(**kwargs):
 
     """
 
+    # convert all keywords to lower case
+    if kwargs:
+        kwargs =  {k.lower(): v for k, v in kwargs.items()}
+    
     if 'stations' in kwargs:
         stations = kwargs['stations']
     else:
         # start with getting all stations
-        stations = __get_all()
+        # check if progressbar should be visible or not, default True, visible
+        progress = True
+        if 'progress' in kwargs.keys():
+            progress = kwargs['progress']
+    
+        stations = __get_stations(progress=progress)
 
     # with no keyword arguments, return all stations
     # in default format (see _outfmt())
     if not kwargs:
         return _outfmt(kwargs, stations)
-
-    # convert all keywords to lower case
-    kwargs =  {k.lower(): v for k, v in kwargs.items()}
 
 
     # check if sdate AND edate is provided. If yes,
@@ -536,7 +559,7 @@ def find(**kwargs):
 
     return _outfmt(kwargs, stations)
 
-def get(id=None):
+def get(id=None, progress=False):
     """
     This function returns a stilt station object or a list of
     stiltstation objects.
@@ -566,6 +589,12 @@ def get(id=None):
                 A single string or a list of strings containing one or more
                 stilt station ids.
 
+    progress: BOOL
+            You can display a progressbar, for long running tasks. For
+            example when you get a long list of id's. By default the
+            progressbar is not visible. This parameter is only applicable
+            while providing id's, but NOT for dictionaries.
+            
     Returns
     -------
     LIST[stiltstation]
@@ -574,28 +603,34 @@ def get(id=None):
 
     stationslist = []
 
+
     if isinstance(id,str):
-        st = find(id=id)
+        # assuming str is a station id
+        st = __get_stations([id], progress)
         if not st:
             return None
         for s in st:
             stationslist.append(StiltStation(st[s]))
 
     if isinstance(id,dict):
+        # assuming dict is coming from .find....call
         for s in id:
             stationslist.append(StiltStation(id[s]))
 
     if isinstance(id, list):
         if isinstance(id[0],dict):
-           for s in id:
+            # assuming dict is coming from .find....call
+            for s in id:
                stationslist.append(StiltStation(id[s]))
 
         if isinstance(id[0], str):
-            st = find(id=id)
+            # assuming we have a list of valid station id's
+            st = __get_stations(id, progress)
             if not st:
                 return None
             for s in st:
                 stationslist.append(StiltStation(st[s]))
+                
 
     if len(stationslist) == 1:
         return stationslist[0]

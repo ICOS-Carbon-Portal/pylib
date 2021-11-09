@@ -455,8 +455,9 @@ load the module with:
 
 Two functions are available: one to find STILT stations and one to extract the STILT station as 
 an object, which gives access to the data (time series and footprints).
+### stiltstation
 
-### stiltstation.find(\*\*kwargs)
+### .find(\*\*kwargs)
 This is the main function to find STILT stations. By default, it returns a dictionary where each 
 station id is the key to access metadata about the station. The order how you provide keywords 
 is respected and you can influence the result. Keyword arguments are applied sequentially (the 
@@ -541,6 +542,12 @@ Input format, see sdate,edate. Remember, that only year and month is checked.
 
 	stiltstation.find(dates=['2020-01-01', '2020/05/23'])
 
+#### progress = BOOL
+By default a progress bar is displayed while searching all possible STILT stations. With this keyword you can show/hide the progress bar.
+	
+	stiltstation.find(progress=True)   # DEFAULT, progress bar is displayed
+	stiltstation.find(progress=False)  # No progress bar
+	
 #### outfmt = 'STR'
 where string is `dict` | `pandas` | `list` | `map`.
 This keyword is ALWAYS executed last, regardless of the position within keyword arguments. By 
@@ -555,21 +562,30 @@ The map can be displayed directly in a Jupyter Notebook, or you can save the map
 	stiltstation.find(country='Italy', outfmt='pandas') 
 	stiltstation.find(country='Italy', outfmt='pandas').save('mymap.html')
 
-### stiltstation.get(id='')
+### .get(id='', progress=False)
 Returns a stilt station object or a list of stilt station objects. A stilt station object, 
 gives access to the underlying data (timeseries and footprints). You may provide a STR or
 LIST[STR] of STILT id's or the 'result' of a .find() query. The properties of the returned stilt 
 object is listed further below.
 
+#### id = STR | LIST[STR]
+Provide a string or list of strings representing a STILT station id's.
+
+#### id = DICT | LIST[DICT]
+provide a single dictionary, or a list of dictionaries. The dictionaries should be the result of a stiltstation.find() execution.
+
+#### progress = BOOL
+By default no progress bar is displayed while assembling the stiltstation object. With this keyword you can show/hide the progress bar. This parameter is only effective while providing id's.
+
 	# return stilt stations based on stiltstation.find(id='STR')
     stiltstation.get('HTM')		    
-	stiltstation.get(['KIT','HTM150'])
+	stiltstation.get(['KIT','HTM150'], progress = True)
 
-	# return stilt stations based on dictionary or list of dict
+	# return stilt stations based on dictionary or list of dict with a progressbar
 	a = stiltstation.find(search='north')
 	stiltstation.get(a)
     OR
-	stiltstation.get(stiltstation.find(...))
+	stiltstation.get(stiltstation.find(search='south'))
 
 ### STILT Object
 classmethod **StiltStation(dict)**<br>
