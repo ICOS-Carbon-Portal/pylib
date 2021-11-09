@@ -572,10 +572,10 @@ object is listed further below.
 Provide a string or list of strings representing a STILT station id's.
 
 #### id = DICT | LIST[DICT]
-provide a single dictionary, or a list of dictionaries. The dictionaires should be the result of a stiltstation.find() execution.
+provide a single dictionary, or a list of dictionaries. The dictionaries should be the result of a stiltstation.find() execution.
 
 #### progress = BOOL
-By default no progress bar is displayed while assembling the stiltstation object. With this keyword you can show/hide the progress bar. This parameter is only effective while providing id's. But
+By default no progress bar is displayed while assembling the stiltstation object. With this keyword you can show/hide the progress bar. This parameter is only effective while providing id's.
 
 	# return stilt stations based on stiltstation.find(id='STR')
     stiltstation.get('HTM')		    
@@ -585,7 +585,7 @@ By default no progress bar is displayed while assembling the stiltstation object
 	a = stiltstation.find(search='north')
 	stiltstation.get(a)
     OR
-	stiltstation.get(stiltstation.find(search='south))
+	stiltstation.get(stiltstation.find(search='south'))
 
 ### STILT Object
 classmethod **StiltStation(dict)**<br>
