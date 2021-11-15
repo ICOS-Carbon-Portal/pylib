@@ -24,6 +24,8 @@ import json
 import xarray as xr
 import icoscp.const as CPC
 from icoscp.stilt import timefuncs as tf
+from icoscp import __version__ as release_version
+from icoscp import country
 ##############################################################################
 
 class StiltStation():
@@ -219,6 +221,8 @@ class StiltStation():
                 #Print message:
                 print("\033[0;31;1m Error...\nToo big STILT dataset!\nSelect data for a shorter time period.\n\n")
 
+        # track data usage
+        self.__portalUse()
         #Return dataframe:
         return df
     #----------------------------------------------------------------------------------------------------------
@@ -303,6 +307,8 @@ class StiltStation():
         fp.lon.attrs["axis"] = "X"
         fp.lon.attrs["standard_name"] = "longitude"
 
+        # track data usage
+        self.__portalUse()
         #Return footprint array:
         return fp
 
@@ -354,4 +360,19 @@ class StiltStation():
         #Return variable:
         return columns
 
+    def __portalUse(self):
+        """Assembles and posts stilt data usage."""
+
+        counter = {'StiltDataAccess': {
+            'params': {
+                'station_id': self.id,
+                'station_coordinates': {'latitude': self.lat,
+                                        'longitude': self.lon,
+                                        'altitude': self.alt},
+                'station_country': country.get(latlon=[self.lat, self.lon])['name']['common'],
+                'library': __name__,
+                'version': release_version,  # Grabbed from '__init__.py'.
+                'internal': True}}}
+        server = 'https://cpauth.icos-cp.eu/logs/portaluse'
+        requests.post(server, json=counter)
 # ----------------------------------- End of STILT Station Class ------------------------------------- #
