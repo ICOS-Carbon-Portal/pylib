@@ -169,7 +169,9 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#stilt">STILT</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#stiltstationfindkwargs">stiltstation.find(**kwargs)</a>
+    <li class="toctree-l3"><a class="reference internal" href="#stiltstation">stiltstation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#findkwargs">.find(**kwargs)</a>
         <ul>
     <li class="toctree-l4"><a class="reference internal" href="#idstr-strstr">id='STR' | ['STR','STR',...]</a>
     </li>
@@ -189,11 +191,21 @@
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#dates">dates=[]</a>
     </li>
+    <li class="toctree-l4"><a class="reference internal" href="#progress-bool">progress = BOOL</a>
+    </li>
     <li class="toctree-l4"><a class="reference internal" href="#outfmt-str">outfmt = 'STR'</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#stiltstationgetid">stiltstation.get(id='')</a>
+    <li class="toctree-l3"><a class="reference internal" href="#getid-progressfalse">.get(id='', progress=False)</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#id-str-liststr">id = STR | LIST[STR]</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#id-dict-listdict">id = DICT | LIST[DICT]</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#progress-bool_1">progress = BOOL</a>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#stilt-object">STILT Object</a>
         <ul>
@@ -714,7 +726,8 @@ our servers as well.</p>
 </code></pre>
 <p>Two functions are available: one to find STILT stations and one to extract the STILT station as 
 an object, which gives access to the data (time series and footprints).</p>
-<h3 id="stiltstationfindkwargs">stiltstation.find(**kwargs)</h3>
+<h3 id="stiltstation">stiltstation</h3>
+<h3 id="findkwargs">.find(**kwargs)</h3>
 <p>This is the main function to find STILT stations. By default, it returns a dictionary where each 
 station id is the key to access metadata about the station. The order how you provide keywords 
 is respected and you can influence the result. Keyword arguments are applied sequentially (the 
@@ -785,6 +798,11 @@ returned. (accepted formats see above)</p>
 Input format, see sdate,edate. Remember, that only year and month is checked.</p>
 <pre><code>stiltstation.find(dates=['2020-01-01', '2020/05/23'])
 </code></pre>
+<h4 id="progress-bool">progress = BOOL</h4>
+<p>By default a progress bar is displayed while searching all possible STILT stations. With this keyword you can show/hide the progress bar.</p>
+<pre><code>stiltstation.find(progress=True)   # DEFAULT, progress bar is displayed
+stiltstation.find(progress=False)  # No progress bar
+</code></pre>
 <h4 id="outfmt-str">outfmt = 'STR'</h4>
 <p>where string is <code>dict</code> | <code>pandas</code> | <code>list</code> | <code>map</code>.
 This keyword is ALWAYS executed last, regardless of the position within keyword arguments. By 
@@ -798,20 +816,26 @@ The map can be displayed directly in a Jupyter Notebook, or you can save the map
 <pre><code>stiltstation.find(country='Italy', outfmt='pandas') 
 stiltstation.find(country='Italy', outfmt='pandas').save('mymap.html')
 </code></pre>
-<h3 id="stiltstationgetid">stiltstation.get(id='')</h3>
+<h3 id="getid-progressfalse">.get(id='', progress=False)</h3>
 <p>Returns a stilt station object or a list of stilt station objects. A stilt station object, 
 gives access to the underlying data (timeseries and footprints). You may provide a STR or
 LIST[STR] of STILT id's or the 'result' of a .find() query. The properties of the returned stilt 
 object is listed further below.</p>
+<h4 id="id-str-liststr">id = STR | LIST[STR]</h4>
+<p>Provide a string or list of strings representing a STILT station id's.</p>
+<h4 id="id-dict-listdict">id = DICT | LIST[DICT]</h4>
+<p>provide a single dictionary, or a list of dictionaries. The dictionaries should be the result of a stiltstation.find() execution.</p>
+<h4 id="progress-bool_1">progress = BOOL</h4>
+<p>By default no progress bar is displayed while assembling the stiltstation object. With this keyword you can show/hide the progress bar. This parameter is only effective while providing id's.</p>
 <pre><code># return stilt stations based on stiltstation.find(id='STR')
 stiltstation.get('HTM')         
-stiltstation.get(['KIT','HTM150'])
+stiltstation.get(['KIT','HTM150'], progress = True)
 
-# return stilt stations based on dictionary or list of dict
+# return stilt stations based on dictionary or list of dict with a progressbar
 a = stiltstation.find(search='north')
 stiltstation.get(a)
 OR
-stiltstation.get(stiltstation.find(...))
+stiltstation.get(stiltstation.find(search='south'))
 </code></pre>
 <h3 id="stilt-object">STILT Object</h3>
 <p>classmethod <strong>StiltStation(dict)</strong><br>
