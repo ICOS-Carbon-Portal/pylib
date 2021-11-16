@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.11
+- rework process of requesting stilt stations
+- add a progress bar when requesting stilt stations
+- update user information when using the stilt module
+- add stilt data reporting to the back-end
+
+
 ## 0.1.10
 - adjust pylib version reported to the back-end
 - include non-code files to distribution
