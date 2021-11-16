@@ -8,11 +8,11 @@
 
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.1.0"
+__version__     = "0.1.1"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu']
-__status__      = "rc1"
-__date__        = "2021-04-23"
+__status__      = "release"
+__date__        = "2021-11-16"
 #################################################################################
 
 #Import modules
@@ -24,6 +24,7 @@ import json
 import xarray as xr
 import icoscp.const as CPC
 from icoscp.stilt import timefuncs as tf
+from icoscp import __version__ as release_version
 ##############################################################################
 
 class StiltStation():
@@ -110,7 +111,7 @@ class StiltStation():
         hours : STR | INT, optional
             If hours is empty or None, ALL Timeslots are returned.
             [0,3,6,9,12,15,18,21]
-            
+
             Valid results are returned as result with LOWER BOUND values.
             For backwards compatibility, input for str format hh:mm is accepted
             Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
@@ -119,7 +120,7 @@ class StiltStation():
                         hours = ["10", "10:00", 10] returns timeslot 9
 
         columns : TYPE, optional
-            Valid entries are "default", "co2", "co", "rn", "wind", "latlon", "all"            
+            Valid entries are "default", "co2", "co", "rn", "wind", "latlon", "all"
             default (or empty) will return
             ["isodate","co2.stilt","co2.fuel","co2.bio", "co2.background"]
             A full description of the 'columns' can be found at
@@ -219,6 +220,8 @@ class StiltStation():
                 #Print message:
                 print("\033[0;31;1m Error...\nToo big STILT dataset!\nSelect data for a shorter time period.\n\n")
 
+        # track data usage
+        self.__portalUse('timeseries')
         #Return dataframe:
         return df
     #----------------------------------------------------------------------------------------------------------
@@ -241,7 +244,7 @@ class StiltStation():
         hours : STR | INT, optional
             If hours is empty or None, ALL Timeslots are returned.
             [0,3,6,9,12,15,18,21]
-            
+
             Valid results are returned as result with LOWER BOUND values.
             For backwards compatibility, input for str format hh:mm is accepted
             Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
@@ -303,6 +306,8 @@ class StiltStation():
         fp.lon.attrs["axis"] = "X"
         fp.lon.attrs["standard_name"] = "longitude"
 
+        # track data usage
+        self.__portalUse('footprint')
         #Return footprint array:
         return fp
 
@@ -354,4 +359,25 @@ class StiltStation():
         #Return variable:
         return columns
 
+    def __portalUse(self, dtype):
+        """Assembles and posts stilt data usage."""
+
+        if not self.geoinfo:
+            country = 'unknown'
+        else:
+            country = self.geoinfo['name']['common']
+
+        counter = {'StiltDataAccess': {
+            'params': {
+                'station_id': self.id,
+                'station_coordinates': {'latitude': self.lat,
+                                        'longitude': self.lon,
+                                        'altitude': self.alt},
+                'station_country': country,
+                'library': __name__,
+                'data_type': dtype,
+                'version': release_version,  # Grabbed from '__init__.py'.
+                'internal': True}}}
+        server = 'https://cpauth.icos-cp.eu/logs/portaluse'
+        requests.post(server, json=counter)
 # ----------------------------------- End of STILT Station Class ------------------------------------- #

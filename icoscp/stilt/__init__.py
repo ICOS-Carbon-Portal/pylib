@@ -5,11 +5,14 @@ to timeseries and spatial footprints.
 """
 
 import os
+import icoscp.const as CPC
 
-
-try:
-    os.stat('/data/')
-except FileNotFoundError as error:
-    print('Error! The Stilt module can only be used on ICOS servers and not '
-          'locally.\nExiting...')
-    exit(0)
+if not os.path.exists(CPC.STILTPATH):
+    print("""
+Please be aware, that the STILT module is not supported to run
+locally (outside of the Virtual Environment at the ICOS Carbon
+Portal). You must use one of our Jupyter Services.
+Visit https://www.icos-cp.eu/data-services/tools/jupyter-notebook
+for further information. Or you may use our online STILT viewer
+application https://stilt.icos-cp.eu/viewer/.
+    """)
