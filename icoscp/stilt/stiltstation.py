@@ -335,12 +335,13 @@ def __get_stations(ids=[], progress=True):
     # dictionary to return
     stations = {}
 
-    # fill dictionary with ICOS station id, latitude, longitude and altitude
-	 # implement progress True/False
-    for ist in tqdm(sorted(allStations), disable=progress):
-        if not ist in df['STILT id'].values:
-            continue
+    # load precomputed geoinfo
+    geo = geoinfo.get()
 
+    # fill dictionary with ICOS station id, latitude, longitude and altitude
+    # implement progress True/False
+    for ist in tqdm(sorted(allStations), disable=progress):
+        
         stations[ist] = {}
         # get filename of link (original stiltweb directory structure) and
         # extract location information
@@ -362,8 +363,16 @@ def __get_stations(ids=[], progress=True):
         stations[ist]['locIdent']=os.path.split(loc_ident)[-1]
 
         # set the name and id
-        stations[ist]['id'] = df.loc[df['STILT id'] == ist]['STILT id'].item()
-        stationName = str(df.loc[df['STILT id'] == ist]['STILT name'].item())
+        stations[ist]['id'] = ist
+        
+        # check if station id is in the manual curated list at
+        # CPC.STILTINFO
+        id = [a.lower() for a in df['STILT id'].values]
+        if ist.lower() in id:
+            stationName = str(df.loc[df['STILT id'] == ist]['STILT name'].item())
+        else:
+            stationName = ''
+        
         stations[ist]['name'] = __stationName(stations[ist]['id'], stationName, stations[ist]['alt'])
 
         # set a flag if it is an ICOS station
@@ -384,16 +393,26 @@ def __get_stations(ids=[], progress=True):
             months = sorted([m for m in months if not sub.lower() in m.lower()])
             stations[ist][yy]['months'] = months
             stations[ist][yy]['nmonths'] = len(stations[ist][yy]['months'])
-
-    # merge geoinfo
-    geo = geoinfo.get()
-
-    for k in stations:
+            
+        # add geoinfo
+        if ist in geo.keys():
+            #get the precomputed country info
+            stations[ist]['geoinfo'] = geo[ist]['geoinfo']
+        elif stations[ist]['icos']:
+            # get country from ICOS coordinates
+            stations[ist]['geoinfo'] = __country([stations[ist]['icos']['lat'],stations[ist]['icos']['lon']])
+        else:
+            # get country from STILT coordiantes
+            stations[ist]['geoinfo'] = __country([stations[ist]['lat'],stations[ist]['lon']])
+            
+    
+    """ for k in tqdm(stations, disable=progress, desc='geographic info'):
+    #for k in stations:
         if k in geo.keys():
             stations[k]['geoinfo'] = geo[k]['geoinfo']
         else:
             stations[k]['geoinfo'] = __country([stations[k]['lat'],stations[k]['lon']])
-
+    """
     return stations
 
 
@@ -404,7 +423,7 @@ def __country(latlon):
 
 
 def __stationName(idx, name, alt):
-    if name=='nan':
+    if name=='nan' or not name:
         name = idx
     if not (name[-1]=='m' and name[-2].isdigit()):
         name = name + ' ' + str(alt) + 'm'
@@ -517,13 +536,25 @@ def find(**kwargs):
     if 'stations' in kwargs:
         stations = kwargs['stations']
     else:
-        # start with getting all stations
+        # start with getting all stations, or if ids are provided
+        # we can limit to search to the ids (which is much faster)
+        
+        if 'id' in kwargs:
+            ids = kwargs['id']
+            if isinstance(ids,str):
+                ids=[ids]
+            if not isinstance(ids,list):
+                ids=list(ids)
+        else:
+            # provide an empty list
+            ids = []
+        
         # check if progressbar should be visible or not, default True, visible
         progress = True
         if 'progress' in kwargs.keys():
             progress = kwargs['progress']
     
-        stations = __get_stations(progress=progress)
+        stations = __get_stations(ids=ids, progress=progress)
 
     # with no keyword arguments, return all stations
     # in default format (see _outfmt())
