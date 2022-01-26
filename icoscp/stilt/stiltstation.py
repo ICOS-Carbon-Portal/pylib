@@ -405,14 +405,7 @@ def __get_stations(ids=[], progress=True):
             # get country from STILT coordiantes
             stations[ist]['geoinfo'] = __country([stations[ist]['lat'],stations[ist]['lon']])
             
-    
-    """ for k in tqdm(stations, disable=progress, desc='geographic info'):
-    #for k in stations:
-        if k in geo.keys():
-            stations[k]['geoinfo'] = geo[k]['geoinfo']
-        else:
-            stations[k]['geoinfo'] = __country([stations[k]['lat'],stations[k]['lon']])
-    """
+
     return stations
 
 
@@ -568,7 +561,6 @@ def find(**kwargs):
         kwargs['daterange'] = [kwargs['sdate'], kwargs['edate']]
         del kwargs['sdate']
         del kwargs['edate']
-
 
 
     # valid key words. Make sure all are lower capital and that

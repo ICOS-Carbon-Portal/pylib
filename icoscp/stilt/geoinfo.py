@@ -92,9 +92,6 @@ def __save_all():
     # fill dictionary with ICOS station id, latitude, longitude and altitude
     for ist in tqdm(sorted(allStations)):
   
-        if not ist in df['STILT id'].values:
-            continue
-        
         stations[ist] = {}
         # get filename of link (original stiltweb directory structure) and extract location information
        
@@ -113,9 +110,26 @@ def __save_all():
         stations[ist]['lon']=lon
         stations[ist]['alt']=alt
         stations[ist]['locIdent']=os.path.split(loc_ident)[-1]
+        
+        
+        # set a flag if it is an ICOS station
+        stn = stations[ist]['id'][0:3].upper()
+        if stn in icosStations:
+            stations[ist]['icos'] = cpstation.get(stn).info()
+        else:
+            stations[ist]['icos'] = False
+        
 
     for s in tqdm(stations):
-        stations[s]['geoinfo'] = country.get(latlon=[stations[s]['lat'],stations[s]['lon']])
+        if stations[s]['icos']:
+            lat = stations[s]['icos']['lat']
+            lon = stations[s]['icos']['lon']
+        else:
+            lat = stations[s]['lat']
+            lon = stations[s]['lon']
+            
+            
+        stations[s]['geoinfo'] = country.get(latlon=[lat,lon])
         
     return stations
 
