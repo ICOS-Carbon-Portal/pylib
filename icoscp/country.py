@@ -132,15 +132,41 @@ def _c_name(name, countries):
 
     return country
 
-def _c_reverse(latlon):
-    # revers geocoding
-    base = 'https://nominatim.openstreetmap.org/reverse?format=json&'
-    url = base + 'lat=' + str(latlon[0]) + '&lon=' + str(latlon[1]) + '&zoom=3'
-    response = requests.get(url=url)
-    country = response.json()
-    if 'address' in country.keys():
-        return country['address']['country_code']
 
+def _c_reverse(latlon):
+    # Icos nominatim service is the first responder to a reverse
+    # geocoding request.
+    icos_base = 'https://nominatim.icos-cp.eu/reverse?format=json&'
+    icos_url = icos_base + 'lat=' + str(latlon[0]) + '&lon=' + str(latlon[1]) + '&zoom=3'
+    try:
+        icos_response = requests.get(url=icos_url)
+        if icos_response == 200:
+            country = icos_response.json()
+            if 'address' in country.keys():
+                return country['address']['country_code']
+    # If icos nominatim is unavailable try OpenStreetMap nominatim
+    # service instead.
+    except requests.exceptions.RequestException as e:
+        print('Request failed with: ' + str(e))
+        icos_info_message = 'Icos reverse geocoding service is unavailable.\n' \
+                            'Redirecting to external https://nominatim.openstreetmap.org ...\n'
+        print(icos_info_message)
+        # OpenStreetMap nominatim service is the second responder to a
+        # reverse geocoding request.
+        external_base = 'https://nominatim.openstreetmap.org/reverse?format=json&'
+        external_url = external_base + 'lat=' + str(latlon[0]) + '&lon=' + str(latlon[1]) + \
+                       '&zoom=3'
+        try:
+            external_response = requests.get(url=external_url)
+            if external_response == 200:
+                country = external_response.json()
+                if 'address' in country.keys():
+                    return country['address']['country_code']
+        except requests.exceptions.RequestException as e:
+            print('Request failed with: ' + str(e))
+            external_info_message = 'External geocoding services at ' \
+                                    'https://nominatim.openstreetmap.org are unavailable.\n'
+            print(external_info_message)
     return False
 
 
