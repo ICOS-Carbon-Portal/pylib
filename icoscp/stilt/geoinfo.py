@@ -19,7 +19,6 @@ import json
 from icoscp.station import station as cpstation
 import icoscp.const as CPC
 import os
-import pandas as pd
 from tqdm import tqdm
 import numpy as np
 from icoscp import country
@@ -106,6 +105,9 @@ def __save_all():
         stations[ist]['lon']=lon
         stations[ist]['alt']=alt
         stations[ist]['locIdent']=os.path.split(loc_ident)[-1]
+        
+        # set the name and id
+        stations[ist]['id'] = ist
                 
         # set a flag if it is an ICOS station
         stn = stations[ist]['id'][0:3].upper()
