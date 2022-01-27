@@ -77,12 +77,8 @@ def __save_all():
     # use directory listing from siltweb data
     allStations = os.listdir(CPC.STILTPATH)
 
-    # add information on station name (and new STILT station id)
-    # from stations.csv file used in stiltweb.
-    # this is available from the backend through a url
-    df = pd.read_csv(CPC.STILTINFO)
-    
-    # add ICOS flag to the station
+        
+    # read lis of ICOS stations
     icosStations = cpstation.getIdList()
     icosStations = list(icosStations['id'][icosStations.theme=='AS'])
     
@@ -110,26 +106,19 @@ def __save_all():
         stations[ist]['lon']=lon
         stations[ist]['alt']=alt
         stations[ist]['locIdent']=os.path.split(loc_ident)[-1]
-        
-        
+                
         # set a flag if it is an ICOS station
         stn = stations[ist]['id'][0:3].upper()
         if stn in icosStations:
             stations[ist]['icos'] = cpstation.get(stn).info()
+            lat = stations[ist]['icos']['lat']
+            lon = stations[ist]['icos']['lon']
         else:
-            stations[ist]['icos'] = False
-        
-
-    for s in tqdm(stations):
-        if stations[s]['icos']:
-            lat = stations[s]['icos']['lat']
-            lon = stations[s]['icos']['lon']
-        else:
-            lat = stations[s]['lat']
-            lon = stations[s]['lon']
-            
-            
-        stations[s]['geoinfo'] = country.get(latlon=[lat,lon])
+            stations[ist]['icos'] = False        
+            lat = stations[ist]['lat']
+            lon = stations[ist]['lon']
+                        
+        stations[ist]['geoinfo'] = country.get(latlon=[lat,lon])
         
     return stations
 
