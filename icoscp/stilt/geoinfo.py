@@ -110,7 +110,7 @@ def __save_all():
         stations[ist]['id'] = ist
                 
         # set a flag if it is an ICOS station
-        stn = stations[ist]['id'][0:3].upper()
+        stn = ist[0:3].upper()
         if stn in icosStations:
             stations[ist]['icos'] = cpstation.get(stn).info()
             lat = stations[ist]['icos']['lat']
