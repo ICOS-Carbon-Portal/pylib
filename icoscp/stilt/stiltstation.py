@@ -529,25 +529,13 @@ def find(**kwargs):
     if 'stations' in kwargs:
         stations = kwargs['stations']
     else:
-        # start with getting all stations, or if ids are provided
-        # we can limit to search to the ids (which is much faster)
-        
-        if 'id' in kwargs:
-            ids = kwargs['id']
-            if isinstance(ids,str):
-                ids=[ids]
-            if not isinstance(ids,list):
-                ids=list(ids)
-        else:
-            # provide an empty list
-            ids = []
-        
+        # start with getting all stations
         # check if progressbar should be visible or not, default True, visible
         progress = True
         if 'progress' in kwargs.keys():
             progress = kwargs['progress']
     
-        stations = __get_stations(ids=ids, progress=progress)
+        stations = __get_stations(progress=progress)
 
     # with no keyword arguments, return all stations
     # in default format (see _outfmt())
