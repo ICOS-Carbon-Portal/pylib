@@ -1,11 +1,17 @@
 # Changelog
 
+## 0.1.12
+- fix `stiltstation.find()` to return all STILT stations
+- switch to ICOS reverse geocoder as default
+- precompute all known stations to speed up search functions
+- if possible, use ICOS station's latitude/longitude when reverse geocoding a STILT station for 
+  precision
+
 ## 0.1.11
 - rework process of requesting stilt stations
 - add a progress bar when requesting stilt stations
 - update user information when using the stilt module
 - add stilt data reporting to the back-end
-
 
 ## 0.1.10
 - adjust pylib version reported to the back-end
