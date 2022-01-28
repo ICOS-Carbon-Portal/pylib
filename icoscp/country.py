@@ -140,7 +140,7 @@ def _c_reverse(latlon):
     icos_url = icos_base + 'lat=' + str(latlon[0]) + '&lon=' + str(latlon[1]) + '&zoom=3'
     try:
         icos_response = requests.get(url=icos_url)
-        if icos_response == 200:
+        if icos_response.status_code == 200:
             country = icos_response.json()
             if 'address' in country.keys():
                 return country['address']['country_code']
@@ -158,7 +158,7 @@ def _c_reverse(latlon):
                        '&zoom=3'
         try:
             external_response = requests.get(url=external_url)
-            if external_response == 200:
+            if external_response.status_code == 200:
                 country = external_response.json()
                 if 'address' in country.keys():
                     return country['address']['country_code']

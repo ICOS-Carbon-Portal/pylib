@@ -19,7 +19,6 @@ import json
 from icoscp.station import station as cpstation
 import icoscp.const as CPC
 import os
-import pandas as pd
 from tqdm import tqdm
 import numpy as np
 from icoscp import country
@@ -77,12 +76,8 @@ def __save_all():
     # use directory listing from siltweb data
     allStations = os.listdir(CPC.STILTPATH)
 
-    # add information on station name (and new STILT station id)
-    # from stations.csv file used in stiltweb.
-    # this is available from the backend through a url
-    df = pd.read_csv(CPC.STILTINFO)
-    
-    # add ICOS flag to the station
+        
+    # read lis of ICOS stations
     icosStations = cpstation.getIdList()
     icosStations = list(icosStations['id'][icosStations.theme=='AS'])
     
@@ -92,9 +87,6 @@ def __save_all():
     # fill dictionary with ICOS station id, latitude, longitude and altitude
     for ist in tqdm(sorted(allStations)):
   
-        if not ist in df['STILT id'].values:
-            continue
-        
         stations[ist] = {}
         # get filename of link (original stiltweb directory structure) and extract location information
        
@@ -113,9 +105,22 @@ def __save_all():
         stations[ist]['lon']=lon
         stations[ist]['alt']=alt
         stations[ist]['locIdent']=os.path.split(loc_ident)[-1]
-
-    for s in tqdm(stations):
-        stations[s]['geoinfo'] = country.get(latlon=[stations[s]['lat'],stations[s]['lon']])
+        
+        # set the name and id
+        stations[ist]['id'] = ist
+                
+        # set a flag if it is an ICOS station
+        stn = ist[0:3].upper()
+        if stn in icosStations:
+            stations[ist]['icos'] = cpstation.get(stn).info()
+            lat = stations[ist]['icos']['lat']
+            lon = stations[ist]['icos']['lon']
+        else:
+            stations[ist]['icos'] = False        
+            lat = stations[ist]['lat']
+            lon = stations[ist]['lon']
+                        
+        stations[ist]['geoinfo'] = country.get(latlon=[lat,lon])
         
     return stations
 
