@@ -312,8 +312,9 @@ def __get_stations(ids=[], progress=True):
     # DEFAULT disable = False -> progressbar is visible
     progress = not progress
     
-    # use directory listing from siltweb data
-    allStations = os.listdir(CPC.STILTPATH)
+    # Use directory listing from stilt-web data. Ignore stations that
+    # may be in the queue but are not finished yet.
+    allStations = [s for s in os.listdir(CPC.STILTPATH) if os.path.exists(CPC.STILTPATH + s)]
     
     # if ids are provided, select only valid ids from allstations
     if ids:
@@ -383,11 +384,13 @@ def __get_stations(ids=[], progress=True):
             stations[ist]['icos'] = False
 
         # set years and month of available data
-        years = os.listdir(CPC.STILTPATH+'/'+ist)
+        years = [y for y in os.listdir(CPC.STILTPATH + '/' + ist) if
+                 os.path.exists(CPC.STILTPATH + '/' + ist + '/' + y)]
         stations[ist]['years'] = years
         for yy in sorted(stations[ist]['years']):
             stations[ist][yy] = {}
-            months = os.listdir(CPC.STILTPATH+'/'+ist+'/'+yy)
+            months = [m for m in os.listdir(CPC.STILTPATH + '/' + ist + '/' + yy) if
+                      os.path.exists(CPC.STILTPATH + '/' + ist + '/' + yy + '/' + m)]
             # remove cache txt entry
             sub = 'cache'
             months = sorted([m for m in months if not sub.lower() in m.lower()])
