@@ -69,6 +69,10 @@
                 <ul class="current">
                     <li class="toctree-l1 current"><a class="reference internal current" href="./">Changelog</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#0112">0.1.12</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#0111">0.1.11</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#0110">0.1.10</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#019">0.1.9</a>
@@ -124,6 +128,21 @@
             <div class="section">
               
                 <h1 id="changelog">Changelog</h1>
+<h2 id="0112">0.1.12</h2>
+<ul>
+<li>fix <code>stiltstation.find()</code> to return all STILT stations</li>
+<li>switch to ICOS reverse geocoder as default</li>
+<li>precompute all known stations to speed up search functions</li>
+<li>if possible, use ICOS station's latitude/longitude when reverse geocoding a STILT station for 
+  precision</li>
+</ul>
+<h2 id="0111">0.1.11</h2>
+<ul>
+<li>rework process of requesting stilt stations</li>
+<li>add a progress bar when requesting stilt stations</li>
+<li>update user information when using the stilt module</li>
+<li>add stilt data reporting to the back-end</li>
+</ul>
 <h2 id="0110">0.1.10</h2>
 <ul>
 <li>adjust pylib version reported to the back-end</li>
