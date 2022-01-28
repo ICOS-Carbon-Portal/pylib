@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.13
+- rework directory listing of STILT stations and ignore queued but empty stations
+
 ## 0.1.12
 - fix `stiltstation.find()` to return all STILT stations
 - switch to ICOS reverse geocoder as default
