@@ -73,8 +73,9 @@ def __save_all():
         return dictionary with meta data, keys are stilt station id's
     """
         
-    # use directory listing from siltweb data
-    allStations = os.listdir(CPC.STILTPATH)
+    # Use directory listing from stilt-web data. Ignore stations that
+    # may be in the queue but are not finished yet.
+    allStations = [s for s in os.listdir(CPC.STILTPATH) if os.path.exists(CPC.STILTPATH + s)]
 
         
     # read lis of ICOS stations
