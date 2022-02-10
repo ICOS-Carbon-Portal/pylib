@@ -331,24 +331,24 @@ class StiltStation():
             returns the raw results in form of a pandas data frame
         """
         #Convert date-strings to date objs:
-        s_date = tf.parse(start_date)
-        e_date = tf.parse(end_date)
+        s_date = tf.parse(start_date).strftime('%Y-%m-%d')
+        e_date = tf.parse(end_date).strftime('%Y-%m-%d')
         
-
+    
         # Check input parameters:
         if e_date < s_date:
             return False
-
+    
         # create header:
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
         
         data = '{"fromDate": "'+s_date+'", "toDate": "'+e_date+'", "stationId": "'+self.id+'"}'
-        response = requests.post(url, headers=headers, data=data)
+        response = requests.post(CPC.STILTRAW, headers=headers, data=data)
         
         # track data usage
         self.__portalUse('timeseries')
         #Return dataframe:
-        return df
+        return
     
     #Function that checks the selection of columns that are to be
     #returned with the STILT timeseries model output:
@@ -423,3 +423,7 @@ class StiltStation():
         server = 'https://cpauth.icos-cp.eu/logs/portaluse'
         requests.post(server, json=counter)
 # ----------------------------------- End of STILT Station Class ------------------------------------- #
+
+if __name__ = '__main__':
+    a = StiltStation()
+    getRaw
