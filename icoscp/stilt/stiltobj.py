@@ -343,6 +343,7 @@ class StiltStation():
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
         
         data = '{"fromDate": "'+s_date+'", "toDate": "'+e_date+'", "stationId": "'+self.id+'"}'
+        print(data)
         response = requests.post(CPC.STILTRAW, headers=headers, data=data)
         
         # track data usage
@@ -423,7 +424,3 @@ class StiltStation():
         server = 'https://cpauth.icos-cp.eu/logs/portaluse'
         requests.post(server, json=counter)
 # ----------------------------------- End of STILT Station Class ------------------------------------- #
-
-if __name__ = '__main__':
-    a = StiltStation()
-    getRaw
