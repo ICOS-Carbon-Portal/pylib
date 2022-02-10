@@ -311,6 +311,45 @@ class StiltStation():
         #Return footprint array:
         return fp
 
+    def get_raw(self, start_date, end_date):
+        """
+        Please do use this function with caution. Only very expirienced user
+        should load raw data.
+    
+        Parameters
+        ----------
+        start_date : STR
+            DESCRIPTION.
+        end_date : STR
+            DESCRIPTION.
+        hours : TYPE, optional
+            DESCRIPTION. The default is [].
+    
+        Returns
+        -------
+        columns : Pandas DataFrame
+            returns the raw results in form of a pandas data frame
+        """
+        #Convert date-strings to date objs:
+        s_date = tf.parse(start_date)
+        e_date = tf.parse(end_date)
+        
+
+        # Check input parameters:
+        if e_date < s_date:
+            return False
+
+        # create header:
+        headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
+        
+        data = '{"fromDate": "'+s_date+'", "toDate": "'+e_date+'", "stationId": "'+self.id+'"}'
+        response = requests.post(url, headers=headers, data=data)
+        
+        # track data usage
+        self.__portalUse('timeseries')
+        #Return dataframe:
+        return df
+    
     #Function that checks the selection of columns that are to be
     #returned with the STILT timeseries model output:
     def __columns(self, cols):
