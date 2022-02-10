@@ -315,6 +315,9 @@ class StiltStation():
     #returned with the STILT timeseries model output:
     def __columns(self, cols):
 
+        # make parameters case insensitive
+        cols = [col.lower() for col in cols]
+        
         # check for a valid entry. If not...return default
         valid = ["default", "co2", "co", "rn", "wind", "latlon", "all"]
         if cols not in valid:
@@ -349,12 +352,12 @@ class StiltStation():
             columns = ('["isodate","co2.stilt","co2.fuel","co2.bio","co2.fuel.coal",'+
                     '"co2.fuel.oil","co2.fuel.gas","co2.fuel.bio","co2.energy",'+
                     '"co2.transport", "co2.industry","co2.others", "co2.cement",'+
-                    '"co2.background", "co.stilt","co.fuel","co.bio","co.fuel.coal",'+
+                    '"co2.background", "co.stilt","co.fuel","co.bio","co2.bio.gee",' +
+                    '"co2.bio.resp", "co.fuel.coal",'+
                     '"co.fuel.oil","co.fuel.gas","co.fuel.bio","co.energy",'+
                     '"co.transport","co.industry","co.others", "co.cement",'+
                     '"co.background","rn", "rn.era","rn.noah","wind.dir",'+
                     '"wind.u","wind.v","latstart","lonstart"]')
-
 
         #Return variable:
         return columns
