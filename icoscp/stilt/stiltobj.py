@@ -338,7 +338,8 @@ class StiltStation():
         # validate column names:
             
         # make sure isodate is in the request
-        cols.append('isodate')
+        if 'isodate' not in cols:
+            cols.append('isodate')
         columns = list(set(cols).intersection(self._raw_column_names()))
         if len(columns) <= 1:
             return False
