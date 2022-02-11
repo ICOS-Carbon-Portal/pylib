@@ -15,10 +15,6 @@ import requests
 import icoscp
 
 
-class UnableToGeocode(Exception):
-    pass
-
-
 def get(**kwargs):
     """
     Search country information.
@@ -154,6 +150,17 @@ def _c_reverse(latlon):
 
     Returns
     -------
+    location_info : dict
+        Returns a dictionary with a human-readable address or place. If
+        the request could not be geocoded a boolean `False` is returned
+        instead.
+
+    Raises
+    ------
+    RequestException
+        A RequestException is raised if icos nominatim is unavailable,
+        if icos nominatim could not geocode with `zoom=3`, or if
+        OpenStreetMap nominatim is unavailable.
 
     """
     # Icos nominatim service is the first responder to a reverse
@@ -185,6 +192,7 @@ def _c_reverse(latlon):
         # Remove zoom from request.
         icos_url = icos_base + 'lat=' + str(latlon[0]) + '&lon=' + str(latlon[1])
         try:
+            print('Retrying without zoom ...')
             icos_response = requests.get(url=icos_url)
             if icos_response.status_code == 200:
                 json_content = icos_response.json()
