@@ -338,23 +338,23 @@ class StiltStation():
         # validate column names:
             
         # make sure isodate is in the request
-        if len(cols) > 1:
-            cols.append('isodate')
+        cols.append('isodate')
         columns = list(set(cols).intersection(self._raw_column_names()))
+        if len(columns) <= 1:
+            return False
         # provide double quotes in the list
         columns = json.dumps(columns) 
     
         # Check input parameters:
         if e_date < s_date:
             return False
-        if not columns:
-            return False
-    
+            
         # create http header and payload:
             
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}        
-        data = '{"columns": '+ str(columns) + '"fromDate": "'+s_date+'", "toDate": "'+e_date+'", "stationId": "'+self.id+'"}'
+        data = '{"columns": '+ str(columns) + ',"fromDate": "'+s_date+'", "toDate": "'+e_date+'", "stationId": "'+self.id+'"}'
         
+        print(data)
         response = requests.post(CPC.STILTRAW, headers=headers, data=data)
         
         if response.status_code != 500:
