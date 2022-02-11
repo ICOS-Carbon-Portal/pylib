@@ -388,7 +388,7 @@ class StiltStation():
     def __columns(self, cols):
 
         # make parameters case insensitive
-        cols = [col.lower() for col in cols]
+        cols = cols.lower()
         
         # check for a valid entry. If not...return default
         valid = ["default", "co2", "co", "rn", "wind", "latlon", "all"]
