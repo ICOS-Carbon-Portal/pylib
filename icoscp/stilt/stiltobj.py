@@ -354,8 +354,6 @@ class StiltStation():
             
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}        
         data = '{"columns": '+ str(columns) + ',"fromDate": "'+s_date+'", "toDate": "'+e_date+'", "stationId": "'+self.id+'"}'
-        
-        print(data)
         response = requests.post(CPC.STILTRAW, headers=headers, data=data)
         
         if response.status_code != 500:
