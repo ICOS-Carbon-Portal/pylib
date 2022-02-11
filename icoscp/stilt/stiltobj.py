@@ -401,7 +401,7 @@ class StiltStation():
 
         elif cols=='co2':
             columns = ('["isodate","co2.stilt","co2.fuel","co2.bio","co2.fuel.coal",'+
-                       '"co2.bio.gee", "co2.bio.resp"' +
+                       '"co2.bio.gee", "co2.bio.resp",' +
                     '"co2.fuel.oil","co2.fuel.gas","co2.fuel.bio","co2.energy",'+
                     '"co2.transport", "co2.industry","co2.others", "co2.cement",'+
                     '"co2.background"]')
