@@ -22,3 +22,6 @@ STILTINFO = 'https://stilt.icos-cp.eu/viewer/stationinfo'
 
 # online results
 STILTTS = 'https://stilt.icos-cp.eu/viewer/stiltresult'
+
+# stiltresults all columns, raw
+STILTRAW = 'https://stilt.icos-cp.eu/viewer/stiltrawresult'
