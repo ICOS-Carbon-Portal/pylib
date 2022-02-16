@@ -14,6 +14,7 @@ import json
 import requests
 import icoscp
 
+
 def get(**kwargs):
     """
     Search country information.
@@ -134,39 +135,108 @@ def _c_name(name, countries):
 
 
 def _c_reverse(latlon):
+    """Reverse geocode coordinates.
+
+    Use latitude and longitude coordinates to reverse geocode a
+    location. Locations within Europe are handled by icos nominatim
+    service https://nominatim.icos-cp.eu/. Other cases of reverse
+    geocoding are handled by https://nominatim.openstreetmap.org.
+
+    Parameters
+    ----------
+    latlon : list
+        `latlon` list includes latitude and longitude coordinates which
+        will be used to reverse geocode.
+
+    Returns
+    -------
+    location_info : dict
+        Returns a dictionary with a human-readable address or place. If
+        the request could not be geocoded a boolean `False` is returned
+        instead.
+
+    Raises
+    ------
+    RequestException
+        A RequestException is raised if icos nominatim is unavailable,
+        if icos nominatim could not geocode with `zoom=3`, or if
+        OpenStreetMap nominatim is unavailable.
+
+    """
     # Icos nominatim service is the first responder to a reverse
     # geocoding request.
     icos_base = 'https://nominatim.icos-cp.eu/reverse?format=json&'
     icos_url = icos_base + 'lat=' + str(latlon[0]) + '&lon=' + str(latlon[1]) + '&zoom=3'
+    unable_to_geocode = False
     try:
         icos_response = requests.get(url=icos_url)
         if icos_response.status_code == 200:
-            country = icos_response.json()
-            if 'address' in country.keys():
-                return country['address']['country_code']
+            json_content = icos_response.json()
+            # Icos nominatim geocoder successfully returned a location.
+            if 'error' not in json_content.keys() and 'address' in json_content.keys():
+                location_info = json_content['address']['country_code']
+                return location_info
+            else:
+                unable_to_geocode = True
+        # Raise this exception if icos nominatim is unavailable.
+        else:
+            raise requests.exceptions.RequestException
+    except requests.exceptions.RequestException as request_exception:
+        print('Request failed with: ' + str(request_exception) + '\n'
+              'Icos reverse geocoding service is unavailable.\n'
+              'Redirecting to external https://nominatim.openstreetmap.org ...\n')
+    # Handle errors due to incomplete nominatim database.
+    # Icos nominatim might be able to reverse geocode without using
+    # the zoom option.
+    if unable_to_geocode:
+        # Remove zoom from request.
+        icos_url = icos_base + 'lat=' + str(latlon[0]) + '&lon=' + str(latlon[1])
+        try:
+            print('Retrying without zoom ...')
+            icos_response = requests.get(url=icos_url)
+            if icos_response.status_code == 200:
+                json_content = icos_response.json()
+                # Icos nominatim geocoder successfully returned a
+                # location.
+                if 'error' not in json_content.keys() and 'address' in json_content.keys():
+                    location_info = json_content['address']['country_code']
+                    return location_info
+                # Raise this exception in case icos nominatim is unable
+                # to geocode. This should be replaced by a custom
+                # exception raise.
+                else:
+                    raise requests.exceptions.RequestException
+            # Raise this exception in case icos nominatim is
+            # unavailable. This is a strong indicator that icos
+            # nominatim crashed during consequential requests.
+            else:
+                raise requests.exceptions.RequestException
+        except requests.exceptions.RequestException as request_exception:
+            print('Request failed: ' + str(request_exception) + '\n'  
+                  'Icos nominatim was unable to reverse geocode or less likely the service '
+                  'crashed during two consequential requests.\nRedirecting to external '
+                  'OpenStreetMap nominatim https://nominatim.openstreetmap.org ...\n')
     # If icos nominatim is unavailable try OpenStreetMap nominatim
     # service instead.
-    except requests.exceptions.RequestException as e:
-        print('Request failed with: ' + str(e))
-        icos_info_message = 'Icos reverse geocoding service is unavailable.\n' \
-                            'Redirecting to external https://nominatim.openstreetmap.org ...\n'
-        print(icos_info_message)
-        # OpenStreetMap nominatim service is the second responder to a
-        # reverse geocoding request.
-        external_base = 'https://nominatim.openstreetmap.org/reverse?format=json&'
-        external_url = external_base + 'lat=' + str(latlon[0]) + '&lon=' + str(latlon[1]) + \
-                       '&zoom=3'
-        try:
-            external_response = requests.get(url=external_url)
-            if external_response.status_code == 200:
-                country = external_response.json()
-                if 'address' in country.keys():
-                    return country['address']['country_code']
-        except requests.exceptions.RequestException as e:
-            print('Request failed with: ' + str(e))
-            external_info_message = 'External geocoding services at ' \
-                                    'https://nominatim.openstreetmap.org are unavailable.\n'
-            print(external_info_message)
+    external_base = 'https://nominatim.openstreetmap.org/reverse?format=json&'
+    external_url = external_base + 'lat=' + str(latlon[0]) + '&lon=' + str(latlon[1]) + '&zoom=3'
+    try:
+        external_response = requests.get(url=external_url)
+        if external_response.status_code == 200:
+            json_content = external_response.json()
+            # OpenStreetMap nominatim geocoder successfully returned a
+            # location.
+            if 'error' not in json_content.keys() and 'address' in json_content.keys():
+                location_info = json_content['address']['country_code']
+                return location_info
+        # Raise this exception if external OpenStreetMap nominatim
+        # is unavailable.
+        else:
+            raise requests.exceptions.RequestException
+    except requests.exceptions.RequestException as request_exception:
+        print('Request failed: ' + str(request_exception) + '\n' +
+              'External geocoding services at '
+              'https://nominatim.openstreetmap.org are unavailable.\n')
     return False
 
 
