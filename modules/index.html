@@ -233,6 +233,8 @@
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#get_fpstart_date-end_date-hours">.get_fp(start_date, end_date, hours=[]):</a>
     </li>
+    <li class="toctree-l4"><a class="reference internal" href="#get_rawstart_date-end_date-cols">.get_raw(start_date, end_date, cols):</a>
+    </li>
         </ul>
     </li>
         </ul>
@@ -896,18 +898,18 @@ Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
 <p>columns : STR, optional</p>
 <ul>
 <li>Valid entries are <code>"default", "co2", "co", "rn", "wind", "latlon", "all"</code><pre><code>default:
-    isodate,co2.stilt,co2.fuel,co2.bio, co2.background
+    isodate, co2.stilt, co2.fuel, co2.bio, co2.background
 
 co2
-    isodate,co2.stilt,co2.fuel,co2.bio,co2.fuel.coal,
-    co2.fuel.oil,co2.fuel.gas,co2.fuel.bio,co2.energy
-    co2.transport, co2.industry,co2.others, co2.cement,
-    co2.background
+    isodate, co2.stilt, co2.fuel, co2.bio, co2.fuel.coal, 
+    co2.bio.gee, co2.bio.resp, co2.fuel.oil, co2.fuel.gas, 
+    co2.fuel.bio, co2.energy, co2.transport, co2.industry, 
+    co2.others, co2.cement, co2.background
 
 co
-    isodate, co.stilt,co.fuel,co.bio,co.fuel.coal
-    co.fuel.oil, co.fuel.gas,co.fuel.bio,co.energy
-    co.transport,co.industry, co.others, co.cement,
+    isodate, co.stilt,co.fuel, co.bio, co.fuel.coal
+    co.fuel.oil, co.fuel.gas, co.fuel.bio, co.energy
+    co.transport, co.industry, co.others, co.cement,
     co.background
 
 rn
@@ -920,14 +922,14 @@ latlon
     isodate, latstart, lonstart
 
 all
-    isodate,co2.stilt,co2.fuel,co2.bio,co2.fuel.coal,
-    co2.fuel.oil,co2.fuel.gas,co2.fuel.bio,co2.energy,
-    co2.transport, co2.industry,co2.others, co2.cement,
-    co2.background, co.stilt,co.fuel,co.bio,co.fuel.coal,
-    co.fuel.oil,co.fuel.gas,co.fuel.bio,co.energy,
-    co.transport,co.industry,co.others, co.cement,
-    co.background,rn, rn.era,rn.noah,wind.dir,
-    wind.u,wind.v,latstart,lonstart
+    isodate, co2.stilt, co2.fuel, co2.bio, co2.fuel.coal,
+    co2.fuel.oil, co2.fuel.gas, co2.fuel.bio, co2.energy,
+    co2.transport, co2.industry, co2.others, co2.cement,
+    co2.background, co.stilt, co.fuel, co.bio, co2.bio.gee,
+    co2.bio.resp, co.fuel.coal, co.fuel.oil, co.fuel.gas,
+    co.fuel.bio, co.energy, co.transport, co.industry,
+    co.others, co.cement, co.background, rn, rn.era, rn.noah,
+    wind.dir, wind.u, wind.v, latstart, lonstart
 </code></pre>
 </li>
 </ul>
@@ -958,6 +960,21 @@ Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
 </li>
 </ul>
 </li>
+</ul>
+<h4 id="get_rawstart_date-end_date-cols">.get_raw(start_date, end_date, cols):</h4>
+<p>Please use this function with caution as it loads raw data. For further assistance 
+please contact us at <a href="mailto:jupyter-info@icos-cp.eu">jupyter-info@icos-cp.eu</a>.</p>
+<ul>
+<li>start_date : STR in form yy-mm-dd.<ul>
+<li>start_date = '18-01-01'</li>
+</ul>
+</li>
+<li>end_date : STR in form yy-mm-dd.<ul>
+<li>end_date = '18-01-31'</li>
+</ul>
+</li>
+<li>cols : LIST[STR] A list of valid column names. You can retrieve the full list with
+  <code>_raw_column_names()</code>.</li>
 </ul>
 <hr>
 
