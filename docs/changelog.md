@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.14
+- update `get_ts()` to case-insensitive and include `co2.bio.gee` and `co2.bio.resp` in the 
+  `co2` results
+- correctly redirect nominatim requests when icos nominatim is unable to reverse geocode. 
+
 ## 0.1.13
 - rework directory listing of STILT stations and ignore queued but empty stations
 
