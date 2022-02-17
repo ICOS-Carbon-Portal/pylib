@@ -182,9 +182,10 @@ def _c_reverse(latlon):
         else:
             raise requests.exceptions.RequestException
     except requests.exceptions.RequestException as request_exception:
-        print('Request failed with: ' + str(request_exception) + '\n'
-              'Icos reverse geocoding service is unavailable.\n'
-              'Redirecting to external https://nominatim.openstreetmap.org ...\n')
+        exception_message = ('Request failed with: ' + str(request_exception) + '\n'
+                             'Icos reverse geocoding service is unavailable.\n'
+                             'Redirecting to external https://nominatim.openstreetmap.org ...\n')
+        # print(exception_message)
     # Handle errors due to incomplete nominatim database.
     # Icos nominatim might be able to reverse geocode without using
     # the zoom option.
@@ -192,7 +193,7 @@ def _c_reverse(latlon):
         # Remove zoom from request.
         icos_url = icos_base + 'lat=' + str(latlon[0]) + '&lon=' + str(latlon[1])
         try:
-            print('Retrying without zoom ...')
+            # print('Retrying without zoom ...')
             icos_response = requests.get(url=icos_url)
             if icos_response.status_code == 200:
                 json_content = icos_response.json()
@@ -212,10 +213,12 @@ def _c_reverse(latlon):
             else:
                 raise requests.exceptions.RequestException
         except requests.exceptions.RequestException as request_exception:
-            print('Request failed: ' + str(request_exception) + '\n'  
-                  'Icos nominatim was unable to reverse geocode or less likely the service '
-                  'crashed during two consequential requests.\nRedirecting to external '
-                  'OpenStreetMap nominatim https://nominatim.openstreetmap.org ...\n')
+            exception_message = (
+                    'Request failed: ' + str(request_exception) + '\n'  
+                    'Icos nominatim was unable to reverse geocode or less likely the service '
+                    'crashed during two consequential requests.\nRedirecting to external '
+                    'OpenStreetMap nominatim https://nominatim.openstreetmap.org ...\n')
+            # print(exception_message)
     # If icos nominatim is unavailable try OpenStreetMap nominatim
     # service instead.
     external_base = 'https://nominatim.openstreetmap.org/reverse?format=json&'
@@ -234,9 +237,10 @@ def _c_reverse(latlon):
         else:
             raise requests.exceptions.RequestException
     except requests.exceptions.RequestException as request_exception:
-        print('Request failed: ' + str(request_exception) + '\n' +
-              'External geocoding services at '
-              'https://nominatim.openstreetmap.org are unavailable.\n')
+        exception_message = ('Request failed: ' + str(request_exception) + '\n'
+                             'External geocoding services at '
+                             'https://nominatim.openstreetmap.org are unavailable.\n')
+        # print(exception_message)
     return False
 
 
