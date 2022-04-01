@@ -28,7 +28,7 @@ from folium.plugins import MarkerCluster
 import requests
 
 
-def get(queried_stations, project):
+def get(queried_stations, project, icon):
     """Generates a folium map of stations.
 
     Uses the requested stations dataframe along with the REST countries
@@ -80,17 +80,19 @@ def get(queried_stations, project):
         station_info = stations[station_index]
         # Create the html popup message for each station.
         popup = folium.Popup(generate_popup_html(station_info, response))
-        if response['service']:
-            # Set the icon for each marker using the country's flag.
-            icon = folium.CustomIcon(icon_image=station_info.flag, icon_size=(20, 14))
+        if icon == 'flag' and response['service']:
+            # Set the folium icon for each marker using the country's flag.
+            folium_icon = folium.CustomIcon(icon_image=station_info.flag, icon_size=(20, 14))
+        elif isinstance(icon, str):
+            folium_icon = folium.features.CustomIcon(icon, icon_size=(20, 14))
         else:
-            icon = folium.Icon(color='blue', icon_color='white', icon='info_sign')
+            folium_icon = folium.Icon(color='blue', icon_color='white', icon='info_sign')
         # Add a marker for each station at the station's location
         # along with the popup and the tooltip.
         station_marker = folium.Marker(location=[station_info.lat, station_info.lon],
-                                       tooltip='<b>' + station_info.id + '</b>',
+                                       tooltip=f'<b>{station_info.id}</b>',
                                        popup=popup,
-                                       icon=icon)
+                                       icon=folium_icon)
         # Add the station marker to the cluster.
         marker_cluster.add_child(station_marker)
     # Add the cluster and the layer control to the folium map.

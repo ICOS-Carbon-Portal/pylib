@@ -575,7 +575,7 @@ def get(stationId):
     return myStn
 
 
-def getIdList(project='ICOS', sort='name', outfmt='pandas'):
+def getIdList(project='ICOS', sort='name', outfmt='pandas', icon='flag'):
     """Retrieves a list of stations using a specific format.
 
     Returns a list with all station id's. By default only ICOS stations
@@ -602,6 +602,9 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas'):
         this case, stations without a fixed location (like measurements
         that belong to stations collected from instrumented Ships of
         Opportunity) will not be included.
+
+    icon: str, optional
+        todo:
 
     Returns
     -------
@@ -640,7 +643,7 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas'):
     queried_stations.sort_values(by=sort, inplace=True)
 
     if outfmt == 'map' and not queried_stations.empty:
-        stations_folium_map = fmap.get(queried_stations, project)
+        stations_folium_map = fmap.get(queried_stations, project, icon)
         return stations_folium_map
 
     else:
