@@ -650,7 +650,7 @@ hours and columns. Returns time series as a `pandas` data frame.
 	- Valid entries are `"default", "co2", "co", "rn", "wind", "latlon", "all"`
 
 			default:
-				isodate,co2.stilt,co2.fuel,co2.bio, co2.background
+				isodate,co2.stilt,co2.fuel,co2.bio, co2.cement, co2.background
 
 			co2
 				isodate,co2.stilt,co2.fuel,co2.bio,co2.fuel.coal,
