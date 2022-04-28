@@ -26,7 +26,7 @@ setuptools.setup(
 			'Documentation':'https://icos-carbon-portal.github.io/pylib/',
             'DataPortal':'https://data.icos-cp.eu/portal/',
             'SparqlEndpoint':'https://meta.icos-cp.eu/sparqlclient/?type=CSV'},
-    install_requires=['pandas','requests','tqdm'],
+    install_requires=['pandas','requests','tqdm', 'folium'],
     classifiers=[
         'Programming Language :: Python :: 3',
 		'Development Status :: 4 - Beta', 
