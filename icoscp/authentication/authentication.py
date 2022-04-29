@@ -13,6 +13,27 @@ def generate_cookie():
     return
 
 
+def print_help(self):
+    important_notice = \
+        f'\nImportant notice!\n\n' \
+        f'Due to updates in the python library of the ICOS carbon portal, ' \
+        f'starting from the next version, user authentication might be required.\n' \
+        f'User authentication will only be requested upon accessing data objects. ' \
+        f'Meta-data is available without authentication.\n' \
+        f'Credentials will be validated by providing a username and password ' \
+        f'or an API token.\n' \
+        f'\n\tUsername and password example:\n' \
+        f'\t\tPlease enter your username or API token (h for help): tade@tadedomain \u21A9\n' \
+        f'\t\tPlease enter your password: test_icos_password \u21A9\n\n' \
+        f'\tToken example:\n' \
+        f'\t\tPlease enter your username or API token (h for help): ' \
+        f'cpauthToken=rO0ABXcIAAABgHuHzPl0ABx6b2lzLnpvZ29wb3Vsb3NAbmF0ZWtvLmx1...\u21A9\n' \
+        f'\t\t(Login here: https://cpauth.icos-cp.eu/login/ to retrieve you personal API ' \
+        f'token. You will find the token at the bottom of the webpage).'
+    print(important_notice)
+    return
+
+
 class Authentication:
 
     def __init__(self):
@@ -84,8 +105,8 @@ class Authentication:
         try:
             response = requests.post(url=url, data=data)
             if response.status_code == 200:
-                self._token = response.headers['Set-Cookie'].split('=')[1]
-                self._valid_credentials = True
+                self._token = response.headers['Set-Cookie']
+                self.validate_token()
             response.raise_for_status()
         except requests.exceptions.HTTPError as error:
             if response.status_code == 403:
@@ -97,24 +118,37 @@ class Authentication:
     def work_on_cookie_file(self):
         # Repeat until user enters valid credentials.
         while not self._valid_credentials:
-            if not os.path.exists(self._cookie_file):
-                test_string = input('\tPlease enter your username or API token: ')
-                if '@' in test_string:
-                    self._username = test_string
-                    self._password = input('\tPlease enter your password: ')
-                    self.retrieve_token()
-                else:
-                    self._token = test_string
-                    self.validate_token()
-            elif os.path.exists(self._cookie_file):
+            # Read and validate credentials in already existing cookie.
+            if os.path.exists(self._cookie_file):
                 self.retrieve_credentials()
                 if self._token:
+                    self.validate_token()
+                if self._username and self._password and not self._valid_credentials:
+                    self.retrieve_token()
+                if not self._valid_credentials:
+                    os.remove(self._cookie_file)
+            # Cookie file is not available in the file system.
+            # Request user's credentials.
+            else:
+                user_input = input('Please enter your username or API token (h for help): ')
+                if user_input == 'h':
+                    print_help(self)
+                elif '@' in user_input:
+                    self._username = user_input
+                    self._password = input('Please enter your password: ')
+                    self.retrieve_token()
+                else:
+                    self._token = user_input
                     self.validate_token()
             # Cookie file contains wrong credentials and needs to be
             # replaced.
             if not self._token and os.path.exists(self._cookie_file):
                 os.remove(self._cookie_file)
         # Write valid credentials to cookie file.
+        self.write_cookie()
+        return
+
+    def write_cookie(self):
         with open(file=self._cookie_file, mode='w+') as cookie_handle:
             cookie_handle.write(f'username: {self._username}\n'
                                 f'password: {self._password}\n'
@@ -134,6 +168,9 @@ class Authentication:
             # requested file was downloaded successfully.
             if response.status_code == 200 and 'Content-Disposition' in response.headers.keys():
                 self._valid_credentials = True
+                print('Successful authorization!')
+            elif 'Content-Disposition' not in response.headers.keys():
+                print(f'Trying to retrieve token for user: {self._username}... ')
             response.raise_for_status()
         except requests.exceptions.HTTPError as error:
             if response.status_code == 403:
@@ -148,7 +185,12 @@ class Authentication:
              self._credentials.items()]
         with open(file=self._cookie_file, mode='w') as cookie_handle:
             cookie_handle.writelines(cookie_lines)
+        return
 
+    def print_credentials(self):
+        print(f'\nusername: {self._username}\n'
+              f'password: {self._password}\n'
+              f'token: {self._token}\n')
         return
 
 
