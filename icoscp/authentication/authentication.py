@@ -23,13 +23,13 @@ def print_help(self):
         f'Credentials will be validated by providing a username and password ' \
         f'or an API token.\n' \
         f'\n\tUsername and password example:\n' \
-        f'\t\tPlease enter your username or API token (h for help): tade@tadedomain \u21A9\n' \
-        f'\t\tPlease enter your password: test_icos_password \u21A9\n\n' \
+        f'\t\tPlease enter your username or API token (h for help): tade@tadedomain.sth \u21A9\n' \
+        f'\t\tPlease enter your password: test_password \u21A9\n\n' \
         f'\tToken example:\n' \
         f'\t\tPlease enter your username or API token (h for help): ' \
         f'cpauthToken=rO0ABXcIAAABgHuHzPl0ABx6b2lzLnpvZ29wb3Vsb3NAbmF0ZWtvLmx1...\u21A9\n' \
         f'\t\t(Login here: https://cpauth.icos-cp.eu/login/ to retrieve you personal API ' \
-        f'token. You will find the token at the bottom of the webpage).'
+        f'token. You will find the token at the bottom of the webpage).\n'
     print(important_notice)
     return
 
@@ -93,9 +93,14 @@ class Authentication:
     def retrieve_credentials(self):
         with open(file=self._cookie_file, mode='r') as cookie_handle:
             cookie_lines = cookie_handle.readlines()
+        credentials = list()
+        for line in cookie_lines:
+            credential = line.split()[1] if len(line.split()) > 1 else None
+            if credential == 'None':
+                credential = None
+            credentials.append(credential)
         # Assign credentials read from cookie file to properties.
-        self._username, self._password, self._token = \
-            [line.split()[1] if len(line.split()) > 1 else None for line in cookie_lines]
+        self._username, self._password, self._token = credentials
         return
 
     def retrieve_token(self):
@@ -119,8 +124,9 @@ class Authentication:
         # Repeat until user enters valid credentials.
         while not self._valid_credentials:
             # Read and validate credentials in already existing cookie.
-            if os.path.exists(self._cookie_file):
+            if os.path.exists(self._cookie_file) and os.stat(self._cookie_file).st_size > 0:
                 self.retrieve_credentials()
+                self.print_credentials()
                 if self._token:
                     self.validate_token()
                 if self._username and self._password and not self._valid_credentials:
@@ -130,22 +136,26 @@ class Authentication:
             # Cookie file is not available in the file system.
             # Request user's credentials.
             else:
-                user_input = input('Please enter your username or API token (h for help): ')
-                if user_input == 'h':
-                    print_help(self)
-                elif '@' in user_input:
-                    self._username = user_input
-                    self._password = input('Please enter your password: ')
-                    self.retrieve_token()
-                else:
-                    self._token = user_input
-                    self.validate_token()
+                self.request_credentials()
             # Cookie file contains wrong credentials and needs to be
             # replaced.
             if not self._token and os.path.exists(self._cookie_file):
                 os.remove(self._cookie_file)
         # Write valid credentials to cookie file.
         self.write_cookie()
+        return
+
+    def request_credentials(self):
+        user_input = input('Please enter your username or API token (h for help): ')
+        if user_input == 'h':
+            print_help(self)
+        elif '@' in user_input:
+            self._username = user_input
+            self._password = input('Please enter your password: ')
+            self.retrieve_token()
+        else:
+            self._token = user_input
+            self.validate_token()
         return
 
     def write_cookie(self):
@@ -169,8 +179,9 @@ class Authentication:
             if response.status_code == 200 and 'Content-Disposition' in response.headers.keys():
                 self._valid_credentials = True
                 print('Successful authorization!')
-            elif 'Content-Disposition' not in response.headers.keys():
-                print(f'Trying to retrieve token for user: {self._username}... ')
+            elif response.status_code == 200 and \
+                    'Content-Disposition' not in response.headers.keys():
+                print('Token is wrong or has expired...')
             response.raise_for_status()
         except requests.exceptions.HTTPError as error:
             if response.status_code == 403:
@@ -188,9 +199,9 @@ class Authentication:
         return
 
     def print_credentials(self):
-        print(f'\nusername: {self._username}\n'
-              f'password: {self._password}\n'
-              f'token: {self._token}\n')
+        print(f'\nusername: {self._username}, {type(self._username)}\n'
+              f'password: {self._password}, {type(self._password)}\n'
+              f'token: {self._token}, {type(self._token)}\n')
         return
 
 
