@@ -25,6 +25,7 @@ from icoscp import __version__ as release_version
 from icoscp.cpb import dtype_dict
 from icoscp.sparql.runsparql import RunSparql
 import icoscp.sparql.sparqls as sparqls
+from icoscp.authentication import authentication
 
 
 class Dobj():
@@ -43,8 +44,11 @@ class Dobj():
         self._info3 = None          # station information for dobj
         self._colSchema = None      # format of columns (read struct bin data)        
         self._dtypeStruct = None    # format of columns (read struct bin data)        
-        self._json = None           # holds the "payload" for requests        
-        self._server = 'https://data.icos-cp.eu/portal/tabular'
+        self._json = None           # holds the "payload" for requests
+
+        # self._server = 'https://data.icos-cp.eu/portal/tabular'
+        self._server = 'https://data.icos-cp.eu/cpb'
+
         self._localpath = '/data/dataAppStorage/'        # read data from local file
         self._islocal = None        # status if file is read from local store
                                     # if localpath + dobj is valid                                     
@@ -64,8 +68,7 @@ class Dobj():
         # __payLoad() is exectued automatically to create json object 
         # for all columns#
         self.dobj = digitalObject   # this sets self._dobj, which is the PID        
-        
-        
+
     #-----------
     @property
     def dobj(self):
@@ -323,7 +326,9 @@ class Dobj():
             
         else:
             self._islocal = False
-            r = requests.post(self._server, json=self._json, stream=True) 
+            carbon_portal_authentication = authentication.Authentication()
+            headers = {'cookie': carbon_portal_authentication.token}
+            r = requests.post(self._server, json=self._json, stream=True, headers=headers)
             try:
                 r.raise_for_status()
                 content = r.content

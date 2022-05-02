@@ -38,11 +38,21 @@ class Authentication:
 
     def __init__(self):
         # generate_cookie()
+        self._using_token = True
         self._valid_credentials = False
         self._cookie_file = os.path.join(tempfile.gettempdir(), 'icos_cookie.txt')
         self._username, self._password, self._token = None, None, None
         # Todo: Rename this method.
         self.work_on_cookie_file()
+        return
+
+    @property
+    def using_token(self):
+        return self._using_token
+
+    @using_token.setter
+    def using_token(self, using_token):
+        self._using_token = using_token
         return
 
     @property
@@ -110,6 +120,7 @@ class Authentication:
         try:
             response = requests.post(url=url, data=data)
             if response.status_code == 200:
+                self._using_token = False
                 self._token = response.headers['Set-Cookie']
                 self.validate_token()
             response.raise_for_status()
@@ -126,7 +137,6 @@ class Authentication:
             # Read and validate credentials in already existing cookie.
             if os.path.exists(self._cookie_file) and os.stat(self._cookie_file).st_size > 0:
                 self.retrieve_credentials()
-                self.print_credentials()
                 if self._token:
                     self.validate_token()
                 if self._username and self._password and not self._valid_credentials:
@@ -166,28 +176,21 @@ class Authentication:
         return
 
     def validate_token(self):
-        url = 'https://data.icos-cp.eu/objects/hznHbmgfkAkjuQDJ3w73XPQh'
+        url = 'https://cpauth.icos-cp.eu/whoami'
         headers = {'cookie': self._token}
         response = None
         try:
             response = requests.get(url=url, headers=headers)
-            # Validate request by `status_code` and by existence of
-            # 'Content_Disposition' key in `headers` dictionary.
-            # According to https://github.com/ICOS-Carbon-Portal/data
-            # if 'Content-Disposition' key exists in the headers the
-            # requested file was downloaded successfully.
-            if response.status_code == 200 and 'Content-Disposition' in response.headers.keys():
+            if response.status_code == 200:
                 self._valid_credentials = True
-                print('Successful authorization!')
-            elif response.status_code == 200 and \
-                    'Content-Disposition' not in response.headers.keys():
-                print('Token is wrong or has expired...')
+                print(f'\U0001f464{response.json()["email"]}\U0001f464 authorized using '
+                      f'{"token" if self._using_token else "username & password"}.')
             response.raise_for_status()
         except requests.exceptions.HTTPError as error:
             if response.status_code == 403:
                 print(f'\n{error}\n{response.text}.\n')
             else:
-                print(error)
+                print(f'\n{error}\n{response.text}.\n')
         return
 
     def update_cookie(self):
