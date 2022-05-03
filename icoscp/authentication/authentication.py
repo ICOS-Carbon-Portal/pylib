@@ -125,10 +125,7 @@ class Authentication:
                 self.validate_token()
             response.raise_for_status()
         except requests.exceptions.HTTPError as error:
-            if response.status_code == 403:
-                print(f'\n{error}\n{response.text}.\n')
-            else:
-                print(error)
+            print(f'\t{response.text}\t{error}')
         return
 
     def work_on_cookie_file(self):
@@ -156,9 +153,11 @@ class Authentication:
         return
 
     def request_credentials(self):
-        user_input = input('Please enter your username or API token (h for help): ')
+        user_input = input('Please enter your username or API token (h for help, e to exit): ')
         if user_input == 'h':
             print_help(self)
+        elif user_input == 'e':
+            exit(0)
         elif '@' in user_input:
             self._username = user_input
             self._password = input('Please enter your password: ')
@@ -187,10 +186,7 @@ class Authentication:
                       f'{"an API token" if self._using_token else "username & password"}.')
             response.raise_for_status()
         except requests.exceptions.HTTPError as error:
-            if response.status_code == 403:
-                print(f'\n{error}\n{response.text}.\n')
-            else:
-                print(f'\n{error}\n{response.text}.\n')
+            print(f'\t{response.text}\t{error}')
         return
 
     def update_cookie(self):
