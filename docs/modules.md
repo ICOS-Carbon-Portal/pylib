@@ -650,19 +650,20 @@ hours and columns. Returns time series as a `pandas` data frame.
 	- Valid entries are `"default", "co2", "co", "rn", "wind", "latlon", "all"`
 
 			default:
-				isodate,co2.stilt,co2.fuel,co2.bio, co2.cement, co2.background
+				isodate, co2.stilt, co2.bio, co2.fuel, co2.cement, co2.background
 
 			co2
-				isodate,co2.stilt,co2.fuel,co2.bio,co2.fuel.coal,
-				co2.fuel.oil,co2.fuel.gas,co2.fuel.bio,co2.energy
-				co2.transport, co2.industry,co2.others, co2.cement,
-				co2.background
+				isodate, co2.stilt, co2.bio, co2.fuel, co2.cement,
+				co2.bio.gee, co2.bio.resp, co2.fuel.coal, co2.fuel.oil, co2.fuel.gas,
+				co2.fuel.bio, co2.fuel.waste, co2.energy, co2.transport, co2.industry,
+				co2.residential, co2.other_categories, co2.background
 
 			co
-				isodate, co.stilt,co.fuel,co.bio,co.fuel.coal
-				co.fuel.oil, co.fuel.gas,co.fuel.bio,co.energy
-				co.transport,co.industry, co.others, co.cement,
-				co.background
+				isodate, co.stilt, co.fuel, co.cement, 
+				co.fuel.coal, co.fuel.oil, co.fuel.gas, 
+				co.fuel.bio, co.fuel.waste, co.energy
+				co.transport, co.industry, co.residential, 
+				co.other_categories, co.background
 
 			rn
 				isodate, rn, rn.era, rn.noah
@@ -674,14 +675,21 @@ hours and columns. Returns time series as a `pandas` data frame.
 				isodate, latstart, lonstart
 
 			all
-				isodate,co2.stilt,co2.fuel,co2.bio,co2.fuel.coal,
-				co2.fuel.oil,co2.fuel.gas,co2.fuel.bio,co2.energy,
-				co2.transport, co2.industry,co2.others, co2.cement,
-				co2.background, co.stilt,co.fuel,co.bio,co.fuel.coal,
-				co.fuel.oil,co.fuel.gas,co.fuel.bio,co.energy,
-				co.transport,co.industry,co.others, co.cement,
-				co.background,rn, rn.era,rn.noah,wind.dir,
-				wind.u,wind.v,latstart,lonstart
+				isodate, co2.stilt, co2.bio, co2.fuel, co2.cement, 
+				co2.bio.gee, co2.bio.resp, 
+				co2.fuel.coal, co2.fuel.oil, co2.fuel.gas, 
+				co2.fuel.bio, co2.fuel.waste, 
+				co2.energy, co2.transport, co2.industry,
+				co2.residential, co2.other_categories,
+				co2.background,
+				co.stilt, co.fuel, co.cement,
+				co.fuel.coal, co.fuel.oil, co.fuel.gas,
+				co.fuel.bio, co.fuel.waste, 
+				co.energy, co.transport, co.industry,
+				co.residential, co.other_categories,
+				co.background,
+				rn, rn.era, rn.noah, wind.dir,
+				wind.u, wind.v, latstart, lonstart
 
 #### .get_fp(start_date, end_date, hours=[]):
 STILT footprints for a given time period, with optional selection of specific hours.

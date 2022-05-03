@@ -122,7 +122,7 @@ class StiltStation():
         columns : TYPE, optional
             Valid entries are "default", "co2", "co", "rn", "wind", "latlon", "all"
             default (or empty) will return
-            ["isodate","co2.stilt","co2.fuel","co2.bio","co2.cement","co2.background"]
+            ["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement","co2.background"]
             A full description of the 'columns' can be found at
             https://icos-carbon-portal.github.io/pylib/modules/#stilt
 
