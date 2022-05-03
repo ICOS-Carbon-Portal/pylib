@@ -23,11 +23,11 @@ def print_help(self):
         f'Credentials will be validated by providing a username and password ' \
         f'or an API token.\n' \
         f'\n\tUsername and password example:\n' \
-        f'\t\tPlease enter your username or API token (h for help): tade@tadedomain.sth \u21A9\n' \
-        f'\t\tPlease enter your password: test_password \u21A9\n\n' \
+        f'\t\tPlease enter your username or API token (h for help): tade@tadedomain.sth\n' \
+        f'\t\tPlease enter your password: test_password\n\n' \
         f'\tToken example:\n' \
         f'\t\tPlease enter your username or API token (h for help): ' \
-        f'cpauthToken=rO0ABXcIAAABgHuHzPl0ABx6b2lzLnpvZ29wb3Vsb3NAbmF0ZWtvLmx1...\u21A9\n' \
+        f'cpauthToken=rO0ABXcIAAABgHuHzPl0ABx6b2lzLnpvZ29wb3Vsb3NAbmF0ZWtvLmx1...\n' \
         f'\t\t(Login here: https://cpauth.icos-cp.eu/login/ to retrieve you personal API ' \
         f'token. You will find the token at the bottom of the webpage).\n'
     print(important_notice)
@@ -37,7 +37,6 @@ def print_help(self):
 class Authentication:
 
     def __init__(self):
-        # generate_cookie()
         self._using_token = True
         self._valid_credentials = False
         self._cookie_file = os.path.join(tempfile.gettempdir(), 'icos_cookie.txt')
@@ -121,7 +120,8 @@ class Authentication:
             response = requests.post(url=url, data=data)
             if response.status_code == 200:
                 self._using_token = False
-                self._token = response.headers['Set-Cookie']
+                # Retrieve token from headers.
+                self._token = response.headers['Set-Cookie'].split()[0]
                 self.validate_token()
             response.raise_for_status()
         except requests.exceptions.HTTPError as error:
@@ -183,8 +183,8 @@ class Authentication:
             response = requests.get(url=url, headers=headers)
             if response.status_code == 200:
                 self._valid_credentials = True
-                print(f'\U0001f464{response.json()["email"]}\U0001f464 authorized using '
-                      f'{"token" if self._using_token else "username & password"}.')
+                print(f'User --{response.json()["email"]}-- was authorized using '
+                      f'{"an API token" if self._using_token else "username & password"}.')
             response.raise_for_status()
         except requests.exceptions.HTTPError as error:
             if response.status_code == 403:
