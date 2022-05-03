@@ -396,7 +396,7 @@ class StiltStation():
 
         #Check columns-input:
         if cols=='default':
-            columns = ('["isodate","co2.stilt","co2.fuel","co2.bio","co2.cement",'+ 
+            columns = ('["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement",'+ 
                        '"co2.background"]')
 
         elif cols=='co2':
