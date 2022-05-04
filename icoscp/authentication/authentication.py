@@ -2,6 +2,7 @@ from pprint import pprint
 import os
 import requests
 import tempfile
+from sys import exit
 
 
 def generate_cookie():
@@ -156,6 +157,7 @@ class Authentication:
         user_input = input('Please enter your username or API token (h for help, e to exit): ')
         if user_input == 'h':
             print_help(self)
+            exit(0)
         elif user_input == 'e':
             exit(0)
         elif '@' in user_input:
