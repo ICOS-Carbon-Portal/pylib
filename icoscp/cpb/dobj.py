@@ -314,6 +314,7 @@ class Dobj():
         folder = self._info2['objFormat'].iloc[0].split('/')[-1]        
         fileName = ''.join([self.dobj.split('/')[-1],'.cpb'])
         localfile = os.path.abspath(''.join([self._localpath,folder,'/',fileName]))
+        localfile= ''
         
         if os.path.isfile(localfile): 
             self._islocal = True
