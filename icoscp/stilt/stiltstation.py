@@ -299,8 +299,7 @@ def _search(kwargs, stations):
 
 
 def __get_object(stations):
-
-    return [StiltStation().get_info(stations[st]) for st in stations.keys()]
+    return [StiltStation(stations[st]) for st in stations.keys()]
 
 
 def __get_stations(ids=[], progress=True):
