@@ -3,6 +3,7 @@ import os
 import requests
 import tempfile
 from sys import exit
+from icoscp import const
 
 
 def generate_cookie():
@@ -37,31 +38,21 @@ def print_help(self):
 
 class Authentication:
 
-    def __init__(self):
-        self._using_token = True
-        self._valid_credentials = False
-        self._cookie_file = os.path.join(tempfile.gettempdir(), 'icos_cookie.txt')
-        self._username, self._password, self._token = None, None, None
-        # Todo: Rename this method.
-        self.work_on_cookie_file()
-        return
-
-    @property
-    def using_token(self):
-        return self._using_token
-
-    @using_token.setter
-    def using_token(self, using_token):
-        self._using_token = using_token
-        return
-
-    @property
-    def valid_credentials(self):
-        return self._valid_credentials
-
-    @valid_credentials.setter
-    def valid_credentials(self, valid_credentials):
-        self._valid_credentials = valid_credentials
+    def __init__(self, username=None, password=None, token=None):
+        self._username = username
+        self._password = password
+        self._token = token
+        self._valid_token = False
+        # Retrieve token from configuration.
+        self.read_configuration()
+        # Token has expired or configuration file is missing.
+        if not self._valid_token:
+            if self._username is not None and self._password is not None:
+                self.retrieve_token(self._username, self._password)
+            elif self._token is not None:
+                self.validate_token()
+            if self._valid_token:
+                self.write_configuration()
         return
 
     @property
@@ -92,6 +83,64 @@ class Authentication:
         return
 
     @property
+    def valid_token(self):
+        return self._valid_token
+
+    @valid_token.setter
+    def valid_token(self, valid_token):
+        self._valid_token = valid_token
+        return
+
+    def read_configuration(self):
+        if os.path.exists(const.CONFIGURATION_FILE):
+            with open(file=const.CONFIGURATION_FILE, mode='r') as \
+                    configuration_handle:
+                self._token = configuration_handle.read()
+                self.validate_token()
+        return
+
+    def write_configuration(self):
+        with open(file=const.CONFIGURATION_FILE, mode='w+') as \
+                configuration_handle:
+            configuration_handle.write(self._token)
+        return
+
+    def retrieve_token(self, username, password):
+        url = 'https://cpauth.icos-cp.eu/password/login'
+        data = {'mail': username, 'password': password}
+        try:
+            response = requests.post(url=url, data=data)
+            if response.status_code == 200:
+                # Retrieve token from headers.
+                self._token = response.headers['Set-Cookie'].split()[0]
+                self._valid_token = True
+                self.write_configuration()
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as error:
+            raise Exception(error)
+        return
+
+    @property
+    def using_token(self):
+        return self._using_token
+
+    @using_token.setter
+    def using_token(self, using_token):
+        self._using_token = using_token
+        return
+
+    @property
+    def valid_credentials(self):
+        return self._valid_credentials
+
+    @valid_credentials.setter
+    def valid_credentials(self, valid_credentials):
+        self._valid_credentials = valid_credentials
+        return
+
+
+
+    @property
     def cookie_file(self):
         return self._cookie_file
 
@@ -113,21 +162,7 @@ class Authentication:
         self._username, self._password, self._token = credentials
         return
 
-    def retrieve_token(self):
-        url = 'https://cpauth.icos-cp.eu/password/login'
-        data = {'mail': self._username, 'password': self._password}
-        response = None
-        try:
-            response = requests.post(url=url, data=data)
-            if response.status_code == 200:
-                self._using_token = False
-                # Retrieve token from headers.
-                self._token = response.headers['Set-Cookie'].split()[0]
-                self.validate_token()
-            response.raise_for_status()
-        except requests.exceptions.HTTPError as error:
-            print(f'\t{response.text}\t{error}')
-        return
+
 
     def work_on_cookie_file(self):
         # Repeat until user enters valid credentials.
@@ -183,13 +218,27 @@ class Authentication:
         try:
             response = requests.get(url=url, headers=headers)
             if response.status_code == 200:
-                self._valid_credentials = True
-                print(f'User --{response.json()["email"]}-- was authorized using '
-                      f'{"an API token" if self._using_token else "username & password"}.')
+                self._valid_token = True
             response.raise_for_status()
         except requests.exceptions.HTTPError as error:
-            print(f'\t{response.text}\t{error}')
+            pass
+            # raise Exception(response.text)
         return
+
+    # def validate_token_pre_kados(self):
+    #     url = 'https://cpauth.icos-cp.eu/whoami'
+    #     headers = {'cookie': self._token}
+    #     response = None
+    #     try:
+    #         response = requests.get(url=url, headers=headers)
+    #         if response.status_code == 200:
+    #             self._valid_credentials = True
+    #             print(f'User --{response.json()["email"]}-- was authorized using '
+    #                   f'{"an API token" if self._using_token else "username & password"}.')
+    #         response.raise_for_status()
+    #     except requests.exceptions.HTTPError as error:
+    #         print(f'\t{response.text}\t{error}')
+    #     return
 
     def update_cookie(self):
         cookie_lines = \
@@ -206,3 +255,4 @@ class Authentication:
         return
 
 
+#

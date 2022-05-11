@@ -25,7 +25,7 @@ from icoscp import __version__ as release_version
 from icoscp.cpb import dtype_dict
 from icoscp.sparql.runsparql import RunSparql
 import icoscp.sparql.sparqls as sparqls
-from icoscp.authentication import authentication
+from icoscp.cpauth import authentication
 
 
 class Dobj():
@@ -34,7 +34,7 @@ class Dobj():
         the method .getColumns() will return the actual data
     """
     
-    def __init__(self, digitalObject = ''):          
+    def __init__(self, digitalObject='', auth_object=None):
         
         self._colSelected = None    # 'none' -> ALL columns are returned
         self._endian = 'big'        # default "big endian conversion 
@@ -67,7 +67,9 @@ class Dobj():
         # this needs to be the last call within init. If dobj is provided
         # __payLoad() is exectued automatically to create json object 
         # for all columns#
-        self.dobj = digitalObject   # this sets self._dobj, which is the PID        
+        self.dobj = digitalObject   # this sets self._dobj, which is the PID
+        self._authentication = auth_object
+        self._token = auth_object.token if auth_object else None
 
     #-----------
     @property
@@ -146,6 +148,23 @@ class Dobj():
             return self.__licence()
         return None 
     #-----------
+    @property
+    def token(self):
+        return self._token
+
+    @token.setter
+    def token(self, token):
+        self._token = token
+        return
+
+    @property
+    def authentication(self):
+        return self._authentication
+
+    @authentication.setter
+    def authentication(self, authentication):
+        self._authentication = authentication
+        return
 # -------------------------------------------------    
 
     def __str__(self):
@@ -316,25 +335,30 @@ class Dobj():
         localfile = os.path.abspath(''.join([self._localpath,folder,'/',fileName]))
         localfile= ''
         
-        if os.path.isfile(localfile): 
+        if os.path.isfile(localfile):
             self._islocal = True
             with open(localfile, 'rb') as binData:
                 content = binData.read()
             # we need to select ALL columns
             self._colSelected = None             
             self.__getPayload()
-            
-            
+
         else:
             self._islocal = False
-            carbon_portal_authentication = authentication.Authentication()
-            headers = {'cookie': carbon_portal_authentication.token}
-            r = requests.post(self._server, json=self._json, stream=True, headers=headers)
+            headers = {'cookie': self._token}
+            response, content = None, None
             try:
-                r.raise_for_status()
-                content = r.content
-            except requests.exceptions.HTTPError as e:
-                raise Exception(e)
+                response = requests.post(self._server,
+                                         json=self._json,
+                                         stream=True,
+                                         headers=headers)
+                response.raise_for_status()
+                if response.status_code == 200:
+                    content = response.content
+            except requests.exceptions.HTTPError as error:
+                if self._token is None:
+                    print('API token was not found.')
+                raise Exception(error)
 
         #track data usage
         self.__portalUse()            
