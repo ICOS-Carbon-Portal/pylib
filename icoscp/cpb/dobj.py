@@ -68,8 +68,7 @@ class Dobj():
         # __payLoad() is exectued automatically to create json object 
         # for all columns#
         self.dobj = digitalObject   # this sets self._dobj, which is the PID
-        self._authentication = auth_object
-        self._token = auth_object.token if auth_object else None
+        self._auth_object = auth_object
 
     #-----------
     @property
@@ -148,22 +147,14 @@ class Dobj():
             return self.__licence()
         return None 
     #-----------
-    @property
-    def token(self):
-        return self._token
-
-    @token.setter
-    def token(self, token):
-        self._token = token
-        return
 
     @property
-    def authentication(self):
-        return self._authentication
+    def auth_object(self):
+        return self._auth_object
 
-    @authentication.setter
-    def authentication(self, authentication):
-        self._authentication = authentication
+    @auth_object.setter
+    def auth_object(self, auth_object):
+        self._auth_object = auth_object
         return
 # -------------------------------------------------    
 
@@ -329,10 +320,12 @@ class Dobj():
         self._info3 = sparql.data()        
         
         
-        #assemble local file path        
-        folder = self._info2['objFormat'].iloc[0].split('/')[-1]        
-        fileName = ''.join([self.dobj.split('/')[-1],'.cpb'])
+        # Assemble local file path.
+        folder = self._info2['objFormat'].iloc[0].split('/')[-1]
+        fileName = ''.join([self.dobj.split('/')[-1], '.cpb'])
         localfile = os.path.abspath(''.join([self._localpath,folder,'/',fileName]))
+        # Todo: remove this line of code. It's only needed to test
+        # Todo: authentication using jupyter notebooks on ICOS services
         localfile= ''
         
         if os.path.isfile(localfile):
@@ -345,7 +338,8 @@ class Dobj():
 
         else:
             self._islocal = False
-            headers = {'cookie': self._token}
+            token = self._auth_object.token if self._auth_object else None
+            headers = {'cookie': token}
             response, content = None, None
             try:
                 response = requests.post(self._server,
@@ -356,7 +350,7 @@ class Dobj():
                 if response.status_code == 200:
                     content = response.content
             except requests.exceptions.HTTPError as error:
-                if self._token is None:
+                if token is None:
                     print('API token was not found.')
                 raise Exception(error)
 
