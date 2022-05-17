@@ -4,6 +4,7 @@ import requests
 import tempfile
 from sys import exit
 from icoscp import const
+from icoscp.exceptions import AuthenticationError
 
 
 def generate_cookie():
@@ -43,16 +44,18 @@ class Authentication:
         self._password = password
         self._token = token
         self._valid_token = False
-        # Retrieve token from configuration.
-        self.read_configuration()
-        # Token has expired or configuration file is missing.
-        if not self._valid_token:
-            if self._username is not None and self._password is not None:
-                self.retrieve_token(self._username, self._password)
-            elif self._token is not None:
-                self.validate_token()
-            if self._valid_token:
-                self.write_configuration()
+        # Authenticate using username and password.
+        if self._username is not None and self._password is not None:
+            self.retrieve_token(self._username, self._password)
+        # Authenticate using user token.
+        elif self._token is not None:
+            self.validate_token()
+        # Authenticate using token from configuration.
+        else:
+            self.read_configuration()
+        # Write valid token to configuration file for reusability.
+        if self._valid_token:
+            self.write_configuration()
         return
 
     @property
@@ -108,16 +111,19 @@ class Authentication:
     def retrieve_token(self, username, password):
         url = 'https://cpauth.icos-cp.eu/password/login'
         data = {'mail': username, 'password': password}
+        response = None
         try:
             response = requests.post(url=url, data=data)
             if response.status_code == 200:
                 # Retrieve token from headers.
                 self._token = response.headers['Set-Cookie'].split()[0]
+                # No further validation is needed for the token since
+                # it was correctly retrieved (status_code == 200) using
+                # username and password.
                 self._valid_token = True
-                self.write_configuration()
             response.raise_for_status()
-        except requests.exceptions.HTTPError as error:
-            raise Exception(error)
+        except requests.exceptions.HTTPError:
+            raise AuthenticationError(response)
         return
 
     @property
@@ -220,9 +226,8 @@ class Authentication:
             if response.status_code == 200:
                 self._valid_token = True
             response.raise_for_status()
-        except requests.exceptions.HTTPError as error:
-            pass
-            # raise Exception(response.text)
+        except requests.exceptions.HTTPError:
+            raise AuthenticationError(response)
         return
 
     # def validate_token_pre_kados(self):

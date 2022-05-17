@@ -25,7 +25,7 @@ from icoscp import __version__ as release_version
 from icoscp.cpb import dtype_dict
 from icoscp.sparql.runsparql import RunSparql
 import icoscp.sparql.sparqls as sparqls
-from icoscp.cpauth import authentication
+from icoscp.exceptions import AuthenticationError
 
 
 class Dobj():
@@ -33,8 +33,8 @@ class Dobj():
         for infos, and create the "payload" to retrieve the binary data
         the method .getColumns() will return the actual data
     """
-    
-    def __init__(self, digitalObject='', auth_object=None):
+
+    def __init__(self, digitalObject='', authentication=None):
         
         self._colSelected = None    # 'none' -> ALL columns are returned
         self._endian = 'big'        # default "big endian conversion 
@@ -68,7 +68,7 @@ class Dobj():
         # __payLoad() is exectued automatically to create json object 
         # for all columns#
         self.dobj = digitalObject   # this sets self._dobj, which is the PID
-        self._auth_object = auth_object
+        self._authentication = authentication
 
     #-----------
     @property
@@ -150,11 +150,11 @@ class Dobj():
 
     @property
     def auth_object(self):
-        return self._auth_object
+        return self._authentication
 
     @auth_object.setter
-    def auth_object(self, auth_object):
-        self._auth_object = auth_object
+    def auth_object(self, authentication):
+        self._authentication = authentication
         return
 # -------------------------------------------------    
 
@@ -324,8 +324,10 @@ class Dobj():
         folder = self._info2['objFormat'].iloc[0].split('/')[-1]
         fileName = ''.join([self.dobj.split('/')[-1], '.cpb'])
         localfile = os.path.abspath(''.join([self._localpath,folder,'/',fileName]))
-        # Todo: remove this line of code. It's only needed to test
-        # Todo: authentication using jupyter notebooks on ICOS services
+        # Todo: start comment
+        # Remove this line of code. It's only needed to test
+        # authentication using jupyter notebooks on ICOS services.
+        # Todo: end comment
         localfile= ''
         
         if os.path.isfile(localfile):
@@ -338,7 +340,11 @@ class Dobj():
 
         else:
             self._islocal = False
-            token = self._auth_object.token if self._auth_object else None
+            # Grab the authentication token from the authentication
+            # object passed at the __init__ method. Token will be
+            # unavailable if no authentication was acquired.
+            token = \
+                self._authentication.token if self._authentication else None
             headers = {'cookie': token}
             response, content = None, None
             try:
@@ -349,10 +355,8 @@ class Dobj():
                 response.raise_for_status()
                 if response.status_code == 200:
                     content = response.content
-            except requests.exceptions.HTTPError as error:
-                if token is None:
-                    print('API token was not found.')
-                raise Exception(error)
+            except requests.exceptions.HTTPError:
+                raise AuthenticationError(response)
 
         #track data usage
         self.__portalUse()            
