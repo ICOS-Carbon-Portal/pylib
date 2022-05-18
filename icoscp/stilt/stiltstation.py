@@ -86,7 +86,7 @@ def _outfmt(kwargs, stations):
         fmt = 'dict'
     
     # make sure we have a valid keyword, else set default dict
-    valid = ['dict', 'list', 'pandas', 'map']
+    valid = ['dict', 'list', 'pandas', 'map', 'avail']
     if not fmt in valid:
             fmt = 'dict'
     
@@ -104,6 +104,9 @@ def _outfmt(kwargs, stations):
 
     if fmt == 'map':
         return fmap.get(stations)
+
+    if fmt == 'avail':
+        return _avail(stations)
 
 def _country(kwargs, stations):
     """
@@ -282,6 +285,49 @@ def _edate(kwargs, stations):
 
     stations =  {k: stations[k] for k in flt}
     return stations
+
+
+def _project(kwargs, stations):
+
+    proj = kwargs['project']
+    
+    # We use lowercase. 
+    proj = proj.lower()
+
+    flt = []
+    if proj == 'icos':
+        for k in stations:
+            if stations[k]['icos']:
+                flt.append(k)
+
+    stations =  {k: stations[k] for k in flt}
+    return stations
+
+
+def _avail(stations):
+    
+    years_set = set()
+    availability = {}
+
+    for stn in stations:
+        avail_per_stn ={}
+        if stations[stn]['years'] != None:
+            years_set = years_set.union(stations[stn]['years'])
+            for y in stations[stn]['years']:
+                avail_per_stn[int(y)] = int(stations[stn][y]['nmonths'])
+        availability[stn] = avail_per_stn
+
+    columns_list = list(range(min ({int(x) for x in years_set}),
+                              max ({int(x) for x in years_set}) + 1 ))
+      
+    df = pd.DataFrame(data = list(availability[x] for x in availability.keys()), 
+                      index = list(availability.keys()), 
+                      columns = columns_list)
+    # Fill in the gaps.
+    df.fillna(0,inplace=True)
+    df.applymap(np.int16)
+
+    return df
 
 
 def _search(kwargs, stations):
@@ -504,11 +550,14 @@ def find(**kwargs):
         Remember, that only year and month is checked.
     Example: station.find(dates=['2020-01-01', '2020/05/23'])
 
+    project STR 'icos':
+        This will only return stilt stations that are ICOS stations.
+        
     progress BOOL 
         By default progress is set to True, which returns a progressbar
         while searching the catalogue of STILT stations.    
     
-    outfmt STR ['dict'| 'pandas' | 'list' | 'map']:
+    outfmt STR ['dict'| 'pandas' | 'list' | 'map'| 'avail']:
         the result is returned as
         
             dict:       dictionary with full metadata for each station
@@ -517,6 +566,9 @@ def find(**kwargs):
             list:       list of stilt station objects
             map:        folium map, can be displayed directly in notebooks
                         or save to a static (leaflet) .html webpage
+            avail:      This choice will return availability of time series 
+                        data for all stilt stations. 
+                        Output format is a pandas dataframe.
     
     Returns
     -------
@@ -565,7 +617,8 @@ def find(**kwargs):
            'edate':_edate,
            'dates':_dates,
            'daterange':__daterange,
-           'search':_search}
+           'search':_search,
+           'project':_project}
 
     for k in kwargs.keys():
         if k in fun.keys():
@@ -650,4 +703,3 @@ def get(id=None, progress=False):
         return stationslist[0]
     else:
         return stationslist
-
