@@ -311,21 +311,30 @@ def _avail(stations):
 
     for stn in stations:
         avail_per_stn ={}
+        if stations[stn]['icos']: 
+            avail_per_stn['ICOS id'] = stations[stn]['icos']['stationId']
+        else: 
+            avail_per_stn['ICOS id'] = ''
+        if stations[stn]['alt'] != None: 
+            avail_per_stn['Alt'] = stations[stn]['alt']
+        else: 
+            avail_per_stn['Alt'] = 0
         if stations[stn]['years'] != None:
             years_set = years_set.union(stations[stn]['years'])
             for y in stations[stn]['years']:
                 avail_per_stn[int(y)] = int(stations[stn][y]['nmonths'])
         availability[stn] = avail_per_stn
-
-    columns_list = list(range(min ({int(x) for x in years_set}),
+    
+    year_list = list(range(min ({int(x) for x in years_set}),
                               max ({int(x) for x in years_set}) + 1 ))
+    columns_list = ['Alt'] + year_list + ['ICOS id']
       
     df = pd.DataFrame(data = list(availability[x] for x in availability.keys()), 
                       index = list(availability.keys()), 
                       columns = columns_list)
     # Fill in the gaps.
-    df.fillna(0,inplace=True)
-    df.applymap(np.int16)
+    df[year_list] = df[year_list].fillna(0)
+    df[['Alt'] + year_list] = df[['Alt'] + year_list].applymap(np.int64)
 
     return df
 
