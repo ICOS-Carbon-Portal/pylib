@@ -2,8 +2,6 @@ from pprint import pprint
 import os
 import requests
 import tempfile
-from sys import exit
-from icoscp import const
 from icoscp.exceptions import AuthenticationError
 
 
@@ -39,11 +37,15 @@ def print_help(self):
 
 class Authentication:
 
-    def __init__(self, username=None, password=None, token=None):
+    def __init__(self, username=None, password=None, token=None,
+                 write_configuration=False):
         self._username = username
         self._password = password
         self._token = token
         self._valid_token = False
+        self._configuration_file = None
+        # Call the `write_configuration` setter.
+        self.write_configuration = write_configuration
         # Authenticate using username and password.
         if self._username is not None and self._password is not None:
             self.retrieve_token(self._username, self._password)
@@ -51,11 +53,14 @@ class Authentication:
         elif self._token is not None:
             self.validate_token()
         # Authenticate using token from configuration.
-        else:
+        elif self._configuration_file:
             self.read_configuration()
-        # Write valid token to configuration file for reusability.
-        if self._valid_token:
-            self.write_configuration()
+        # User wants to store the valid token to configuration file for
+        # reusability.
+        if self._valid_token and self._write_configuration:
+            self.store_information()
+        elif not self._valid_token:
+            raise AuthenticationError
         return
 
     @property
@@ -94,15 +99,45 @@ class Authentication:
         self._valid_token = valid_token
         return
 
+    @property
+    def write_configuration(self):
+        return self._write_configuration
+
+    @write_configuration.setter
+    def write_configuration(self, write_configuration):
+        self._write_configuration = write_configuration
+        # User specified default configuration path.
+        if type(self._write_configuration) == bool \
+                and self._write_configuration:
+            self._configuration_file = os.path.join('configuration.py')
+            self.touch_configuration()
+        # User specified a custom configuration path.
+        elif type(self._write_configuration) == str:
+            self._configuration_file = os.path.join(self._write_configuration,
+                                                    'configuration.py')
+            # Create all intermediate directories if needed.
+            os.makedirs(self._write_configuration, exist_ok=True)
+            self.touch_configuration()
+        return
+
+    @property
+    def configuration_file(self):
+        return self._configuration_file
+
+    @configuration_file.setter
+    def configuration_file(self, configuration_file):
+        self._configuration_file = configuration_file
+        return
+
     def read_configuration(self):
-        if os.path.exists(const.CONFIGURATION_FILE):
-            with open(file=const.CONFIGURATION_FILE, mode='r') as \
+        if os.path.exists(self._configuration_file):
+            with open(file=self._configuration_file, mode='r') as \
                     configuration_handle:
                 self._token = configuration_handle.read()
                 self.validate_token()
         return
 
-    def write_configuration(self):
+    def store_information(self):
         with open(file=const.CONFIGURATION_FILE, mode='w+') as \
                 configuration_handle:
             configuration_handle.write(self._token)
@@ -259,5 +294,7 @@ class Authentication:
               f'token: {self._token}, {type(self._token)}\n')
         return
 
-
-#
+    def touch_configuration(self):
+        with open(file=self._configuration_file, mode='w+') as file_handle:
+            pass
+        return

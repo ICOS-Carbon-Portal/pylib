@@ -25,5 +25,3 @@ STILTTS = 'https://stilt.icos-cp.eu/viewer/stiltresult'
 
 # stiltresults all columns, raw
 STILTRAW = 'https://stilt.icos-cp.eu/viewer/stiltrawresult'
-
-CONFIGURATION_FILE = 'configuration.py'
