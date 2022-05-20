@@ -175,6 +175,8 @@
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#countrystr-strstr">country='STR' | ['STR','STR',...]</a>
     </li>
+    <li class="toctree-l4"><a class="reference internal" href="#projecticos">project='icos'</a>
+    </li>
     <li class="toctree-l4"><a class="reference internal" href="#bboxlatlonlatlon">bbox=[(lat,lon),(lat,lon)]</a>
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#pinpointlatlondistancekm">pinpoint=[lat,lon,distanceKM]</a>
@@ -383,7 +385,7 @@ property is set to <strong>True</strong></p>
 </ul>
 <p>All Dobj related metadata is available in the following properties.</p>
 <h3 id="dobjinfo"><strong>Dobj.info</strong></h3>
-<p>This will return a list of three pandas data frames which contain metadata.</p>
+<p>This will return a list of three Pandas DataFrames which contain metadata.</p>
 <pre><code>info[0] -&gt; information about the dobj like, url, specification, number of rows, related file name.
 info[1] -&gt; information about the data like colName, value type, unit, kind
 info[2] -&gt; information about the station, where the data was obtained. Name, id, lat, lon etc..
@@ -600,7 +602,7 @@ Subsequently, the data sets are now public available at the ICOS Carbon Portal
 <p>Load the module with:<br>
     from icoscp.collection import collection</p>
 <p>classmethod <strong>Collection(coll)</strong><br>
-(where <code>coll</code> represents a <code>pandas</code> data frame, similar to the output from .getIdList()). BUT 
+(where <code>coll</code> represents a <code>pandas.DataFrame</code>, similar to the output from .getIdList()). BUT 
 only similar. We do <strong>NOT Recommend</strong> to instantiate this class directly. Please <strong>use</strong> the 
 function <strong>.get(CollectionId)</strong>. The Purpose of the class documentation is to provide you a 
 list of attributes available, after the .get(CollectionId) return a collection object.</p>
@@ -666,8 +668,8 @@ well  as creating an instance of a collection.</p>
 <h4 id="collectiongetidlist">collection.getIdList()</h4>
 <pre><code>collection.getIdList()
 </code></pre>
-<p>This will return a <code>pandas</code> data frame, listing all available collections at the data portal. The 
-data frame contains the following columns: 
+<p>This will return a <code>pandas.DataFrame</code>, listing all available collections at the data portal. The 
+DataFrame contains the following columns: 
 <code>['collection', 'doi', 'title', 'description', 'dobj', 'count']</code>. We would recommend that you 
 pay close attention to the <code>count</code>. We have collections with many data objects associated. If 
 you just want to play around, select a collection with less than 10 objects.</p>
@@ -678,7 +680,7 @@ Example: .get('https://meta.icos-cp.eu/collections/n7cIMHIyqHJKBeF_3jjgptHP')</l
 <li><code>dobj</code> contains a list (LIST[STR]) of all PID/URI associated data objects.<br></li>
 <li><code>count</code> tells you how many data objects are associated with this collection.
 <br><br></li>
-<li>Returns a pandas data frame </li>
+<li>Returns a pandas DataFrame </li>
 </ul>
 <h4 id="collectionget">collection.get()</h4>
 <pre><code>collection.get(CollectionId)
@@ -741,6 +743,8 @@ code (ISO 3166) or the full country name (some translations are available as wel
 STILT stations with geolocation in Norway you can search for either NO, NOR, Norway, Norge.</p>
 <pre><code>stiltstation.find(country=['Swe','norge', 'IT'])
 </code></pre>
+<h5 id="projecticos">project='icos'</h5>
+<p>This option will retrieve all STILT stations that are ICOS stations.</p>
 <h5 id="bboxlatlonlatlon">bbox=[(lat,lon),(lat,lon)]</h5>
 <p>Bounding Box. Provide two tuples (wgs84), where the box is defined as TopLeftCorner (NorthWest) 
 and BottomRightCorner (SouthEast). The following example returns approximately all stations in 
@@ -788,18 +792,20 @@ Input format, see sdate,edate. Remember, that only year and month is checked.</p
 stiltstation.find(progress=False)  # No progress bar
 </code></pre>
 <h4 id="outfmt-str">outfmt = 'STR'</h4>
-<p>where string is <code>dict</code> | <code>pandas</code> | <code>list</code> | <code>map</code>.
+<p>where string is <code>dict</code> | <code>pandas</code> | <code>list</code> | <code>map</code> | <code>avail</code>.
 This keyword is ALWAYS executed last, regardless of the position within keyword arguments. By 
-default, a <code>dictionary</code> is returned. With <code>pandas</code> a pandas data frame is returned where the 
+default, a <code>dictionary</code> is returned. With <code>pandas</code> a pandas DataFrame is returned where the 
 station id is indexed, each row contains one station with the same metadata as is available in 
 the dictionary <a href="https://pandas.pydata.org/docs/">https://pandas.pydata.org/docs/</a>. List however 
 returns a list of STILT station objects. Please see the documentation about<br>
-<code>stiltstation.get(id="")</code>. Lastly you can choose <code>map</code>, which returns a folium map 
+<code>stiltstation.get(id="")</code>. The choice <code>map</code>, returns a folium map 
 <a href="https://python-visualization.github.io/folium/">https://python-visualization.github.io/folium/</a>.
 The map can be displayed directly in a Jupyter Notebook, or you can save the map to a html file.</p>
 <pre><code>stiltstation.find(country='Italy', outfmt='pandas') 
 stiltstation.find(country='Italy', outfmt='pandas').save('mymap.html')
 </code></pre>
+<p>Finally, the choice <code>avail</code> will return a pandas DataFrame where availability of timeseries data 
+per STILT station is gathered for each year. </p>
 <h3 id="getid-progressfalse">.get(id='', progress=False)</h3>
 <p>Returns a stilt station object or a list of stilt station objects. A stilt station object, 
 gives access to the underlying data (timeseries and footprints). You may provide a STR or
@@ -853,7 +859,7 @@ calculated for a year, <code>year</code> will be listed.</p>
 
 <h4 id="get_tsstart_date-end_date-hours-columns">.get_ts(start_date, end_date, hours=[], columns=''):</h4>
 <p>STILT concentration time series for a given time period, with optional selection of specific 
-hours and columns. Returns time series as a <code>pandas</code> data frame.</p>
+hours and columns. Returns time series as a <code>pandas.DataFrame</code>.</p>
 <ul>
 <li>start_date : STR, FLOAT/INT (Unix timestamp), datetime object<ul>
 <li>start_date = '2018-01-01'</li>
@@ -880,20 +886,19 @@ Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
 <p>columns : STR, optional</p>
 <ul>
 <li>Valid entries are <code>"default", "co2", "co", "rn", "wind", "latlon", "all"</code><pre><code>default:
-    isodate, co2.stilt, co2.bio, co2.fuel, co2.cement, co2.background
+    isodate,co2.stilt,co2.fuel,co2.bio, co2.background
 
 co2
-    isodate, co2.stilt, co2.bio, co2.fuel, co2.cement,
-    co2.bio.gee, co2.bio.resp, co2.fuel.coal, co2.fuel.oil, co2.fuel.gas,
-    co2.fuel.bio, co2.fuel.waste, co2.energy, co2.transport, co2.industry,
-    co2.residential, co2.other_categories, co2.background
+    isodate,co2.stilt,co2.fuel,co2.bio,co2.fuel.coal,
+    co2.fuel.oil,co2.fuel.gas,co2.fuel.bio,co2.energy
+    co2.transport, co2.industry,co2.others, co2.cement,
+    co2.background
 
 co
-    isodate, co.stilt, co.fuel, co.cement, 
-    co.fuel.coal, co.fuel.oil, co.fuel.gas, 
-    co.fuel.bio, co.fuel.waste, co.energy
-    co.transport, co.industry, co.residential, 
-    co.other_categories, co.background
+    isodate, co.stilt,co.fuel,co.bio,co.fuel.coal
+    co.fuel.oil, co.fuel.gas,co.fuel.bio,co.energy
+    co.transport,co.industry, co.others, co.cement,
+    co.background
 
 rn
     isodate, rn, rn.era, rn.noah
@@ -905,21 +910,14 @@ latlon
     isodate, latstart, lonstart
 
 all
-    isodate, co2.stilt, co2.bio, co2.fuel, co2.cement, 
-    co2.bio.gee, co2.bio.resp, 
-    co2.fuel.coal, co2.fuel.oil, co2.fuel.gas, 
-    co2.fuel.bio, co2.fuel.waste, 
-    co2.energy, co2.transport, co2.industry,
-    co2.residential, co2.other_categories,
-    co2.background,
-    co.stilt, co.fuel, co.cement,
-    co.fuel.coal, co.fuel.oil, co.fuel.gas,
-    co.fuel.bio, co.fuel.waste, 
-    co.energy, co.transport, co.industry,
-    co.residential, co.other_categories,
-    co.background,
-    rn, rn.era, rn.noah, wind.dir,
-    wind.u, wind.v, latstart, lonstart
+    isodate,co2.stilt,co2.fuel,co2.bio,co2.fuel.coal,
+    co2.fuel.oil,co2.fuel.gas,co2.fuel.bio,co2.energy,
+    co2.transport, co2.industry,co2.others, co2.cement,
+    co2.background, co.stilt,co.fuel,co.bio,co.fuel.coal,
+    co.fuel.oil,co.fuel.gas,co.fuel.bio,co.energy,
+    co.transport,co.industry,co.others, co.cement,
+    co.background,rn, rn.era,rn.noah,wind.dir,
+    wind.u,wind.v,latstart,lonstart
 </code></pre>
 </li>
 </ul>
