@@ -98,7 +98,7 @@ True if PID is set and found at the ICOS Carbon Portal
 All Dobj related metadata is available in the following properties.
 
 ### **Dobj.info**
-This will return a list of three pandas data frames which contain metadata.
+This will return a list of three Pandas DataFrames which contain metadata.
 ```
 info[0] -> information about the dobj like, url, specification, number of rows, related file name.
 info[1] -> information about the data like colName, value type, unit, kind
@@ -336,7 +336,7 @@ Load the module with:<br>
 	from icoscp.collection import collection
 
 classmethod **Collection(coll)**<br>
-(where `coll` represents a `pandas` data frame, similar to the output from .getIdList()). BUT 
+(where `coll` represents a `pandas.DataFrame`, similar to the output from .getIdList()). BUT 
 only similar. We do **NOT Recommend** to instantiate this class directly. Please **use** the 
 function **.get(CollectionId)**. The Purpose of the class documentation is to provide you a 
 list of attributes available, after the .get(CollectionId) return a collection object.
@@ -406,8 +406,8 @@ well  as creating an instance of a collection.
 
 	collection.getIdList()
 
-This will return a `pandas` data frame, listing all available collections at the data portal. The 
-data frame contains the following columns: 
+This will return a `pandas.DataFrame`, listing all available collections at the data portal. The 
+DataFrame contains the following columns: 
 `['collection', 'doi', 'title', 'description', 'dobj', 'count']`. We would recommend that you 
 pay close attention to the `count`. We have collections with many data objects associated. If 
 you just want to play around, select a collection with less than 10 objects.
@@ -418,7 +418,7 @@ Example: .get('https://meta.icos-cp.eu/collections/n7cIMHIyqHJKBeF_3jjgptHP')
 - `dobj` contains a list (LIST[STR]) of all PID/URI associated data objects.<br>
 - `count` tells you how many data objects are associated with this collection.
 <br><br>
-- Returns a pandas data frame 
+- Returns a pandas DataFrame 
 
 #### collection.get()
 
@@ -494,6 +494,9 @@ STILT stations with geolocation in Norway you can search for either NO, NOR, Nor
 
 	stiltstation.find(country=['Swe','norge', 'IT'])
 
+##### project='icos'
+This option will retrieve all STILT stations that are ICOS stations.
+
 ##### bbox=[(lat,lon),(lat,lon)]
 Bounding Box. Provide two tuples (wgs84), where the box is defined as TopLeftCorner (NorthWest) 
 and BottomRightCorner (SouthEast). The following example returns approximately all stations in 
@@ -549,18 +552,21 @@ By default a progress bar is displayed while searching all possible STILT statio
 	stiltstation.find(progress=False)  # No progress bar
 	
 #### outfmt = 'STR'
-where string is `dict` | `pandas` | `list` | `map`.
+where string is `dict` | `pandas` | `list` | `map` | `avail`.
 This keyword is ALWAYS executed last, regardless of the position within keyword arguments. By 
-default, a `dictionary` is returned. With `pandas` a pandas data frame is returned where the 
+default, a `dictionary` is returned. With `pandas` a pandas DataFrame is returned where the 
 station id is indexed, each row contains one station with the same metadata as is available in 
 the dictionary [https://pandas.pydata.org/docs/](https://pandas.pydata.org/docs/). List however 
 returns a list of STILT station objects. Please see the documentation about<br>
-`stiltstation.get(id="")`. Lastly you can choose `map`, which returns a folium map 
+`stiltstation.get(id="")`. The choice `map`, returns a folium map 
 [https://python-visualization.github.io/folium/](https://python-visualization.github.io/folium/).
 The map can be displayed directly in a Jupyter Notebook, or you can save the map to a html file.
 
 	stiltstation.find(country='Italy', outfmt='pandas') 
 	stiltstation.find(country='Italy', outfmt='pandas').save('mymap.html')
+
+Finally, the choice `avail` will return a pandas DataFrame where availability of timeseries data 
+per STILT station is gathered for each year. 
 
 ### .get(id='', progress=False)
 Returns a stilt station object or a list of stilt station objects. A stilt station object, 
@@ -630,7 +636,7 @@ Dictionary with geographical (country) information, if the station is within a c
 
 #### .get_ts(start_date, end_date, hours=[], columns=''):
 STILT concentration time series for a given time period, with optional selection of specific 
-hours and columns. Returns time series as a `pandas` data frame.
+hours and columns. Returns time series as a `pandas.DataFrame`.
 
 - start_date : STR, FLOAT/INT (Unix timestamp), datetime object
 	- start_date = '2018-01-01'
