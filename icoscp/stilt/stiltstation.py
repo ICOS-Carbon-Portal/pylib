@@ -19,11 +19,8 @@ __date__        = "2021-11-04"
 
 import os
 import json
-import numpy as np
 import pandas as pd
-
 from tqdm.notebook import tqdm
-
 from icoscp.station import station as cpstation
 from icoscp.stilt.stiltobj import StiltStation
 from icoscp.stilt import geoinfo
@@ -349,14 +346,14 @@ def __get_stations(ids=[], progress=True):
 
         loc_ident = os.readlink(CPC.STILTPATH+ist)
         clon = loc_ident[-13:-6]
-        lon = np.float(clon[:-1])
+        lon = float(clon[:-1])
         if clon[-1:] == 'W':
             lon = -lon
         clat = loc_ident[-20:-14]
-        lat = np.float(clat[:-1])
+        lat = float(clat[:-1])
         if clat[-1:] == 'S':
             lat = -lat
-        alt = np.int(loc_ident[-5:])
+        alt = int(loc_ident[-5:])
 
         stations[ist]['lat']=lat
         stations[ist]['lon']=lon
