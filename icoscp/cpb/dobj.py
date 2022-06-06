@@ -9,22 +9,22 @@
 __author__      = ["Claudio D'Onofrio"]
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.1.6"
+__version__     = "0.1.7"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "rc1"
-__date__        = "2021-06-15"
+__date__        = "2022-05-24"
 
 import os
+from warnings import warn
 import requests
 import struct
 import pandas as pd
-import re
 
 from icoscp import __version__ as release_version
-from icoscp.cpb import dtype_dict
-from icoscp.sparql.runsparql import RunSparql
-import icoscp.sparql.sparqls as sparqls
+from icoscp.cpb import dtype
+from icoscp.cpb import metadata
+import icoscp.const as CPC
 
 
 class Dobj():
@@ -32,62 +32,70 @@ class Dobj():
         for infos, and create the "payload" to retrieve the binary data
         the method .getColumns() will return the actual data
     """
-    
-    def __init__(self, digitalObject = ''):          
-        
+
+    def __init__(self, digitalObject = None):
+
+        self._dobj = None           # contains the pid
         self._colSelected = None    # 'none' -> ALL columns are returned
-        self._endian = 'big'        # default "big endian conversion 
+        self._endian = 'big'        # default "big endian conversion
         self._dtconvert = True      # convert Unixtimstamp to datetime object
-        self._info1 = None          # sparql query object           
-        self._info2 = None          # sparql query objcect format
-        self._info3 = None          # station information for dobj
-        self._colSchema = None      # format of columns (read struct bin data)        
-        self._dtypeStruct = None    # format of columns (read struct bin data)        
-        self._json = None           # holds the "payload" for requests        
-        self._server = 'https://data.icos-cp.eu/portal/tabular'
-        self._localpath = '/data/dataAppStorage/'        # read data from local file
+        self._meta = None           # contains metadata about dobj
+        self._variables = None      # contains a list of variables, former info2
+        self._colSchema = None      # format of columns (read struct bin data)
+        self._struct = None         # format of columns (read struct bin data)
+        self._json = None           # holds the "payload" for requests
         self._islocal = None        # status if file is read from local store
-                                    # if localpath + dobj is valid                                     
-        self._dobjSet = False       # -> see dobj setter
-        self._dobjValid = False     # -> see __getPayload()
+                                    # if localpath + dobj is valid
         
-        self.citation = None        # hold the citation string for the object
-        self._licence = None         # hold the licence links and text
-        
+        self._dobjValid = False     # -> see __set_meta()        
         self._data = pd.DataFrame() # This holds the data pandas dataframe
-                                    # persistent in the object. 
+                                    # persistent in the object.
         self._datapersistent = True # If True (default), data is kept persistent
                                     # in self._data. If False, force to reload
-                                    # from data portal.
-        
+                                    
         # this needs to be the last call within init. If dobj is provided
-        # __payLoad() is exectued automatically to create json object 
-        # for all columns#
-        self.dobj = digitalObject   # this sets self._dobj, which is the PID        
-        
-        
+        # meta data is retrieved and .valid is True
+        self.dobj = digitalObject   
+
+
     #-----------
     @property
-    def dobj(self):
+    def dobj(self):        
         return self._dobj
-    
+
     @dobj.setter
-    def dobj(self, digitalObject=''):
+    def dobj(self, digitalObject = None):
+        
         if not digitalObject:
-            self._dobjSet = False
+            self._dobjValid = False
             return
         else:
             self._dobj = digitalObject
-            self._dobjSet = True
-            self.__getPayload()
+            # set_meta will return false or true
+            self._dobjValid = self.__set_meta()
     #-----------
+    @property
+    def previous(self):
+        prev = None
+        if self.valid and 'previousVersion' in self.meta.keys():
+            prev = self.meta['previousVersion']
+        return prev
+    #-----------
+    @property
+    def next(self):
+        nextversion = None
+        if self.valid and 'nextVersion' in self.meta.keys():
+            nextversion = self.meta['nextVersion']
+        return nextversion
+    #-----------    
     @property
     def id(self):
         return self._dobj
-    
+
     @id.setter
-    def id(self, id=''):
+    def id(self, id=None):
         self.dobj = id
+
     #-----------
     @property
     def valid(self):
@@ -104,8 +112,9 @@ class Dobj():
     @property
     def colNames(self):
         if self._dobjValid:
-            return self._info2['colName']
-        return None  
+            cols = self.variables['name'].tolist()
+            return cols
+        return None
     #-----------
     @property
     def station(self):
@@ -134,196 +143,199 @@ class Dobj():
     @property
     def info(self):
         if self._dobjValid:
-            return [self._info1, self._info2, self._info3]
-        return None 
-    #-----------    
+            msg = """
+            .info has changed and will return the same as .meta.
+            .info will be removed in future icoscp releases.
+            Documentation is available at
+            https://icos-carbon-portal.github.io/pylib/modules/#dobj
+            """
+            warn(msg, FutureWarning)
+            return self.meta
+        return None
+    #-----------
+    @property
+    def meta(self, fmt='json'):
+        if self._dobjValid:
+            return self._meta
+        return None
+    #-----------
+    @property
+    def variables(self):
+        if self._dobjValid:
+            return self._variables
+        return None
+    #-----------
     @property
     def licence(self):
+        """ Returns DICT, with the licencse for this dataobject """
         if self._dobjValid:
-            return self.__licence()
-        return None 
+            return self._meta['references']['licence']
+        return None
     #-----------
-# -------------------------------------------------    
+    
+# -------------------------------------------------
 
     def __str__(self):
-        out = str(self.info[0].iloc[0]['dobj'])
-        return out
-    
         
-    def get(self):
-        """ return data as pandas data frame"""
-        return self.getColumns()
+        if not self.valid:
+            return ''
+        
+        return self.citation('plain')
+
+
+    def citation(self, format='plain'):
+        '''
+        Returns the citation string in different formats.
+        By default a plain formated string is returned.
     
+        Parameters
+        ----------
+        format : STR, optional
+            possible options are : bibtex, ris, plain
+            
+
+        Returns
+        -------
+        STR
+    
+        '''
+        if not self._dobjValid:
+            return
+        
+        citfmt = {
+                    'bibtex':  'citationBibTex',
+                    'ris':     'citationRis',
+                    'plain':   'citationString'
+                 }
+        
+        format = format.lower()        
+        if not format in citfmt.keys():
+            format = 'plain'
+        
+        return self.meta['references'][citfmt[format]]
+
+    def get(self, columns=None):
+        """ return data as pandas data frame"""
+        return self.getColumns(columns)
+
     def getColumns(self, columns=None):
+        '''
+        returns only selected columns from the server.
+        You can see valid entries with .variables['names']
+        If columns are not provided, all columns will be returned
+        which is the same as .data OR .get
+        
+        If the data has already been downloaded and stored in the object
+        the existing data frame is returned.
+
+        Parameters
+        ----------
+        columns : LIST[STR]
+            Provide a list of strings (column names)
+
+        Returns
+        -------
+        PANDAS DATAFRAME            
+
+        '''
+        
+        if not self._dobjValid:
+            return 
+        
         #check if the data is alreday present and persistent is true.
-        # return the existing dataframe in self._data        
+        # return the existing dataframe in self._data
         if not self._data.empty and self._datapersistent:
             return self._data
 
-        # if datapersistence is fals or the data is missing download..        
-        # if columns = None, return ALL columns, otherwise, 
+        # if datapersistence is false or the data is missing download..
+        # if columns = None, return ALL columns, otherwise,
         # try to extract only a subset of columns
-        if (not columns) & self._dobjValid:
-            # return all columns
-            return self.__getColumns()
+       
+        self.__setColumns(columns)
+        self.__getPayload()
+
+        return self.__getColumns()
+
+
+# -------------------------------------------------
+    def __set_meta(self):
+        ''' retreive meta data for the object
+        and set
+            self.meta
+            self.variables
+        '''
         
-        if columns:
-            if self.__setColumns(columns):
-                # set columns and recompute payload
-                self.__getPayload()
+        # get all the meta data and check..
+        self._meta = metadata.get(self.dobj)
         
-        if self._dobjValid:
-            return self.__getColumns()
+        if not self._meta:            
+            return False
+        else:
+            # set conveniance excerpts from meta
+            self._variables = metadata.variables(self._meta)
+            return True
         
-        return False
-    
-# -------------------------------------------------    
+        
     def __getPayload(self):
+
         """ this function sends predefined sparql queries to the cp endpoint
             a single digital object is interrogated to check
             if a binary data representation is available
             if successful _dobjValid is "True"
         """
-        if not self._dobjSet:
-            return
-                
-        sparql = RunSparql()
-        """
-        get information about the digital objcect and if 
-        there is a dataset with format specification
-        It is possible, that "optional" columns are present.
-        -   check if columnNames is empty or not. If not adjust 
-            info2 accordingly
-        """
-        
-        sparql.query = sparqls.cpbGetInfo(self.dobj)
-        sparql.format = 'pandas'
-        sparql.run()
-        self._info1 = sparql.data()
-        if not len(self._info1):
-            self._dobjValid=False              
-            return
 
-        # -------------------------------------------------
-        # get the information about the underlying format
-        # from the previous query -> sparql.data....
-        # info2 will contain a list of all columns
-        sparql.query = sparqls.cpbGetSchemaDetail(self._info1['objSpec'][0])
-        sparql.run()  
-        self._info2 = sparql.data()
+        # extract the col formats, AFTER sorting the variable names        
+        # create the dataType format, neccesary to interpret the binary
+        # data with python struct library or numpy
+        fmt = self.variables.sort_values('name')['format'].tolist()
+        self._colSchema = [dtype.map_type(f) for f in fmt]
         
-        # if info[1][columnNames] contains a list (optional columns...)       
-        if not pd.isnull(self._info1['columnNames'][0]):        
-            # create a clean list of actual column names and
-            # place it back to self._info1
-            colList = self._info1['columnNames'][0]
-            # remove [] from beginning and end
-            colList = colList[1:len(colList)-1]
-            # remove all double quotes and make a list
-            colList = colList.replace('"', '').split(',')
-            #remove leading and trailing whitespaces from entries
-            colList = [c.strip() for c in colList]
-                
-            #replace _info1.columnNames with a clean list
-            self._info1.loc[0].columnNames = colList
-            
-            # check if a there is regex column, if yes, deal with it             
-            if self._info2.isRegex.count():                
-                # cycle through all column definition which are regex
-                regexrow = self._info2[self._info2.isRegex == 'true']
-                for i, r in enumerate(regexrow.colName):
-                    # for each column, test if regex matches and
-                    # create an entry in self._info2
-                    for c in colList:
-                        if re.match(r, c):
-                            row = regexrow.iloc[[i]]
-                            row.loc[row.index[0]].colName = c
-                            row.loc[row.index[0]].isRegex = None                            
-                            self._info2 = pd.concat([self._info2, row],ignore_index=True)
-                
-                # now we have expanded all regex column...remove the original regex rows
-                self._info2 = self._info2[self._info2.isRegex != 'true']
+        
+        rows = int(self.meta['specificInfo']['nRows'])
+        
+        # possibly we don't need all the schema.. only the ones from
+        # selected columns, which gives us the structure of the returned binary
+        # data
+        slicedSchema = [self._colSchema[sel] for sel in self._colSelected]
+        struct = [dtype.struct(sel,rows) for sel in slicedSchema]
+        
+        self._struct = dtype.endian(self._endian) + ''.join(struct)
 
-            # potentially there a more column definitions than actual columns
-            # remove all "columns" from info2 which are not in colList
-            for i, c in enumerate(self._info2['colName']):
-                if not c in colList:
-                    self._info2 = self._info2.drop(i)   
-        
-        # make sure that _info2 is sorted....the binary file representation
-        # has been crated that way, hence we need to have the same order
-        self._info2.sort_values(by='colName', inplace=True)
-            
-        # if no specific columns are selected, default to all
-        if not self._colSelected:
-            self._colSelected = list(range(0,len(self._info2)))
-
-        # -------------------------------------------------
-        # create the dataType format, neccesary to interpret the binary 
-        # data with python struct library or numpy        
-        self._colSchema = []        
-        for f in self._info2['valFormat']:
-            try:
-                self._colSchema.append(dtype_dict.mapDataTypesCP(f))  
-            except:
-                raise Exception('dtype_dict')
-                    
-        dtypeStruct = []
-        for d in self._colSelected:    
-            dtypeStruct.append(dtype_dict.structTypes(self._colSchema[d],int(self._info1['nRows'][0])))                    
-            
-        self._dtypeStruct = dtype_dict.structEndian(self._endian) + ''.join(dtypeStruct)
-        
         # assemble the json object needed to return the data
-        self._json = {'tableId':self._info1['dobj'].iloc[0].split('/')[-1],
-                          'schema':{'columns':self._colSchema,
-                                    'size':int(self._info1['nRows'].iloc[0])},
-                                    'columnNumbers':self._colSelected,
-                                    'subFolder':self._info2['objFormat'].iloc[0].split('/')[-1]
-                     }
-        
-        # get the citation for this object
-        sparql.query = sparqls.get_icos_citation(self.dobj)                   
-        citation = sparql.run()['cit'][0] 
-        if not citation:
-            self.citation = 'no citation available ...'
-        else:
-            self.citation = citation  
-        
+        self._json = {
+                    'tableId':self.dobj.split('/')[-1],
+                    'schema':{'columns':self._colSchema,
+                    'size':int(self.meta['specificInfo']['nRows'])},
+                    'columnNumbers':self._colSelected,
+                    'subFolder':self.meta['specification']['format']['uri'].split('/')[-1]
+            }
+
         self._dobjValid = True
         return
-        
-# -------------------------------------------------    
+
+# -------------------------------------------------
     def __getColumns(self):
         """
             check if a local path is set and valid
             otherwise try to download from the cp server
-        """ 
-        # get the station information for the dobj, 
-        sparql = RunSparql()
-        sparql.format = 'pandas'
-        sparql.query = sparqls.dobjStation(self.dobj)
-        sparql.run()  
-        self._info3 = sparql.data()        
+        """
         
-        
-        #assemble local file path        
-        folder = self._info2['objFormat'].iloc[0].split('/')[-1]        
+        #assemble local file path
+        folder = self.meta['specification']['format']['uri'].split('/')[-1]
         fileName = ''.join([self.dobj.split('/')[-1],'.cpb'])
-        localfile = os.path.abspath(''.join([self._localpath,folder,'/',fileName]))
-        
-        if os.path.isfile(localfile): 
+        localfile = os.path.abspath(''.join([CPC.LOCALDATA,folder,'/',fileName]))
+
+        if os.path.isfile(localfile):
             self._islocal = True
             with open(localfile, 'rb') as binData:
                 content = binData.read()
             # we need to select ALL columns
-            self._colSelected = None             
+            self._colSelected = None
             self.__getPayload()
-            
-            
+
         else:
             self._islocal = False
-            r = requests.post(self._server, json=self._json, stream=True) 
+            r = requests.post(CPC.DATA, json=self._json, stream=True)
             try:
                 r.raise_for_status()
                 content = r.content
@@ -331,130 +343,142 @@ class Dobj():
                 raise Exception(e)
 
         #track data usage
-        self.__portalUse()            
-        return self.__unpackRawData(content)                    
+        self.__portalUse()
+        return self.__unpackRawData(content)
 
     def __unpackRawData(self, rawData):
         # unpack the binary data
-        data = struct.unpack_from(self._dtypeStruct, rawData)
-        
+        data = struct.unpack_from(self._struct, rawData)
+
         # get them into a pandas data frame, column by column
-        df = pd.DataFrame()
-        rows = int(self._info1['nRows'])  
+        df = pd.DataFrame()        
+        columns = self.variables['name'].tolist()
         
+        # make sure the list is sorted by variable name, this is how the
+        # binary fileformat is built.
+        columns.sort()
+        
+        
+        rows = int(self.meta['specificInfo']['nRows'])
+
         try:
-            for idx,col in enumerate(self._colSelected):                       
+            for idx,col in enumerate(self._colSelected):
                 lst = list(data[idx*rows:(idx+1)*rows])
-                if(self._colSchema[col] == 'CHAR'):
+                if self._colSchema[col] == 'CHAR':
                     #convert UTF-16 , this is often used in "Flag" columns
-                    lst = [chr(i) for i in lst]            
-                df[self._info2.iloc[col]['colName']] = lst
+                    lst = [chr(i) for i in lst]
+                df[columns[col]] = lst
+                
         except Exception as e:
             raise Exception('_unpackRawData')
             print(e)
-                
+
         """
             The ICOS Carbon Portal provides a TIMESTAMP which is
             a unix timestamp in milliseconds [UTC]
-            Convert the "number" to a pandas date/time object       
+            Convert the "number" to a pandas date/time object
         """
+        
         if 'TIMESTAMP' in df.columns and self._dtconvert:
             df['TIMESTAMP'] = pd.to_datetime(df.loc[:,'TIMESTAMP'],unit='ms')
         
+        if 'TIMESTAMP_END' in df.columns and self._dtconvert:
+            df['TIMESTAMP_END'] = pd.to_datetime(df.loc[:,'TIMESTAMP_END'],unit='ms')
+
         # there are files with date and time where
         # date is a unixtimestamp
         # time seconds per day
         if 'date' in df.columns and self._dtconvert:
             df['date'] = pd.to_datetime(df.loc[:,'date'],unit='D')
-        
+
         if 'time' in df.columns and self._dtconvert:
             # convert unix timestamp
             df['time'] = pd.to_datetime(df.loc[:,'time'],unit='s')
             # remove the data, so that only time remains
             df['time'] = pd.to_datetime(df.loc[:,'time'],format='%H:%M').dt.time
-            
-        # reorder the data frame in case of regex/optional columns
-        # to the original order provided by cpmeta:hasColumns
-        if self._info1.loc[0].columnNames:
-            df = df[self._info1.loc[0].columnNames]
+
         
         # store data in object
         if self._datapersistent:
             self._data = df
-            
+        
         return df
 
-    # -------------------------------------------------                       
+    # -------------------------------------------------
     def __portalUse(self):
-        
-        """ private function to track data usage """    
+
+        """ private function to track data usage """
 
         counter = {'BinaryFileDownload':{
         'params':{
             'objId':self._dobj,
-            'columns': self.colNames.tolist(),            
+            'columns': self.colNames,
             'library':__name__,
-            'version':release_version,  # Grabbed from '__init__.py'.
+            'version':release_version,  # from '__init__.py'.
             'internal': str(self._islocal)}
             }
         }
         server = 'https://cpauth.icos-cp.eu/logs/portaluse'
         requests.post(server, json=counter)
-        
-    # -------------------------------------------------                       
-    def __setColumns(self, columns=None):
-        """ this function sets the columnNumbers to extract data 
-            :Param colums (None | List)
-            
-            1. If columns=None returns all ColumnNumbers
-            2. List -> either a list of numbers(indices for columns), columNames
-                as strings or a mixture of both.
-                Only valid uniqe entries will be returned
-                
-            Return: Bool (True|False)
-                    False if:   _dobjValid is False
-                                columns is not a list
-                                column could not be found in dobj
-                    True if self._colSeleceted contains valid entries and hence
-                    the "__getPayload" is valid, such that __getData can be exectuded.            
-        """
-        if not self._dobjValid:
-            return False
-        
-        if columns is None:
-            # with colSelected None, payload returns ALL available columns
-            self._colSelected = None            
-            return True
 
-        if not isinstance(columns, list):
-            try:
-                columns = list(columns)
-            except: 
-                return False
+    # -------------------------------------------------
+    def __setColumns(self, columns=None):
+        '''
+        this function sets the columnNumbers to extract data
+        
+
+        Parameters
+        ----------
+        columns : LIST[STR], optional
+            List of column names to be returned. The default is None, which 
+            returns ALL columns available.
+
+        
+            1. If columns=None returns all ColumnNumbers
+            2. List -> columNames as strings
+                Only valid uniqe entries will be returned
+                if none of the values are valid, default (ALL)
+                will be set.
+            
+            The columns are stored in self._colSelected
+            
+        '''
+        if not columns: # the list is empty, hence set ALL
+            self._colSelected = list(range(0,len(self.variables)))
+            return
         
         colSelected = []
-        
+
         # we deal everything in uppercase to make it case INsensitive
-        colNames = [c.upper() for c in self.colNames.tolist()]
-        colIndexRange = range(len(colNames))
+        # extract the list, sort, and reindex. sorting MUST be done, 
+        # the binary fileformat is stored in the sorted order of column names
+        
+        colNames = [c for c in self.variables['name'].tolist()]
+        colNames.sort()
+        # Only now we can convert to case insensitive uppercase, this needs
+        # to come AFTER sorting.. otherwise the order is wrong
+        colNames = [c.upper() for c in colNames]
+        
+        
         for c in columns:
             #check if list entry is a "name"
-            if (isinstance(c,str) and c.upper() in colNames):         
-                idx = colNames.index(c.upper())                
-            # check if an "index" is provided
-            elif (isinstance(c, int) and c in colIndexRange):
-                idx = c            
-            if (idx not in colSelected):
-                colSelected.append(idx)
+            if (isinstance(c,str) and c.upper() in colNames):
+                idx = colNames.index(c.upper())
         
-        if not colSelected: # the list is empty..            
-            return False
+            if idx not in colSelected:
+                colSelected.append(idx)
+
+        colSelected.sort()
+        
+        if not colSelected: # the list is empty, hence set ALL
+            self._colSelected = list(range(0,len(self.variables)))                    
         else:
             self._colSelected = colSelected
-            
-        return True
-     
-    # ------------------------------------------------------------    
+
+        return
+
+
+    # ------------------------------------------------------------
     def size(self):
         """
         return the real size of object
@@ -462,34 +486,22 @@ class Dobj():
         """
         import icoscp.cpb.get_size as s
         return s.get(self)
-    
-    # -------------------------------------------------------------
-    def __licence(self):
-        """
-        Licence associated for this data object. 
 
-        Returns
-        -------
-        DICT : conotaining the the licence text and url
 
-        """
-        return {'licence':'CC BY 4.0', 'url': 'https://data.icos-cp.eu/licence' }
-    
 if __name__ == "__main__":
     """
     execute only if run as a script
     """
-    
+
     msg="""
     You should use this Class within a script.
     Example to create a digital object representation
-    
+
     from icoscp.cpb.dobj import Dobj
-    
+
     do = Dobj('https://meta.icos-cp.eu/objects/M6XCOcBsPDTnlUv_6gGNZ2EX')
-    data = do.get() 
-    data.head(3)           
+    data = do.get()
+    data.head(3)
     """
-       
+
     print(msg)
-    

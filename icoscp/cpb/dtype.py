@@ -17,10 +17,10 @@ __status__      = "rc1"
 __date__        = "2019-08-09"
 
 #-----------------------------------------------------------------------
-def structTypes(columnDescriptor, repeat=1):
+def struct(columnDescriptor, repeat=1):
     """ create the format descriptor to read binary data
         the data types and order are documented in 
-        https://docs.python.org/2/library/struct.html
+        https://docs.python.org/3/library/struct.html
         :param columnDescriptor (output form function mapDataTypesCP)        
         :param repeat (int) (how many time the same format is read)        
     """
@@ -33,7 +33,7 @@ def structTypes(columnDescriptor, repeat=1):
 			}
     return str(repeat) + dictionary.get(columnDescriptor)
 #-----------------------------------------------------------------------
-def structEndian(endianness='big'):
+def endian(endianness='big'):
     """:param endianness (str) 
         return: str the code how "struct" is interpreting the bin data
         default is big endiann
@@ -79,7 +79,7 @@ def numpyEndian(endianness='big'):
     return dictionary.get(endianness)
 
 #-----------------------------------------------------------------------
-def mapDataTypesCP(valueFormatUrl):
+def map_type(valueFormatUrl):
     """ Convert meta data descriptor to numerical descriptor
     
         :param valueFormatUrl = full url to the description

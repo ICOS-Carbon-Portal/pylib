@@ -1,0 +1,38 @@
+Dobj change to read metadata from http request
+
+
+- add new script to extract metadata from server
+	metadata.py
+	
+remove _info1, _info2, _info3 from Dobj
+
+change .info (consisted of info1,2,3,) and return .meta instead
+
+references to server calls moved to constants
+
+change .colNames
+	returns now a list of strings with all variable names
+
+license is extracted dynamically from the metadata per object.
+
+citation is longer a property but a method, to allow for returning different formats
+
+rename dtype_dict.py to dtype.py
+
+print(Dobj) output of __str__ changed to plain citation string, instead of pid
+
+add new property: .previous -> return the pid/url of the previous version of this file
+add new property: .next -> return the pid/url of the next version of this file
+
+rework of:
+.data 	[property] returns all data
+.get(columns=None)  [method] returns all data by default (this method is the shor name for .getColumns(columns=None).
+Provides the possibility to extract specific columns from the data set. Expected is a list of column names, 
+								which then returns only the selected columns. Non valid entries
+								are removed from the list (if only non valid entries are provided, 
+								by default all columns are returned)
+.getColumns(columns=None) [method] this is the long name of .get(columns=None)
+
+Please be aware, that `.data` `.get()` and `.getColumns()` will return ALL columns if executed on the Carbon Portal server.
+								
+								
