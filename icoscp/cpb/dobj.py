@@ -144,9 +144,13 @@ class Dobj():
     def info(self):
         if self._dobjValid:
             msg = """
-            .info has changed and will return the same as .meta.
-            .info will be removed in future icoscp releases.
-            Documentation is available at
+            ICOSCP release >= 0.1.15has changed 
+            the format of .info and will return a dictionary containing
+            all the metadata. The meta data should now be accessed through
+            .meta
+            
+            This warning will be removed in future icoscp releases. Please
+            update your code base accordingly. Documentation is available at
             https://icos-carbon-portal.github.io/pylib/modules/#dobj
             """
             warn(msg, FutureWarning)
