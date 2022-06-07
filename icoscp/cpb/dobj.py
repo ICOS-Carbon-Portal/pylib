@@ -94,7 +94,7 @@ class Dobj():
 
     @id.setter
     def id(self, id=None):
-        self.dobj = id
+        self.__init__(id)        
 
     #-----------
     @property
