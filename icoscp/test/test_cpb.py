@@ -75,4 +75,4 @@ def test_properties():
     assert list(dobj.meta.keys()) == keys
     assert len(dobj.variables) == 5  
     assert dobj.citation() == dobj.__str__()
-    assert dobj.size()[0] == float(2.143)
+    
