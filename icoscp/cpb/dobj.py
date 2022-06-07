@@ -329,8 +329,8 @@ class Dobj():
             self._islocal = True
             with open(localfile, 'rb') as binData:
                 content = binData.read()
-            # we need to select ALL columns
-            self._colSelected = None
+            # for local files, we always return ALL columns
+            self._colSelected = list(range(0,len(self.variables)))
             self.__getPayload()
 
         else:
