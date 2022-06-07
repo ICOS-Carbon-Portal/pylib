@@ -12,7 +12,7 @@ __license__     = "GPL-3.0"
 __version__     = "0.1.7"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
-__status__      = "rc1"
+__status__      = "stable"
 __date__        = "2022-05-24"
 
 import os
@@ -73,7 +73,15 @@ class Dobj():
             self._dobj = digitalObject
             # set_meta will return false or true
             self._dobjValid = self.__set_meta()
-    #-----------
+    #-----------    
+    @property
+    def id(self):
+        return self._dobj
+
+    @id.setter
+    def id(self, id=None):
+        self.__init__(id)       
+    #-----------            
     @property
     def previous(self):
         prev = None
@@ -87,15 +95,6 @@ class Dobj():
         if self.valid and 'nextVersion' in self.meta.keys():
             nextversion = self.meta['nextVersion']
         return nextversion
-    #-----------    
-    @property
-    def id(self):
-        return self._dobj
-
-    @id.setter
-    def id(self, id=None):
-        self.__init__(id)        
-
     #-----------
     @property
     def valid(self):
@@ -118,23 +117,28 @@ class Dobj():
     #-----------
     @property
     def station(self):
-        self.getColumns()
-        return self._info3.stationName[0]
+        if self.valid:
+            return self.meta['specificInfo']['acquisition']['station']
+        
     #-----------
     @property
     def lat(self):
-        self.getColumns() # make sure info3 is filled
-        return float(self._info3.latitude[0])
+        if self.valid:
+            return float(self.meta['specificInfo']['acquisition']['station']['location']['lat'])
     #-----------
     @property
     def lon(self):
-        self.getColumns() # make sure info3 is filled
-        return float(self._info3.longitude[0])
+        if self.valid:
+            return float(self.meta['specificInfo']['acquisition']['station']['location']['lon'])
     #-----------
     @property
     def elevation(self):
-        self.getColumns() # make sure info3 is filled
-        return float(self._info3.elevation[0])
+        if self.valid:
+            return float(self.meta['specificInfo']['acquisition']['station']['location']['alt'])
+    @property
+    def alt(self):
+        if self.valid:
+            return self.elevation
     #-----------
     @property
     def data(self):

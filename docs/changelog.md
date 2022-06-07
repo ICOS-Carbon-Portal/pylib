@@ -1,26 +1,34 @@
 # Changelog
  
 ## 0.1.15
-### Changelog for cpb module update (0.1.14 -> 0.1.15)
+### Changelog for cpb module
 - Dobj change to read metadata from http request. Instead of using sparql queries, a http request is used to load the same meta data as available from the website.
-- add new script to extract metadata from server *metadata.py*
-- remove properties: `._info1`, `._info2`, `._info3` from Dobj.
-- change `.info` (consisted of info 1,2,3,) and return .meta instead
-- references to server calls moved to constants
-- change `.colNames`: returns now a list of strings with all variable names
-- license is extracted dynamically from the metadata per object.
-- citation is NO longer a property but a method, to allow for returning different formats. Without argument it returns a 'plain' citation string. Argument options are 'bibtex', 'ris', 'plain') -> .citation('bibtex'|'ris'|'plain')
-- `print(Dobj)` output of __str__ changed to plain citation string, instead of pid
+- Add new script to extract metadata from server `metadata.py`
+- Add new property `.meta` returns a dictionary based on the meta available from the landing page of a data object containing a very rich set of information. An example: 
+	[https://meta.icos-cp.eu/objects/M8STRfcQfU4Yj7Uy0snHvlve/meta.json](https://meta.icos-cp.eu/objects/M8STRfcQfU4Yj7Uy0snHvlve/meta.json)
+- Add new property: `.previous` Return the pid/url of the previous version of this file if available.
+- Add new property: `.next` -> Return the pid/url of the next version of this file if available.
+- Add new property: `.variables` Return a PandasDataFrame with metadata for all variables ['name', 'unit', 'type', 'format']
+- Add new property: `.alt` Returns altitude of station, the same as `.elevation`. 
+	
+- Remove properties: `._info1`, `._info2`, `._info3` from Dobj.
+- Change `.info` (consisted of info 1,2,3,) and return `.meta` instead
+- Change `.station`: Returns a dictionary with a subset of .meta describing the station.
+- Change of `.colNames`: returns now a list of strings with all variable names instead of a pandas core series.
+- License is extracted dynamically from the metadata per object.
+- Citation is **no longer a property** but a method, to allow for returning different formats. Without argument it returns a 'plain' citation string. Argument options are 'bibtex', 'ris', 'plain') -> `.citation('bibtex'|'ris'|'plain')`
+- `print(Dobj)` output of \_\_str\_\_ changed to plain citation string, instead of pid
 
-- rename dtype_dict.py to dtype.py
+- References to server calls moved to `const.py`
+- Rename file dtype_dict.py to dtype.py for better readability.
+- add simple unit test and implement inital assertions for the cpb module.
 
-- add new property: `.previous` -> return the pid/url of the previous version of this file
-- add new property: `.next` -> return the pid/url of the next version of this file
+#### Access to data
+- `.data` [property] will always return all columns.
+- `.get(columns=None)` [method] returns all data by default. Provides the possibility to extract specific columns from the data set. Expected is a list of column names, which then returns only the selected columns. Non valid entries are removed from the list (if only non valid entries are provided, an empty list by default returns all columns). Please be aware, that `.get()` will ALWAYS return ALL columns if executed on the Carbon Portal server. Valid entries can be obtained with `.colNames` or `.variables['name']
+- Remove `.getColumns(columns=None)`, this was exactly the same as .get(), hence redundant.
 
-- `.get(columns=None)`  [method] returns all data by default. Provides the possibility to extract specific columns from the data set. Expected is a list of column names, which then returns only the selected columns. Non valid entries are removed from the list (if only non valid entries are provided, an empty list by default returns all columns)
-- remove `.getColumns(columns=None)`
 
-Please be aware, that `.data` `.get()` will return ALL columns if executed on the Carbon Portal server.
 
 ## 0.1.14
 - update `get_ts()` to case-insensitive and include `co2.bio.gee` and `co2.bio.resp` in the 
