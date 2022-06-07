@@ -138,7 +138,7 @@ class Dobj():
     #-----------
     @property
     def data(self):
-        return self.getColumns()
+        return self.get()
     #-----------
     @property
     def info(self):
@@ -219,12 +219,9 @@ class Dobj():
         return self.meta['references'][citfmt[format]]
 
     def get(self, columns=None):
-        """ return data as pandas data frame"""
-        return self.getColumns(columns)
 
-    def getColumns(self, columns=None):
         '''
-        returns only selected columns from the server.
+        Access to the data. Returns all OR selected columns from the server.
         You can see valid entries with .variables['names']
         If columns are not provided, all columns will be returned
         which is the same as .data OR .get
