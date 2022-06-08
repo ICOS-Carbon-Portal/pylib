@@ -559,8 +559,10 @@ def find(**kwargs):
         Remember, that only year and month is checked.
     Example: station.find(dates=['2020-01-01', '2020/05/23'])
 
-    project STR 'icos':
+    project STR 'icos'.
         This will only return stilt stations that are ICOS stations.
+    Example: station.find(project='icos')
+
         
     progress BOOL 
         By default progress is set to True, which returns a progressbar
