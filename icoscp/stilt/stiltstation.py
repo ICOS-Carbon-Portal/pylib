@@ -562,7 +562,6 @@ def find(**kwargs):
     project STR 'icos'.
         This will only return stilt stations that are ICOS stations.
     Example: station.find(project='icos')
-
         
     progress BOOL 
         By default progress is set to True, which returns a progressbar
