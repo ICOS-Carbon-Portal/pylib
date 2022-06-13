@@ -575,7 +575,7 @@ def get(stationId):
     return myStn
 
 
-def getIdList(project='ICOS', sort='name', outfmt='pandas', icon='flag'):
+def getIdList(project='ICOS', sort='name', outfmt='pandas', icon=None):
     """Retrieves a list of stations using a specific format.
 
     Returns a list with all station id's. By default only ICOS stations
@@ -603,8 +603,11 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas', icon='flag'):
         that belong to stations collected from instrumented Ships of
         Opportunity) will not be included.
 
-    icon: str, optional
-        todo:
+    icon: None | str, optional
+        The default is None. If set to 'flag', the generated folium map
+        displays a corresponding flag icon for each marker. A path to
+        an image file can also be provided. Please, use a small-sized
+        file or see your folium map grow humongous in size.
 
     Returns
     -------
@@ -645,7 +648,6 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas', icon='flag'):
     if outfmt == 'map' and not queried_stations.empty:
         stations_folium_map = fmap.get(queried_stations, project, icon)
         return stations_folium_map
-
     else:
         return queried_stations
 

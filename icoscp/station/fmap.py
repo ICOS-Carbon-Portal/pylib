@@ -21,10 +21,11 @@ __date__ = "2021-09-20"
 
 # Standard library imports.
 import json
+import os
 # Related third party imports.
+from folium.plugins import MarkerCluster
 import folium
 import pandas as pd
-from folium.plugins import MarkerCluster
 import requests
 
 
@@ -45,6 +46,9 @@ def get(queried_stations, project, icon):
     project : str
         The name of the project that the user inserted in the caller
         function in order to search for stations.
+
+    icon: None | str, optional
+        Argument passed down from `getIdList()` function.
 
     Returns
     -------
@@ -81,18 +85,28 @@ def get(queried_stations, project, icon):
         # Create the html popup message for each station.
         popup = folium.Popup(generate_popup_html(station_info, response))
         if icon == 'flag' and response['service']:
-            # Set the folium icon for each marker using the country's flag.
-            folium_icon = folium.CustomIcon(icon_image=station_info.flag, icon_size=(20, 14))
-        elif isinstance(icon, str):
+            # Set the folium icon for each marker using the country's
+            # flag.
+            folium_icon = folium.CustomIcon(icon_image=station_info.flag,
+                                            icon_size=(20, 14))
+        elif icon and os.path.isfile(icon):
+            # The `folium_icon` variable needs to be initialized for
+            # each marker and each marker will include a copy of the
+            # custom image in the generated html map. This results in
+            # maps with large size, thus one needs to use small sized
+            # images. This issue is already mentioned here:
+            # https://github.com/python-visualization/folium/issues/744
             folium_icon = folium.features.CustomIcon(icon, icon_size=(20, 14))
         else:
-            folium_icon = folium.Icon(color='blue', icon_color='white', icon='info_sign')
+            folium_icon = folium.Icon(color='blue', icon_color='white',
+                                      icon='info_sign')
         # Add a marker for each station at the station's location
         # along with the popup and the tooltip.
-        station_marker = folium.Marker(location=[station_info.lat, station_info.lon],
-                                       tooltip=f'<b>{station_info.id}</b>',
-                                       popup=popup,
-                                       icon=folium_icon)
+        station_marker = folium.Marker(
+            location=[station_info.lat, station_info.lon],
+            tooltip=f'<b>{station_info.id}</b>',
+            popup=popup,
+            icon=folium_icon)
         # Add the station marker to the cluster.
         marker_cluster.add_child(station_marker)
     # Add the cluster and the layer control to the folium map.
