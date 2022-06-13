@@ -207,12 +207,13 @@ def edit_queried_stations(queried_stations, edited_response):
     edited_stations : pandas.Dataframe
         `edited_stations` is an updated version of the
         `queried_stations` dataframe which was obtained using a sparql
-        query. Also this edited version is stripped off stations
+        query. Also, this edited version is stripped off stations
         without a fixed position (Instrumented ships of opportunity).
 
     """
 
-    edited_stations = pd.DataFrame()
+    stations = list()
+    folium_station = pd.DataFrame()
     # Transpose the requested stations dataframe and iterate each
     # station.
     queried_stations = queried_stations.transpose()
@@ -234,8 +235,10 @@ def edit_queried_stations(queried_stations, edited_response):
             station_info['station_name'] = station_info.pop('name')
             station_info['country'] = countries_data[station_info.country_code]['name']
             station_info['flag'] = countries_data[station_info.country_code]['flag']
-        edited_stations = edited_stations.append(other=station_info)
-    return edited_stations
+            stations.append(station_info)
+        #
+        folium_stations = pd.concat(stations, axis=1).transpose()
+    return folium_stations
 
 
 def add_tile_layers(folium_map):
