@@ -117,8 +117,11 @@ def __pid(pid):
        Return the full url in form:
         'https://meta.icos-cp.eu/objects/ + pid
     """
-       
-    pid = pid.split('/')[-1]
+    pid = str(pid)
+    if '/' in pid:
+        # this is the case of providing
+        # the full url or the handle/pid
+        pid = pid.split('/')[-1]
     url = 'https://meta.icos-cp.eu/objects/' + pid
     return url        
     
