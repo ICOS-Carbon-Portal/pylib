@@ -9,6 +9,11 @@ import pytest
 import os 
 
 absolut = os.path.dirname(os.path.realpath(__file__))
-f = os.path.join(absolut, 'test/')
+f = os.path.join(absolut, './')
 
-modules = pytest.main(["-x", f])
+modules = pytest.main(["-xv", f])
+
+'''
+x = stop testing after failure
+v = verbose output
+'''

@@ -16,6 +16,7 @@ dobj = Dobj(pid)
 
 @pytest.mark.parametrize('test_input,expected', [
     ('',False),
+    (123, False),
     ('gibberish', False),
     ('9GVNGXhqvmn7UUsxSWp-zLyR', True),
     ('11676/9GVNGXhqvmn7UUsxSWp-zLyR', True),
@@ -41,7 +42,7 @@ def test_data():
     assert len(dobj.data) == 8806
     
     
-def test_return_value():
+def test_return_values():
     assert isinstance(dobj.dobj, str) 
     assert isinstance(dobj.id, str)
     assert isinstance(dobj.previous, str)
