@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.15
+- add `icon` argument to `station.getIdList()` function.
+
 ## 0.1.14
 - update `get_ts()` to case-insensitive and include `co2.bio.gee` and `co2.bio.resp` in the 
   `co2` results
