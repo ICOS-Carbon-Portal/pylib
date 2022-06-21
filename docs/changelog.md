@@ -4,7 +4,7 @@
 ### Changelog for cpb module
 - Dobj change to read metadata from http request. Instead of using sparql queries, a http request is used to load the same meta data as available from the website.
 - Add new script to extract metadata from server `metadata.py`
-- Add new property `.meta` returns a dictionary based on the meta available from the landing page of a data object containing a very rich set of information. An example: 
+- Add new property `.meta` returns a dictionary based on the meta data available from the landing page of a data object containing a very rich set of information. An example: 
 	[https://meta.icos-cp.eu/objects/M8STRfcQfU4Yj7Uy0snHvlve/meta.json](https://meta.icos-cp.eu/objects/M8STRfcQfU4Yj7Uy0snHvlve/meta.json)
 - Add new property: `.previous` Return the pid/url of the previous version of this file if available.
 - Add new property: `.next` -> Return the pid/url of the next version of this file if available.
@@ -16,18 +16,18 @@
 - Change `.station`: Returns a dictionary with a subset of .meta describing the station.
 - Change of `.colNames`: returns now a list of strings with all variable names instead of a pandas core series.
 - License is extracted dynamically from the metadata per object.
-- Citation is **no longer a property** but a method, to allow for returning different formats. Without argument it returns a 'plain' citation string. Argument options are 'bibtex', 'ris', 'plain') -> `.citation('bibtex'|'ris'|'plain')`
+- Add new method `get_citation(format='plain')`. Returns the citation by default as plain string, the same as .citation (property) which internally calls this method.
+  Argument options are 'bibtex', 'ris', 'plain') -> `.citation('bibtex'|'ris'|'plain')`
 - `print(Dobj)` output of \_\_str\_\_ changed to plain citation string, instead of pid
 
 - References to server calls moved to `const.py`
 - Rename file dtype_dict.py to dtype.py for better readability.
-- add simple unit test and implement inital assertions for the cpb module.
+- add simple unit test and implement initial assertions for the cpb module.
 
 #### Access to data
 - `.data` [property] will always return all columns.
 - `.get(columns=None)` [method] returns all data by default. Provides the possibility to extract specific columns from the data set. Expected is a list of column names, which then returns only the selected columns. Non valid entries are removed from the list (if only non valid entries are provided, an empty list by default returns all columns). Please be aware, that `.get()` will ALWAYS return ALL columns if executed on the Carbon Portal server. Valid entries can be obtained with `.colNames` or `.variables['name']
-- Remove `.getColumns(columns=None)`, this was exactly the same as .get(), hence redundant.
-
+- `.getColumns(columns=None)`, this is exactly the same as .get(columns='None'). We keep this function for compatibility to previous versions.
 
 
 ## 0.1.14

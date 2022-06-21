@@ -180,7 +180,9 @@ class Dobj():
             return self._meta['references']['licence']
         return None
     #-----------
-    
+    @property
+    def citation(self):
+        return self.get_citation('plain')
 # -------------------------------------------------
 
     def __str__(self):
@@ -188,10 +190,10 @@ class Dobj():
         if not self.valid:
             return ''
         
-        return self.citation('plain')
+        return self.get_citation('plain')
 
 
-    def citation(self, format='plain'):
+    def get_citation(self, format='plain'):
         '''
         Returns the citation string in different formats.
         By default a plain formated string is returned.
@@ -199,7 +201,7 @@ class Dobj():
         Parameters
         ----------
         format : STR, optional
-            possible options are : bibtex, ris, plain
+            possible options are : plain (default), bibtex, ris
             
 
         Returns
@@ -214,7 +216,7 @@ class Dobj():
                     'bibtex':  'citationBibTex',
                     'ris':     'citationRis',
                     'plain':   'citationString'
-                 }
+                  }
         
         format = format.lower()        
         if not format in citfmt.keys():
@@ -222,6 +224,10 @@ class Dobj():
         
         return self.meta['references'][citfmt[format]]
 
+    def getColumns(self, columns=None):
+        ''' see help for .get() '''
+        return self.get(columns)
+    
     def get(self, columns=None):
 
         '''

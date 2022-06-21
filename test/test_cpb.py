@@ -59,10 +59,19 @@ def test_return_values():
     assert isinstance(dobj.meta, dict)
     assert isinstance(dobj.variables, pandas.DataFrame)
     assert isinstance(dobj.licence, dict)
-    assert isinstance(dobj.citation(), str)
+    assert isinstance(dobj.citation, str)
     assert isinstance(dobj.get(), pandas.DataFrame)
     assert isinstance(dobj.size(), tuple)
     
+def test_citation():
+    assert isinstance(dobj.get_citation(), str)
+    assert isinstance(dobj.get_citation('plain'), str)
+    assert isinstance(dobj.get_citation('bibtex'), str)
+    assert isinstance(dobj.get_citation('ris'), str)
+    assert dobj.citation == dobj.__str__()
+    assert dobj.citation == dobj.get_citation()
+
+
     
 def test_properties():
     assert dobj.previous == 'https://meta.icos-cp.eu/objects/Jn7Cl2eN09XGyxizaeFIe9IQ'
@@ -75,5 +84,4 @@ def test_properties():
                     'specificInfo', 'specification', 'submission']
     assert list(dobj.meta.keys()) == keys
     assert len(dobj.variables) == 5  
-    assert dobj.citation() == dobj.__str__()
     
