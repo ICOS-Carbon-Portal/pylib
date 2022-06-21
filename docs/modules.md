@@ -279,12 +279,13 @@ instantiate  a station. Hence, it is easy to adjust and filter these records and
 
 - Return Pandas DataFrame  
 ```
-station.getIdList(project='ALL', outfmt='map')
+station.getIdList(project='ALL', outfmt='map', icon=None)
 ```
-If the optional argument `outfmt='map'` is given, a folium map is created with all the queried 
+If the optional argument `outfmt='map'` is provided, a folium map is created with all the queried 
 stations provided by the `project` argument. Stations without a fixed location (like 
 measurements collected from instrumented Ships of Opportunity) will not be included in the map. 
-Each marker in the map represents a station and contains station related information.
+Each marker in the map represents a station and contains station related information. A user can
+further customize the style of the map by providing the `icon` argument `[None, 'flag', 'path/to/image.png']`.
 
 - Return Folium Map
 

@@ -21,14 +21,15 @@ __date__ = "2021-09-20"
 
 # Standard library imports.
 import json
+import os
 # Related third party imports.
+from folium.plugins import MarkerCluster
 import folium
 import pandas as pd
-from folium.plugins import MarkerCluster
 import requests
 
 
-def get(queried_stations, project):
+def get(queried_stations, project, icon):
     """Generates a folium map of stations.
 
     Uses the requested stations dataframe along with the REST countries
@@ -45,6 +46,9 @@ def get(queried_stations, project):
     project : str
         The name of the project that the user inserted in the caller
         function in order to search for stations.
+
+    icon: None | str, optional
+        Argument passed down from `getIdList()` function.
 
     Returns
     -------
@@ -80,17 +84,29 @@ def get(queried_stations, project):
         station_info = stations[station_index]
         # Create the html popup message for each station.
         popup = folium.Popup(generate_popup_html(station_info, response))
-        if response['service']:
-            # Set the icon for each marker using the country's flag.
-            icon = folium.CustomIcon(icon_image=station_info.flag, icon_size=(20, 14))
+        if icon == 'flag' and response['service']:
+            # Set the folium icon for each marker using the country's
+            # flag.
+            folium_icon = folium.CustomIcon(icon_image=station_info.flag,
+                                            icon_size=(20, 14))
+        elif icon and os.path.isfile(icon):
+            # The `folium_icon` variable needs to be initialized for
+            # each marker and each marker will include a copy of the
+            # custom image in the generated html map. This results in
+            # maps with large size, thus one needs to use small sized
+            # images. This issue is already mentioned here:
+            # https://github.com/python-visualization/folium/issues/744
+            folium_icon = folium.features.CustomIcon(icon, icon_size=(20, 14))
         else:
-            icon = folium.Icon(color='blue', icon_color='white', icon='info_sign')
+            folium_icon = folium.Icon(color='blue', icon_color='white',
+                                      icon='info_sign')
         # Add a marker for each station at the station's location
         # along with the popup and the tooltip.
-        station_marker = folium.Marker(location=[station_info.lat, station_info.lon],
-                                       tooltip='<b>' + station_info.id + '</b>',
-                                       popup=popup,
-                                       icon=icon)
+        station_marker = folium.Marker(
+            location=[station_info.lat, station_info.lon],
+            tooltip=f'<b>{station_info.id}</b>',
+            popup=popup,
+            icon=folium_icon)
         # Add the station marker to the cluster.
         marker_cluster.add_child(station_marker)
     # Add the cluster and the layer control to the folium map.
@@ -205,12 +221,13 @@ def edit_queried_stations(queried_stations, edited_response):
     edited_stations : pandas.Dataframe
         `edited_stations` is an updated version of the
         `queried_stations` dataframe which was obtained using a sparql
-        query. Also this edited version is stripped off stations
+        query. Also, this edited version is stripped off stations
         without a fixed position (Instrumented ships of opportunity).
 
     """
 
-    edited_stations = pd.DataFrame()
+    stations = list()
+    folium_station = pd.DataFrame()
     # Transpose the requested stations dataframe and iterate each
     # station.
     queried_stations = queried_stations.transpose()
@@ -232,8 +249,10 @@ def edit_queried_stations(queried_stations, edited_response):
             station_info['station_name'] = station_info.pop('name')
             station_info['country'] = countries_data[station_info.country_code]['name']
             station_info['flag'] = countries_data[station_info.country_code]['flag']
-        edited_stations = edited_stations.append(other=station_info)
-    return edited_stations
+            stations.append(station_info)
+        #
+        folium_stations = pd.concat(stations, axis=1).transpose()
+    return folium_stations
 
 
 def add_tile_layers(folium_map):
