@@ -47,9 +47,18 @@ or create an 'empty' instance and the set the identifier later:
 <hr>
 
 ### **Dobj.citation**
-Citation string
+Citation string, a simple plain text citation string.
 
 - Return STR
+
+### **Dobj.get_citation(format)**
+Returns the citation string in different formats. By default a plain formatted string is returned, the same as with with the property `Dobj.citation`. Possible formats are:
+
+- **plain** : (default) a simple string
+- **bibtex** : [wikipedia](https://en.wikipedia.org/wiki/BibTeX)
+- **ris** : [wikipedia]( https://en.wikipedia.org/wiki/RIS_(file_format))
+
+Example: Dobj.get_citation('ris')
 
 ### **Dobj.licence**
 Licence associated with the dataset.
@@ -60,13 +69,13 @@ Licence associated with the dataset.
 Available column names. This information is part of the Dobj.info, which holds all the 
 available metadata.
 
-- Return pandas.core.series.Series
+- Return **list**
 
 ### **Dobj.dateTimeConvert = True**
 Set or retrieve. Default **True**. The binary data representation provides a UTC Timestamp as 
-Unixtimestamp. By default, this is converted to a DateTimeObject
+Unixtimestamp with start point of 1970-01-01 00:00:00. By default, this is converted to a DateTimeObject
 (**pandas._libs.tslibs.timestamps.Timestamp**). If you prefer to have the raw Unixtimestamp 
-(**numpy.float64**), set Dobj.dateTimeConvert = False prior to issue the .get() command.
+(**numpy.float64**), set Dobj.dateTimeConvert = False prior to load the data with **.get()** or **.data** or **.getColumns()**.
 
 - Return BOOL
 
@@ -81,14 +90,28 @@ property is set to **True**
 - Return STR
 
 ### **Dobj.data**
-Retrieve the actual data for the PID, the same as `.get()`.
+Retrieve the actual data for the PID, the same as `.get()` by defaulting to all available columns.
 
 - Return Pandas DataFrame
 
-### **Dobj.get()**
-Retrieve the actual data for the PID. The same as `.data`
+### **Dobj.get(variables)**
+Retrieve the actual data for the PID. The same as `.data`. By default all columns all returned, but you have the option to retrieve only selected columns (or variables). You can see valid entries with .variables['names']. If columns are not provided, ALL columns will be returned, which is the same as .data OR .get(). Only valid unique entries will be returned. If none of the values are valid, default (all) will be set.
+
+- Parameter variables: LIST[STR]
 
 - Return Pandas DataFrame
+
+Examples:
+
+- do = Dobj('https://meta.icos-cp.eu/objects/9GVNGXhqvmn7UUsxSWp-zLyR')
+- data = do.get(['timestamp','ch4'])
+- data = do.get()
+- data = do.data
+	
+	
+### **Dobj.getColumns(variables)**
+This is exactly the same as .get(). See details above.
+
 
 ### **Dobj.valid**
 True if PID is set and found at the ICOS Carbon Portal

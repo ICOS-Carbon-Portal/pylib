@@ -8,9 +8,17 @@
     CPC.ST_PATH
     
 """
-       
-# Stilt specific
 
+
+# -------------------------------------------------------------
+# Dobj
+# read ICOS data through https calls
+DATA        = 'https://data.icos-cp.eu/portal/tabular'
+# read data from local file
+LOCALDATA   = '/data/dataAppStorage/'
+
+ # -------------------------------------------------------------
+# Stilt specific
 #local path to stiltstations if running on jupyter server
 STILTPATH = '/data/stiltweb/stations/'
 
