@@ -331,7 +331,7 @@ def _avail(stations):
                       columns = columns_list)
     # Fill in the gaps.
     df[year_list] = df[year_list].fillna(0)
-    df[['Alt'] + year_list] = df[['Alt'] + year_list].applymap(np.int64)
+    df[['Alt'] + year_list] = df[['Alt'] + year_list].applymap(int)
 
     return df
 
