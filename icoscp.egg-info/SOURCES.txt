@@ -13,9 +13,10 @@ icoscp/collection/__init__.py
 icoscp/collection/collection.py
 icoscp/cpb/__init__.py
 icoscp/cpb/dobj.py
-icoscp/cpb/dtype_dict.py
+icoscp/cpb/dtype.py
 icoscp/cpb/get_size.py
 icoscp/cpb/logfile.py
+icoscp/cpb/metadata.py
 icoscp/sparql/__init__.py
 icoscp/sparql/runsparql.py
 icoscp/sparql/sparqls.py
@@ -29,3 +30,4 @@ icoscp/stilt/stations.json
 icoscp/stilt/stiltobj.py
 icoscp/stilt/stiltstation.py
 icoscp/stilt/timefuncs.py
+test/test_cpb.py
