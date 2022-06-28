@@ -20,7 +20,6 @@ from icoscp.station import station as cpstation
 import icoscp.const as CPC
 import os
 from tqdm import tqdm
-import numpy as np
 from icoscp import country
 
 
@@ -93,14 +92,14 @@ def __save_all():
        
         loc_ident = os.readlink(CPC.STILTPATH+ist)
         clon = loc_ident[-13:-6]
-        lon = np.float(clon[:-1])
+        lon = float(clon[:-1])
         if clon[-1:] == 'W':
             lon = -lon
         clat = loc_ident[-20:-14]
-        lat = np.float(clat[:-1])
+        lat = float(clat[:-1])
         if clat[-1:] == 'S':
             lat = -lat
-        alt = np.int(loc_ident[-5:])
+        alt = int(loc_ident[-5:])
 
         stations[ist]['lat']=lat
         stations[ist]['lon']=lon
