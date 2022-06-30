@@ -86,21 +86,12 @@ class StiltStation():
     def __str__(self):
         # by default called when a an 'object' is printed
         
-        try:
-            out = {'id:': self.id,
-                   'name:': self.name,
-                   'lat:': self.lat,
-                   'lon:': self.lon,
-                   'alt [m]:': self.alt,
-                   'country': self.geoinfo['name']
-                   }
-        except TypeError:
-            out = {'id:': self.id,
-                   'name:': self.name,
-                   'lat:': self.lat,
-                   'lon:': self.lon,
-                   'alt [m]:': self.alt
-                   }
+        out = {'id:': self.id,
+               'name:': self.name,
+               'lat:': self.lat,
+               'lon:': self.lon,
+               'alt [m]:': self.alt
+               }
         return json.dumps(out)
 
     #----------------------------------------------------------------------------------------------------------
