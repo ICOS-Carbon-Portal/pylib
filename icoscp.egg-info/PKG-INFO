@@ -1,10 +1,10 @@
 Metadata-Version: 2.1
 Name: icoscp
-Version: 0.1.14
+Version: 0.1.15
 Summary: Access to ICOS data objects hosted at https://data.icos-cp.eu
 Home-page: https://www.icos-cp.eu/
-Author: Claudio D'Onofrio, Zois Zogopoulos, ICOS Carbon Portal
-Author-email: claudio.donofrio@nateko.lu.se, zois.zogopoulos@nateko.lu.se, info@icos-cp.eu
+Author: Claudio D'Onofrio, Zois Zogopoulos, Anders Dahlner, ICOS Carbon Portal
+Author-email: claudio.donofrio@nateko.lu.se, zois.zogopoulos@nateko.lu.se, anders.dahlner@nateko.lu.se, info@icos-cp.eu
 License: GPLv3+
 Project-URL: Source, https://github.com/ICOS-Carbon-Portal/pylib
 Project-URL: Documentation, https://icos-carbon-portal.github.io/pylib/
