@@ -63,6 +63,16 @@
               <ul class="current">
                 <li class="toctree-l1 current"><a class="reference internal current" href="./">Changelog</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#0115">0.1.15</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#cpb-module">cpb module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#access-to-data">Access to data</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#other-changes">Other changes</a>
+    </li>
+        </ul>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#0114">0.1.14</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#0113">0.1.13</a>
@@ -116,11 +126,69 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="changelog">Changelog</h1>
+<h2 id="0115">0.1.15</h2>
+<ul>
+<li>
+<h4 id="cpb-module">cpb module</h4>
+<ul>
+<li>Dobj change to read metadata from http request. Instead of using sparql queries, a http request is used to load 
+   the same meta data as available from the website.</li>
+<li>Add new script to extract metadata from server <code>metadata.py</code>.</li>
+<li>Add new property <code>.meta</code> returns a dictionary based on the meta data available from the landing page of a data 
+   object containing a very rich set of information. An example: 
+   <a href="https://meta.icos-cp.eu/objects/M8STRfcQfU4Yj7Uy0snHvlve/meta.json">https://meta.icos-cp.eu/objects/M8STRfcQfU4Yj7Uy0snHvlve/meta.json</a></li>
+<li>Add new property: <code>.previous</code> Return the pid/url of the previous version of this file if available.</li>
+<li>Add new property: <code>.next</code> -&gt; Return the pid/url of the next version of this file if available.</li>
+<li>Add new property: <code>.variables</code> Return a PandasDataFrame with metadata for all variables 
+   ['name', 'unit', 'type', 'format'].</li>
+<li>Add new property: <code>.alt</code> Returns altitude of station, the same as <code>.elevation</code>.</li>
+<li>Remove properties: <code>._info1</code>, <code>._info2</code>, <code>._info3</code> from Dobj.</li>
+<li>Change <code>.info</code> (consisted of info 1,2,3,) and return <code>.meta</code> instead.</li>
+<li>Change <code>.station</code>: Returns a dictionary with a subset of .meta describing the station.</li>
+<li>Change of <code>.colNames</code>: returns now a list of strings with all variable names instead of a pandas core series.</li>
+<li>License is extracted dynamically from the metadata per object.</li>
+<li>Add new method <code>get_citation(format='plain')</code>. Returns the citation by default as plain string, the same as 
+   .citation (property) which internally calls this method. Argument options are ('bibtex', 'ris', 'plain') -&gt; 
+   <code>.citation('bibtex'|'ris'|'plain')</code>.</li>
+<li><code>print(Dobj)</code> output of __str__ changed to plain citation string, instead of pid.</li>
+<li>References to server calls moved to <code>const.py</code>.</li>
+<li>Rename file dtype_dict.py to dtype.py for better readability.</li>
+<li>add simple unit test and implement initial assertions for the cpb module.</li>
+</ul>
+</li>
+<li>
+<h4 id="access-to-data">Access to data</h4>
+<ul>
+<li><code>.data</code> [property] will always return all columns.</li>
+<li><code>.get(columns=None)</code> [method] returns all data by default. Provides the possibility to extract specific columns 
+   from the data set. Expected is a list of column names, which then returns only the selected columns. Non valid 
+   entries are removed from the list (if only non valid entries are provided, an empty list by default returns all 
+   columns). Please be aware, that <code>.get()</code> will ALWAYS return ALL columns if executed on the Carbon Portal server. 
+   Valid entries can be obtained with <code>.colNames</code> or `.variables['name'].</li>
+<li><code>.getColumns(columns=None)</code>, this is exactly the same as .get(columns='None'). We keep this function for
+   compatibility to previous versions.</li>
+</ul>
+</li>
+<li>
+<h4 id="other-changes">Other changes</h4>
+<ul>
+<li>add <code>icon</code> argument to <code>station.getIdList()</code> function.</li>
+<li>regenerate STILT module's static <code>stations.json</code>.</li>
+<li>resolve deprecation warnings from <code>numpy</code> calls.</li>
+<li>implement <code>stiltstation.find()</code> by <code>project</code>.</li>
+<li>add <code>outfmt='avail'</code> argument to <code>stiltstation.find()</code> function to generate an availability table for 
+   <code>STILT stations</code>.</li>
+<li>fix <code>stiltstation.find(outfmt='list')</code>.</li>
+<li>fix <code>print(stiltobj)</code> by removing country information. Country information can still be retrieved using the
+   <code>.info</code> attribute of the <code>StilStation</code> object. </li>
+</ul>
+</li>
+</ul>
 <h2 id="0114">0.1.14</h2>
 <ul>
 <li>update <code>get_ts()</code> to case-insensitive and include <code>co2.bio.gee</code> and <code>co2.bio.resp</code> in the 
   <code>co2</code> results</li>
-<li>correctly redirect nominatim requests when icos nominatim is unable to reverse geocode. </li>
+<li>correctly redirect nominatim requests when icos nominatim is unable to reverse geocode.</li>
 </ul>
 <h2 id="0113">0.1.13</h2>
 <ul>

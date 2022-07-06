@@ -55,6 +55,8 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#dobjcitation">Dobj.citation</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dobjget_citationformat">Dobj.get_citation(format)</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#dobjlicence">Dobj.licence</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#dobjcolnames">Dobj.colNames</a>
@@ -67,7 +69,9 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#dobjdata">Dobj.data</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjget">Dobj.get()</a>
+    <li class="toctree-l3"><a class="reference internal" href="#dobjgetvariables">Dobj.get(variables)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dobjgetcolumnsvariables">Dobj.getColumns(variables)</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#dobjvalid">Dobj.valid</a>
     </li>
@@ -336,10 +340,18 @@ myDobj.dobj = "j7-Lxlln8_ysi4DEV8qine_v"
 <hr>
 
 <h3 id="dobjcitation"><strong>Dobj.citation</strong></h3>
-<p>Citation string</p>
+<p>Citation string, a simple plain text citation string.</p>
 <ul>
 <li>Return STR</li>
 </ul>
+<h3 id="dobjget_citationformat"><strong>Dobj.get_citation(format)</strong></h3>
+<p>Returns the citation string in different formats. By default a plain formatted string is returned, the same as with with the property <code>Dobj.citation</code>. Possible formats are:</p>
+<ul>
+<li><strong>plain</strong> : (default) a simple string</li>
+<li><strong>bibtex</strong> : <a href="https://en.wikipedia.org/wiki/BibTeX">wikipedia</a></li>
+<li><strong>ris</strong> : <a href="https://en.wikipedia.org/wiki/RIS_(file_format)">wikipedia</a></li>
+</ul>
+<p>Example: Dobj.get_citation('ris')</p>
 <h3 id="dobjlicence"><strong>Dobj.licence</strong></h3>
 <p>Licence associated with the dataset.</p>
 <ul>
@@ -349,13 +361,13 @@ myDobj.dobj = "j7-Lxlln8_ysi4DEV8qine_v"
 <p>Available column names. This information is part of the Dobj.info, which holds all the 
 available metadata.</p>
 <ul>
-<li>Return pandas.core.series.Series</li>
+<li>Return <strong>list</strong></li>
 </ul>
 <h3 id="dobjdatetimeconvert-true"><strong>Dobj.dateTimeConvert = True</strong></h3>
 <p>Set or retrieve. Default <strong>True</strong>. The binary data representation provides a UTC Timestamp as 
-Unixtimestamp. By default, this is converted to a DateTimeObject
+Unixtimestamp with start point of 1970-01-01 00:00:00. By default, this is converted to a DateTimeObject
 (<strong>pandas._libs.tslibs.timestamps.Timestamp</strong>). If you prefer to have the raw Unixtimestamp 
-(<strong>numpy.float64</strong>), set Dobj.dateTimeConvert = False prior to issue the .get() command.</p>
+(<strong>numpy.float64</strong>), set Dobj.dateTimeConvert = False prior to load the data with <strong>.get()</strong> or <strong>.data</strong> or <strong>.getColumns()</strong>.</p>
 <ul>
 <li>Return BOOL</li>
 </ul>
@@ -369,15 +381,29 @@ property is set to <strong>True</strong></p>
 <li>Return STR</li>
 </ul>
 <h3 id="dobjdata"><strong>Dobj.data</strong></h3>
-<p>Retrieve the actual data for the PID, the same as <code>.get()</code>.</p>
+<p>Retrieve the actual data for the PID, the same as <code>.get()</code> by defaulting to all available columns.</p>
 <ul>
 <li>Return Pandas DataFrame</li>
 </ul>
-<h3 id="dobjget"><strong>Dobj.get()</strong></h3>
-<p>Retrieve the actual data for the PID. The same as <code>.data</code></p>
+<h3 id="dobjgetvariables"><strong>Dobj.get(variables)</strong></h3>
+<p>Retrieve the actual data for the PID. The same as <code>.data</code>. By default all columns all returned, but you have the option to retrieve only selected columns (or variables). You can see valid entries with .variables['names']. If columns are not provided, ALL columns will be returned, which is the same as .data OR .get(). Only valid unique entries will be returned. If none of the values are valid, default (all) will be set.</p>
 <ul>
-<li>Return Pandas DataFrame</li>
+<li>
+<p>Parameter variables: LIST[STR]</p>
+</li>
+<li>
+<p>Return Pandas DataFrame</p>
+</li>
 </ul>
+<p>Examples:</p>
+<ul>
+<li>do = Dobj('https://meta.icos-cp.eu/objects/9GVNGXhqvmn7UUsxSWp-zLyR')</li>
+<li>data = do.get(['timestamp','ch4'])</li>
+<li>data = do.get()</li>
+<li>data = do.data</li>
+</ul>
+<h3 id="dobjgetcolumnsvariables"><strong>Dobj.getColumns(variables)</strong></h3>
+<p>This is exactly the same as .get(). See details above.</p>
 <h3 id="dobjvalid"><strong>Dobj.valid</strong></h3>
 <p>True if PID is set and found at the ICOS Carbon Portal</p>
 <ul>
@@ -555,12 +581,13 @@ instantiate  a station. Hence, it is easy to adjust and filter these records and
 <ul>
 <li>Return Pandas DataFrame  </li>
 </ul>
-<pre><code>station.getIdList(project='ALL', outfmt='map')
+<pre><code>station.getIdList(project='ALL', outfmt='map', icon=None)
 </code></pre>
-<p>If the optional argument <code>outfmt='map'</code> is given, a folium map is created with all the queried 
+<p>If the optional argument <code>outfmt='map'</code> is provided, a folium map is created with all the queried 
 stations provided by the <code>project</code> argument. Stations without a fixed location (like 
 measurements collected from instrumented Ships of Opportunity) will not be included in the map. 
-Each marker in the map represents a station and contains station related information.</p>
+Each marker in the map represents a station and contains station related information. A user can
+further customize the style of the map by providing the <code>icon</code> argument <code>[None, 'flag', 'path/to/image.png']</code>.</p>
 <ul>
 <li>Return Folium Map</li>
 </ul>
@@ -886,19 +913,20 @@ Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
 <p>columns : STR, optional</p>
 <ul>
 <li>Valid entries are <code>"default", "co2", "co", "rn", "wind", "latlon", "all"</code><pre><code>default:
-    isodate,co2.stilt,co2.fuel,co2.bio, co2.background
+    isodate, co2.stilt, co2.bio, co2.fuel, co2.cement, co2.background
 
 co2
-    isodate,co2.stilt,co2.fuel,co2.bio,co2.fuel.coal,
-    co2.fuel.oil,co2.fuel.gas,co2.fuel.bio,co2.energy
-    co2.transport, co2.industry,co2.others, co2.cement,
-    co2.background
+    isodate, co2.stilt, co2.bio, co2.fuel, co2.cement,
+    co2.bio.gee, co2.bio.resp, co2.fuel.coal, co2.fuel.oil, co2.fuel.gas,
+    co2.fuel.bio, co2.fuel.waste, co2.energy, co2.transport, co2.industry,
+    co2.residential, co2.other_categories, co2.background
 
 co
-    isodate, co.stilt,co.fuel,co.bio,co.fuel.coal
-    co.fuel.oil, co.fuel.gas,co.fuel.bio,co.energy
-    co.transport,co.industry, co.others, co.cement,
-    co.background
+    isodate, co.stilt, co.fuel, co.cement, 
+    co.fuel.coal, co.fuel.oil, co.fuel.gas, 
+    co.fuel.bio, co.fuel.waste, co.energy
+    co.transport, co.industry, co.residential, 
+    co.other_categories, co.background
 
 rn
     isodate, rn, rn.era, rn.noah
@@ -910,14 +938,21 @@ latlon
     isodate, latstart, lonstart
 
 all
-    isodate,co2.stilt,co2.fuel,co2.bio,co2.fuel.coal,
-    co2.fuel.oil,co2.fuel.gas,co2.fuel.bio,co2.energy,
-    co2.transport, co2.industry,co2.others, co2.cement,
-    co2.background, co.stilt,co.fuel,co.bio,co.fuel.coal,
-    co.fuel.oil,co.fuel.gas,co.fuel.bio,co.energy,
-    co.transport,co.industry,co.others, co.cement,
-    co.background,rn, rn.era,rn.noah,wind.dir,
-    wind.u,wind.v,latstart,lonstart
+    isodate, co2.stilt, co2.bio, co2.fuel, co2.cement, 
+    co2.bio.gee, co2.bio.resp, 
+    co2.fuel.coal, co2.fuel.oil, co2.fuel.gas, 
+    co2.fuel.bio, co2.fuel.waste, 
+    co2.energy, co2.transport, co2.industry,
+    co2.residential, co2.other_categories,
+    co2.background,
+    co.stilt, co.fuel, co.cement,
+    co.fuel.coal, co.fuel.oil, co.fuel.gas,
+    co.fuel.bio, co.fuel.waste, 
+    co.energy, co.transport, co.industry,
+    co.residential, co.other_categories,
+    co.background,
+    rn, rn.era, rn.noah, wind.dir,
+    wind.u, wind.v, latstart, lonstart
 </code></pre>
 </li>
 </ul>
