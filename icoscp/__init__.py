@@ -19,5 +19,5 @@ __version__     = "0.1.15"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "stable"
-__date__        = "2022-06-28"
+__date__        = "2022-07-06"
 

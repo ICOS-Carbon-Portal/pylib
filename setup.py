@@ -12,8 +12,8 @@ setuptools.setup(
     name='icoscp',
     version='0.1.15',
 	license='GPLv3+',
-    author="Claudio D'Onofrio, Zois Zogopoulos, ICOS Carbon Portal",
-    author_email='claudio.donofrio@nateko.lu.se, zois.zogopoulos@nateko.lu.se, info@icos-cp.eu',
+    author="Claudio D'Onofrio, Zois Zogopoulos, Anders Dahlner, ICOS Carbon Portal",
+    author_email='claudio.donofrio@nateko.lu.se, zois.zogopoulos@nateko.lu.se, anders.dahlner@nateko.lu.se, info@icos-cp.eu',
     packages=setuptools.find_packages(),
     include_package_data=True,
     data_files=[('icoscp/.', ['icoscp/countries.json'])],
@@ -29,7 +29,7 @@ setuptools.setup(
     install_requires=['pandas','requests','tqdm', 'folium'],
     classifiers=[
         'Programming Language :: Python :: 3',
-		'Development Status :: 4 - Beta', 
+		'Development Status :: 4 - Beta',
         'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
         'Intended Audience :: Science/Research',
 		'Intended Audience :: Developers',
@@ -41,7 +41,7 @@ setuptools.setup(
         'Topic :: Scientific/Engineering :: Information Analysis',
         'Topic :: Scientific/Engineering :: GIS',
 		'Topic :: Scientific/Engineering :: Visualization',
-        'Topic :: Utilities',        
+        'Topic :: Utilities',
     ],
 )
 
