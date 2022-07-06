@@ -1,41 +1,50 @@
 # Changelog
  
 ## 0.1.15
-### cpb module
-- Dobj change to read metadata from http request. Instead of using sparql queries, a http request is used to load the same meta data as available from the website.
-- Add new script to extract metadata from server `metadata.py`.
-- Add new property `.meta` returns a dictionary based on the meta data available from the landing page of a data object containing a very rich set of information. An example: 
-	[https://meta.icos-cp.eu/objects/M8STRfcQfU4Yj7Uy0snHvlve/meta.json](https://meta.icos-cp.eu/objects/M8STRfcQfU4Yj7Uy0snHvlve/meta.json)
-- Add new property: `.previous` Return the pid/url of the previous version of this file if available.
-- Add new property: `.next` -> Return the pid/url of the next version of this file if available.
-- Add new property: `.variables` Return a PandasDataFrame with metadata for all variables ['name', 'unit', 'type', 'format'].
-- Add new property: `.alt` Returns altitude of station, the same as `.elevation`.
-- Remove properties: `._info1`, `._info2`, `._info3` from Dobj.
-- Change `.info` (consisted of info 1,2,3,) and return `.meta` instead.
-- Change `.station`: Returns a dictionary with a subset of .meta describing the station.
-- Change of `.colNames`: returns now a list of strings with all variable names instead of a pandas core series.
-- License is extracted dynamically from the metadata per object.
-- Add new method `get_citation(format='plain')`. Returns the citation by default as plain string, the same as .citation (property) which internally calls this method.
-  Argument options are 'bibtex', 'ris', 'plain') -> `.citation('bibtex'|'ris'|'plain')`.
-- `print(Dobj)` output of \_\_str\_\_ changed to plain citation string, instead of pid.
-- References to server calls moved to `const.py`.
-- Rename file dtype_dict.py to dtype.py for better readability.
-- add simple unit test and implement initial assertions for the cpb module.
-
-### Access to data
-- `.data` [property] will always return all columns.
-- `.get(columns=None)` [method] returns all data by default. Provides the possibility to extract specific columns from the data set. Expected is a list of column names, which then returns only the selected columns. Non valid entries are removed from the list (if only non valid entries are provided, an empty list by default returns all columns). Please be aware, that `.get()` will ALWAYS return ALL columns if executed on the Carbon Portal server. Valid entries can be obtained with `.colNames` or `.variables['name']
-- `.getColumns(columns=None)`, this is exactly the same as .get(columns='None'). We keep this function for compatibility to previous versions.
-
-### Other changes
-- add `icon` argument to `station.getIdList()` function.
-- regenerate STILT module's static `stations.json`.
-- resolve deprecation warnings from `numpy` calls.
-- implement `stiltstation.find()` by `project`.
-- add `outfmt='avail'` argument to `stiltstation.find()` function to generate an availability table for `STILT stations`.
-- fix `stiltstation.find(outfmt='list')`.
-- fix `print(stiltobj)` by removing country information. Country information can still be retrieved using the `.info`
- attribute of the `StilStation` object. 
+ - #### cpb module
+     - Dobj change to read metadata from http request. Instead of using sparql queries, a http request is used to load 
+       the same meta data as available from the website.
+     - Add new script to extract metadata from server `metadata.py`.
+     - Add new property `.meta` returns a dictionary based on the meta data available from the landing page of a data 
+       object containing a very rich set of information. An example: 
+       [https://meta.icos-cp.eu/objects/M8STRfcQfU4Yj7Uy0snHvlve/meta.json](
+       https://meta.icos-cp.eu/objects/M8STRfcQfU4Yj7Uy0snHvlve/meta.json)
+     - Add new property: `.previous` Return the pid/url of the previous version of this file if available.
+     - Add new property: `.next` -> Return the pid/url of the next version of this file if available.
+     - Add new property: `.variables` Return a PandasDataFrame with metadata for all variables 
+       ['name', 'unit', 'type', 'format'].
+     - Add new property: `.alt` Returns altitude of station, the same as `.elevation`.
+     - Remove properties: `._info1`, `._info2`, `._info3` from Dobj.
+     - Change `.info` (consisted of info 1,2,3,) and return `.meta` instead.
+     - Change `.station`: Returns a dictionary with a subset of .meta describing the station.
+     - Change of `.colNames`: returns now a list of strings with all variable names instead of a pandas core series.
+     - License is extracted dynamically from the metadata per object.
+     - Add new method `get_citation(format='plain')`. Returns the citation by default as plain string, the same as 
+       .citation (property) which internally calls this method. Argument options are ('bibtex', 'ris', 'plain') -> 
+       `.citation('bibtex'|'ris'|'plain')`.
+     - `print(Dobj)` output of \_\_str\_\_ changed to plain citation string, instead of pid.
+     - References to server calls moved to `const.py`.
+     - Rename file dtype_dict.py to dtype.py for better readability.
+     - add simple unit test and implement initial assertions for the cpb module.
+ - #### Access to data
+     - `.data` [property] will always return all columns.
+     - `.get(columns=None)` [method] returns all data by default. Provides the possibility to extract specific columns 
+       from the data set. Expected is a list of column names, which then returns only the selected columns. Non valid 
+       entries are removed from the list (if only non valid entries are provided, an empty list by default returns all 
+       columns). Please be aware, that `.get()` will ALWAYS return ALL columns if executed on the Carbon Portal server. 
+       Valid entries can be obtained with `.colNames` or `.variables['name'].
+     - `.getColumns(columns=None)`, this is exactly the same as .get(columns='None'). We keep this function for
+       compatibility to previous versions.
+ - #### Other changes
+     - add `icon` argument to `station.getIdList()` function.
+     - regenerate STILT module's static `stations.json`.
+     - resolve deprecation warnings from `numpy` calls.
+     - implement `stiltstation.find()` by `project`.
+     - add `outfmt='avail'` argument to `stiltstation.find()` function to generate an availability table for 
+       `STILT stations`.
+     - fix `stiltstation.find(outfmt='list')`.
+     - fix `print(stiltobj)` by removing country information. Country information can still be retrieved using the
+       `.info` attribute of the `StilStation` object. 
 
 ## 0.1.14
 - update `get_ts()` to case-insensitive and include `co2.bio.gee` and `co2.bio.resp` in the 
