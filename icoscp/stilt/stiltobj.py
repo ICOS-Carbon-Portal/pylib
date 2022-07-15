@@ -357,6 +357,7 @@ class StiltStation():
         columns = str(columns)
         columns = columns.replace("'", '"')
         
+        print(type(columns), columns)
         # Check input parameters:
         if e_date < s_date:
             return False
