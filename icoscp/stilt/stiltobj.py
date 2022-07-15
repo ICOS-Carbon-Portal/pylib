@@ -186,7 +186,10 @@ class StiltStation():
             toDate = date_range[-1].strftime('%Y-%m-%d')
 
             #Store the STILT result column names to a variable:
+            # We need a continous string with double quotes
             columns  = self.__columns(columns)
+            columns = str(columns)
+            columns = columns.replace("'", '"')
 
             #Store the STILT result data column names to a variable:
             data = '{"columns": '+columns+', "fromDate": "'+fromDate+'", "toDate": "'+toDate+'", "stationId": "'+self.id+'"}'
@@ -355,9 +358,8 @@ class StiltStation():
         # '["col1","col2"]'
         
         columns = str(columns)
-        columns = columns.replace("'", '"')
+        columns = columns.replace("'", '"')        
         
-        print(type(columns), columns)
         # Check input parameters:
         if e_date < s_date:
             return False
