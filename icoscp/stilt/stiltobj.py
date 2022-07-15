@@ -185,14 +185,16 @@ class StiltStation():
             #Get new ending date:
             toDate = date_range[-1].strftime('%Y-%m-%d')
 
-            #Store the STILT result column names to a variable:
-            # We need a continous string with double quotes
+            # Store the STILT result column names to a variable:
+            
             columns  = self.__columns(columns)
-            columns = str(columns)
-            columns = columns.replace("'", '"')
+            
+            # We need a continous string with double quotes for the http request
+            col = str(columns)
+            col = columns.replace("'", '"')
 
             #Store the STILT result data column names to a variable:
-            data = '{"columns": '+columns+', "fromDate": "'+fromDate+'", "toDate": "'+toDate+'", "stationId": "'+self.id+'"}'
+            data = '{"columns": '+col+', "fromDate": "'+fromDate+'", "toDate": "'+toDate+'", "stationId": "'+self.id+'"}'
 
             #Send request to get STILT results:
             response = requests.post(self._url, headers=headers, data=data)
