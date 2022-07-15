@@ -8,24 +8,29 @@
 
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.1.2"
+__version__     = "0.1.3"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu']
 __status__      = "release"
-__date__        = "2022-02-11"
+__date__        = "2022-07-15"
+
 #################################################################################
 
 #Import modules
 import os
+import json
+
 import numpy as np
 import pandas as pd
 import requests
-import json
+
 import xarray as xr
 import icoscp.const as CPC
 from icoscp.stilt import timefuncs as tf
 from icoscp import __version__ as release_version
-##############################################################################
+
+
+# pylint: disable=too-many-instance-attributes
 
 class StiltStation():
 
@@ -85,7 +90,7 @@ class StiltStation():
 
     def __str__(self):
         # by default called when a an 'object' is printed
-        
+
         out = {'id:': self.id,
                'name:': self.name,
                'lat:': self.lat,
@@ -196,7 +201,7 @@ class StiltStation():
                 output=np.asarray(response.json())
 
                 #Convert numpy array with STILT results to a pandas dataframe:
-                df = pd.DataFrame(output[:,:], columns=eval(columns))
+                df = pd.DataFrame(output[:,:], columns=columns)
 
                 #Replace 'null'-values with numpy NaN-values:
                 df = df.replace('null',np.NaN)
@@ -291,7 +296,7 @@ class StiltStation():
         #Concatenate xarrays on time axis:
         fp = xr.open_mfdataset(fp_files, concat_dim="time",
                                data_vars='minimal', coords='minimal',
-                               compat='override', parallel=True)
+                               compat='override', parallel=True, decode_cf=False)
 
         #Format time attributes:
         fp.time.attrs["standard_name"] = "time"
@@ -314,7 +319,7 @@ class StiltStation():
         """
         Please do use this function with caution. Only very expirienced user
         should load raw data.
-    
+
         Parameters
         ----------
         start_date : STR
@@ -324,7 +329,7 @@ class StiltStation():
         cols : LIST[STR]
             A list of valid column names. You can retrieve the full list
             with _raw_clumn_names.
-    
+
         Returns
         -------
         columns : Pandas DataFrame
@@ -333,9 +338,9 @@ class StiltStation():
         #Convert date-strings to date objs:
         s_date = tf.parse(start_date).strftime('%Y-%m-%d')
         e_date = tf.parse(end_date).strftime('%Y-%m-%d')
-        
+
         # validate column names:
-            
+
         # make sure isodate is in the request
         if 'isodate' not in cols:
             cols.append('isodate')
@@ -343,25 +348,25 @@ class StiltStation():
         if len(columns) <= 1:
             return False
         # provide double quotes in the list
-        columns = json.dumps(columns) 
-    
+        columns = json.dumps(columns)
+
         # Check input parameters:
         if e_date < s_date:
             return False
-            
+
         # create http header and payload:
-            
-        headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}        
+
+        headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
         data = '{"columns": '+ str(columns) + ',"fromDate": "'+s_date+'", "toDate": "'+e_date+'", "stationId": "'+self.id+'"}'
         response = requests.post(CPC.STILTRAW, headers=headers, data=data)
-        
+
         if response.status_code != 500:
 
             #Get response in json-format and read it in to a numpy array:
             output=np.asarray(response.json())
 
             #Convert numpy array with STILT results to a pandas dataframe:
-            df = pd.DataFrame(output[:,:], columns=eval(columns))
+            df = pd.DataFrame(output[:,:], columns=columns)
 
             #Replace 'null'-values with numpy NaN-values:
             df = df.replace('null',np.NaN)
@@ -375,19 +380,19 @@ class StiltStation():
             #Set 'date'-column as index:
             df.set_index(['date'],inplace=True)
 
-    
+
         # track data usage
         self.__portalUse('timeseries')
         #Return dataframe:
         return df
-    
+
     #Function that checks the selection of columns that are to be
     #returned with the STILT timeseries model output:
     def __columns(self, cols):
 
         # make parameters case insensitive
         cols = cols.lower()
-        
+
         # check for a valid entry. If not...return default
         valid = ["default", "co2", "co", "rn", "wind", "latlon", "all"]
         if cols not in valid:
@@ -395,52 +400,52 @@ class StiltStation():
 
         #Check columns-input:
         if cols=='default':
-            columns = ('["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement",'+ 
-                       '"co2.background"]')
+            columns = ["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement",
+                       "co2.background"]
 
         elif cols=='co2':
-            columns = ('["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement",'+
-                       '"co2.bio.gee","co2.bio.resp",' +
-                       '"co2.fuel.coal","co2.fuel.oil","co2.fuel.gas",'+
-                       '"co2.fuel.bio","co2.fuel.waste",'+
-                       '"co2.energy","co2.transport","co2.industry",'+
-                       '"co2.residential","co2.other_categories",'+
-                       '"co2.background"]')
+            columns = ["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement"
+                       "co2.bio.gee","co2.bio.resp",
+                       "co2.fuel.coal","co2.fuel.oil","co2.fuel.gas",
+                       "co2.fuel.bio","co2.fuel.waste",
+                       "co2.energy","co2.transport","co2.industry",
+                       "co2.residential","co2.other_categories",
+                       "co2.background"]
 
         elif cols=='co':
-            columns = ('["isodate", "co.stilt","co.fuel","co.cement",'+
-                       '"co.fuel.coal","co.fuel.oil", "co.fuel.gas",'+
-                       '"co.fuel.bio","co.fuel.waste",'+
-                       '"co.energy","co.transport","co.industry",'+
-                       '"co.residential","co.other_categories",'+
-                       '"co.background"]')
+            columns = ["isodate", "co.stilt","co.fuel","co.cement",
+                       "co.fuel.coal","co.fuel.oil", "co.fuel.gas",
+                       "co.fuel.bio","co.fuel.waste",
+                       "co.energy","co.transport","co.industry",
+                       "co.residential","co.other_categories",
+                       "co.background"]
 
         elif cols=='rn':
-            columns = ('["isodate", "rn", "rn.era", "rn.noah"]')
+            columns = ["isodate", "rn", "rn.era", "rn.noah"]
 
         elif cols=='wind':
-            columns = ('["isodate", "wind.dir", "wind.u", "wind.v"]')
+            columns = ["isodate", "wind.dir", "wind.u", "wind.v"]
 
         elif cols=='latlon':
-            columns = ('["isodate", "latstart", "lonstart"]')
+            columns = ["isodate", "latstart", "lonstart"]
 
         elif cols=='all':
-            columns = ('["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement",'+
-                       '"co2.bio.gee", "co2.bio.resp",' +
-                       '"co2.fuel.coal","co2.fuel.oil","co2.fuel.gas",'+
-                       '"co2.fuel.bio","co2.fuel.waste",'+
-                       '"co2.energy","co2.transport", "co2.industry",'+
-                       '"co2.residential","co2.other_categories",'+
-                       '"co2.background",'+
-                       '"co.stilt","co.fuel","co.cement",'+
-                       '"co.fuel.coal","co.fuel.oil","co.fuel.gas",'+
-                       '"co.fuel.bio","co.fuel.waste",'+
-                       '"co.energy","co.transport","co.industry",'+
-                       '"co.residential","co.other_categories",'+
-                       '"co.background",'+
-                       '"rn", "rn.era","rn.noah",'+
-                       '"wind.dir","wind.u","wind.v",'+
-                       '"latstart","lonstart"]')
+            columns = ["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement",
+                       "co2.bio.gee", "co2.bio.resp",
+                       "co2.fuel.coal","co2.fuel.oil","co2.fuel.gas",
+                       "co2.fuel.bio","co2.fuel.waste",
+                       "co2.energy","co2.transport", "co2.industry",
+                       "co2.residential","co2.other_categories",
+                       "co2.background",
+                       "co.stilt","co.fuel","co.cement",
+                       "co.fuel.coal","co.fuel.oil","co.fuel.gas",
+                       "co.fuel.bio","co.fuel.waste",
+                       "co.energy","co.transport","co.industry",
+                       "co.residential","co.other_categories",
+                       "co.background",
+                       "rn", "rn.era","rn.noah",
+                       "wind.dir","wind.u","wind.v",
+                       "latstart","lonstart"]
 
         #Return variable:
         return columns
@@ -466,14 +471,14 @@ class StiltStation():
                 'internal': True}}}
         server = 'https://cpauth.icos-cp.eu/logs/portaluse'
         requests.post(server, json=counter)
-        
+
     def _raw_column_names(self):
         '''
         The STILT model calculates many different variables. We provide
         sensible groups for users, see the documentationfor .get_ts()
         This function returns an exhaustive list for all columns, approximately
         600, which can be used in conjunction get_raw()
-        
+
 
         Returns
         -------

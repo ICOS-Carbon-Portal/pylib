@@ -1,5 +1,11 @@
 # Changelog
- 
+
+## 0.1.16
+ - #### stiltobj
+     - Increase perfomance to load footprint data faster by 25%
+       Xarray has default value of decode_cf=True, changed to False
+       
+
 ## 0.1.15
  - #### cpb module
      - Dobj change to read metadata from http request. Instead of using sparql queries, a http request is used to load 
