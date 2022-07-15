@@ -347,9 +347,16 @@ class StiltStation():
         columns = list(set(cols).intersection(self._raw_column_names()))
         if len(columns) <= 1:
             return False
+        
         # provide double quotes in the list
-        columns = json.dumps(columns)
+        #columns = json.dumps(columns)
 
+        # columns need to be a string with double quotes, like
+        # '["col1","col2"]'
+        
+        columns = str(columns)
+        columns = columns.replace("'", '"')
+        
         # Check input parameters:
         if e_date < s_date:
             return False
