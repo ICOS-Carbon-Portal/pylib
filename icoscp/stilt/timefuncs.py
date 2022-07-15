@@ -59,6 +59,10 @@ def get_hours(hours):
     
     
     valid = [0,3,6,9,12,15,18,21,24]
+    if not hours:
+        # hours = None, return ALL
+        return valid[0:8]
+    
     valid_hours = []
     for h in hours:
         # for back compatibility, we need to check input for str format
