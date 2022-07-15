@@ -191,7 +191,7 @@ class StiltStation():
             
             # We need a continous string with double quotes for the http request
             col = str(columns)
-            col = columns.replace("'", '"')
+            col = col.replace("'", '"')
 
             #Store the STILT result data column names to a variable:
             data = '{"columns": '+col+', "fromDate": "'+fromDate+'", "toDate": "'+toDate+'", "stationId": "'+self.id+'"}'
