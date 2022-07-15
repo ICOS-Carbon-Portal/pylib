@@ -416,7 +416,7 @@ class StiltStation():
                        "co2.background"]
 
         elif cols=='co2':
-            columns = ["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement"
+            columns = ["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement",
                        "co2.bio.gee","co2.bio.resp",
                        "co2.fuel.coal","co2.fuel.oil","co2.fuel.gas",
                        "co2.fuel.bio","co2.fuel.waste",
