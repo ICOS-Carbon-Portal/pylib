@@ -298,7 +298,8 @@ class StiltStation():
         #Concatenate xarrays on time axis:
         fp = xr.open_mfdataset(fp_files, concat_dim="time",
                                data_vars='minimal', coords='minimal',
-                               compat='override', parallel=True, decode_cf=False)
+                               compat='override', parallel=True,
+                               decode_cf=False, decode_times=True)
 
         #Format time attributes:
         fp.time.attrs["standard_name"] = "time"
