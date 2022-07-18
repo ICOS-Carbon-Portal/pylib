@@ -48,8 +48,6 @@ class StiltStation():
 
     """
 
-    #Import modules:
-
     #Function that initializes the attributes of an object:
     def __init__(self, st_dict):
 
@@ -135,7 +133,6 @@ class StiltStation():
         Pandas Dataframe
         """
 
-
         #Convert date-strings to date objs:
         s_date = tf.parse(start_date)
         e_date = tf.parse(end_date)
@@ -189,7 +186,7 @@ class StiltStation():
             
             columns  = self.__columns(columns)
             
-            # We need a continous string with double quotes for the http request
+            # We need a continuous string with double quotes for the http request
             col = str(columns)
             col = col.replace("'", '"')
 
@@ -322,7 +319,7 @@ class StiltStation():
 
     def get_raw(self, start_date, end_date, cols):
         """
-        Please do use this function with caution. Only very expirienced user
+        Please do use this function with caution. Only very experienced user
         should load raw data.
 
         Parameters
