@@ -14,7 +14,7 @@ For the example below, we assume that you know how to get hold of the PID/URI us
 
 [https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc](https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc)
 
-ICOS Atmosphere Level 2 data, Norunda, release 2019-1. Go to the landing page to find more information about this data set.
+which is an ICOS Atmosphere Level 2 data set from Norunda, release 2019-1. Go to the landing page to find more information about this data set.
 
 <hr>
 
@@ -23,7 +23,7 @@ ICOS Atmosphere Level 2 data, Norunda, release 2019-1. Go to the landing page to
 	from icoscp.cpb.dobj import Dobj
 	dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
 	
-Information (meta data) is automatically stored in the data frames with the object, accessible with `Dobj.info` command. More about the content of info and other attributes are in the [modules section](modules.md#dobjinfo). For example to list all the columns available in the data set:
+Information (meta data) is automatically stored in the data frames with the object, accessible with `Dobj.meta`. More about the content of meta and other attributes are in the [modules section](modules.md#dobjinfo). Common used properties are as well available directly. Following are a few examples:
 	
 	dobj.colNames
 
@@ -50,7 +50,7 @@ Extracting the data as pandas data frame:
 	uri = 'https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc'
 	do = Dobj(uri)
 	if do.valid:
-		display(do.data.head())
+		display(do.data.head(10))
 	else:
 		print('no preview data available')
 	
@@ -69,13 +69,6 @@ id |  Flag |  NbPoints | Stdev  |           TIMESTAMP |          ch4
 8  |     O |        16 |  0.429 | 2017-04-01 08:00:00 |  1962.540039
 9  |     O |        17 |  0.861 | 2017-04-01 09:00:00 |  1965.349976
 
-<br>Since version `0.1.3` a simplified access to the data is possible with:
-
-	do.data
-
-So instead of data = do.get() to 'extract' the pandas data frame you can directly use the data frame to print the first 10 rows, which will give you the same result as above:
-
-	do.data.head(10)
 
 <hr>
 
@@ -84,33 +77,31 @@ So instead of data = do.get() to 'extract' the pandas data frame you can directl
 This first example shows how to extract a data file and create a plot. It is the easiest way to load the data into a Pandas DataFrame in your Python environment. The DataFrame contains the following columNames:
 Flag, NbPoints, Stdev, TIMESTAMP, ch4. Let's load the data and create a plot for measured methane concentrations over time.
 
-	import matplotlib.pyplot as plt
 	from icoscp.cpb.dobj import Dobj
-
-	dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
+	pid = 'https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc'
+	dobj = Dobj(pid)
 	dobj.data.plot(x='TIMESTAMP', y='ch4', grid=True)
-
-	plt.show()
 
 ![Result](img/dobj_minimal.png)
 
 <hr>
 
 ### Plot with Title and Units
-To get a useful plot, at least we should have a title and the unit of measurement is absolutely paramount:
+To get a useful plot, at the very least we should have a title and the unit of measurement:
 
 	import matplotlib.pyplot as plt
 	from icoscp.cpb.dobj import Dobj
-
-	dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
-	dobj.get()
+	
+	pid = 'https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc'
+	dobj = Dobj(pid)
+	
 
 	# extract information from the dobj meta data
-	# look at dobj.info() for a full list 
-	unit = dobj.info[1].unit[dobj.info[1]['colName'] =='ch4'].values[0]
-	title = dobj.info[0].specLabel[0]
-	title = dobj.info[2].stationName[0] + ' (' + dobj.info[2].stationId[0] + ')'
-	title = title + '\n'  + dobj.info[0].specLabel[0]
+	# look at dobj.meta for a full list of metadata
+	unit = dobj.variables[dobj.variables.name == 'ch4'].unit.values[0]
+	name = dobj.station['org']['name']
+	uri = dobj.station['org']['self']['uri']
+	title = f"{name} \n {uri}"
 
 	plot = dobj.data.plot(x='TIMESTAMP', y='ch4', grid=True, title=title)
 	plot.set(ylabel=unit)
