@@ -109,13 +109,13 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li><li>Examples</li>
+    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+      <li>Examples</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
   <hr/>
 </div>
-
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
@@ -127,14 +127,14 @@ password: get in touch to get the password</p>
 <h2 id="digital-object">Digital Object</h2>
 <p>For the example below, we assume that you know how to get hold of the PID/URI used at the Carbon Portal. You can read more about this in the Modules section. Each object in the data portal has a unique and persistent identification in form of an URI. The following examples will use the URI </p>
 <p><a href="https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc">https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc</a></p>
-<p>ICOS Atmosphere Level 2 data, Norunda, release 2019-1. Go to the landing page to find more information about this data set.</p>
+<p>which is an ICOS Atmosphere Level 2 data set from Norunda, release 2019-1. Go to the landing page to find more information about this data set.</p>
 <hr>
 
 <h3 id="data-object">Data Object</h3>
 <pre><code>from icoscp.cpb.dobj import Dobj
 dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
 </code></pre>
-<p>Information (meta data) is automatically stored in the data frames with the object, accessible with <code>Dobj.info</code> command. More about the content of info and other attributes are in the <a href="../modules/#dobjinfo">modules section</a>. For example to list all the columns available in the data set:</p>
+<p>Information (meta data) is automatically stored in the data frames with the object, accessible with <code>Dobj.meta</code>. More about the content of meta and other attributes are in the <a href="../modules/#dobjinfo">modules section</a>. Common used properties are as well available directly. Following are a few examples:</p>
 <pre><code>dobj.colNames
 </code></pre>
 <table>
@@ -177,7 +177,7 @@ dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
 uri = 'https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc'
 do = Dobj(uri)
 if do.valid:
-    display(do.data.head())
+    display(do.data.head(10))
 else:
     print('no preview data available')
 </code></pre>
@@ -276,42 +276,34 @@ else:
 </tr>
 </tbody>
 </table>
-<p><br>Since version <code>0.1.3</code> a simplified access to the data is possible with:</p>
-<pre><code>do.data
-</code></pre>
-<p>So instead of data = do.get() to 'extract' the pandas data frame you can directly use the data frame to print the first 10 rows, which will give you the same result as above:</p>
-<pre><code>do.data.head(10)
-</code></pre>
 <hr>
 
 <h3 id="minimalistic-plot">Minimalistic Plot</h3>
 <p>This first example shows how to extract a data file and create a plot. It is the easiest way to load the data into a Pandas DataFrame in your Python environment. The DataFrame contains the following columNames:
 Flag, NbPoints, Stdev, TIMESTAMP, ch4. Let's load the data and create a plot for measured methane concentrations over time.</p>
-<pre><code>import matplotlib.pyplot as plt
-from icoscp.cpb.dobj import Dobj
-
-dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
+<pre><code>from icoscp.cpb.dobj import Dobj
+pid = 'https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc'
+dobj = Dobj(pid)
 dobj.data.plot(x='TIMESTAMP', y='ch4', grid=True)
-
-plt.show()
 </code></pre>
 <p><img alt="Result" src="../img/dobj_minimal.png" /></p>
 <hr>
 
 <h3 id="plot-with-title-and-units">Plot with Title and Units</h3>
-<p>To get a useful plot, at least we should have a title and the unit of measurement is absolutely paramount:</p>
+<p>To get a useful plot, at the very least we should have a title and the unit of measurement:</p>
 <pre><code>import matplotlib.pyplot as plt
 from icoscp.cpb.dobj import Dobj
 
-dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
-dobj.get()
+pid = 'https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc'
+dobj = Dobj(pid)
+
 
 # extract information from the dobj meta data
-# look at dobj.info() for a full list 
-unit = dobj.info[1].unit[dobj.info[1]['colName'] =='ch4'].values[0]
-title = dobj.info[0].specLabel[0]
-title = dobj.info[2].stationName[0] + ' (' + dobj.info[2].stationId[0] + ')'
-title = title + '\n'  + dobj.info[0].specLabel[0]
+# look at dobj.meta for a full list of metadata
+unit = dobj.variables[dobj.variables.name == 'ch4'].unit.values[0]
+name = dobj.station['org']['name']
+uri = dobj.station['org']['self']['uri']
+title = f"{name} \n {uri}"
 
 plot = dobj.data.plot(x='TIMESTAMP', y='ch4', grid=True, title=title)
 plot.set(ylabel=unit)

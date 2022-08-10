@@ -49,7 +49,11 @@
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#pip-official-release">Pip official release</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#manaual-installation">Manaual installation</a>
+    <li class="toctree-l2"><a class="reference internal" href="#manual-installation">Manual installation</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#cutting-edge">Cutting Edge</a>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a>
     </li>
@@ -85,45 +89,46 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li><li>Installation</li>
+    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+      <li>Installation</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
   <hr/>
 </div>
-
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
                 <h1 id="installation">Installation</h1>
 <p>This library is in active development and may change at any time. We do our best to keep the function calls and parameters consistent, but without a guarantee. You can follow the development on <a href="https://github.com/ICOS-Carbon-Portal/pylib">Github</a>. Create an issue to leave comments, suggestions or if you find something not working as expected. The library has not been tested on many different operating systems and environments, hence we appreciate you telling us what is good and bad. </p>
-<p>The library is developed with  Python 3.7.x and we assume that any recent Python distribution should work. If you have any trouble running the library, we are very keen to know why. Please get in touch.</p>
+<p>The library is developed with  Python 3.x and we assume that any recent Python distribution should work. If you have any trouble running the library, we are very keen to know why. Please get in touch ( jupyter-info@icos-cp.eu )</p>
 <h2 id="pip-official-release">Pip official release</h2>
 <p>The recommended way of installation is by using pip:</p>
 <pre><code>pip install icoscp
 </code></pre>
 <p>The installation should take care of any dependencies, but to successfully access any data object from the ICOS Carbon Portal you need to have a working internet connection.</p>
-<p>We would encourage you to use a virtual environment for python to test this library.
-For example with mini-conda <a href="https://docs.conda.io/en/latest/miniconda.html">https://docs.conda.io/en/latest/miniconda.html</a> you can create a new environment with:</p>
+<p>We would encourage you to use a virtual environment for python to test this library. For example with mini-conda <a href="https://docs.conda.io/en/latest/miniconda.html">https://docs.conda.io/en/latest/miniconda.html</a> you can create a new environment with:</p>
 <ul>
 <li><code>conda create -n icos python</code></li>
 <li><code>activate icos</code></li>
 <li><code>pip install icoscp</code></li>
 </ul>
-<h2 id="manaual-installation">Manaual installation</h2>
-<p>If you would like to install the latest version (branch from Github), you can download / fork the repo navigate (change directory) to the library folder and start the installation with:</p>
+<h2 id="manual-installation">Manual installation</h2>
+<p>If you would like to install the latest version (branch from Github), you can download / fork the repo navigate to the library folder and start the installation with:</p>
 <ul>
 <li><code>pip install .</code>
 <br>or<br></li>
 <li><code>python setup.py install</code></li>
 </ul>
-<p><br>or without downloading directly from our github master branch<br>
-- <code>pip install git+https://github.com/ICOS-Carbon-Portal/pylib.git</code></p>
+<h3 id="cutting-edge">Cutting Edge</h3>
+<p>Install directly from our github master branch. Please be aware that this is not reflecting the official release of the library, but includes the latest development. Hence you should think of this as an alpha or beta version of the new release:<br>
+<code>pip install git+https://github.com/ICOS-Carbon-Portal/pylib.git</code></p>
 <h2 id="dependencies">Dependencies</h2>
 <p>The following modules are required by the library:</p>
-<pre><code>requests
-pandas
-tqdm
+<pre><code>- requests
+- pandas
+- tqdm
+- folium
 </code></pre>
               
             </div>
