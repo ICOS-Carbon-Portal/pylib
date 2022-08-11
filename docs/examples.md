@@ -1,6 +1,6 @@
 # Examples
 
-The following paragraphs explain how to use the library in worked examples. If you would like to run the library live and play around with data sets without installation: We have a public Jupyter Hub running Python3 notebooks, where the library is preinstalled. The examples from this page are available in the folder `pylib_examples`
+The following paragraphs explain how to use the library in worked examples. If you would like to run the library live and play around with data sets without installation: We have a public Jupyter Hub running Python3 notebooks, where the library is preinstalled. There you will find several examples in the folder `pylib_examples`
 
 [https://exploredata.icos-cp.eu/](https://exploredata.icos-cp.eu/)
 
@@ -23,24 +23,18 @@ which is an ICOS Atmosphere Level 2 data set from Norunda, release 2019-1. Go to
 	from icoscp.cpb.dobj import Dobj
 	dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
 	
-Information (meta data) is automatically stored in the data frames with the object, accessible with `Dobj.meta`. More about the content of meta and other attributes are in the [modules section](modules.md#dobjinfo). Common used properties are as well available directly. Following are a few examples:
+Information (meta data) is automatically stored in a dictionary (the `json`-file from the landing page) with the object, accessible with `Dobj.meta`. More about the content of meta and other attributes are in the [modules section](modules.md#dobjinfo). Common used properties are as well available directly. Following are a few examples:
 	
 	dobj.colNames
-
-|   | Column Name|
-|---|-----------:|
-| 0 |  Flag      |
-| 1 |    NbPoints|
-| 2 |       Stdev|
-| 3 |   TIMESTAMP|
-| 4 |         ch4|
+	
+['TIMESTAMP', 'Flag', 'NbPoints', 'ch4', 'Stdev']
 
 
 or get the citation string for this object:
 	
 	dobj.citation
 	
-"ICOS RI, 2019. ICOS ATC CH4 Release, Norunda (59.0 m), 2017-04-01–2019-04-30, https://hdl.handle.net/11676/lNJPHqvsMuTAh-3DOvJejgYc"
+"Lehner, I., Mölder, M., ICOS RI, 2019. ICOS ATC CH4 Release, Norunda (59.0 m), 2017-04-01–2019-04-30, https://hdl.handle.net/11676/lNJPHqvsMuTAh-3DOvJejgYc"
 
 ### DataFrame
 
@@ -54,7 +48,7 @@ Extracting the data as pandas data frame:
 	else:
 		print('no preview data available')
 	
-Printing the first 10 rows of the data (data.head(10)) should yield the following table:
+Printing the first 10 rows of the data (`data.head(10)`) should yield the following table:
 
 id |  Flag |  NbPoints | Stdev  |           TIMESTAMP |          ch4
 -- | ----- | --------- | ------ |---------------------| ------------
@@ -117,10 +111,12 @@ To get a useful plot, at the very least we should have a title and the unit of m
 The function to get the station id's might be something you will use a lot. Based on a station id you can get all the dobj id's (PID/URI) and hence access to the data. So if you have no idea whatsoever what stations are available, you came to the right place:
 
 	from icoscp.station import station
-	stationList = station.getIdlist()  # returns a Pandas DataFrame
+	stationList = station.getIdList()  # returns a Pandas DataFrame
 	stationList.columns  # what information do we get back?	
 
-['uri', 'id', 'name', 'country', 'lat', 'lon', 'elevation', 'project','theme']
+Index(['uri', 'id', 'name', 'country', 'lat', 'lon', 'elevation', 'project',
+       'theme'],
+      dtype='object')
 	
 	stationList.head(5)
 
@@ -182,7 +178,9 @@ let see what columns are provided. The most important information will be the 'd
 	myStation = station.get('SE-Nor')
 	myStation.data().columns
 	
-['station', 'dobj', 'spec', 'timeStart', 'timeEnd', 'specLabel','samplingheight', 'datalevel', 'bytes']
+Index(['station', 'dobj', 'spec', 'timeStart', 'timeEnd', 'specLabel',
+       'samplingheight', 'datalevel', 'bytes'],
+      dtype='object')
 
 	myStation.data(level='2') # return a DataFrame with Level 2 data objects for the station
 
@@ -194,16 +192,7 @@ station               |  dobj                                                   
 ...stations/ES_SE-Nor | https://meta.icos-cp.eu/objects/mBPKiB9tIQZQGrsy8ehAinvz | .../etcArchiveProduct
 ...stations/ES_SE-Nor | https://meta.icos-cp.eu/objects/XA_Ifq7BKqS0tkQd4dGVEFnM | .../etcFluxnetProduct
 
-This is not the full output, just an excerpt..... most important is the dobj column. You can use the content of the column 'dobj' to extract data. Now we put everything together
-
-	from icoscp.cpb.dobj import Dobj
-	from icoscp.station import station
-	myStation = station.get('SE-Nor')
-	myDobj = Dobj(myStation.data().dobj[1]) # this would be the second record from above table (drought2018FluxnetProduct)
-	data = myDobj.get()
-	data.columns
-	
-['GPP_DT_VUT_REF', 'GPP_NT_VUT_REF', 'H_F_MDS', 'H_F_MDS_QC', 'LE_F_MDS','LE_F_MDS_QC', 'NEE_VUT_REF', 'NEE_VUT_REF_QC', 'RECO_DT_VUT_REF','RECO_NT_VUT_REF', 'SW_IN_F', 'SW_IN_F_QC', 'TA_F', 'TA_F_QC','TIMESTAMP', 'TIMESTAMP_END', 'VPD_F', 'VPD_F_QC']
+This is not the full output, just an excerpt.
 
 
 ### List of Stations
@@ -238,14 +227,15 @@ https://meta.icos-cp.eu/collections/WM5ShdLFqP...|10.18160/P7E9-EKEA|Ambient atm
 ### Create a collection representation
 with the information from above, you can use either the `collection` or `doi` to initialize a collection representation and print some information. Have a look at [Modules / collection](modules.md#collection) for a full list of attributes.
 
-	myCollection = collection.get('10.18160/ry7n-3r04')
+	myCollection = collection.get('10.18160/P7E9-EKEA')
 	myCollection.info()
 
-{'id': 'https://meta.icos-cp.eu/collections/n7cIMHIyqHJKBeF_3jjgptHP',
- 'doi': '10.18160/ry7n-3r04',
- 'citation': 'Ramonet, M. (2019). ICOS Atmosphere Level 2 data, Puy de Dome, release 2019-1 (1.0). ICOS ERIC- Carbon Portal. https://doi.org/10.18160/RY7N-3R04\n',
- 'title': 'ICOS Atmosphere Level 2 data, Puy de Dome, release 2019-1',
- 'description': 'ICOS Atmospheric Greenhouse Gas Mole Fractions of CO2, CH4, CO and Meteorological Observations, period 2016-08-25 to 2019-04-30, Puy de Dome, final quality controlled Level 2 data, release 2019-1'}
+{'id': 'https://meta.icos-cp.eu/collections/WM5ShdLFqPSI0coyVa57G1_Z',
+ 'doi': '10.18160/P7E9-EKEA',
+ 'citation': 'Integrated Non-CO2 Observing System (INGOS). (2018). Ambient atmospheric methane observations from the ICOS/InGOS network 2000-2015. ICOS ERIC - Carbon Portal. https://doi.org/10.18160/P7E9-EKEA\n',
+ 'title': 'Ambient atmospheric methane observations from the ICOS/InGOS network 2000-2015',
+ 'description': 'This dataset for historic ambient CH4 mole fractions is an important outcome of the FP7 InGOS project (http://www.ingos-infrastructure.eu, Grant Agreement Number 284274). Data from 17 stations have been reprocessed for the period 2000-2015; in some cases involving re-integration of chromatograms and in all cases re-calibrating the time series using updated assigned values for standard gases and target gases. All data have been brought to the same concentration scale (NOAA-2006A). Data have been flagged for identified periods with instrumental or sampling problems. Next to added estimations for measurement uncertainty based on repeatability of the working standards also error estimates are added that represent uncertainty due to lab internal scale consistency, monthly reproducibility, scale transfer and where available comparison with concurrent flask sampling.'}
+
  
 A more in depth example and how to plot data from the collection can be found on [https://exploredata.icos-cp.eu](https://exploredata.icos-cp.eu)
 
