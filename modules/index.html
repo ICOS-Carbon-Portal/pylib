@@ -335,7 +335,6 @@ myDobj = Dobj('j7-Lxlln8_ysi4DEV8qine_v')
 myDobj.dobj = "j7-Lxlln8_ysi4DEV8qine_v"
 </code></pre>
 <h2>Attributes:</h2>
-
 <h3 id="dobjinfo"><strong>Dobj.info</strong></h3>
 <p><strong> Please refer to the property <code>.meta</code></strong>. The property <code>.info</code> returns now the same as <code>.meta</code> which was introduced with version 0.1.15.</p>
 <p>For provenance reasons only the following documentation is kept, but is only valid for installations 0.1.10 to 0.1.14:</p>
@@ -387,7 +386,7 @@ Some of the important key properties, like 'previous', 'next', 'citation', etc.,
 <li>Return STR</li>
 </ul>
 <h3 id="dobjcolnames"><strong>Dobj.colNames</strong></h3>
-<p>Available column names. This information is part of the Dobj.info, which holds all the 
+<p>Available column names. This information is part of the <code>Dobj.meta</code>, which holds all the 
 available metadata.</p>
 <ul>
 <li>Return LIST</li>
@@ -442,21 +441,22 @@ available metadata.</p>
 </tr>
 </tbody>
 </table>
-<p><br>
-- Return Pandas DataFrame</p>
+<ul>
+<li>Return Pandas DataFrame</li>
+</ul>
 <h3 id="dobjdata"><strong>Dobj.data</strong></h3>
 <p>Retrieve the actual data for the PID. All available variables will be returned.</p>
 <ul>
 <li>Return Pandas DataFrame</li>
 </ul>
 <h3 id="dobjgetvariables"><strong>Dobj.get(variables)</strong></h3>
-<p>Retrieve the actual data for the PID. The same as <code>.data</code> but you have the option to retrieve only selected columns (or variables). You can see valid entries with <a href="#dobjvariables">.variables['name']</a> or <a href="#dobjcolnames">.colNames</a>. If columns are not provided, by default ALL columns will be returned, which is the same as .data OR .get(). Only valid and unique entries will be returned. If none of the values are valid by default (all) will be returned.</p>
+<p>Retrieve the actual data for the PID. The same as <code>.data</code> but you have the option to retrieve only selected columns (or variables). Only valid and unique entries will be returned. You can see valid entries with <a href="#dobjvariables">.variables['name']</a> or <a href="#dobjcolnames">.colNames</a>. If columns are not provided, or if none of the provided variables are valid, or if you work with local data, the default DataFrame (with all columns) will be returned, which is the same as <code>.data</code>. </p>
 <ul>
 <li>Parameter variables: LIST[STR]</li>
 <li>Return Pandas DataFrame</li>
 </ul>
 <h3 id="dobjgetcolumnsvariables"><strong>Dobj.getColumns(variables)</strong></h3>
-<p>This is exactly the same as .get(). See details above. We keep this for backward compatibility,  please do not use. This function will be deprecated over time.</p>
+<p>This is exactly the same as <code>.get()</code>. See details above. We keep this for backward compatibility,  please do not use. This function will be deprecated over time.</p>
 <p><strong> Examples to retrieve data</strong>:</p>
 <pre><code># Create a dobj:
 
@@ -511,7 +511,7 @@ points.</p>
 <p>This is exactly the same as .elevation</p>
 <h3 id="dobjstation"><strong>Dobj.station</strong></h3>
 <p>This returns information about the station, where the data was collected/measured, to provide information about the provenance of the data. Further information about sammplingHeight, instruments, documentation, etc. can be found in <code>dobj.meta['specificInfo']['acquisition']</code>.
-Please be aware that prior to version 0.1.15 this has returned a string with station id, which is now available as station['id']. An example code snippet on how to extract all 'keys' from a nested dictionary is available in (#faq)[#faq]</p>
+Please be aware that prior to version 0.1.15 this has returned a string with station id, which is now available as station['id']. An example code snippet on how to extract all 'keys' from a nested dictionary is available in the <a href="../faq/#q1">FAQ</a></p>
 <ul>
 <li>Return DICT</li>
 </ul>
@@ -522,7 +522,7 @@ no longer just a pointer to data.</p>
 <li>Return TUPLE (int32, STR), where int32 represents the size and STR the unit. Example output 
   looks like: (4.353, 'MB')</li>
 </ul>
-<p><hr><hr></p>
+<hr>
 <h2 id="station">Station</h2>
 <p>The station module provides a search facility to explore ICOS stations and find associated data 
 objects and data products. There is a lot of information available about the ICOS stations, 
@@ -537,8 +537,7 @@ is provided with specific and complex Sparql queries. It is possible to instanti
 class on its own, but we recommend using the convenience functions <code>station.getIdList()</code> 
 <code>station.get('StationID')</code> <code>station.getList()</code>  as described further below to create the 
 station object. Once you have a created valid station object a list of attributes are available:</p>
-<h2>Attributes:</h2>
-
+<hr><h2>Attributes:</h2>
 <hr>
 
 <h3 id="stationcountry"><strong>Station.country</strong></h3>
@@ -647,7 +646,6 @@ stations at the Carbon Portal and how to get a valid station object (or list of)
 <h4 id="stationgetidlist">station.getIdList()</h4>
 <pre><code>station.getIdList(project='ICOS', sort='name')
 </code></pre>
-
 <p>This returns a DataFrame with columns:</p>
 <p><code>['uri', 'id', 'name', 'country', 'lat', 'lon', 'elevation', 'project', 'theme']</code></p>
 <p>By default, ICOS certified stations are returned. If project is set to 'all', all known 
@@ -660,7 +658,6 @@ instantiate  a station. Hence, it is easy to adjust and filter these records and
 </ul>
 <pre><code>station.getIdList(project='ALL', outfmt='map', icon=None)
 </code></pre>
-
 <p>If the optional argument <code>outfmt='map'</code> is provided, a folium map is created with all the queried 
 stations provided by the <code>project</code> argument. Stations without a fixed location (like 
 measurements collected from instrumented Ships of Opportunity) will not be included in the map. 
@@ -693,7 +690,7 @@ is ignored. </p>
 <ul>
 <li>Return LIST[Station Objects]</li>
 </ul>
-<p><hr><hr></p>
+<hr>
 <h2 id="collection">Collection</h2>
 <p>This module supports to load a collection of digital objects. Data products 
 (<a href="https://www.icos-cp.eu/data-products">https://www.icos-cp.eu/data-products</a>) or collections 
@@ -711,8 +708,7 @@ Subsequently, the data sets are now public available at the ICOS Carbon Portal
 only similar. We do <strong>NOT Recommend</strong> to instantiate this class directly. Please <strong>use</strong> the 
 function <strong>.get(CollectionId)</strong>. The Purpose of the class documentation is to provide you a 
 list of attributes available, after the .get(CollectionId) return a collection object.</p>
-<h2>Attributes:</h2>
-
+<hr><h2>Attributes:</h2>
 <hr>
 
 <h3 id="collectionid"><strong>Collection.id</strong></h3>
@@ -865,7 +861,6 @@ km with pinpoint in the centre. If you don't provide a distance, a default value
 <pre><code>stiltstation.find(pinpoint=[55.7,13.1,500])     # bounding box ~ 1000km x 1000km
 stiltstation.find(pinpoint=[55.7,13.1])         # bounding box ~ 400km x 400km
 </code></pre>
-
 <p><br><h2>Temporal keywords</h2><br></p>
 <p>Be aware, that the granularity for all temporal keywords is year and month, days are not 
 considered in the search. Input format for the dates entry MUST be convertible to data time 
@@ -1060,12 +1055,12 @@ Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
             hours = [] return ALL
             hours = ["10", "10:00", 10] returns timeslot 9
 </code></pre>
+</li>
+</ul>
+</li>
+</ul>
 <hr>
 
-</li>
-</ul>
-</li>
-</ul>
 <h2 id="sparql">Sparql</h2>
 <p>At the ICOS Carbon Portal we store all data and metadata as linked data in a triple store. For 
 more information about this approach refer to 
@@ -1085,7 +1080,6 @@ endpoint at
 The output format is by default (txt/json) but you can adjust with the following formats ['json',
 'csv', 'dict', 'pandas', 'array', 'html'].</p>
 <h2>Attributes:</h2>
-
 <hr>
 
 <h3 id="runsparqldata"><strong>RunSparql.data</strong></h3>

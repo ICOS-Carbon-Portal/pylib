@@ -120,7 +120,7 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="examples">Examples</h1>
-<p>The following paragraphs explain how to use the library in worked examples. If you would like to run the library live and play around with data sets without installation: We have a public Jupyter Hub running Python3 notebooks, where the library is preinstalled. The examples from this page are available in the folder <code>pylib_examples</code></p>
+<p>The following paragraphs explain how to use the library in worked examples. If you would like to run the library live and play around with data sets without installation: We have a public Jupyter Hub running Python3 notebooks, where the library is preinstalled. There you will find several examples in the folder <code>pylib_examples</code></p>
 <p><a href="https://exploredata.icos-cp.eu/">https://exploredata.icos-cp.eu/</a></p>
 <p>user: name@organisation <br>
 password: get in touch to get the password</p>
@@ -134,43 +134,14 @@ password: get in touch to get the password</p>
 <pre><code>from icoscp.cpb.dobj import Dobj
 dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
 </code></pre>
-<p>Information (meta data) is automatically stored in the data frames with the object, accessible with <code>Dobj.meta</code>. More about the content of meta and other attributes are in the <a href="../modules/#dobjinfo">modules section</a>. Common used properties are as well available directly. Following are a few examples:</p>
+<p>Information (meta data) is automatically stored in a dictionary (the <code>json</code>-file from the landing page) with the object, accessible with <code>Dobj.meta</code>. More about the content of meta and other attributes are in the <a href="../modules/#dobjinfo">modules section</a>. Common used properties are as well available directly. Following are a few examples:</p>
 <pre><code>dobj.colNames
 </code></pre>
-<table>
-<thead>
-<tr>
-<th></th>
-<th align="right">Column Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0</td>
-<td align="right">Flag</td>
-</tr>
-<tr>
-<td>1</td>
-<td align="right">NbPoints</td>
-</tr>
-<tr>
-<td>2</td>
-<td align="right">Stdev</td>
-</tr>
-<tr>
-<td>3</td>
-<td align="right">TIMESTAMP</td>
-</tr>
-<tr>
-<td>4</td>
-<td align="right">ch4</td>
-</tr>
-</tbody>
-</table>
+<p>['TIMESTAMP', 'Flag', 'NbPoints', 'ch4', 'Stdev']</p>
 <p>or get the citation string for this object:</p>
 <pre><code>dobj.citation
 </code></pre>
-<p>"ICOS RI, 2019. ICOS ATC CH4 Release, Norunda (59.0 m), 2017-04-01–2019-04-30, https://hdl.handle.net/11676/lNJPHqvsMuTAh-3DOvJejgYc"</p>
+<p>"Lehner, I., Mölder, M., ICOS RI, 2019. ICOS ATC CH4 Release, Norunda (59.0 m), 2017-04-01–2019-04-30, https://hdl.handle.net/11676/lNJPHqvsMuTAh-3DOvJejgYc"</p>
 <h3 id="dataframe">DataFrame</h3>
 <p>Extracting the data as pandas data frame:</p>
 <pre><code>from icoscp.cpb.dobj import Dobj
@@ -181,7 +152,7 @@ if do.valid:
 else:
     print('no preview data available')
 </code></pre>
-<p>Printing the first 10 rows of the data (data.head(10)) should yield the following table:</p>
+<p>Printing the first 10 rows of the data (<code>data.head(10)</code>) should yield the following table:</p>
 <table>
 <thead>
 <tr>
@@ -315,10 +286,12 @@ plt.show()
 <h3 id="station-ids">Station Id's</h3>
 <p>The function to get the station id's might be something you will use a lot. Based on a station id you can get all the dobj id's (PID/URI) and hence access to the data. So if you have no idea whatsoever what stations are available, you came to the right place:</p>
 <pre><code>from icoscp.station import station
-stationList = station.getIdlist()  # returns a Pandas DataFrame
+stationList = station.getIdList()  # returns a Pandas DataFrame
 stationList.columns  # what information do we get back?
 </code></pre>
-<p>['uri', 'id', 'name', 'country', 'lat', 'lon', 'elevation', 'project','theme']</p>
+<p>Index(['uri', 'id', 'name', 'country', 'lat', 'lon', 'elevation', 'project',
+       'theme'],
+      dtype='object')</p>
 <pre><code>stationList.head(5)
 </code></pre>
 <table>
@@ -447,7 +420,9 @@ let see what columns are provided. The most important information will be the 'd
 myStation = station.get('SE-Nor')
 myStation.data().columns
 </code></pre>
-<p>['station', 'dobj', 'spec', 'timeStart', 'timeEnd', 'specLabel','samplingheight', 'datalevel', 'bytes']</p>
+<p>Index(['station', 'dobj', 'spec', 'timeStart', 'timeEnd', 'specLabel',
+       'samplingheight', 'datalevel', 'bytes'],
+      dtype='object')</p>
 <pre><code>myStation.data(level='2') # return a DataFrame with Level 2 data objects for the station
 </code></pre>
 <table>
@@ -481,15 +456,7 @@ myStation.data().columns
 </tr>
 </tbody>
 </table>
-<p>This is not the full output, just an excerpt..... most important is the dobj column. You can use the content of the column 'dobj' to extract data. Now we put everything together</p>
-<pre><code>from icoscp.cpb.dobj import Dobj
-from icoscp.station import station
-myStation = station.get('SE-Nor')
-myDobj = Dobj(myStation.data().dobj[1]) # this would be the second record from above table (drought2018FluxnetProduct)
-data = myDobj.get()
-data.columns
-</code></pre>
-<p>['GPP_DT_VUT_REF', 'GPP_NT_VUT_REF', 'H_F_MDS', 'H_F_MDS_QC', 'LE_F_MDS','LE_F_MDS_QC', 'NEE_VUT_REF', 'NEE_VUT_REF_QC', 'RECO_DT_VUT_REF','RECO_NT_VUT_REF', 'SW_IN_F', 'SW_IN_F_QC', 'TA_F', 'TA_F_QC','TIMESTAMP', 'TIMESTAMP_END', 'VPD_F', 'VPD_F_QC']</p>
+<p>This is not the full output, just an excerpt.</p>
 <h3 id="list-of-stations">List of Stations</h3>
 <p>There is a built in function to extract a list of stations. Be aware that if you extract all ICOS stations, a lot of information is gathered and retrieved. At the time of writing there are over a 100 stations and in can take up to a minute to extract all.</p>
 <pre><code>from icoscp.station import station
@@ -534,14 +501,14 @@ collection.getIdList()
 <p><br></p>
 <h3 id="create-a-collection-representation">Create a collection representation</h3>
 <p>with the information from above, you can use either the <code>collection</code> or <code>doi</code> to initialize a collection representation and print some information. Have a look at <a href="../modules/#collection">Modules / collection</a> for a full list of attributes.</p>
-<pre><code>myCollection = collection.get('10.18160/ry7n-3r04')
+<pre><code>myCollection = collection.get('10.18160/P7E9-EKEA')
 myCollection.info()
 </code></pre>
-<p>{'id': 'https://meta.icos-cp.eu/collections/n7cIMHIyqHJKBeF_3jjgptHP',
- 'doi': '10.18160/ry7n-3r04',
- 'citation': 'Ramonet, M. (2019). ICOS Atmosphere Level 2 data, Puy de Dome, release 2019-1 (1.0). ICOS ERIC- Carbon Portal. https://doi.org/10.18160/RY7N-3R04\n',
- 'title': 'ICOS Atmosphere Level 2 data, Puy de Dome, release 2019-1',
- 'description': 'ICOS Atmospheric Greenhouse Gas Mole Fractions of CO2, CH4, CO and Meteorological Observations, period 2016-08-25 to 2019-04-30, Puy de Dome, final quality controlled Level 2 data, release 2019-1'}</p>
+<p>{'id': 'https://meta.icos-cp.eu/collections/WM5ShdLFqPSI0coyVa57G1_Z',
+ 'doi': '10.18160/P7E9-EKEA',
+ 'citation': 'Integrated Non-CO2 Observing System (INGOS). (2018). Ambient atmospheric methane observations from the ICOS/InGOS network 2000-2015. ICOS ERIC - Carbon Portal. https://doi.org/10.18160/P7E9-EKEA\n',
+ 'title': 'Ambient atmospheric methane observations from the ICOS/InGOS network 2000-2015',
+ 'description': 'This dataset for historic ambient CH4 mole fractions is an important outcome of the FP7 InGOS project (http://www.ingos-infrastructure.eu, Grant Agreement Number 284274). Data from 17 stations have been reprocessed for the period 2000-2015; in some cases involving re-integration of chromatograms and in all cases re-calibrating the time series using updated assigned values for standard gases and target gases. All data have been brought to the same concentration scale (NOAA-2006A). Data have been flagged for identified periods with instrumental or sampling problems. Next to added estimations for measurement uncertainty based on repeatability of the working standards also error estimates are added that represent uncertainty due to lab internal scale consistency, monthly reproducibility, scale transfer and where available comparison with concurrent flask sampling.'}</p>
 <p>A more in depth example and how to plot data from the collection can be found on <a href="https://exploredata.icos-cp.eu">https://exploredata.icos-cp.eu</a></p>
               
             </div>
