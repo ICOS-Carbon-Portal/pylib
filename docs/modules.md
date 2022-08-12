@@ -85,7 +85,7 @@ If a newer version of the data object is available, this returns the **pid** for
 - Return STR
 
 ### **Dobj.colNames**
-Available column names. This information is part of the Dobj.info, which holds all the 
+Available column names. This information is part of the `Dobj.meta`, which holds all the 
 available metadata.
 
 - Return LIST
@@ -101,7 +101,7 @@ index | name | unit | type | format
 3 | ch4 | nmol mol-1 | CH4 mixing ratio (dry mole fraction) | http://meta.icos-cp.eu/ontologies/cpmeta/float32
 4 | Stdev | nmol mol-1 | standard deviation of gas mole fraction |http://meta.icos-cp.eu/ontologies/cpmeta/float32
 
-<br>
+
 - Return Pandas DataFrame
 
 ### **Dobj.data**
@@ -110,14 +110,14 @@ Retrieve the actual data for the PID. All available variables will be returned.
 - Return Pandas DataFrame
 
 ### **Dobj.get(variables)**
-Retrieve the actual data for the PID. The same as `.data` but you have the option to retrieve only selected columns (or variables). You can see valid entries with [.variables['name']](#dobjvariables) or [.colNames](#dobjcolnames). If columns are not provided, by default ALL columns will be returned, which is the same as .data OR .get(). Only valid and unique entries will be returned. If none of the values are valid by default (all) will be returned.
+Retrieve the actual data for the PID. The same as `.data` but you have the option to retrieve only selected columns (or variables). Only valid and unique entries will be returned. You can see valid entries with [.variables['name']](#dobjvariables) or [.colNames](#dobjcolnames). If columns are not provided, or if none of the provided variables are valid, or if you work with local data, the default DataFrame (with all columns) will be returned, which is the same as `.data`. 
 
 - Parameter variables: LIST[STR]
 - Return Pandas DataFrame
 
 	
 ### **Dobj.getColumns(variables)**
-This is exactly the same as .get(). See details above. We keep this for backward compatibility,  please do not use. This function will be deprecated over time.
+This is exactly the same as `.get()`. See details above. We keep this for backward compatibility,  please do not use. This function will be deprecated over time.
 
 ** Examples to retrieve data**:
 
@@ -176,7 +176,7 @@ This is exactly the same as .elevation
 	
 ### **Dobj.station**
 This returns information about the station, where the data was collected/measured, to provide information about the provenance of the data. Further information about sammplingHeight, instruments, documentation, etc. can be found in `dobj.meta['specificInfo']['acquisition']`.
-Please be aware that prior to version 0.1.15 this has returned a string with station id, which is now available as station['id']. An example code snippet on how to extract all 'keys' from a nested dictionary is available in (#faq)[#faq]
+Please be aware that prior to version 0.1.15 this has returned a string with station id, which is now available as station['id']. An example code snippet on how to extract all 'keys' from a nested dictionary is available in the [FAQ](faq.md#q1)
 
 - Return DICT
 
