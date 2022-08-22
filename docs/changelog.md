@@ -1,5 +1,11 @@
 # Changelog
- 
+
+
+## 0.1.16
+ - #### sparql
+     - Remove methods with unused queries `cpbGetInfo(dobj)` and `cpbGetSchemaDetail(formatSpec)`
+     - Speed up queries in methods `objectSpec(spec='atcCo2L2DataObject', station='', limit=0)`, `getStations(station = '')`, `get_coords_icos_stations_atc()`, and `get_icos_stations_atc_L1()`
+
 ## 0.1.15
  - #### cpb module
      - Dobj change to read metadata from http request. Instead of using sparql queries, a http request is used to load 
