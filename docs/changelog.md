@@ -1,6 +1,5 @@
 # Changelog
 
-
 ## 0.1.16
  - #### sparql
      - Remove methods with unused queries `cpbGetInfo(dobj)` and `cpbGetSchemaDetail(formatSpec)`
