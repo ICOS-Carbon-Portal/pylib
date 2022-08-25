@@ -121,12 +121,13 @@ def objectSpec(spec='atcCo2L2DataObject', station='', limit=0):
 			FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}
 			?dobj cpmeta:wasSubmittedBy/prov:endedAtTime ?submEnd .
 			?dobj cpmeta:wasAcquiredBy [
-				prov:wasAssociatedWith/cpmeta:hasName ?station ;
+				prov:wasAssociatedWith ?stationIri ;
 				cpmeta:hasSamplingHeight ?samplingHeight
-			] .			
+			] .
+            ?stationIri cpmeta:hasName ?station .		
 			%s
 		}
-		order by ?station ?samplingHeight		
+		order by ?station ?samplingHeight
         %s
         """ % (spec,station, __checklimit__(limit))
 
@@ -373,18 +374,19 @@ def getStations(station = ''):
     query : str, valid sparql query to run against the Carbon Portal SPARQL endpoint.
     """
     if station:
-        flt = 'FILTER(?id = "' + station + '") . '
+        flt = 'BIND ( "' + station + '"^^xsd:string as ?id)'
     else:
-        flt = station
-    
+        flt = ''
+
     query = """
             prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
             select *
             from <http://meta.icos-cp.eu/resources/icos/> 
-            from <http://meta.icos-cp.eu/resources/extrastations/> 
+            from <http://meta.icos-cp.eu/resources/extrastations/>
+            from <http://meta.icos-cp.eu/resources/cpmeta/> 
             where {
-            	?uri cpmeta:hasStationId ?id .   
                 %s
+            	?uri cpmeta:hasStationId ?id .   
             	OPTIONAL {?uri cpmeta:hasName ?name  } .                
             	OPTIONAL {?uri cpmeta:countryCode ?country }.
             	OPTIONAL {?uri cpmeta:hasLatitude ?lat }.
@@ -394,60 +396,6 @@ def getStations(station = ''):
             """ %(flt)
             
             
-    return query
-
-# -----------------------------------------------------------------------------
-def cpbGetInfo(dobj):
-    """
-        Define SPARQL query to get information about a digitial object
-        aiming to assmble the underlying binary data structure schema for
-        a fast access to the binary file.
-        Input dobj: Persisten Identifier
-        dobj may be in the form of the PID or the full handle
-    """
-   
-    query = """
-            prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
-            select * where {
-                values ?dobj { %s }
-                ?dobj cpmeta:hasObjectSpec ?objSpec ;
-                cpmeta:hasNumberOfRows ?nRows ;
-                cpmeta:hasName ?fileName .
-                ?objSpec rdfs:label ?specLabel .
-                OPTIONAL{?dobj cpmeta:hasActualColumnNames ?columnNames }
-            }
-            
-            """ %__dobjUrl__(dobj)
-
-    return query
-# -----------------------------------------------------------------------------
-def cpbGetSchemaDetail(formatSpec):
-    """
-        Define SPARQL query to get information about a digitial object
-        to assmble the underlying binary data structure schema for
-        access to the binary file.
-        :param formatSpec url for the specification  
-    """
-
-    query = """
-            prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
-            SELECT distinct ?objFormat ?colName ?valueType ?valFormat ?unit ?qKind ?colTip ?isRegex
-            WHERE {
-                <%(formSpec)s> cpmeta:containsDataset ?dset .
-                <%(formSpec)s> cpmeta:hasFormat ?objFormat .
-                ?dset cpmeta:hasColumn ?column .
-                ?column cpmeta:hasColumnTitle ?colName ;
-                    cpmeta:hasValueFormat ?valFormat ;
-                    cpmeta:hasValueType ?valType .                
-                ?valType rdfs:label ?valueType .
-                optional{?valType rdfs:comment ?colTip }
-                optional{ ?column cpmeta:isRegexColumn ?isRegex } .
-                optional{
-                    ?valType cpmeta:hasUnit ?unit .
-                    ?valType cpmeta:hasQuantityKind [rdfs:label ?qKind ] .
-                }
-            } order by ?colName                       
-            """ % {'formSpec': formatSpec}
     return query
 
 # -----------------------------------------------------------------------------
@@ -519,15 +467,14 @@ def get_coords_icos_stations_atc():
         select ?station (GROUP_CONCAT(?piLname; separator=";") AS ?PI_names)
         where{
           ?station a cpmeta:AS .
-          ?pi cpmeta:hasMembership ?piMemb .
           ?piMemb cpmeta:atOrganization ?station  .
-           ?piMemb cpmeta:hasRole <http://meta.icos-cp.eu/resources/roles/PI> .
-           filter not exists {?piMemb cpmeta:hasEndTime []}
-           ?pi cpmeta:hasLastName ?piLname .
+          ?piMemb cpmeta:hasRole <http://meta.icos-cp.eu/resources/roles/PI> .
+          filter not exists {?piMemb cpmeta:hasEndTime []}
+          ?pi cpmeta:hasMembership ?piMemb .
+          ?pi cpmeta:hasLastName ?piLname .
         }
         group by ?station
         }
-        ?station a cpmeta:AS .
         ?station cpmeta:hasName ?stationName ;
            cpmeta:hasStationId ?stationId ;
            cpmeta:countryCode ?Country ;
@@ -581,8 +528,9 @@ def get_icos_stations_atc_L1():
               #prov:wasAssociatedWith/cpmeta:hasStationId ?stationId ;
               prov:startedAtTime ?timeStart ;
               prov:endedAtTime ?timeEnd ;
-              prov:wasAssociatedWith/cpmeta:hasName ?stationName 
+              prov:wasAssociatedWith ?stationIri 
             ] .
+            ?stationIri cpmeta:hasName ?stationName .
             ?dobj cpmeta:wasAcquiredBy/cpmeta:hasSamplingHeight ?height .
         }
         order by ?variable ?stationName ?height
