@@ -1,12 +1,15 @@
-Things, which have popped up while using this library, and might be of interest
+#
+Things, which have popped up while using this library, and might be of interest.
 
-## Q&A
-### Q1:
-The new meta data available in a digital object has many nested dictionaries. Can I print all the keys to get an overview of what information is available?<br>
-A: You can use the following code, to print all keys from a nested dictionary. The example extracts the station information associated with the data object. This information is a 'subset' from the metadata `do.meta['specificInfo']['acquisition']['station']` or,  yielding the same information, through the convenience property: `do.station`.
+## How can I get an overview of a digital object's metadata?
+You can use the following code, to print all keys from a nested dictionary. The example extracts the station
+information associated with the data object. This information is a 'subset' from the metadata 
+`do.meta['specificInfo']['acquisition']['station']` or, yielding the same information, through the convenience property:
+`do.station`.
+	
+    from icoscp.cpb.dobj import Dobj
 
-	from icoscp.cpb.dobj import Dobj
-	do = Dobj('j7-Lxlln8_ysi4DEV8qine_v')
+	dobj = Dobj('j7-Lxlln8_ysi4DEV8qine_v')
 	
 	def get_keys(dictionary):
 		result = []
@@ -65,20 +68,20 @@ output of all **keys** for the station metadata:
  'specificInfo/wigosId'
 `
 
-### Q2:
-dobj.station returns None<br>
-A: The attribute of dobj.station is set only AFTER you have called dobj.data. Not very intuitive and will be rectified in a future release.<br>
+## dobj.station returns None. What am I doing wrong?
+The attribute of dobj.station is set only AFTER you have called dobj.data. Not very intuitive and will be rectified in 
+a future release.<br> 
 ** update ** (>=version 0.1.15): The full meta data information about a digital object is available immediately.
 
-### Q3:
-Collection data not available<br>
-A: Collection is loosely assembled and may contain any kind of files and information. For example it is possible to gather pdf documents and NetCDF and some tabular files in a collection. These files will be presented to you, because they are within the collection. BUT only tabular files (where a preview is available in the data portal) can be accessed directly.
-With other words, you can NOT expect that you can 'load' all files listed in a collection.
+## Why can't I access all files within a collection?
+Collection is loosely assembled and may contain any kind of files and information. For example, it is possible to 
+gather pdf documents and NetCDF and some tabular files in a collection. These files will be presented to you, because 
+they are within the collection. **BUT** only tabular files (where a preview is available in the data portal) can be 
+accessed directly. In other words, you can NOT expect that you can 'load' all files listed in a collection.
 
-### Q4:
-I have loaded a dataset, but found out that .next returns a PID. Hence I am not looking at the newest data. How can I retrieve the latest/newest version?
-
-A: The following code snippet will loop through the pid, returning the newest version:
+## How can I retrieve the latest/newest version of a dataset?
+Sometimes after loading a dataset, .next might return a PID. Hence, you are not looking at the newest version of the 
+data. The following code snippet will loop through the pid, returning the newest version:
 	
 	from icoscp.cpb.dobj import Dobj
 	dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
@@ -88,11 +91,12 @@ A: The following code snippet will loop through the pid, returning the newest ve
 			dobj = Dobj(dobj.next)
 		else:
 			break
-	# now dobj is the newest version
+	# Now dobj is the newest version.
 	
 ## Good to Know
 
-- Stations are associated with the stationID. This means that at the moment a combined 
- station, certified for Ecosystem AND Atmosphere, has two different stationId's and hence to access ALL data for such a station you need provide a list of stationId's to find a complete set of data products.
-	Example Norunda, Sweden (stationId "SE-Nor" for Ecosystem, stationId "NOR" for Atmosphere).
+- Stations are associated with the stationID. This means that at the moment a combined station, certified for Ecosystem 
+AND Atmosphere, has two different stationId's and hence to access ALL data for such a station you need provide a list of
+stationId's to find a complete set of data products. Example Norunda, Sweden (stationId "SE-Nor" for Ecosystem, 
+stationId "NOR" for Atmosphere).
 

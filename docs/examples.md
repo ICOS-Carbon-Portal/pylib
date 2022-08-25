@@ -41,10 +41,11 @@ or get the citation string for this object:
 Extracting the data as pandas data frame:
 
 	from icoscp.cpb.dobj import Dobj
+
 	uri = 'https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc'
-	do = Dobj(uri)
-	if do.valid:
-		display(do.data.head(10))
+	dobj = Dobj(uri)
+	if dobj.valid:
+		display(dobj.data.head(10))
 	else:
 		print('no preview data available')
 	
@@ -72,6 +73,7 @@ This first example shows how to extract a data file and create a plot. It is the
 Flag, NbPoints, Stdev, TIMESTAMP, ch4. Let's load the data and create a plot for measured methane concentrations over time.
 
 	from icoscp.cpb.dobj import Dobj
+
 	pid = 'https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc'
 	dobj = Dobj(pid)
 	dobj.data.plot(x='TIMESTAMP', y='ch4', grid=True)
@@ -90,8 +92,8 @@ To get a useful plot, at the very least we should have a title and the unit of m
 	dobj = Dobj(pid)
 	
 
-	# extract information from the dobj meta data
-	# look at dobj.meta for a full list of metadata
+	# Extract information from the dobj meta data.
+	# Look at dobj.meta for a full list of metadata.
 	unit = dobj.variables[dobj.variables.name == 'ch4'].unit.values[0]
 	name = dobj.station['org']['name']
 	uri = dobj.station['org']['self']['uri']
@@ -111,8 +113,9 @@ To get a useful plot, at the very least we should have a title and the unit of m
 The function to get the station id's might be something you will use a lot. Based on a station id you can get all the dobj id's (PID/URI) and hence access to the data. So if you have no idea whatsoever what stations are available, you came to the right place:
 
 	from icoscp.station import station
-	stationList = station.getIdList()  # returns a Pandas DataFrame
-	stationList.columns  # what information do we get back?	
+
+	stationList = station.getIdList()  # Returns a Pandas DataFrame.
+	stationList.columns  # What information do we get back?	
 
 Index(['uri', 'id', 'name', 'country', 'lat', 'lon', 'elevation', 'project',
        'theme'],
@@ -135,6 +138,7 @@ Now you have basic information about a station, but most important you got the s
 Let's create a station object and have a look what information is provided with the function .info() . Each entry from "info" is an attribute and can be extracted with "myStation.attribute". In the following example you can access the station name with myStation.name
 
 	from icoscp.station import station
+
 	myStation = station.get('SE-Nor')
 	myStation.info()
 	
@@ -157,7 +161,7 @@ Let's create a station object and have a look what information is provided with 
 
 
 
-	myStation.products() # return DataFrame with all products available from this station
+	myStation.products() # Return DataFrame with all products available from this station.
 
 id |                           specification     |
 ---|---------------------------------------------|
@@ -175,6 +179,7 @@ All the dobj URI's (ultimately containing the data itself) can be retrieved with
 let see what columns are provided. The most important information will be the 'dobj' column. This contains the link to the data and can be used to extract the data.
 
 	from icoscp.station import station
+
 	myStation = station.get('SE-Nor')
 	myStation.data().columns
 	
@@ -182,7 +187,7 @@ Index(['station', 'dobj', 'spec', 'timeStart', 'timeEnd', 'specLabel',
        'samplingheight', 'datalevel', 'bytes'],
       dtype='object')
 
-	myStation.data(level='2') # return a DataFrame with Level 2 data objects for the station
+	myStation.data(level='2') # Return a DataFrame with Level 2 data objects for the station.
 
 
 station               |  dobj                                                    |  spec
@@ -199,8 +204,8 @@ This is not the full output, just an excerpt.
 There is a built in function to extract a list of stations. Be aware that if you extract all ICOS stations, a lot of information is gathered and retrieved. At the time of writing there are over a 100 stations and in can take up to a minute to extract all.
 
 	from icoscp.station import station
-	icosStations = station.getList()
-	
+
+	icosStations = station.getList()	
 	for s in icosStations:
 		print(s.stationId, s.name, s.lat, s.lon)
 
@@ -215,6 +220,7 @@ FR-Aur Aurade 43.54965 1.106103 <br>
 ### Find a collection
 
 	from icoscp.collection import collection
+
 	collection.getIdList()
 
 Output is a pandas data frame, where each row contains information about a collection. The column `collection` or `doi` can be used to create a collection representation. The column `dobj` contains a list of all associated digital objects (the data) and the column `count` tells you how many data files are associated.
