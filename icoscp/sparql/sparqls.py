@@ -379,22 +379,51 @@ def getStations(station = ''):
         flt = ''
 
     query = """
-            prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
-            select *
-            from <http://meta.icos-cp.eu/resources/icos/> 
-            from <http://meta.icos-cp.eu/resources/extrastations/>
-            from <http://meta.icos-cp.eu/resources/cpmeta/> 
-            where {
-                %s
-            	?uri cpmeta:hasStationId ?id .   
-            	OPTIONAL {?uri cpmeta:hasName ?name  } .                
-            	OPTIONAL {?uri cpmeta:countryCode ?country }.
-            	OPTIONAL {?uri cpmeta:hasLatitude ?lat }.
-            	OPTIONAL {?uri cpmeta:hasLongitude ?lon }.
-            	OPTIONAL {?uri cpmeta:hasElevation ?elevation } .
+        prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+        prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+        prefix cpst: <http://meta.icos-cp.eu/ontologies/stationentry/>
+        select ?uri ?id ?name ?icosClass ?country ?siteType ?lat ?lon ?eas ?elevation ?stationTheme ?firstName ?lastName ?email
+        from <http://meta.icos-cp.eu/resources/icos/>
+        from <http://meta.icos-cp.eu/resources/extrastations/>
+        from <http://meta.icos-cp.eu/resources/stationentry/>
+        where {
+            {
+                select ?uri ?id ?stationTheme (sample(?pers) as ?piOpt)  where{
+                    %s
+                    ?uri cpmeta:hasStationId ?id .
+                    ?uri a ?stationTheme .
+                    OPTIONAL{
+                        ?memb cpmeta:atOrganization ?uri ; cpmeta:hasRole <http://meta.icos-cp.eu/resources/roles/PI> .
+                        filter not exists {?memb cpmeta:hasEndTime []}
+                        ?pers cpmeta:hasMembership ?memb
+                    }
+                }
+                group by ?uri ?id ?stationTheme
             }
-            """ %(flt)
-            
+            bind(coalesce(?piOpt, <http://dummy>) as ?pi)
+            OPTIONAL{
+                ?pi cpmeta:hasFirstName ?firstName .
+                ?pi cpmeta:hasLastName ?lastName
+            }
+            OPTIONAL{?pi cpmeta:hasEmail ?email}
+            OPTIONAL {
+                {
+                    ?provSt cpst:hasProductionCounterpart ?prodUriStr .
+                    filter(iri(?prodUriStr) = ?uri)
+                }
+                ?provSt cpst:hasSiteType ?siteType .
+            }
+            OPTIONAL {?uri cpmeta:hasStationClass ?icosClass}
+            OPTIONAL {?uri cpmeta:hasName ?name  }
+            OPTIONAL {?uri cpmeta:countryCode ?country }
+            OPTIONAL {?uri cpmeta:hasLatitude ?lat }
+            OPTIONAL {?uri cpmeta:hasLongitude ?lon }
+            OPTIONAL {?uri cpmeta:hasElevationAboveSea ?eas}
+            OPTIONAL {?uri cpmeta:hasElevation ?elevation }
+        }
+        order by ?stationTheme ?id
+        """ % (flt)
+
             
     return query
 
