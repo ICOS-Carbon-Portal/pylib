@@ -735,17 +735,11 @@ def getList(theme=['AS', 'ES', 'OS'], ids=None):
         # Revert to default values, return all certified stations.
         theme = defaulttheme
 
-    icos_themes = [x for x in theme if x in defaulttheme]
-    non_icos_themes = [x for x in theme if x not in defaulttheme]
-
     # get station list, by default returns all icos stations
     stations = getIdList()
     # filter by theme and icosClass if applicable
-    stations_icos = stations[stations.theme.isin(icos_themes)]
-    stations_icos = stations_icos[stations_icos['icosClass'].notna() & stations_icos['icosClass'].isin(['1', '2'])]
-    stations_other = stations[stations.theme.isin(non_icos_themes)]
-
-    stations = pd.concat([stations_icos, stations_other])
+    stations = stations[stations.theme.isin(theme)]
+    stations = stations[stations['icosClass'].notna() & stations['icosClass'].isin(['1', '2', 'Associated'])]
 
     stationList = []
     for s in tqdm(stations.id):
