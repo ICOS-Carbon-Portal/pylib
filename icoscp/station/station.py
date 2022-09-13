@@ -559,7 +559,7 @@ def get(stationId):
     # flow from the thematic centres is achieved.        
 
     if 'ICOS' in myStn.project:
-        myStn.theme = stn.stationTheme.values[0].split('/')[-1].split('_')[0]
+        myStn.theme = stn.stationTheme.values[0].split('/')[-1]
         myStn.icosclass = stn.icosClass.values[0]
         myStn.firstName = stn.firstName.values[0]
         myStn.lastName = stn.lastName.values[0]
@@ -634,8 +634,7 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas', icon=None):
     query = sparqls.getStations()
     queried_stations = RunSparql(query, 'pandas').run()
     queried_stations['project'] = queried_stations.apply(lambda x: __project(x['uri']), axis=1)
-    queried_stations['theme'] = queried_stations.apply(lambda x: x['stationTheme'].
-                                                       split('/')[-1].split('_')[0], axis=1)
+    queried_stations['theme'] = queried_stations.apply(lambda x: x['stationTheme'].split('/')[-1], axis=1)
     if not project == 'ALL':
         queried_stations = queried_stations[queried_stations.project == project.upper()]
     # Drop any existing double entries.
@@ -735,11 +734,12 @@ def getList(theme=['AS', 'ES', 'OS'], ids=None):
         # Revert to default values, return all certified stations.
         theme = defaulttheme
 
-    # get station list, by default returns all icos stations
+    # Query stations.
+    # By default, `getIdList()` will return icos stations only.
     stations = getIdList()
-    # filter by theme and icosClass if applicable
-    stations = stations[stations.theme.isin(theme)]
-    stations = stations[stations['icosClass'].notna() & stations['icosClass'].isin(['1', '2', 'Associated'])]
+    # Filter stations by theme and icos class if applicable.
+    stations = stations[stations.theme.isin(theme) &
+                        stations['icosClass'].isin(['1', '2', 'Associated'])]
 
     stationList = []
     for s in tqdm(stations.id):
