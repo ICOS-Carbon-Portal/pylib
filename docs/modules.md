@@ -1,8 +1,6 @@
 # Content
 
-The following modules are available in the library to find and access data hosted at the Carbon 
-Portal. After a successful installation into your python environment you should be able to load 
-the modules with:
+The following modules are available in the library to find and access data hosted at the Carbon Portal. After a successful installation into your python environment you should be able to load the modules with:
 
 - `from icoscp.cpb.dobj import Dobj`
 - `from icoscp.station import station`
@@ -11,40 +9,49 @@ the modules with:
 - `from icoscp.sparql.runsparql import RunSparql`
 - `from icoscp.sparql import sparqls`
 
-<hr><hr>
-
 ## Dobj
 
-This is the basic module to load a **d**igital **obj**ect (data set) into memory. You need to 
-know a valid persistent identifier (PID/URL) to access the data. Either you can browse the 
-[data portal](https://data.icos-cp.eu) to find PID's or you can use the 'station' package to 
-find PID's programmatically (see section [station](#station)). In essence each data object is 
-linked to a unique and persistent identifier in the form of a URL. Hence, each data object has 
-an on-line landing page. If you select any data object on 
-[https://data.icos-cp.eu](https://data.icos-cp.eu) and then navigate to the PID link (which 
-looks like `11676/j7-Lxlln8_ysi4DEV8qine_v` ) you end up on the 'landing' page of the document. 
-If you look at the address bar of your browser, you will see a URL similar to 
-[https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v](
-https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v). To access the data you need to know 
-this URL or the last part of the URL (`j7-Lxlln8_ysi4DEV8qine_v`).
+This is the basic module to load a **d**igital **obj**ect (data set) into memory. You need to know a valid persistent identifier (PID/URL) to access the data. Either you can browse the [data portal](https://data.icos-cp.eu) to find PID's or you can use the 'station' package to find PID's programmatically (see section [station](#station)). In essence each data object is linked to a unique and persistent identifier in the form of a URL. Hence, each data object has an on-line landing page. If you select any data object on [https://data.icos-cp.eu](https://data.icos-cp.eu) and then navigate to the PID link (which looks like `11676/j7-Lxlln8_ysi4DEV8qine_v` ) you end up on the 'landing' page of the document. If you look at the address bar of your browser, you will see a URL similar to [https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v](https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v). To access the data you need to know this URL or the last part of the URL (`j7-Lxlln8_ysi4DEV8qine_v`).
 
-Load the module with:<br>
+Load the module with:
+
 	from icoscp.cpb.dobj import Dobj
 
 classmethod **Dobj(digitalObject='')**<br>
-You can initialise a Dobj with a PID. The following two statements yield the same result.
+You can initialise a Dobj with a PID. The following statements yield the same result.
 
 	myDobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+	myDobj = Dobj('11676/j7-Lxlln8_ysi4DEV8qine_v')
 	myDobj = Dobj('j7-Lxlln8_ysi4DEV8qine_v')
 
 or create an 'empty' instance and the set the identifier later:
 
 	myDobj = Dobj()
 	myDobj.dobj = "j7-Lxlln8_ysi4DEV8qine_v"
-<br>
 
 <h2>Attributes:</h2>
-<hr>
+### **Dobj.info**
+** Please refer to the property `.meta`**. The property `.info` returns now the same as `.meta` which was introduced with version 0.1.15.
+
+For provenance reasons only the following documentation is kept, but is only valid for installations 0.1.10 to 0.1.14:
+
+	All Dobj related metadata is available in the following properties.
+	This will return a list of three Pandas DataFrames which contain metadata.
+	
+	info[0] -> information about the dobj like, url, specification,
+			number of rows, related file name.
+	info[1] -> information about the data like colName,
+			value type, unit, kind
+	info[2] -> information about the station, where the data was obtained.
+			Name, id, lat, lon etc..
+	
+	- Return LIST[Pandas DataFrame]
+
+### **Dobj.meta**
+This property was introduced with version 0.1.15 and is replacing **.info**.<br>
+.meta returns a dictionary based on the meta data available from the landing page of the ICOS Caronb Portal website. Every data object has a rich set of meta data available. You can download an example from data portal:[https://meta.icos-cp.eu/objects/M8STRfcQfU4Yj7Uy0snHvlve/meta.json](       https://meta.icos-cp.eu/objects/M8STRfcQfU4Yj7Uy0snHvlve/meta.json). This will then be parsed into a python dictionary representing the metadata from ICOS.
+Some of the important key properties, like 'previous', 'next', 'citation', etc., are extracted for easy access and made available as properties. Please check this documentation.
+
 
 ### **Dobj.citation**
 Citation string, a simple plain text citation string.
@@ -65,11 +72,65 @@ Licence associated with the dataset.
 
 - Return DICT
 
+	dict_keys(['baseLicence', 'name', 'url', 'webpage'])
+
+### **Dobj.previous**
+If an older version of this data object is available, this returns the **pid** for this object.
+
+- Return STR
+
+### **Dobj.next**
+If a newer version of the data object is available, this returns the **pid** for this object.
+
+- Return STR
+
 ### **Dobj.colNames**
-Available column names. This information is part of the Dobj.info, which holds all the 
+Available column names. This information is part of the `Dobj.meta`, which holds all the 
 available metadata.
 
-- Return **list**
+- Return LIST
+
+### **Dobj.variables**
+This provides access to all available variables, including the unit, a short description (type) and the 'landing page' for the format used (int, float, chr, ...). The following example shows the variables for a data object of an atmospheric methane concentration:
+
+index | name | unit | type | format
+ --- | --- | --- | --- | --- 
+0 | TIMESTAMP | None | time instant, UTC | http://meta.icos-cp.eu/ontologies/cpmeta/iso8601dateTime
+1 | Flag      | None | quality flag | http://meta.icos-cp.eu/ontologies/cpmeta/bmpChar
+2 | NbPoints | None | number of points | http://meta.icos-cp.eu/ontologies/cpmeta/int32
+3 | ch4 | nmol mol-1 | CH4 mixing ratio (dry mole fraction) | http://meta.icos-cp.eu/ontologies/cpmeta/float32
+4 | Stdev | nmol mol-1 | standard deviation of gas mole fraction |http://meta.icos-cp.eu/ontologies/cpmeta/float32
+
+
+- Return Pandas DataFrame
+
+### **Dobj.data**
+Retrieve the actual data for the PID. All available variables will be returned.
+
+- Return Pandas DataFrame
+
+### **Dobj.get(variables)**
+Retrieve the actual data for the PID. The same as `.data` but you have the option to retrieve only selected columns (or variables). Only valid and unique entries will be returned. You can see valid entries with [.variables['name']](#dobjvariables) or [.colNames](#dobjcolnames). If columns are not provided, or if none of the provided variables are valid, or if you work with local data, the default DataFrame (with all columns) will be returned, which is the same as `.data`. 
+
+- Parameter variables: LIST[STR]
+- Return Pandas DataFrame
+
+	
+### **Dobj.getColumns(variables)**
+This is exactly the same as `.get()`. See details above. We keep this for backward compatibility,  please do not use. This function will be deprecated over time.
+
+** Examples to retrieve data**:
+
+	# Create a dobj:
+
+	do = Dobj('https://meta.icos-cp.eu/objects/9GVNGXhqvmn7UUsxSWp-zLyR')
+
+	# Access all data, or specific columns:
+
+	data = do.data									# all data is returned<br>
+	data = do.get(['timestamp','ch4'])				# only timestamp and ch4 is returned<br>
+	data = do.get(['timestamp','ch4','notValid'])	# only timestamp and ch4 is returned<br>
+	data = do.get() 								# all data is returned<br>
 
 ### **Dobj.dateTimeConvert = True**
 Set or retrieve. Default **True**. The binary data representation provides a UTC Timestamp as 
@@ -88,47 +149,11 @@ check is performed to find the metadata for the object. If this is successful, t
 property is set to **True**
 
 - Return STR
-
-### **Dobj.data**
-Retrieve the actual data for the PID, the same as `.get()` by defaulting to all available columns.
-
-- Return Pandas DataFrame
-
-### **Dobj.get(variables)**
-Retrieve the actual data for the PID. The same as `.data`. By default all columns all returned, but you have the option to retrieve only selected columns (or variables). You can see valid entries with .variables['names']. If columns are not provided, ALL columns will be returned, which is the same as .data OR .get(). Only valid unique entries will be returned. If none of the values are valid, default (all) will be set.
-
-- Parameter variables: LIST[STR]
-
-- Return Pandas DataFrame
-
-Examples:
-
-- do = Dobj('https://meta.icos-cp.eu/objects/9GVNGXhqvmn7UUsxSWp-zLyR')
-- data = do.get(['timestamp','ch4'])
-- data = do.get()
-- data = do.data
 	
-	
-### **Dobj.getColumns(variables)**
-This is exactly the same as .get(). See details above.
-
-
 ### **Dobj.valid**
 True if PID is set and found at the ICOS Carbon Portal
 
 - Return BOOL
-
-All Dobj related metadata is available in the following properties.
-
-### **Dobj.info**
-This will return a list of three Pandas DataFrames which contain metadata.
-```
-info[0] -> information about the dobj like, url, specification, number of rows, related file name.
-info[1] -> information about the data like colName, value type, unit, kind
-info[2] -> information about the station, where the data was obtained. Name, id, lat, lon etc..
-```
-
-- Return LIST[Pandas DataFrame]
 
 ### **Dobj.lat**
 Latitude for station
@@ -141,15 +166,19 @@ Longitude for station
 - Return FLOAT
 	
 ### **Dobj.elevation**
-Elevation above sea level for station. Be aware, this is NOT the sampling height for the data 
+Elevation above sea level for station. Be aware, this is NOT the sampling height for the data
 points.
 
 - Return FLOAT
+
+### **Dobj.alt**
+This is exactly the same as .elevation
 	
 ### **Dobj.station**
-Station name
+This returns information about the station, where the data was collected/measured, to provide information about the provenance of the data. Further information about sammplingHeight, instruments, documentation, etc. can be found in `dobj.meta['specificInfo']['acquisition']`.
+Please be aware that prior to version 0.1.15 this has returned a string with station id, which is now available as station['id']. An example code snippet on how to extract all 'keys' from a nested dictionary is available in the [FAQ](faq.md#q1)
 
-- Return STR
+- Return DICT
 
 ### **Dobj.size()**
 The real size of the dobj in [bytes, KB, MB, TB]. Since this object may contain the data, it is 
@@ -164,8 +193,7 @@ no longer just a pointer to data.
 The station module provides a search facility to explore ICOS stations and find associated data 
 objects and data products. There is a lot of information available about the ICOS stations, 
 partner countries, measured variables and much more in the 
-[ICOS Handbook](https://www.icos-cp.eu/sites/default/files/cmis/ICOS%20Handbook%202020.pdf). 
-
+[ICOS Handbook](https://www.icos-cp.eu/sites/default/files/2022-03/ICOS_Handbook_2022_web.pdf).
 load the module with:
 
 	from icoscp.station import station
@@ -175,7 +203,7 @@ The station object is primarily a data structure to store the associated metadat
 is provided with specific and complex Sparql queries. It is possible to instantiate this 
 class on its own, but we recommend using the convenience functions `station.getIdList()` 
 `station.get('StationID')` `station.getList()`  as described further below to create the 
-station object. Once you have a created valid station object a list attributes are available:
+station object. Once you have a created valid station object a list of attributes are available:
 
 
 <h2>Attributes:</h2>
@@ -376,7 +404,7 @@ This is the ICOS URI (PID). A link to the landing page on the ICOS data portal.
 ### **Collection.doi**
 If available, the official DOI in form of '10.18160/ry7n-3r04'.
 
-- Return Str
+- Return STR
 
 ### **Collection.citation**
 For convenience the citation string provided from [https://citation.crosscite.org/] is stored 
