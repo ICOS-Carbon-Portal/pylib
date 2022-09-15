@@ -2,8 +2,12 @@
 
 ## 0.1.16
  - #### sparql
-     - Remove methods with unused queries `cpbGetInfo(dobj)` and `cpbGetSchemaDetail(formatSpec)`
-     - Speed up queries in methods `objectSpec(spec='atcCo2L2DataObject', station='', limit=0)`, `getStations(station = '')`, `get_coords_icos_stations_atc()`, and `get_icos_stations_atc_L1()`
+     - Remove methods with unused queries `cpbGetInfo(dobj)` and `cpbGetSchemaDetail(formatSpec)`.
+     - Speed up queries in functions `objectSpec(spec='atcCo2L2DataObject', station='', limit=0)`, 
+       `getStations(station = '')`, `get_coords_icos_stations_atc()`, and `get_icos_stations_atc_L1()`.
+     - Update query in `getStations(station = '')'` to correctly retrieve stations.
+ - #### station module
+     - Filter out non icos stations when querying themed stations in `getList()`. 
 
 ## 0.1.15
  - #### cpb module
