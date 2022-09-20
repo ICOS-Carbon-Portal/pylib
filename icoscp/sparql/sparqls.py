@@ -322,42 +322,12 @@ def stations_with_pi(station = '', limit=0):
         As per writing, (April 2019, the list is pulled from the provisional
         data, labeling process)
     """
-    if station:
-        flt = 'FILTER(?stationId = "' + station + '") . '
-    else:
-        flt = station
 
-    query = """
-            prefix st: <http://meta.icos-cp.eu/ontologies/stationentry/>
-            select distinct ?stationId ?stationName ?stationTheme 
-            ?class  ?siteType
-            ?lat ?lon ?eas ?eag ?firstName ?lastName ?email ?country
-            from <http://meta.icos-cp.eu/resources/stationentry/>
-            where{
-                ?s st:hasShortName ?stationId .
-                %s
-                optional{?s st:hasLon ?lon} .
-                optional{?s st:hasLat ?lat} .
-                optional{?s st:hasElevationAboveSea ?eas} .
-                optional{?s st:hasElevationAboveGround ?eag} .                
-                ?s st:hasLongName ?stationName .
-                ?s st:hasPi ?pi .
-                ?pi st:hasFirstName ?firstName .
-                ?pi st:hasLastName ?lastName .
-                ?pi st:hasEmail ?email .
-                ?s a ?stationClass .
-                ?s st:hasStationClass ?class .
-                optional{?s st:hasCountry ?country} .
-                optional{?s st:hasSiteType ?siteType} .
-                
-                BIND (replace(str(?stationClass), "http://meta.icos-cp.eu/ontologies/stationentry/", "") AS ?stationTheme )
-            }            
-            %s
-        """ % (flt, __checklimit__(limit))
 
-    return query
-# -----------------------------------------------------------------------------
-def getStations(station = ''):
+    return getStations(station=station) + __checklimit__(limit)
+
+
+def getStations(station='', theme=''):
     """
     Define SPARQL query to return a list of all known stations
     at the Carbon Portal. This can include NON-ICOS stations.
@@ -366,31 +336,42 @@ def getStations(station = ''):
     Parameters
     ----------
     station : str, optional, case sensitive
-        DESCRIPTION. The default is '', and empyt string which returns ALL
+        DESCRIPTION. The default is '', and empty string which returns ALL
         stations. If you provide a station id, be aware, that it needs to be
-        exactly as provided from the Triple Store....case sensitive. 
+        exactly as provided from the Triple Store....case sensitive.
+    theme : str, optional, case sensitive
+        DESCRIPTION. The default is '', and empty string which returns ALL
+        themes. If you provide a theme, be aware, that it needs to be
+        exactly as provided from the Triple Store....case sensitive.
     Returns
     -------
     query : str, valid sparql query to run against the Carbon Portal SPARQL endpoint.
     """
     if station:
-        flt = 'BIND ( "' + station + '"^^xsd:string as ?id)'
+        station_filter = f'BIND ( "{station}"^^xsd:string as ?id)'
     else:
-        flt = ''
+        station_filter = ''
+    if theme:
+        theme_filter = f'BIND (cpmeta:{theme} as ?stationTheme)'
+    else:
+        theme_filter = ''
 
     query = """
         prefix xsd: <http://www.w3.org/2001/XMLSchema#>
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
         prefix cpst: <http://meta.icos-cp.eu/ontologies/stationentry/>
-        select ?uri ?id ?name ?icosClass ?country ?siteType ?lat ?lon ?eas ?elevation ?stationTheme ?firstName ?lastName ?email
+        select ?uri ?id ?name ?icosClass ?country ?lat ?lon ?elevation ?stationTheme ?firstName ?lastName ?email ?siteType
         from <http://meta.icos-cp.eu/resources/icos/>
         from <http://meta.icos-cp.eu/resources/extrastations/>
+        from <http://meta.icos-cp.eu/resources/cpmeta/>
         from <http://meta.icos-cp.eu/resources/stationentry/>
         where {
             {
-                select ?uri ?id ?stationTheme (sample(?pers) as ?piOpt)  where{
+                select ?uri ?id ?stationTheme (sample(?pers) as ?piOpt)  where
+                {
                     %s
                     ?uri cpmeta:hasStationId ?id .
+                    %s
                     ?uri a ?stationTheme .
                     OPTIONAL{
                         ?memb cpmeta:atOrganization ?uri ; cpmeta:hasRole <http://meta.icos-cp.eu/resources/roles/PI> .
@@ -407,10 +388,11 @@ def getStations(station = ''):
             }
             OPTIONAL{?pi cpmeta:hasEmail ?email}
             OPTIONAL {
-                {
-                    ?provSt cpst:hasProductionCounterpart ?prodUriStr .
-                    filter(iri(?prodUriStr) = ?uri)
-                }
+                    {
+                        ?provSt cpst:hasProductionCounterpart ?prodUriLit .
+                        bind((?uri = iri(?prodUriLit)) as ?areEqual)
+                        filter(?areEqual)
+                    }
                 ?provSt cpst:hasSiteType ?siteType .
             }
             OPTIONAL {?uri cpmeta:hasStationClass ?icosClass}
@@ -418,16 +400,14 @@ def getStations(station = ''):
             OPTIONAL {?uri cpmeta:countryCode ?country }
             OPTIONAL {?uri cpmeta:hasLatitude ?lat }
             OPTIONAL {?uri cpmeta:hasLongitude ?lon }
-            OPTIONAL {?uri cpmeta:hasElevationAboveSea ?eas}
             OPTIONAL {?uri cpmeta:hasElevation ?elevation }
         }
         order by ?stationTheme ?id
-        """ % (flt)
-
+        """ % (station_filter, theme_filter)
             
     return query
 
-# -----------------------------------------------------------------------------
+
 def dobjStation(dobj):
     """
         Define SPARQL query to get information about a station
