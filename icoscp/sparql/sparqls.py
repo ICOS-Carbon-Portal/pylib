@@ -20,6 +20,7 @@ __status__      = "rc1"
 __date__        = "2019-08-09"
 
 
+from warnings import warn
 # --------------------------------------------------------------------
 # create internal helper functions to be used for ALL sparql queries
 # --------------------------------------------------------------------
@@ -316,14 +317,25 @@ def stationData(uri, level='2'):
 
     return query
 
-def stations_with_pi(station = '', limit=0):
-    """
-        Define SPARQL query to get a list of ICOS stations with PI and email.
-        As per writing, (April 2019, the list is pulled from the provisional
-        data, labeling process)
-    """
 
-
+def stations_with_pi(station='', limit=0):
+    """
+        Definition of an old SPARQL query that was used to fetch provisional
+        meta-data, namely a list of ICOS stations with principal
+        investigators and e-mails.
+    """
+    deprecation_message = """
+    This function will be deprecated in the next pylib major release.
+    In its current version the function fetches a query that will return all stations or a number of stations
+    given the `limit` argument.
+    In order to filter only stations with a principal investigator one can run:
+        from icoscp.sparql import sparqls
+        from icoscp.sparql.runsparql import RunSparql
+        query = sparqls.stations_with_pi()
+        df = RunSparql(sparql_query=query, output_format='pandas').run()
+        df_stations_with_pi = df[(df.firstName.notnull()) & (df.lastName.notnull())]
+    """
+    warn(deprecation_message, DeprecationWarning, stacklevel=2)
     return getStations(station=station) + __checklimit__(limit)
 
 
