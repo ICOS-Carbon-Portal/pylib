@@ -1,4 +1,4 @@
-folium
 pandas
 requests
 tqdm
+folium
