@@ -63,6 +63,16 @@
               <ul class="current">
                 <li class="toctree-l1 current"><a class="reference internal current" href="./">Changelog</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#0116">0.1.16</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#sparql">sparql</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#station-module">station module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module">stilt module</a>
+    </li>
+        </ul>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#0115">0.1.15</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#cpb-module">cpb module</a>
@@ -115,17 +125,42 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
-      <li>Changelog</li>
+    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li><li>Changelog</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
   <hr/>
 </div>
+
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
                 <h1 id="changelog">Changelog</h1>
+<h2 id="0116">0.1.16</h2>
+<ul>
+<li>
+<h4 id="sparql">sparql</h4>
+<ul>
+<li>Remove methods with unused queries <code>cpbGetInfo(dobj)</code> and <code>cpbGetSchemaDetail(formatSpec)</code>.</li>
+<li>Speed up queries in functions <code>objectSpec(spec='atcCo2L2DataObject', station='', limit=0)</code>, 
+   <code>getStations(station = '')</code>, <code>get_coords_icos_stations_atc()</code>, and <code>get_icos_stations_atc_L1()</code>.</li>
+<li>Update query in <code>getStations(station = '')</code> to correctly retrieve stations.</li>
+<li>Add deprecation warning for <code>stations_with_pi()</code> query.</li>
+</ul>
+</li>
+<li>
+<h4 id="station-module">station module</h4>
+<ul>
+<li>Filter out non icos stations when querying themed stations in <code>getList()</code>. </li>
+</ul>
+</li>
+<li>
+<h4 id="stilt-module">stilt module</h4>
+<ul>
+<li>Regenerate STILT module's static file <code>stations.json</code>.</li>
+</ul>
+</li>
+</ul>
 <h2 id="0115">0.1.15</h2>
 <ul>
 <li>
