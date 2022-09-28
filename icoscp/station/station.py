@@ -521,7 +521,7 @@ def get(stationId, station_df=None):
 
     if isinstance(station_df, pd.DataFrame) and not station_df.empty:
         try:
-            stn = station_df.loc['id' == stationId]
+            stn = station_df.loc[station_df.id == stationId]
         except:
             query = sparqls.getStations(stationId)
             stn = RunSparql(query, 'pandas').run()
@@ -534,7 +534,10 @@ def get(stationId, station_df=None):
         myStn.valid = False
         return myStn
     else:
-        stn['project'] = stn.apply(lambda x: __project(x['uri']), axis=1)
+        if 'project' not in stn.columns or stn['project'] is None:
+            stn['project'] = stn.apply(lambda x: __project(x['uri']), axis=1)
+        if 'theme' not in stn.columns or stn['theme'] is None:
+            stn['theme'] = stn.apply(lambda x: x['stationTheme'].split('/')[-1], axis=1)
 
     # we have found a valid id
     myStn.stationId = stn.id.values[0]
@@ -567,7 +570,7 @@ def get(stationId, station_df=None):
 
     # if the station belongs to ICOS
     # add information from the labeling app.
-    # this is an interim step and should be removed after the full meta data
+    # this is an interim step and should be removed after the full metadata
     # flow from the thematic centres is achieved.        
 
     if 'ICOS' in myStn.project:
@@ -579,7 +582,6 @@ def get(stationId, station_df=None):
         myStn.siteType = stn.siteType.values[0]
         myStn.eag = stn.elevation.values[0]
 
-    # myStn._setData()
     return myStn
 
 
@@ -751,6 +753,7 @@ def getList(theme=['AS', 'ES', 'OS'], ids=None):
     # Query stations.
     # By default, `getIdList()` will return icos stations only.
     stations_df = getIdList()
+
     # Filter stations by theme and icos class if applicable.
     stations_df = stations_df[stations_df.theme.isin(theme) &
                               stations_df['icosClass'].isin(['1', '2', 'Associated'])]

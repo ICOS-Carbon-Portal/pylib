@@ -296,24 +296,30 @@ def stationData(uri, level='2'):
         return 'input parameters not valid'
 
     uristr = '<' + '> <'.join(uri) + '>'
-    query = """
-			prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
-			prefix prov: <http://www.w3.org/ns/prov#>
-			select *
-			where {
-				VALUES ?station {%s}                                 
-				?dobj cpmeta:hasObjectSpec ?spec .	
-				FILTER NOT EXISTS {?spec cpmeta:hasAssociatedProject/cpmeta:hasHideFromSearchPolicy "true"^^xsd:boolean}
-				FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}				
-				?dobj cpmeta:wasAcquiredBy / prov:startedAtTime ?timeStart .
-				?dobj cpmeta:wasAcquiredBy / prov:endedAtTime ?timeEnd .
-				?dobj cpmeta:wasAcquiredBy/prov:wasAssociatedWith ?station .                                                
-                ?spec rdfs:label ?specLabel .                
-                OPTIONAL {?dobj cpmeta:wasAcquiredBy/cpmeta:hasSamplingHeight ?samplingheight} .                                
-				?spec cpmeta:hasDataLevel ?datalevel .
-                ?dobj cpmeta:hasSizeInBytes ?bytes .
-				FILTER (?datalevel  %s)				
-            }          """ % (uristr, level)
+
+    query = """prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+    prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+    prefix prov: <http://www.w3.org/ns/prov#>
+    select *
+    where {
+	    {
+            ?spec cpmeta:hasDataLevel ?datalevel .
+            FILTER (?datalevel  %s)
+            FILTER NOT EXISTS {?spec cpmeta:hasAssociatedProject/cpmeta:hasHideFromSearchPolicy "true"^^xsd:boolean}
+            ?spec rdfs:label ?specLabel .
+    	}	
+	VALUES ?station {%s}
+	?dobj cpmeta:hasObjectSpec ?spec .	
+	FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}				
+	?dobj cpmeta:wasAcquiredBy [
+		prov:startedAtTime ?timeStart ;
+   		prov:endedAtTime ?timeEnd ;
+	 	prov:wasAssociatedWith ?station 
+	] .
+	?dobj cpmeta:hasSizeInBytes ?bytes .
+	OPTIONAL {?dobj cpmeta:wasAcquiredBy/cpmeta:hasSamplingHeight ?samplingheight} .
+    }""" % (level, uristr)
 
     return query
 
