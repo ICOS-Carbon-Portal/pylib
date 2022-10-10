@@ -268,6 +268,156 @@ def collection_items(id):
     return query
 # -----------------------------------------------------------------------------
 
+def station_query(filter:dict=None):
+    """
+    Define SPARQL query to return a list of all known stations
+    at the Carbon Portal. This can include NON-ICOS stations.
+    Note: excluding WDGCC stations ( https://gaw.kishou.go.jp/ ),
+    which are visible in the data portal for historic reasons.
+    Parameters
+    ----------
+    filter: dictionary
+        DESCRIPTION. The filter may contain selections we want to filter out on
+        the sparql side, instead of doing all filtering on the python side.
+        Possible keys of the filter dictionary are
+            'station': str or list
+            'theme': str or list
+            'country': str or list
+            'project': 'ICOS'
+        where
+            - 'country' expect country codes using alpha-2 ISO 3166.
+            - 'project': 'ICOS' means that the station has icosClass '1', '2'
+              or 'associated'
+
+    Returns
+    -------
+    query : str, valid sparql query to run against the Carbon Portal SPARQL endpoint.
+
+    Example
+    -------
+    >>>station_query({ 'theme': ['AS','ES'], 'station': ['BIR', 'HTM', 'KIT']})
+    >>>station_query({ 'theme': 'AS', 'station': 'BIR'})
+    >>>station_query({ 'project': 'ICOS'})
+    >>>station_query({ 'country': ['NO','SE']})
+
+    """
+
+    # default filters:
+    station_filter = ''
+    theme_filter = ''
+    country_filter = 'OPTIONAL {?uri cpmeta:countryCode ?country }'
+    icos_filter = 'OPTIONAL {?uri cpmeta:hasStationClass ?icosClass}'
+
+    if isinstance(filter, dict):
+
+        # sparql string syntax
+        xsd = '^^xsd:string '
+
+        if 'project' in filter.keys():
+            if filter['project'] == 'ICOS':
+                icos_filter = '''VALUES ?icosClass {"1"^^xsd:string  "2"^^xsd:string  "Associated"^^xsd:string }
+                {?uri cpmeta:hasStationClass ?icosClass}'''
+                if 'theme' not in filter.keys():
+                    filter['theme'] = ['AS', 'ES', 'OS']
+
+
+        if 'station' in filter.keys():
+            if isinstance(filter['station'], str):
+                station  =  f"'{filter['station'].upper()}'{xsd}"
+            elif isinstance(filter['station'], list):
+                station = str(filter['station']).upper()[1:-1]
+                station = station.replace(',', xsd ) + xsd
+            else:
+                station =''
+            station_filter = "VALUES ?id {%s}" % station
+
+        if 'theme' in filter.keys():
+            if isinstance(filter['theme'], str):
+                theme  =  f"cpmeta:{filter['theme'].upper()}"
+            elif isinstance(filter['theme'], list):
+                theme = ' '.join(filter['theme']).upper()
+                theme = 'cpmeta:' + theme.replace(' ', ' cpmeta:')
+            else:
+                theme = ''
+            theme_filter = "VALUES ?stationTheme { %s }" % theme
+
+        if 'country' in filter.keys():
+            if isinstance(filter['country'], str):
+                country = f"'{filter['country'].upper()}'{xsd}"
+            elif isinstance(filter['country'], list):
+                country = str(filter['country']).upper()[1:-1]
+                country = country.replace(',', xsd) + xsd
+            else:
+                country = ''
+            country_filter = """VALUES ?country { %s }
+                {?uri cpmeta:countryCode ?country}""" % country
+
+
+
+
+
+
+    # if station:
+    #     station_filter = f'BIND ( "{station}"^^xsd:string as ?id)'
+    # else:
+    #     station_filter = ''
+    # if theme:
+    #     theme_filter = f'BIND (cpmeta:{theme} as ?stationTheme)'
+    # else:
+    #     theme_filter = ''
+
+    query = """
+        prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+        prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+        prefix cpst: <http://meta.icos-cp.eu/ontologies/stationentry/>
+        select ?uri ?id ?name ?icosClass ?country ?lat ?lon ?elevation ?stationTheme ?firstName ?lastName ?email ?siteType
+        from <http://meta.icos-cp.eu/resources/icos/>
+        from <http://meta.icos-cp.eu/resources/extrastations/>
+        from <http://meta.icos-cp.eu/resources/cpmeta/>
+        from <http://meta.icos-cp.eu/resources/stationentry/>
+        where {
+            {
+                select ?uri ?id ?stationTheme (sample(?pers) as ?piOpt)  where
+                {
+                    %s
+                    ?uri cpmeta:hasStationId ?id .
+                    %s
+                    ?uri a ?stationTheme .
+                    OPTIONAL{
+                        ?memb cpmeta:atOrganization ?uri ; cpmeta:hasRole <http://meta.icos-cp.eu/resources/roles/PI> .
+                        filter not exists {?memb cpmeta:hasEndTime []}
+                        ?pers cpmeta:hasMembership ?memb
+                    }
+                }
+                group by ?uri ?id ?stationTheme
+            }
+            bind(coalesce(?piOpt, <http://dummy>) as ?pi)
+            OPTIONAL{
+                ?pi cpmeta:hasFirstName ?firstName .
+                ?pi cpmeta:hasLastName ?lastName
+            }
+            OPTIONAL{?pi cpmeta:hasEmail ?email}
+            OPTIONAL {
+                    {
+                        ?provSt cpst:hasProductionCounterpart ?prodUriLit .
+                        bind((?uri = iri(?prodUriLit)) as ?areEqual)
+                        filter(?areEqual)
+                    }
+                ?provSt cpst:hasSiteType ?siteType .
+            }
+            %s
+            OPTIONAL {?uri cpmeta:hasName ?name  }
+            %s
+            OPTIONAL {?uri cpmeta:hasLatitude ?lat }
+            OPTIONAL {?uri cpmeta:hasLongitude ?lon }
+            OPTIONAL {?uri cpmeta:hasElevation ?elevation }
+        }
+        order by ?stationTheme ?id
+        """  % (station_filter, theme_filter, icos_filter, country_filter)
+
+    return query
+
+
 def stationData(uri, level='2'):
     """
     Define SPARQL query to get a list of data objects for a specific station.

@@ -598,7 +598,7 @@ def get(stationId, station_df=None):
     return myStn
 
 
-def getIdList(project='ICOS', sort='name', outfmt='pandas', icon=None):
+def getIdList(project='ICOS', theme: list = None, sort='name', outfmt='pandas', icon=None):
     """Retrieves a list of stations using a specific format.
 
     Returns a list with all station id's. By default only ICOS stations
@@ -612,6 +612,10 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas', icon=None):
     project : str, optional
         The default is 'ICOS'. If you set `project` to 'all', all known
         stations are returned.
+
+    theme: list
+        The default is None. getIdList(theme=['AS','OS'])
+
 
     sort : str, optional
         The default is 'name'. A user can `sort` by any of the
@@ -647,6 +651,10 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas', icon=None):
 
     Examples
     --------
+    >>> # Get a dataframe of all atmospheric and ocean stations
+    >>> getIdList(theme=['AS','OS'])
+    ...
+    >>> # Get a dataframe of all ICOS stations
     >>> stations_dataframe = getIdList(project='ICOS').head()
     >>> print(stations_dataframe)
             uri 	 id 	name 	...   elevation   project	theme
@@ -656,6 +664,7 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas', icon=None):
     48 	http...  FR-Aur  Aura...	... 	250.0 	     ICOS 	   ES
     127 http...  1199 	 BE-F... 	... 	None 	     ICOS 	   OS
 
+
     """
 
     project = project.upper()
@@ -664,6 +673,9 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas', icon=None):
 
     if project == 'ICOS':
         stn_df = stn_df[stn_df['icosClass'].isin(['1', '2', 'Associated'])]
+
+    if theme:
+        stn_df = stn_df[stn_df.theme.isin(theme)]
 
     stn_df['project'] = stn_df.apply(lambda x: __project(x['uri']), axis=1)
     stn_df['theme'] = stn_df.apply(lambda x: x['stationTheme'].split('/')[-1], axis=1)
@@ -769,7 +781,7 @@ def getList(theme=None, ids=None):
 
     # Query stations.
     # By default, `getIdList()` will return icos stations only.
-    stations_df = getIdList()
+    stations_df = getIdList(theme=theme)
 
     # Filter stations by theme, if applicable.
     stations_df = stations_df[stations_df.theme.isin(theme)]
