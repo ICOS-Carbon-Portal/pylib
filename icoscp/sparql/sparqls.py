@@ -19,7 +19,6 @@ __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "rc1"
 __date__        = "2019-08-09"
 
-
 from warnings import warn
 # --------------------------------------------------------------------
 # create internal helper functions to be used for ALL sparql queries
@@ -316,30 +315,29 @@ def station_query(filter:dict=None):
         if 'project' in filter.keys():
             if filter['project'] == 'ICOS':
                 icos_filter = '''VALUES ?icosClass {"1"^^xsd:string  "2"^^xsd:string  "Associated"^^xsd:string }
-                {?uri cpmeta:hasStationClass ?icosClass}'''
+            {?uri cpmeta:hasStationClass ?icosClass}'''
                 if 'theme' not in filter.keys():
                     filter['theme'] = ['AS', 'ES', 'OS']
 
-
         if 'station' in filter.keys():
             if isinstance(filter['station'], str):
-                station  =  f"'{filter['station'].upper()}'{xsd}"
+                station = f"'{filter['station'].upper()}'{xsd}"
             elif isinstance(filter['station'], list):
                 station = str(filter['station']).upper()[1:-1]
                 station = station.replace(',', xsd ) + xsd
             else:
-                station =''
-            station_filter = "VALUES ?id {%s}" % station
-
+                station = ''
+            station_filter = f"VALUES ?id {{{station}}}"
+            print(station_filter)
         if 'theme' in filter.keys():
             if isinstance(filter['theme'], str):
-                theme  =  f"cpmeta:{filter['theme'].upper()}"
+                theme = f"cpmeta:{filter['theme'].upper()}"
             elif isinstance(filter['theme'], list):
                 theme = ' '.join(filter['theme']).upper()
                 theme = 'cpmeta:' + theme.replace(' ', ' cpmeta:')
             else:
                 theme = ''
-            theme_filter = "VALUES ?stationTheme { %s }" % theme
+            theme_filter = f"VALUES ?stationTheme {{{theme}}}"
 
         if 'country' in filter.keys():
             if isinstance(filter['country'], str):
@@ -349,24 +347,17 @@ def station_query(filter:dict=None):
                 country = country.replace(',', xsd) + xsd
             else:
                 country = ''
-            country_filter = """VALUES ?country { %s }
-                {?uri cpmeta:countryCode ?country}""" % country
+            country_filter = f"""VALUES ?country {{{country}}}
+            {{?uri cpmeta:countryCode ?country}} """
 
+    ## Note: sparql use {} to group variables, when using the
+    #        python f-string formatting rule:
+    #        - use single curly braces around variables {py_var}
+    #        - use double curly braces {{}} around sparql-code {{?uri cpmeta:hasName ?name }}
+    #        provided sparql expect curly braces {?uri cpmeta:hasName ?name }
+    #        - use triple curly braces {{{py_var}}} provided sparql expect {eval(py_var)}
 
-
-
-
-
-    # if station:
-    #     station_filter = f'BIND ( "{station}"^^xsd:string as ?id)'
-    # else:
-    #     station_filter = ''
-    # if theme:
-    #     theme_filter = f'BIND (cpmeta:{theme} as ?stationTheme)'
-    # else:
-    #     theme_filter = ''
-
-    query = """
+    query = f"""
         prefix xsd: <http://www.w3.org/2001/XMLSchema#>
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
         prefix cpst: <http://meta.icos-cp.eu/ontologies/stationentry/>
@@ -375,45 +366,45 @@ def station_query(filter:dict=None):
         from <http://meta.icos-cp.eu/resources/extrastations/>
         from <http://meta.icos-cp.eu/resources/cpmeta/>
         from <http://meta.icos-cp.eu/resources/stationentry/>
-        where {
-            {
+        where {{
+            {{
                 select ?uri ?id ?stationTheme (sample(?pers) as ?piOpt)  where
-                {
-                    %s
+                {{
+                    {station_filter}
                     ?uri cpmeta:hasStationId ?id .
-                    %s
+                    {theme_filter}
                     ?uri a ?stationTheme .
-                    OPTIONAL{
+                    OPTIONAL{{
                         ?memb cpmeta:atOrganization ?uri ; cpmeta:hasRole <http://meta.icos-cp.eu/resources/roles/PI> .
-                        filter not exists {?memb cpmeta:hasEndTime []}
+                        filter not exists {{?memb cpmeta:hasEndTime []}}
                         ?pers cpmeta:hasMembership ?memb
-                    }
-                }
+                    }}
+                }}
                 group by ?uri ?id ?stationTheme
-            }
+            }}
             bind(coalesce(?piOpt, <http://dummy>) as ?pi)
-            OPTIONAL{
+            OPTIONAL{{
                 ?pi cpmeta:hasFirstName ?firstName .
                 ?pi cpmeta:hasLastName ?lastName
-            }
-            OPTIONAL{?pi cpmeta:hasEmail ?email}
-            OPTIONAL {
-                    {
+            }}
+            OPTIONAL{{?pi cpmeta:hasEmail ?email}}
+            OPTIONAL {{
+                    {{
                         ?provSt cpst:hasProductionCounterpart ?prodUriLit .
                         bind((?uri = iri(?prodUriLit)) as ?areEqual)
                         filter(?areEqual)
-                    }
+                    }}
                 ?provSt cpst:hasSiteType ?siteType .
-            }
-            %s
-            OPTIONAL {?uri cpmeta:hasName ?name  }
-            %s
-            OPTIONAL {?uri cpmeta:hasLatitude ?lat }
-            OPTIONAL {?uri cpmeta:hasLongitude ?lon }
-            OPTIONAL {?uri cpmeta:hasElevation ?elevation }
-        }
+            }}
+            {icos_filter}
+            OPTIONAL {{?uri cpmeta:hasName ?name  }}
+            {country_filter}
+            OPTIONAL {{?uri cpmeta:hasLatitude ?lat }}
+            OPTIONAL {{?uri cpmeta:hasLongitude ?lon }}
+            OPTIONAL {{?uri cpmeta:hasElevation ?elevation }}
+        }}
         order by ?stationTheme ?id
-        """  % (station_filter, theme_filter, icos_filter, country_filter)
+        """
 
     return query
 
