@@ -598,7 +598,7 @@ def get(stationId, station_df=None):
     return myStn
 
 
-def getIdList(project='ICOS', theme: list = None, sort='name', outfmt='pandas', icon=None):
+def getIdList(project: str = 'ICOS', theme: list = None, sort: str = 'name', outfmt: str = 'pandas', icon=None):
     """Retrieves a list of stations using a specific format.
 
     Returns a list with all station id's. By default only ICOS stations
@@ -674,11 +674,12 @@ def getIdList(project='ICOS', theme: list = None, sort='name', outfmt='pandas', 
     if project == 'ICOS':
         stn_df = stn_df[stn_df['icosClass'].isin(['1', '2', 'Associated'])]
 
+    stn_df['project'] = stn_df.apply(lambda x: __project(x['uri']), axis=1)
+    stn_df['theme'] = stn_df.apply(lambda x: x['stationTheme'].split('/')[-1], axis=1)
+
     if theme:
         stn_df = stn_df[stn_df.theme.isin(theme)]
 
-    stn_df['project'] = stn_df.apply(lambda x: __project(x['uri']), axis=1)
-    stn_df['theme'] = stn_df.apply(lambda x: x['stationTheme'].split('/')[-1], axis=1)
     if not project == 'ALL':
         stn_df = stn_df[stn_df.project == project.upper()]
 
