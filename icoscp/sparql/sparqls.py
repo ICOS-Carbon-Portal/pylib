@@ -278,6 +278,7 @@ def station_query(filter:dict=None):
     filter: dictionary
         DESCRIPTION. The filter may contain selections we want to filter out on
         the sparql side, instead of doing all filtering on the python side.
+        sparql will return rows satisfying all keys of the filter.
         Possible keys of the filter dictionary are
             'station': str or list
             'theme': str or list
@@ -294,11 +295,9 @@ def station_query(filter:dict=None):
 
     Example
     -------
-    >>>station_query({ 'theme': ['AS','ES'], 'station': ['BIR', 'HTM', 'KIT']})
-    >>>station_query({ 'theme': 'AS', 'station': 'BIR'})
-    >>>station_query({ 'project': 'ICOS'})
-    >>>station_query({ 'country': ['NO','SE']})
-
+    >>>station_query({ 'theme': ['AS','ES']})
+    >>>station_query({ 'station': ['BIR', 'HTM', 'KIT']})
+    >>>station_query({ 'theme': 'AS', 'country': ['NO','SE'], 'project': 'ICOS'})
     """
 
     # default filters:
@@ -328,7 +327,7 @@ def station_query(filter:dict=None):
             else:
                 station = ''
             station_filter = f"VALUES ?id {{{station}}}"
-            print(station_filter)
+
         if 'theme' in filter.keys():
             if isinstance(filter['theme'], str):
                 theme = f"cpmeta:{filter['theme'].upper()}"
