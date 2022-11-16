@@ -3,7 +3,7 @@ import setuptools
 
 def readme():
     try:
-        with open('readme.md') as f:
+        with open('README.md') as f:
             return f.read()
     except:
         pass
