@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: icoscp
-Version: 0.1.16
+Version: 0.1.17
 Summary: Access to ICOS data objects hosted at https://data.icos-cp.eu
 Home-page: https://www.icos-cp.eu/
 Author: Claudio D'Onofrio, Zois Zogopoulos, Anders Dahlner, ICOS Carbon Portal
@@ -10,7 +10,6 @@ Project-URL: Source, https://github.com/ICOS-Carbon-Portal/pylib
 Project-URL: Documentation, https://icos-carbon-portal.github.io/pylib/
 Project-URL: DataPortal, https://data.icos-cp.eu/portal/
 Project-URL: SparqlEndpoint, https://meta.icos-cp.eu/sparqlclient/?type=CSV
-Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: Development Status :: 4 - Beta
 Classifier: License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)
@@ -51,8 +50,6 @@ For example with mini-conda (https://docs.conda.io/en/latest/miniconda.html) you
 
 
 Documentation about the library and all the modules are available at https://icos-carbon-portal.github.io/pylib/
-
-
 
 
 
