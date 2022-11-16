@@ -356,7 +356,7 @@ def __get_object(stations):
 
 def __get_stations(ids=[], progress=True):
     """ get all stilt stations available on the server
-        return dictionary with meta data, keys are stilt station id's
+        return dictionary with metadata, keys are stilt station id's
     """
 
     # invert the progress parameter, tqdm interpretation is
@@ -381,8 +381,8 @@ def __get_stations(ids=[], progress=True):
     df = pd.read_csv(CPC.STILTINFO)
 
     # add ICOS flag to the station
-    icosStations = cpstation.getIdList()
-    icosStations = list(icosStations['id'][icosStations.theme=='AS'])
+    icos_stations_df = cpstation.getIdList(project='ICOS', theme='AS')
+    icos_stations_ls = list(icos_stations_df.id)
 
     # dictionary to return
     stations = {}
@@ -421,16 +421,19 @@ def __get_stations(ids=[], progress=True):
         # CPC.STILTINFO
         id = [a.lower() for a in df['STILT id'].values]
         if ist.lower() in id:
-            stationName = str(df.loc[df['STILT id'] == ist]['STILT name'].item())
+            stationName = str(df.loc[df['STILT id'] ==
+                                     ist]['STILT name'].item())
         else:
             stationName = ''
         
-        stations[ist]['name'] = __stationName(stations[ist]['id'], stationName, stations[ist]['alt'])
+        stations[ist]['name'] = __stationName(stations[ist]['id'],
+                                              stationName,
+                                              stations[ist]['alt'])
 
         # set a flag if it is an ICOS station
         stn = stations[ist]['id'][0:3].upper()
-        if stn in icosStations:
-            stations[ist]['icos'] = cpstation.get(stn).info()
+        if stn in icos_stations_ls:
+            stations[ist]['icos'] = cpstation.get(stn, icos_stations_df).info()
         else:
             stations[ist]['icos'] = False
 
@@ -481,7 +484,7 @@ def find(**kwargs):
     """
     Return a list of stilt stations. Providing no keyword arguments will
     return a complete list of all stations. You can filter the result by
-    by providing the following keywords:
+    providing the following keywords:
 
     Parameters
     ----------
@@ -585,7 +588,7 @@ def find(**kwargs):
 
     # convert all keywords to lower case
     if kwargs:
-        kwargs =  {k.lower(): v for k, v in kwargs.items()}
+        kwargs = {k.lower(): v for k, v in kwargs.items()}
     
     if 'stations' in kwargs:
         stations = kwargs['stations']
