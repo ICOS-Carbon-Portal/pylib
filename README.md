@@ -1,6 +1,4 @@
 # ICOS Carbon Portal Python Package
-# ICOS Carbon Portal Python Package
-
 <table>
     <tr>
         <td>Latest Release</td>
