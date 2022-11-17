@@ -8,6 +8,8 @@
             <a href="https://pypi.org/project/icoscp/"/>
             <img src="https://badge.fury.io/py/icoscp.svg"/>
         </td>
+    </tr>
+    <tr>
         <td>PyPI Downloads</td>
         <td>
             <a href="https://pepy.tech/project/icoscp"/>
