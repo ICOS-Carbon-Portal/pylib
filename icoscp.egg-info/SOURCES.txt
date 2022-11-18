@@ -30,6 +30,4 @@ icoscp/stilt/stations.json
 icoscp/stilt/stiltobj.py
 icoscp/stilt/stiltstation.py
 icoscp/stilt/timefuncs.py
-icoscp/test/__init__.py
-icoscp/test/test_station.py
 test/test_cpb.py
