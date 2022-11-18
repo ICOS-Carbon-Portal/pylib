@@ -29,9 +29,12 @@ In essence this package allows you to have direct access to data objects from th
 Please be aware, that by either downloading data, or accessing data directly through this library, you agree and accept, that all ICOS data is provided under a <a href="https://data.icos-cp.eu/licence" target="_blank">CC BY 4.0 licence <img src="https://www.icos-cp.eu/sites/default/files/inline-images/creativecommons.png"></a>
 
 ## Installation
-The latest release is available on [https://pypi.org/project/icoscp/](https://pypi.org/project/icoscp/). You can simply run - `pip install icoscp`.
+The latest release is available on [https://pypi.org/project/icoscp/](https://pypi.org/project/icoscp/). You can simply run
+
+`pip install icoscp`.
 
 If you need the cutting edge version you may install the library directly from github with
+
 `pip install git+https://github.com/ICOS-Carbon-Portal/pylib.git`
 
 We would encourage you to use a virtual environment for python to test this library.
