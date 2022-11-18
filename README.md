@@ -18,36 +18,7 @@
 
 ## About ICOS
 
-The Integrated Carbon Observation System, ICOS, is a European-wide greenhouse gas research infrastructure. ICOS produces standardised data on greenhouse gas concentrations in the atmosphere, as well as on carbon fluxes between the atmosphere, the earth and oceans. This information is being used by scientists as well as by decision makers in predicting and mitigating climate change. The high-quality and open ICOS data is based on the measurements from 134 stations across 12 European countries. For more information please visit [https://www.icos-cp.eu/](https://www.icos-cp.eu/)
-
-
-This package is under active development. Please be aware that changes to names of functions and classes are possible without further notice. Please do feedback any recommendations, issues, etc if you try it out.
-
-
-What is the package about?
-In essence this package allows you to have direct access to data objects from the ICOS CarbonPortal were a "Preview" is available. It is an easy access to data objects hosted at the ICOS Carbon Portal ( https://data.icos-cp.eu/ ). By using this library you can load data files directly into memory.
-
-Please be aware, that by either downloading data, or accessing data directly through this library, you agree and accept, that all ICOS data is provided under a <a href="https://data.icos-cp.eu/licence" target="_blank">CC BY 4.0 licence <img src="https://www.icos-cp.eu/sites/default/files/inline-images/creativecommons.png"></a>
-
-We would encourage you to use a virtual environment for python to test this library.
-For example with mini-conda (https://docs.conda.io/en/latest/miniconda.html) you can create a new environment with:
-
-- `conda create -n icos python`
-- `activate icos`
-- `pip install icoscp`
-
-
-Documentation about the library and all the modules are available at https://icos-carbon-portal.github.io/pylib/
-
-
-
-
-
-
-## About ICOS
-
-The Integrated Carbon Observation System, ICOS, is a European-wide greenhouse gas research infrastructure. ICOS produces standardised data on greenhouse gas concentrations in the atmosphere, as well as on carbon fluxes between the atmosphere, the earth and oceans. This information is being used by scientists as well as by decision makers in predicting and mitigating climate change. The high-quality and open ICOS data is based on the measurements from 134 stations across 12 European countries. For more information please visit [https://www.icos-cp.eu/](https://www.icos-cp.eu/)
-
+The Integrated Carbon Observation System, ICOS, is a European-wide greenhouse gas research infrastructure. ICOS produces standardised data on greenhouse gas concentrations in the atmosphere, as well as on carbon fluxes between the atmosphere, the earth and oceans. This information is being used by scientists as well as by decision makers in predicting and mitigating climate change. The high-quality and open ICOS data is based on the measurements from over 130 stations across Europe. For more information about the ICOS station network , data quality control and assurance, and much more, please read the [ICOS Handbook 2022](https://www.icos-cp.eu/sites/default/files/2022-03/ICOS_handbook_2022_WEB.pdf), or visit our website [https://www.icos-cp.eu/](https://www.icos-cp.eu/).
 
 This package is under active development. Please be aware that changes to names of functions and classes are possible without further notice. Please do feedback any recommendations, issues, etc if you try it out.
 
@@ -66,8 +37,3 @@ For example with mini-conda (https://docs.conda.io/en/latest/miniconda.html) you
 
 
 Documentation about the library and all the modules are available at https://icos-carbon-portal.github.io/pylib/
-
-
-
-
-
