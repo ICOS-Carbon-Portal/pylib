@@ -31,7 +31,7 @@ Please be aware, that by either downloading data, or accessing data directly thr
 ## Installation
 The latest release is available on [https://pypi.org/project/icoscp/](https://pypi.org/project/icoscp/). You can simply run
 
-`pip install icoscp`.
+`pip install icoscp`
 
 If you need the cutting edge version you may install the library directly from github with
 
