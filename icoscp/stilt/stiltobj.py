@@ -296,7 +296,7 @@ class StiltStation():
                                       str(dd.day).zfill(2)+'x'+str(dd.hour).zfill(2)+'/foot')]
 
         #Concatenate xarrays on time axis:
-        fp = xr.open_mfdataset(fp_files, concat_dim="time",
+        fp = xr.open_mfdataset(fp_files, combine='by_coords',
                                data_vars='minimal', coords='minimal',
                                compat='override', parallel=True,
                                decode_cf=False, decode_times=True)

@@ -1,13 +1,28 @@
 # Changelog
 
+## 0.1.17
+ - #### station module
+ - #### stilt module
+     - Update `xarray` call in `stiltobj.py`.
+ - #### other changes
+     - Fix library's building problems which resulted in an empty project description here: 
+   [https://pypi.org/project/icoscp/](https://pypi.org/project/icoscp/)
+ 
 ## 0.1.16
  - #### stiltobj
      - Increase perfomance to load footprint data faster by 25%.
        Xarray has default value of decode_cf=True, changed to False.
  - #### sparql
      - Remove methods with unused queries `cpbGetInfo(dobj)` and `cpbGetSchemaDetail(formatSpec)`.
-     - Speed up queries in methods `objectSpec(spec='atcCo2L2DataObject', station='', limit=0)`, 
-     `getStations(station = '')`, `get_coords_icos_stations_atc()`, and `get_icos_stations_atc_L1()`.
+     - Speed up queries in functions `objectSpec(spec='atcCo2L2DataObject', station='', limit=0)`, 
+       `getStations(station = '')`, `get_coords_icos_stations_atc()`, and `get_icos_stations_atc_L1()`.
+     - Update query in `getStations(station = '')` to correctly retrieve stations.
+     - Add deprecation warning for `stations_with_pi()` query.
+ - #### station module
+     - Filter out non icos stations when querying themed stations in `getList()`. 
+ - #### stilt module
+     - Regenerate STILT module's static file `stations.json`.
+
 
 ## 0.1.15
  - #### cpb module
@@ -35,7 +50,7 @@
      - References to server calls moved to `const.py`.
      - Rename file dtype_dict.py to dtype.py for better readability.
      - add simple unit test and implement initial assertions for the cpb module.
- - #### Access to data
+ - #### access to data
      - `.data` [property] will always return all columns.
      - `.get(columns=None)` [method] returns all data by default. Provides the possibility to extract specific columns 
        from the data set. Expected is a list of column names, which then returns only the selected columns. Non valid 
@@ -44,7 +59,7 @@
        Valid entries can be obtained with `.colNames` or `.variables['name'].
      - `.getColumns(columns=None)`, this is exactly the same as .get(columns='None'). We keep this function for
        compatibility to previous versions.
- - #### Other changes
+ - #### other changes
      - add `icon` argument to `station.getIdList()` function.
      - regenerate STILT module's static `stations.json`.
      - resolve deprecation warnings from `numpy` calls.

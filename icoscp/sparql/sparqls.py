@@ -19,7 +19,7 @@ __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "rc1"
 __date__        = "2019-08-09"
 
-
+from warnings import warn
 # --------------------------------------------------------------------
 # create internal helper functions to be used for ALL sparql queries
 # --------------------------------------------------------------------
@@ -267,6 +267,235 @@ def collection_items(id):
     return query
 # -----------------------------------------------------------------------------
 
+
+def station_query(filter: dict = None, return_filter: bool = False) -> str or (str, str):
+    """
+    Define SPARQL query to return a list of all known stations
+    at the Carbon Portal. This can include NON-ICOS stations.
+    Note: excluding WDGCC stations ( https://gaw.kishou.go.jp/ ),
+    which are visible in the data portal for historic reasons.
+
+    Parameters
+    ----------
+    filter: dictionary
+        DESCRIPTION. The filter may contain selections we want to filter out on
+        the sparql side, instead of doing all filtering on the python side.
+        sparql will return rows satisfying all keys of the filter.
+        Combining keys will return the intersection of the data sets.
+        PLEASE NOTE: Some key-values are case-sensitive.
+        Possible keys of the filter dictionary are
+            'station': str or list of str, optional, case-sensitive
+                The empty string, '', will return ALL stations.
+                If you provide a station id, know that:
+                - That it needs to be exactly as provided from the Triple Store.
+                - The station name might not be unique.
+            'theme': str or list of str, optional, case-sensitive
+                The empty string, '', which returns ALL themes.
+                If you provide a theme, be aware, that it needs to be
+                exactly as provided from the Triple Store.
+            'country': str or list of str
+                Where 'country' expect country codes using alpha-2 ISO 3166.
+            'project': str = 'ICOS'| 'ALL'
+                The choice 'ICOS', which is default from internal icoscp-calls,
+                will query for
+                    (1) stations of theme 'AS', 'ES' or 'OS'
+                for which
+                    (2) icosClass is '1', '2' or 'associated'.
+                If used to gether with the 'theme'-filter, the resulting query
+                will only look for themes of the 'theme'-filter that are 'AS,
+                'ES' or 'OS'.
+                The choice 'ALL', then all will return all known stations.
+    return_filter : bool
+        DESCRIPTION. By default, `return_filter` is False. If `return_filter`
+        is True then the return-value will be a tuple: (query, filter), where
+        the filter might be modified.
+
+    Returns
+    -------
+    query : str
+        Provided the parameter `return_filter` is False.
+        The `query` is a valid sparql query to run against the Carbon Portal SPARQL endpoint.
+    (query, filter) : (str, str)
+        Provided the parameter `return_filter` is True.
+        The `query` is a valid sparql query to run against the Carbon Portal SPARQL endpoint.
+        The `filter` might be modified filter.
+
+    Example
+    -------
+    >>># The default call, will return all known stations
+    >>>station_query()
+
+    >>># For ICOS stations use:
+    >>>station_query({'project': 'ICOS'})
+
+    >>># To fetch all atmospheric and ecosystem stations of ICOS, use
+    >>>station_query({ 'theme': ['AS','ES'], 'project': 'ICOS'})
+
+    >>># To fetch the atmospheric ICOS stations: 'BIR', 'HTM' and 'KIT', use
+    >>>station_query({ 'station': ['BIR', 'HTM', 'KIT'], 'project': 'ICOS'})
+
+    >>># To fetch all atmospheric ICOS stations in Norway and Sweden, use
+    >>>station_query({ 'theme': 'AS', 'country': ['NO','SE'], 'project': 'ICOS'})
+
+    >>># To fetch all ICOS and non-ICOS stations in Germany use
+    >>>station_query({ 'country': ['DE'], 'project': 'all'})
+
+    >>># To reuse a filter we can use the return_filter option
+    >>>station_query(some_filter, return_filter = True)
+    """
+
+    # Depending on the filter we will change the
+    # following default query filters:
+    station_filter = ''
+    theme_filter = ''
+    country_filter = 'OPTIONAL {?uri cpmeta:countryCode ?country }'
+    icos_filter = 'OPTIONAL {?uri cpmeta:hasStationClass ?icosClass}'
+
+    if isinstance(filter, dict):
+        # Remove redundant keys
+        provided_keys = list(filter.keys())
+        for any_key in provided_keys:
+            if filter[any_key] in ['', [''], None]:
+                filter.pop(any_key)
+
+        # Setting some parameters upper case
+        icos_themes = ['AS', 'ES', 'OS']
+        upper_cond = (lambda z, w: z if w and z.upper() not in w else z.upper())
+        if 'theme' in filter.keys():
+            if isinstance(filter['theme'], str):
+                filter['theme'] = upper_cond(filter['theme'], icos_themes)
+            elif isinstance(filter['theme'], list):
+                filter['theme'] = [upper_cond(x, icos_themes)
+                                   for x in filter['theme']]
+        if 'country' in filter.keys():
+            if isinstance(filter['country'], str):
+                filter['country'] = filter['country'].upper()
+            elif isinstance(filter['country'], list):
+                filter['country'] = [x.upper() for x in filter['country']]
+
+        # sparql string syntax
+        xsd = '^^xsd:string '
+
+        if 'project' in filter.keys():
+            filter['project'] = str(filter['project']).upper()
+            if filter['project'] == 'ICOS':
+                icos_filter = '''VALUES ?icosClass {"1"^^xsd:string  "2"^^xsd:string  "Associated"^^xsd:string }
+                    {?uri cpmeta:hasStationClass ?icosClass}'''
+                if 'theme' not in filter.keys():
+                    filter['theme'] = icos_themes
+                else:
+                    filter['theme'] = [x for x in icos_themes if x in filter['theme']]
+            elif filter['project'] == 'ALL':
+                # Just filter using the other keys
+                pass
+            else:
+                # In case wrong value is given,
+                # and the filter is to be returned
+                filter.pop('project')
+
+        if 'station' in filter.keys():
+            if isinstance(filter['station'], str):
+                station = f'"{filter["station"]}"{xsd}'
+                station_filter = f'BIND ( {station} as ?id)'
+            elif isinstance(filter['station'], list):
+                station = str(filter['station'])[1:-1]
+                station = station.replace(',', xsd ) + xsd
+                station_filter = f"VALUES ?id {{{station}}}"
+            else:
+                # In case wrong value is given,
+                # and the filter is to be returned
+                filter.pop('station')
+                station_filter = ''
+
+        if 'theme' in filter.keys():
+            if isinstance(filter['theme'], str):
+                theme_filter = f'BIND (cpmeta:{filter["theme"]} as ?stationTheme)'
+            elif isinstance(filter['theme'], list):
+                theme = ' '.join(filter['theme'])
+                theme = 'cpmeta:' + theme.replace(' ', ' cpmeta:')
+                theme_filter = f"VALUES ?stationTheme {{{theme}}}"
+            else:
+                # In case wrong value is given,
+                # and the filter is to be returned
+                filter.pop('theme')
+                theme_filter = ''
+
+        if 'country' in filter.keys():
+            if isinstance(filter['country'], str):
+                country = f"'{filter['country']}'{xsd}"
+            elif isinstance(filter['country'], list):
+                country = str(filter['country'])[1:-1]
+                country = country.replace(',', xsd) + xsd
+            else:
+                # In case wrong value is given,
+                # and the filter is to be returned
+                filter.pop('country')
+                country = ''
+            country_filter = f"""VALUES ?country {{{country}}}
+            {{?uri cpmeta:countryCode ?country}} """
+
+    ## Note: sparql use {} to group variables, when using the
+    #        python f-string formatting rule:
+    #        - use single curly braces around variables {py_var}
+    #        - use double curly braces {{}} around sparql-code {{?uri cpmeta:hasName ?name }}
+    #        provided sparql expect curly braces {?uri cpmeta:hasName ?name }
+    #        - use triple curly braces {{{py_var}}} provided sparql expect {eval(py_var)}
+
+    query = f"""
+        prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+        prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+        prefix cpst: <http://meta.icos-cp.eu/ontologies/stationentry/>
+        select ?uri ?id ?name ?icosClass ?country ?lat ?lon ?elevation ?stationTheme ?firstName ?lastName ?email ?siteType
+        from <http://meta.icos-cp.eu/resources/icos/>
+        from <http://meta.icos-cp.eu/resources/extrastations/>
+        from <http://meta.icos-cp.eu/resources/cpmeta/>
+        from <http://meta.icos-cp.eu/resources/stationentry/>
+        where {{
+            {{
+                select ?uri ?id ?stationTheme (sample(?pers) as ?piOpt)  where
+                {{
+                    {station_filter}
+                    ?uri cpmeta:hasStationId ?id .
+                    {theme_filter}
+                    ?uri a ?stationTheme .
+                    OPTIONAL{{
+                        ?memb cpmeta:atOrganization ?uri ; cpmeta:hasRole <http://meta.icos-cp.eu/resources/roles/PI> .
+                        filter not exists {{?memb cpmeta:hasEndTime []}}
+                        ?pers cpmeta:hasMembership ?memb
+                    }}
+                }}
+                group by ?uri ?id ?stationTheme
+            }}
+            bind(coalesce(?piOpt, <http://dummy>) as ?pi)
+            OPTIONAL{{
+                ?pi cpmeta:hasFirstName ?firstName .
+                ?pi cpmeta:hasLastName ?lastName
+            }}
+            OPTIONAL{{?pi cpmeta:hasEmail ?email}}
+            OPTIONAL {{
+                    {{
+                        ?provSt cpst:hasProductionCounterpart ?prodUriLit .
+                        bind((?uri = iri(?prodUriLit)) as ?areEqual)
+                        filter(?areEqual)
+                    }}
+                ?provSt cpst:hasSiteType ?siteType .
+            }}
+            {icos_filter}
+            OPTIONAL {{?uri cpmeta:hasName ?name  }}
+            {country_filter}
+            OPTIONAL {{?uri cpmeta:hasLatitude ?lat }}
+            OPTIONAL {{?uri cpmeta:hasLongitude ?lon }}
+            OPTIONAL {{?uri cpmeta:hasElevation ?elevation }}
+        }}
+        order by ?stationTheme ?id
+        """
+
+    if not return_filter:
+        return query
+    else:
+        return query, filter
+
+
 def stationData(uri, level='2'):
     """
     Define SPARQL query to get a list of data objects for a specific station.
@@ -295,69 +524,56 @@ def stationData(uri, level='2'):
         return 'input parameters not valid'
 
     uristr = '<' + '> <'.join(uri) + '>'
-    query = """
-			prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
-			prefix prov: <http://www.w3.org/ns/prov#>
-			select *
-			where {
-				VALUES ?station {%s}                                 
-				?dobj cpmeta:hasObjectSpec ?spec .	
-				FILTER NOT EXISTS {?spec cpmeta:hasAssociatedProject/cpmeta:hasHideFromSearchPolicy "true"^^xsd:boolean}
-				FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}				
-				?dobj cpmeta:wasAcquiredBy / prov:startedAtTime ?timeStart .
-				?dobj cpmeta:wasAcquiredBy / prov:endedAtTime ?timeEnd .
-				?dobj cpmeta:wasAcquiredBy/prov:wasAssociatedWith ?station .                                                
-                ?spec rdfs:label ?specLabel .                
-                OPTIONAL {?dobj cpmeta:wasAcquiredBy/cpmeta:hasSamplingHeight ?samplingheight} .                                
-				?spec cpmeta:hasDataLevel ?datalevel .
-                ?dobj cpmeta:hasSizeInBytes ?bytes .
-				FILTER (?datalevel  %s)				
-            }          """ % (uristr, level)
+
+    query = """prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+    prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+    prefix prov: <http://www.w3.org/ns/prov#>
+    select *
+    where {
+	    {
+            ?spec cpmeta:hasDataLevel ?datalevel .
+            FILTER (?datalevel  %s)
+            FILTER NOT EXISTS {?spec cpmeta:hasAssociatedProject/cpmeta:hasHideFromSearchPolicy "true"^^xsd:boolean}
+            ?spec rdfs:label ?specLabel .
+    	}	
+	VALUES ?station {%s}
+	?dobj cpmeta:hasObjectSpec ?spec .	
+	FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}				
+	?dobj cpmeta:wasAcquiredBy [
+		prov:startedAtTime ?timeStart ;
+   		prov:endedAtTime ?timeEnd ;
+	 	prov:wasAssociatedWith ?station 
+	] .
+	?dobj cpmeta:hasSizeInBytes ?bytes .
+	OPTIONAL {?dobj cpmeta:wasAcquiredBy/cpmeta:hasSamplingHeight ?samplingheight} .
+    }""" % (level, uristr)
 
     return query
 
-def stations_with_pi(station = '', limit=0):
-    """
-        Define SPARQL query to get a list of ICOS stations with PI and email.
-        As per writing, (April 2019, the list is pulled from the provisional
-        data, labeling process)
-    """
-    if station:
-        flt = 'FILTER(?stationId = "' + station + '") . '
-    else:
-        flt = station
 
-    query = """
-            prefix st: <http://meta.icos-cp.eu/ontologies/stationentry/>
-            select distinct ?stationId ?stationName ?stationTheme 
-            ?class  ?siteType
-            ?lat ?lon ?eas ?eag ?firstName ?lastName ?email ?country
-            from <http://meta.icos-cp.eu/resources/stationentry/>
-            where{
-                ?s st:hasShortName ?stationId .
-                %s
-                optional{?s st:hasLon ?lon} .
-                optional{?s st:hasLat ?lat} .
-                optional{?s st:hasElevationAboveSea ?eas} .
-                optional{?s st:hasElevationAboveGround ?eag} .                
-                ?s st:hasLongName ?stationName .
-                ?s st:hasPi ?pi .
-                ?pi st:hasFirstName ?firstName .
-                ?pi st:hasLastName ?lastName .
-                ?pi st:hasEmail ?email .
-                ?s a ?stationClass .
-                ?s st:hasStationClass ?class .
-                optional{?s st:hasCountry ?country} .
-                optional{?s st:hasSiteType ?siteType} .
-                
-                BIND (replace(str(?stationClass), "http://meta.icos-cp.eu/ontologies/stationentry/", "") AS ?stationTheme )
-            }            
-            %s
-        """ % (flt, __checklimit__(limit))
+def stations_with_pi(station='', limit=0):
+    """
+        Definition of an old SPARQL query that was used to fetch provisional
+        meta-data, namely a list of ICOS stations with principal
+        investigators and e-mails.
+    """
+    deprecation_message = """
+    This function will be deprecated in the next pylib major release.
+    In its current version the function fetches a query that will return all stations or a number of stations
+    given the `limit` argument.
+    In order to filter only stations with a principal investigator one can run:
+        from icoscp.sparql import sparqls
+        from icoscp.sparql.runsparql import RunSparql
+        query = sparqls.stations_with_pi()
+        df = RunSparql(sparql_query=query, output_format='pandas').run()
+        df_stations_with_pi = df[(df.firstName.notnull()) & (df.lastName.notnull())]
+    """
+    warn(deprecation_message, DeprecationWarning, stacklevel=2)
+    return getStations(station=station) + __checklimit__(limit)
 
-    return query
-# -----------------------------------------------------------------------------
-def getStations(station = ''):
+
+def getStations(station='', theme=''):
     """
     Define SPARQL query to return a list of all known stations
     at the Carbon Portal. This can include NON-ICOS stations.
@@ -366,39 +582,29 @@ def getStations(station = ''):
     Parameters
     ----------
     station : str, optional, case sensitive
-        DESCRIPTION. The default is '', and empyt string which returns ALL
+        DESCRIPTION. The default is '', and empty string which returns ALL
         stations. If you provide a station id, be aware, that it needs to be
-        exactly as provided from the Triple Store....case sensitive. 
+        exactly as provided from the Triple Store....case sensitive.
+    theme : str, optional, case sensitive
+        DESCRIPTION. The default is '', and empty string which returns ALL
+        themes. If you provide a theme, be aware, that it needs to be
+        exactly as provided from the Triple Store....case sensitive.
     Returns
     -------
     query : str, valid sparql query to run against the Carbon Portal SPARQL endpoint.
     """
+
+    filter = dict()
+
     if station:
-        flt = 'BIND ( "' + station + '"^^xsd:string as ?id)'
-    else:
-        flt = ''
+        filter['station'] = station
 
-    query = """
-            prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
-            select *
-            from <http://meta.icos-cp.eu/resources/icos/> 
-            from <http://meta.icos-cp.eu/resources/extrastations/>
-            from <http://meta.icos-cp.eu/resources/cpmeta/> 
-            where {
-                %s
-            	?uri cpmeta:hasStationId ?id .   
-            	OPTIONAL {?uri cpmeta:hasName ?name  } .                
-            	OPTIONAL {?uri cpmeta:countryCode ?country }.
-            	OPTIONAL {?uri cpmeta:hasLatitude ?lat }.
-            	OPTIONAL {?uri cpmeta:hasLongitude ?lon }.
-            	OPTIONAL {?uri cpmeta:hasElevation ?elevation } .
-            }
-            """ %(flt)
-            
-            
-    return query
+    if theme:
+        filter['theme'] = theme
 
-# -----------------------------------------------------------------------------
+    return station_query(filter=filter)
+
+
 def dobjStation(dobj):
     """
         Define SPARQL query to get information about a station

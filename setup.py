@@ -3,14 +3,14 @@ import setuptools
 
 def readme():
     try:
-        with open('readme.md') as f:
+        with open('README.md') as f:
             return f.read()
     except:
         pass
 
 setuptools.setup(
     name='icoscp',
-    version='0.1.16a',
+    version='0.1.17',
 	license='GPLv3+',
     author="Claudio D'Onofrio, Zois Zogopoulos, Anders Dahlner, ICOS Carbon Portal",
     author_email='claudio.donofrio@nateko.lu.se, zois.zogopoulos@nateko.lu.se, anders.dahlner@nateko.lu.se, info@icos-cp.eu',

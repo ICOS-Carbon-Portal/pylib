@@ -8,18 +8,25 @@
     
     Example usage:
         
-    from icoscp.station import station    
-    station.getIdList() # returns a pandas data frame with all station Id's'
-    myStation = station.get('StationId') # create a single statino object
-    myList = station.getList('AS') #  returns a list of Atmospheric stations
+    from icoscp.station import station
+
+    # To get a pandas dataframe with all ICOS stations ids
+    stns_df = station.getIdList()
+
+    # Create a single station object
+    my_station = station.get('StationId')
+
+    # Create a list of station objects for the atmospheric ICOS stations
+    atm_ls = station.getList('AS')
 """
 
-__author__ = ["Claudio D'Onofrio", "Zois Zogopoulos"]
+__author__ = ["Claudio D'Onofrio", "Zois Zogopoulos", "Anders Dahlner"]
 __credits__ = "ICOS Carbon Portal"
 __license__ = "GPL-3.0"
 __version__ = "0.1.3"
 __maintainer__ = "ICOS Carbon Portal, elaborated products team"
-__email__ = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se', 'zois.zogopoulos@nateko.lu.se']
+__email__ = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se', 'zois.zogopoulos@nateko.lu.se',
+             'anders.dahlner@nateko.lu.se']
 __status__ = "rc1"
 __date__ = "2021-09-20"
 
@@ -34,13 +41,13 @@ import icoscp.station.fmap as fmap
 
 
 # ----------------------------------------------
-class Station():
+class Station:
     """ Create an ICOS Station object. This class intends to create 
-        an instance of station, providing meta data including 
+        an instance of station, providing metadata including
         stationId, Name, PI, Lat, Lon,  etc.
         Examples:
         import station
-        myList = station.getList(['AS']) 
+        myList = station.getList(['AS'])
         myStation = station.get('HTM')
         
         station.info()
@@ -60,7 +67,7 @@ class Station():
         self._valid = False  # if stationId is set and valid, return True
         self._name = None  # longName
         self._theme = None  # AS | ES | OS
-        self._icosclass = None  # 1 | 2
+        self._icosclass = None  # 1 | 2 | Associated
         self._siteType = None  # description of site
 
         # locations
@@ -81,7 +88,7 @@ class Station():
 
         # data and products
         self._datacheck = False  # check if data and products have been asked for already
-        self._data = None  # list of associated dataobjects
+        self._data = None  # list of associated data objects
         self._products = None  # list of available products
 
     # super().__init__() # for subclasses
@@ -350,7 +357,7 @@ class Station():
         values = self.__dict__.values()
         dictionary = dict(zip(newKeys, values))
 
-        # remove some of the __dictionary__ keys to get a shorter
+        # remove some __dictionary__ keys to get a shorter
         # summary of information about the station
 
         remove = ['data', 'products', 'valid', 'datacheck']
@@ -363,7 +370,7 @@ class Station():
             return json.dumps(dictionary, indent=4)
 
         if fmt == 'list':
-            return (list(dictionary.keys()), list(dictionary.values()))
+            return list(dictionary.keys()), list(dictionary.values())
 
         if fmt == 'pandas':
             return pd.DataFrame(dictionary, index=[0])
@@ -379,7 +386,7 @@ class Station():
 
                 # Check if current dict key holds the the long name of the station and
                 # if the key to the URL of the station landing page is included:
-                if ((k == 'name') & ('uri' in dictionary.keys())):
+                if (k == 'name') & ('uri' in dictionary.keys()):
 
                     # Create table row and add link with URL to station landing page:
                     html_table = html_table + '<tr><td>' + k + '</td><td><b><a href="' + str(
@@ -387,11 +394,11 @@ class Station():
                         dictionary[k]) + '</a></b></td></tr>'
 
                     # Skip creating table row for 'uri' key:
-                elif (k == 'uri'):
+                elif k == 'uri':
                     continue
 
                 # Dict key 'project' returns a list. Print all comma-sep items as string.
-                elif (k == 'project'):
+                elif k == 'project':
 
                     project_str = ', '.join(dictionary[k])
                     html_table = html_table + '<tr><td>' + k + '</td><td><b>' + project_str + '</b></td></tr>'
@@ -497,36 +504,71 @@ class Station():
 
 # --EOF Station Class-----------------------------------------            
 # ------------------------------------------------------------
-def get(stationId):
+def get(stationId, station_df=None):
     """
     Parameters
     ----------
-    stationId : str StationId as you can extract with getIdList. Example 'NOR'
-                for Atmosphere Norunda station
-    example :  get('NOR')
-            
+    stationId : str
+        Here `stationId` is case-sensitive, for example 'NOR' is the `stationId`
+        for the ICOS atmosphere station Norunda while 'FR-Aur' is the
+        `stationId` for the ICOS ecosystem station Aurade.
+        A list of all stationIds can be extracted using `getIdList()`.
+
+    station_df : pandas.Dataframe
+        By default `station_df` is None. However, if `station_df`
+        is provided it is assumed it will be a dataframe as generated
+        by `getIdList()`. This is used by `getList()` via `_station_list()`
+        in order to increase performance
+
     Returns
     -------
-    station : object Returns a station object (if stationId is found)
+    station : object
+        Returns a station object (if station_id is found)
+
+    Example
+    -------
+    # Get the station object for the ICOS station Norunda
+    >>>st_nor = get('NOR')
+    >>>print(st_nor)
+    {
+        "stationId": "NOR",
+        "name": "Norunda",
+        "theme": "AS",
+        "icosclass": "1",
+        "siteType": "tall tower",
+        ...
+    }
 
     """
 
     # create the station instance
-    myStn = Station()
+    my_stn = Station()
 
-    query = sparqls.getStations(stationId)
-    stn = RunSparql(query, 'pandas').run()
+    if isinstance(station_df, pd.DataFrame) and not station_df.empty:
+        try:
+            stn = station_df.loc[station_df.id == stationId]
+        except:
+            filter = {'station': stationId}
+            query = sparqls.station_query(filter)
+            stn = RunSparql(query, 'pandas').run()
+    else:
+        filter = {'station': stationId}
+        query = sparqls.station_query(filter)
+        stn = RunSparql(query, 'pandas').run()
 
     if not isinstance(stn, pd.DataFrame) or stn.empty:
-        myStn.stationId = stationId
-        myStn.valid = False
-        return myStn
+        my_stn.stationId = stationId
+        my_stn.valid = False
+        return my_stn
     else:
-        stn['project'] = stn.apply(lambda x: __project(x['uri']), axis=1)
+        if 'project' not in stn.columns or stn['project'] is None:
+            stn['project'] = stn.apply(lambda x: __project(x['uri']), axis=1)
+        if 'theme' not in stn.columns or stn['theme'] is None:
+            stn['theme'] = stn.apply(lambda x: x['stationTheme'].split('/')[-1], axis=1)
 
     # we have found a valid id
-    myStn.stationId = stn.id.values[0]
-    myStn.valid = True
+    my_stn.stationId = stn.id.values[0]
+    my_stn.valid = True
 
     # it is possible that more than one station has the same id
     # we will give precedence to the icos project
@@ -535,53 +577,168 @@ def get(stationId):
     # get lat, lon, eas from icos entry
     if not stn[stn.project.str.upper() == "ICOS"].empty:
         if stn.lat.any():
-            myStn.lat = float(stn.lat[stn.project.str.upper() == 'ICOS'])
+            my_stn.lat = float(stn.lat[stn.project.str.upper() == 'ICOS'])
         if stn.lat.any():
-            myStn.lon = float(stn.lon[stn.project.str.upper() == 'ICOS'])
+            my_stn.lon = float(stn.lon[stn.project.str.upper() == 'ICOS'])
         if stn.elevation.any():
-            myStn.eas = float(stn.elevation[stn.project.str.upper() == 'ICOS'])
+            my_stn.eas = float(stn.elevation[stn.project.str.upper() == 'ICOS'])
     else:
         if stn.lat.any():
-            myStn.lat = float(stn.lat.values[0])
+            my_stn.lat = float(stn.lat.values[0])
         if stn.lon.any():
-            myStn.lon = float(stn.lon.values[0])
+            my_stn.lon = float(stn.lon.values[0])
         if stn.elevation.any():
-            myStn.eas = float(stn.elevation.values[0])
+            my_stn.eas = float(stn.elevation.values[0])
 
-    myStn.name = stn.name.iloc[0]
-    myStn.country = stn.country.iloc[0]
-    myStn.project = stn.project.tolist()
-    myStn.uri = stn.uri.tolist()
+    my_stn.name = stn.name.iloc[0]
+    my_stn.country = stn.country.iloc[0]
+    my_stn.project = stn.project.tolist()
+    my_stn.uri = stn.uri.tolist()
 
     # if the station belongs to ICOS
     # add information from the labeling app.
-    # this is an interim step and should be removed after the full meta data
+    # this is an interim step and should be removed after the full metadata
     # flow from the thematic centres is achieved.        
 
-    if 'ICOS' in myStn.project:
-        query = sparqls.stations_with_pi(stationId)
-        lstn = RunSparql(query, 'pandas').run()
-        if not lstn.empty:
-            myStn.theme = lstn['stationTheme'].values[0]
-            myStn.icosclass = lstn['class'].values[0]
-            myStn.icosclass = lstn['class'].values[0]
-            myStn.firstName = lstn['firstName'].values[0]
-            myStn.lastName = lstn['lastName'].values[0]
-            myStn.email = lstn['email'].values[0]
-            myStn.siteType = lstn['siteType'].values[0]
-            myStn.eag = lstn['eag'].values[0]
+    if 'ICOS' in my_stn.project:
+        my_stn.theme = stn.stationTheme.values[0].split('/')[-1]
+        my_stn.icosclass = stn.icosClass.values[0]
+        my_stn.firstName = stn.firstName.values[0]
+        my_stn.lastName = stn.lastName.values[0]
+        my_stn.email = stn.email.values[0]
+        my_stn.siteType = stn.siteType.values[0]
+        my_stn.eag = stn.elevation.values[0]
 
-    # myStn._setData()
-    return myStn
+    return my_stn
 
 
-def getIdList(project='ICOS', sort='name', outfmt='pandas', icon=None):
+def _get_id_list(filter: dict = {'project': 'ICOS', 'theme': ['AS', 'ES', 'OS']},
+                sort: str or list = 'name',
+                outfmt: str = 'pandas',
+                icon=None):
+    """
+        Retrieves a list of stations using a specific format.
+
+        Returns a list with all station id's. By default, only ICOS stations
+        will be returned. If `project` is set to 'ALL', all known station
+        ids are returned. Please be aware, that the usage of data
+        associated with non-ICOS stations might be different from the
+        CCBY 4.0 Licence at ICOS.
+
+        Parameters
+        ----------
+
+        filter : dictionary
+            The filter may contain selections we want to
+            filter out on the sparql side, instead of
+            filtering on the python side. For a precise
+            description of the dictionary keys we refer to
+            the filter description of the function
+            `station_query()` of `icoscp.sparql.sparqls`.
+
+            By default, the key 'project' is set to 'ICOS'
+            which will return all ICOS stations.
+            That is, all atmosphere, ecosystem and ocean
+            stations that has an ICOS Station Class: '1' or
+            '2' or 'Associated'.
+            Also, if a filter is provided without the
+            'project' key, it will be set to ICOS.
+            To return other stations, use `project = 'ALL'`.
+
+        sort : str, optional
+            The default is 'name'. A user can `sort` by any
+            of the dataframe's columns: uri, id, name,
+                    icosClass, country, lat, lon,
+                    elevation, stationTheme,
+                    firstName, lastName, email, siteType,
+                    project, theme.
+
+        outfmt: str, optional
+            The default is 'pandas'. If you provide 'map' to the `outfmt`
+            argument a folium map is created with all known stations that
+            have valid longitude and latitude values. Be advised that in
+            this case, stations without a fixed location (like measurements
+            that belong to a station collected from instrumented Ships of
+            Opportunity) will not be included.
+            To get both the dataframe and the map, use 'pandasmap'.
+
+        icon: None | str, optional
+            The default is None. If set to 'flag', the generated folium map
+            displays a corresponding flag icon for each marker. A path to
+            an image file can also be provided. Please, use a small-sized
+            file or see your folium map grow humongous in size.
+
+        Returns
+        -------
+        queried_stations : pandas.Dataframe
+            This is the default return, based on `outfmt = 'pandas'`
+            The `queried_stations` dataframe includes station id's, name,
+            country, and landing page (or uri) among others.
+            (uri,id,name,icosClass,country,siteType,lat,lon,elevation,
+            stationTheme,firstName,lastName,email)
+
+        stations_map : folium.Map
+            To retrieve the map use `outfmt = 'map'`. The returned object
+            `stations_map` is an interactive folium map with the available
+            stations provided by `project` and `filter` arguments.
+
+        (queried_stations, stations_map): tuple(queried_stations, stations_map )
+             where `queried_stations` and `stations_map` as above.
+
+        Examples
+        --------
+        >>> # Get a folium map of all ICOS stations
+        >>>station_map = _get_id_list(outfmt='map')
+
+        >>> # Load a dataframe with the atmospheric ICOS stations:
+        >>> # 'BIR', 'HTM' and 'KIT':
+        >>>my_df = _get_id_list(filter={'station': ['BIR', 'HTM', 'KIT']})
+
+        >>> # To fetch all ecosystem ICOS stations in Germany, use
+        >>>de_df = _get_id_list(filter={'theme': 'ES', 'country': 'DE'})
+
+        >>> # Get a dataframe of all atmospheric and ocean ICOS stations
+        >>>as_os_df = _get_id_list(filter={'theme': ['AS', 'OS']})
+        
+        >>> # Get a dataframe of all ICOS and non-ICOS stations
+        >>>all_stations_df = _get_id_list({'project': 'ALL'})
+    """
+
+    if isinstance(filter, dict) and 'project' not in filter.keys():
+        filter['project'] = 'ICOS'
+
+    query = sparqls.station_query(filter=filter)
+    stn_df = RunSparql(query, 'pandas').run()
+
+    if not isinstance(stn_df, pd.DataFrame):
+        return stn_df
+    if stn_df.empty:
+        return stn_df
+
+    # Add project and theme columns to the dataframe
+    stn_df['project'] = stn_df.apply(lambda x: __project(x['uri']), axis=1)
+    stn_df['theme'] = stn_df.apply(lambda x: x['stationTheme'].split('/')[-1], axis=1)
+
+    # Sort queried stations by the given sort argument if any.
+    stn_df.sort_values(by=sort, inplace=True, ignore_index=True)
+
+    if outfmt == 'pandas':
+        return stn_df
+    elif outfmt == 'map':
+        stations_folium_map = fmap.get(stn_df, filter['project'], icon)
+        return stations_folium_map
+    else:
+        stations_folium_map = fmap.get(stn_df, filter['project'], icon)
+        return stn_df, stations_folium_map
+
+
+def getIdList(project: str = 'ICOS', theme: list = None, sort: str = 'name', outfmt: str = 'pandas', icon=None):
     """Retrieves a list of stations using a specific format.
 
-    Returns a list with all station id's. By default only ICOS stations
+    Returns a list with all station ids. By default, only ICOS stations
     will be returned. If `project` is set to 'all', all known station
-    id's are returned. Please be aware, that the usage of data
-    associated with non-ICOS stations might be different than the
+    ids are returned. Please be aware, that the usage of data
+    associated with non-ICOS stations might be different from the
     CCBY 4.0 Licence at ICOS.
 
     Parameters
@@ -590,17 +747,21 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas', icon=None):
         The default is 'ICOS'. If you set `project` to 'all', all known
         stations are returned.
 
+    theme: str or list of str
+        The default is None, the theme-strings are case-sensitive.
+
     sort : str, optional
         The default is 'name'. A user can `sort` by any of the
-        dataframe's columns: uri, id, name, country, lat, lon,
-        elevation, project, theme.
+        dataframe's columns: uri, id, name, icosClass, country, lat, lon,
+                             elevation, stationTheme,
+                             firstName, lastName, email, siteType, project, theme.
 
     outfmt: str, optional
         The default is 'pandas'. If you provide 'map' to the `outfmt`
         argument a folium map is created with all known stations that
         have valid longitude and latitude values. Be advised that in
         this case, stations without a fixed location (like measurements
-        that belong to stations collected from instrumented Ships of
+        that belong to a station collected from instrumented Ships of
         Opportunity) will not be included.
 
     icon: None | str, optional
@@ -614,6 +775,8 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas', icon=None):
     queried_stations : pandas.Dataframe
         `queried_stations` dataframe includes station id's, name,
         country, and landing page (or uri) among others.
+        (uri,id,name,icosClass,country,siteType,lat,lon,elevation,
+        stationTheme,firstName,lastName,email)
 
     stations_map : folium.Map
         `stations_map` is an interactive folium map with the available
@@ -621,35 +784,24 @@ def getIdList(project='ICOS', sort='name', outfmt='pandas', icon=None):
 
     Examples
     --------
-    >>> stations_dataframe = getIdList(project='ICOS').head()
+    >>> # Get a dataframe of all ICOS atmospheric and ocean stations
+    >>> getIdList(theme=['AS','OS'])
+    ...
+    >>> # Get a dataframe of all stations
+    >>> stations_dataframe = getIdList(project='ALL').head()
     >>> print(stations_dataframe)
-            uri 	 id 	name 	...   elevation   project	theme
-    40 	http...  SE-Sto  Abis... 	... 	351.893      ICOS 	   ES
-    35 	http...  IT-Noe  Arca... 	... 	25.0 	     ICOS 	   ES
-    102 http...  UK-AMo  Auch... 	... 	270.0 	     ICOS 	   ES
-    48 	http...  FR-Aur  Aura...	... 	250.0 	     ICOS 	   ES
-    127 http...  1199 	 BE-F... 	... 	None 	     ICOS 	   OS
+                                                     uri  ...           theme
+    0  http://meta.icos-cp.eu/resources/stations/ES_S...  ...              ES
+    1  http://meta.icos-cp.eu/resources/stations/FLUX...  ...  FluxnetStation
+    2  http://meta.icos-cp.eu/resources/stations/FLUX...  ...  FluxnetStation
+    3  http://meta.icos-cp.eu/resources/stations/Aler...  ...         Station
+    4  http://meta.icos-cp.eu/resources/stations/FLUX...  ...  FluxnetStation
 
     """
 
-    project = project.upper()
-    query = sparqls.getStations()
-    queried_stations = RunSparql(query, 'pandas').run()
-    queried_stations['project'] = queried_stations.apply(lambda x: __project(x['uri']), axis=1)
-    queried_stations['theme'] = queried_stations.apply(lambda x: x['uri'].
-                                                       split('/')[-1].split('_')[0], axis=1)
-    if not project == 'ALL':
-        queried_stations = queried_stations[queried_stations.project == project.upper()]
-    # Drop any existing double entries.
-    queried_stations.drop
-    # Sort queried stations by the given sort argument if any.
-    queried_stations.sort_values(by=sort, inplace=True)
+    filter = {'project': project.upper(), 'theme': theme}
 
-    if outfmt == 'map' and not queried_stations.empty:
-        stations_folium_map = fmap.get(queried_stations, project, icon)
-        return stations_folium_map
-    else:
-        return queried_stations
+    return _get_id_list(filter=filter, sort=sort, outfmt=outfmt, icon=icon)
 
 
 def __project(uri):
@@ -682,74 +834,153 @@ def __project(uri):
         return 'other'
 
 
+def _station_list(theme: str or list = ['AS', 'ES', 'OS'],
+                  ids: str or list = None,
+                  filter: dict = None):
+    """
+        Query the SPARQL endpoint for stations, creates an object for each
+        Station and return the list of ICOS stations.
+        By default, all atmosphere, ecosystem and ocean ICOS stations are returned
+        which have been certified (ICOS Class 1, ICOS Class 2 or Associated).
+
+        Parameters
+        ----------
+        theme : str or list
+            Only ICOS themes, the default is ['AS', 'ES', 'OS']
+
+        ids : str or list
+            Case-sensitive. Either a string with a station id.
+            NOTE: If you provide a station list, all other
+            parameters are ignored (even if you set theme)
+
+        filter : dictionary
+            The default is `filter = {'project': 'ICOS'}`
+            The filter may contain selections we want to filter out on
+            the sparql side, instead of filtering on the python side.
+            For a precise description of the dictionary keys we refer to
+            the filter description of the function `station_query()` of
+            `icoscp.sparql.sparqls`.
+
+    Example:
+    >>> # Get the list of all ICOS station objects
+    >>>_station_list()
+
+    >>> # Get the list of ICOS atmospheric stations objects
+    >>>_station_list('AS')
+
+    >>> # Get a list for ICOS atmosphere and ocean stations
+    >>>_station_list(['AS','OS'])
+
+    >>> # get list of stations with ids (ids are case sensitive..)
+    >>>_station_list(ids=['HTM', 'LMP', 'SAC'])
+    """
+
+    # list of returned station objects
+    station_ls = []
+
+    # if a list of id's is provided, ignore theme and class.
+    if ids:
+        if isinstance(ids, str):
+            ids = [ids]
+        for s in tqdm(ids):
+            station_ls.append(get(s))
+        return station_ls
+
+    # Default project and themes:
+    project = 'ICOS'
+    theme_ls = ['AS', 'ES', 'OS']
+
+    # Note: Non-icos themes can be case-sensitive
+    if theme:
+        if isinstance(theme, str):
+            if theme.upper() not in theme_ls:
+                project = 'ALL'
+            theme_ls = [theme]
+        elif isinstance(theme, list):
+            if any((x.upper() not in theme_ls) for x in theme):
+                project = 'ALL'
+            theme_ls = theme
+
+    if filter is None:
+        filter = {'project': project, 'theme': theme_ls}
+    elif isinstance(filter, dict):
+        if 'project' not in filter.keys():
+            filter['project'] = project
+        if 'theme' not in filter.keys():
+            filter['theme'] = theme_ls
+
+    # Get dataframe of stations.
+    stations_df = _get_id_list(filter=filter)
+
+    if isinstance(stations_df, pd.DataFrame) and (not stations_df.empty):
+        for s in tqdm(stations_df.id):
+            station_ls.append(get(s, station_df=stations_df))
+
+    return station_ls
+
+
 def getList(theme=['AS', 'ES', 'OS'], ids=None):
     """
     Query the SPARQL endpoint for stations, create an object for each Station
     and return the list of stations.
-    By default all (Ocean, Ecosystem, Atmosphere) ICOS stations are returned
-    which have been certified (Class 1 & 2). 
+    By default, all ICOS stations are returned. That is all ocean, ecosystem
+    and atmosphere stations which have been certified (Class 1, 2 or Associated).
     NOTE: if you provide a station list, all other parameters are ignored.
-    
-    Example:
-    # get all ICOS stations 
-    getStationList()
-    
-    # get a list of station objects for ICOS Atmospheric stations
-    getStationList('As')
 
-    # get a list for Atmosphere and Ocean stations
-    getStationList(['As','OS']) 
-    
-    # get list of stations with Id's (id's are case sensitive..)
-    getStationList(ids=['HTM', 'LMP', SAC])
-    
     Parameters
     ----------
-    theme : str | [iterable object of strings]) valid entries AS, ES, OS
-    
-    stationIds : str | [iterable object of strings]) 
-    
+    theme : str | [iterable object of strings]
+        valid entries AS, ES, OS
+
+    ids : str | [iterable object of strings])
+        Case-sensitive
+
     Returns
     -------
-    stationList : list of station objects
-    
+    station_ls : list of station objects
+
+    Example:
+    # get all ICOS stations
+    getList()
+
+    # get a list of station objects for all atmospheric ICOS stations
+    getList('AS')
+
+    # get a list for Atmosphere and Ocean stations
+    getList(['AS','OS'])
+
+    # get list of stations with Ids (ids are case sensitive..)
+    getList(ids=['HTM', 'LMP', SAC])
+
     """
 
-    stationList = []
+    station_ls = []
 
-    # if a list of id's is provided, ignore theme and class.    
+    # if a list of id's is provided, ignore theme and class.
     if ids:
         for s in tqdm(ids):
-            stationList.append(get(s))
+            station_ls.append(get(s))
 
-        return stationList
+        return station_ls
 
-    defaulttheme = ['AS', 'ES', 'OS']
+    default_theme = ['AS', 'ES', 'OS']
 
-    # make sure input is a list and in uppercase    
+    # make sure input is a list and in uppercase
 
     if isinstance(theme, str):
         theme = [theme.upper()]
     elif isinstance(theme, list):
         theme = [x.upper() for x in theme]
-    if not isinstance(theme, list) or not (set(defaulttheme) & set(theme)):
+    if not isinstance(theme, list) or not (set(default_theme) & set(theme)):
         # looks like input is not a theme.
         # Revert to default values, return all certified stations.
-        theme = defaulttheme
+        theme = default_theme
 
-    # get station list, by default returns all icos stations
-    stations = getIdList()
-    # filter by theme
-    stations = stations[stations.theme.isin(theme)]
-
-    stationList = []
-    for s in tqdm(stations.id):
-        stationList.append(get(s))
-
-    return stationList
+    station_ls = _station_list(filter={'project': 'ICOS', 'theme': theme})
+    return station_ls
 
 
-# ------------------------------------------------------------    
+# ------------------------------------------------------------
 if __name__ == "__main__":
     """
     execute only if run as a script
@@ -760,17 +991,14 @@ if __name__ == "__main__":
     You have chosen to run this as a standalone script.
     usually you would try to import a station in your own script
     and then you have the following basic commands [examples]:
-    
+
     # return a list of ICOS Station ID's
-    idList = station.getIdList 
-    
+    id_list = station.getIdList() 
+
     # return the station object for ID (example > Norunda in Sweden)
-    myStation = station.get('NOR') 
-    
+    my_station = station.get('NOR') 
+
     # return a list of station objects for all Ocean ICOS stations.
-    stationList = station.getList(['OS']) 
+    station_list = station.getList(['OS']) 
     """
     print(msg)
-
-
-# ------------------------------------------------------------
