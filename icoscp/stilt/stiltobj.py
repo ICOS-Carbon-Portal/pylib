@@ -8,11 +8,12 @@
 
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.1.2"
+__version__     = "0.1.3"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu']
 __status__      = "release"
-__date__        = "2022-02-11"
+__date__        = "2022-11-23"
+__lastchange__  = ["Claudio DOnofrio"]
 #################################################################################
 
 #Import modules
@@ -195,8 +196,10 @@ class StiltStation():
                 #Get response in json-format and read it in to a numpy array:
                 output=np.asarray(response.json())
 
-                #Convert numpy array with STILT results to a pandas dataframe:
-                df = pd.DataFrame(output[:,:], columns=eval(columns))
+                #Convert numpy array with STILT results to a pandas dataframe
+                cols = columns[1:-1].replace('"','')
+                cols = list(cols.split(','))
+                df = pd.DataFrame(output[:,:], columns=cols)
 
                 #Replace 'null'-values with numpy NaN-values:
                 df = df.replace('null',np.NaN)
@@ -360,8 +363,10 @@ class StiltStation():
             #Get response in json-format and read it in to a numpy array:
             output=np.asarray(response.json())
 
-            #Convert numpy array with STILT results to a pandas dataframe:
-            df = pd.DataFrame(output[:,:], columns=eval(columns))
+            #Convert numpy array with STILT results to a pandas dataframe
+            cols = columns[1:-1].replace('"','')
+            cols = list(cols.split(','))
+            df = pd.DataFrame(output[:,:], columns=cols)
 
             #Replace 'null'-values with numpy NaN-values:
             df = df.replace('null',np.NaN)
