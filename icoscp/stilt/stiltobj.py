@@ -8,11 +8,12 @@
 
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.1.2"
+__version__     = "0.1.3"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu']
 __status__      = "release"
-__date__        = "2022-02-11"
+__date__        = "2022-11-23"
+__lastchange__  = ["Claudio DOnofrio"]
 #################################################################################
 
 #Import modules
@@ -291,7 +292,11 @@ class StiltStation():
         #Concatenate xarrays on time axis:
         fp = xr.open_mfdataset(fp_files, combine='by_coords',
                                data_vars='minimal', coords='minimal',
-                               compat='override', parallel=True)
+                               compat='override', parallel=True,
+                               decode_cf=False)
+
+        # now check for CF compatibility
+        fp = xr.decode_cf(fp)
 
         #Format time attributes:
         fp.time.attrs["standard_name"] = "time"
