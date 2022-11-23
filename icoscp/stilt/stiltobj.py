@@ -95,7 +95,7 @@ class StiltStation():
         return json.dumps(out)
 
     #----------------------------------------------------------------------------------------------------------
-    def get_ts(self, start_date, end_date, hours=[], columns=''):
+    def get_ts(self, start_date, end_date, hours=None, columns=None):
         """
         STILT concentration time series for a given time period,
         with optional selection of specific hours and columns.
@@ -225,7 +225,7 @@ class StiltStation():
         return df
     #----------------------------------------------------------------------------------------------------------
 
-    def get_fp(self, start_date, end_date, hours=[]):
+    def get_fp(self, start_date, end_date, hours=None):
         """
         STILT footprints for a given time period,
         with optional selection of specific hours.
