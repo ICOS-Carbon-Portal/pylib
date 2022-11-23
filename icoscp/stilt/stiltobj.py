@@ -86,7 +86,7 @@ class StiltStation():
 
     def __str__(self):
         # by default called when a an 'object' is printed
-        
+
         out = {'id:': self.id,
                'name:': self.name,
                'lat:': self.lat,
@@ -197,7 +197,7 @@ class StiltStation():
                 output=np.asarray(response.json())
 
                 #Convert numpy array with STILT results to a pandas dataframe
-                cols = columns[1:-1].replace('"','')
+                cols = columns[1:-1].replace('"','').replace(' ','')
                 cols = list(cols.split(','))
                 df = pd.DataFrame(output[:,:], columns=cols)
 
@@ -317,7 +317,7 @@ class StiltStation():
         """
         Please do use this function with caution. Only very expirienced user
         should load raw data.
-    
+
         Parameters
         ----------
         start_date : STR
@@ -327,7 +327,7 @@ class StiltStation():
         cols : LIST[STR]
             A list of valid column names. You can retrieve the full list
             with _raw_clumn_names.
-    
+
         Returns
         -------
         columns : Pandas DataFrame
@@ -336,9 +336,9 @@ class StiltStation():
         #Convert date-strings to date objs:
         s_date = tf.parse(start_date).strftime('%Y-%m-%d')
         e_date = tf.parse(end_date).strftime('%Y-%m-%d')
-        
+
         # validate column names:
-            
+
         # make sure isodate is in the request
         if 'isodate' not in cols:
             cols.append('isodate')
@@ -346,25 +346,25 @@ class StiltStation():
         if len(columns) <= 1:
             return False
         # provide double quotes in the list
-        columns = json.dumps(columns) 
-    
+        columns = json.dumps(columns)
+
         # Check input parameters:
         if e_date < s_date:
             return False
-            
+
         # create http header and payload:
-            
-        headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}        
+
+        headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
         data = '{"columns": '+ str(columns) + ',"fromDate": "'+s_date+'", "toDate": "'+e_date+'", "stationId": "'+self.id+'"}'
         response = requests.post(CPC.STILTRAW, headers=headers, data=data)
-        
+
         if response.status_code != 500:
 
             #Get response in json-format and read it in to a numpy array:
             output=np.asarray(response.json())
 
             #Convert numpy array with STILT results to a pandas dataframe
-            cols = columns[1:-1].replace('"','')
+            cols = columns[1:-1].replace('"','').replace(' ','')
             cols = list(cols.split(','))
             df = pd.DataFrame(output[:,:], columns=cols)
 
@@ -380,19 +380,19 @@ class StiltStation():
             #Set 'date'-column as index:
             df.set_index(['date'],inplace=True)
 
-    
+
         # track data usage
         self.__portalUse('timeseries')
         #Return dataframe:
         return df
-    
+
     #Function that checks the selection of columns that are to be
     #returned with the STILT timeseries model output:
     def __columns(self, cols):
 
         # make parameters case insensitive
         cols = cols.lower()
-        
+
         # check for a valid entry. If not...return default
         valid = ["default", "co2", "co", "rn", "wind", "latlon", "all"]
         if cols not in valid:
@@ -400,7 +400,7 @@ class StiltStation():
 
         #Check columns-input:
         if cols=='default':
-            columns = ('["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement",'+ 
+            columns = ('["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement",'+
                        '"co2.background"]')
 
         elif cols=='co2':
@@ -471,14 +471,14 @@ class StiltStation():
                 'internal': True}}}
         server = 'https://cpauth.icos-cp.eu/logs/portaluse'
         requests.post(server, json=counter)
-        
+
     def _raw_column_names(self):
         '''
         The STILT model calculates many different variables. We provide
         sensible groups for users, see the documentationfor .get_ts()
         This function returns an exhaustive list for all columns, approximately
         600, which can be used in conjunction get_raw()
-        
+
 
         Returns
         -------
