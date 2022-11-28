@@ -63,13 +63,25 @@
               <ul class="current">
                 <li class="toctree-l1 current"><a class="reference internal current" href="./">Changelog</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#0117">0.1.17</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#station-module">station module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sparql-module">sparql module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module">stilt module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#other-changes">other changes</a>
+    </li>
+        </ul>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#0116">0.1.16</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#sparql">sparql</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#station-module">station module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#station-module_1">station module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#stilt-module">stilt module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_1">stilt module</a>
     </li>
         </ul>
     </li>
@@ -77,9 +89,9 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#cpb-module">cpb module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#access-to-data">Access to data</a>
+    <li class="toctree-l3"><a class="reference internal" href="#access-to-data">access to data</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#other-changes">Other changes</a>
+    <li class="toctree-l3"><a class="reference internal" href="#other-changes_1">other changes</a>
     </li>
         </ul>
     </li>
@@ -125,17 +137,46 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li><li>Changelog</li>
+    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+      <li>Changelog</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
   <hr/>
 </div>
-
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
                 <h1 id="changelog">Changelog</h1>
+<h2 id="0117">0.1.17</h2>
+<ul>
+<li>
+<h4 id="station-module">station module</h4>
+   The station class has been somewhat optimized:<ul>
+<li><code>station.getList()</code> is faster </li>
+<li><code>station.getIdList()</code> has a new parameter <code>theme</code> (as in <code>getList</code>)</li>
+</ul>
+</li>
+<li>
+<h4 id="sparql-module">sparql module</h4>
+   In the background the station class use sparql queries, and <code>sparqls.py</code> has been endowed with station query function:  <ul>
+<li><code>sparqls.station_query()</code>, the function has a filter parameter with which the experienced user for example can use to fetch stations in a list of countries.  </li>
+</ul>
+</li>
+<li>
+<h4 id="stilt-module">stilt module</h4>
+<ul>
+<li>Update <code>xarray</code> call in <code>stiltobj.py</code>.</li>
+</ul>
+</li>
+<li>
+<h4 id="other-changes">other changes</h4>
+<ul>
+<li>Fix library's building problems which resulted in an empty project description here: 
+   <a href="https://pypi.org/project/icoscp/">https://pypi.org/project/icoscp/</a></li>
+</ul>
+</li>
+</ul>
 <h2 id="0116">0.1.16</h2>
 <ul>
 <li>
@@ -149,13 +190,13 @@
 </ul>
 </li>
 <li>
-<h4 id="station-module">station module</h4>
+<h4 id="station-module_1">station module</h4>
 <ul>
 <li>Filter out non icos stations when querying themed stations in <code>getList()</code>. </li>
 </ul>
 </li>
 <li>
-<h4 id="stilt-module">stilt module</h4>
+<h4 id="stilt-module_1">stilt module</h4>
 <ul>
 <li>Regenerate STILT module's static file <code>stations.json</code>.</li>
 </ul>
@@ -192,7 +233,7 @@
 </ul>
 </li>
 <li>
-<h4 id="access-to-data">Access to data</h4>
+<h4 id="access-to-data">access to data</h4>
 <ul>
 <li><code>.data</code> [property] will always return all columns.</li>
 <li><code>.get(columns=None)</code> [method] returns all data by default. Provides the possibility to extract specific columns 
@@ -205,7 +246,7 @@
 </ul>
 </li>
 <li>
-<h4 id="other-changes">Other changes</h4>
+<h4 id="other-changes_1">other changes</h4>
 <ul>
 <li>add <code>icon</code> argument to <code>station.getIdList()</code> function.</li>
 <li>regenerate STILT module's static <code>stations.json</code>.</li>

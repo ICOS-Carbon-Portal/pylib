@@ -299,13 +299,13 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li><li>Modules</li>
+    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+      <li>Modules</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
   <hr/>
 </div>
-
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
@@ -644,22 +644,33 @@ one 'project' this returns a list of URI's</p>
 <p>The following three functions are recommended to get information about the available 
 stations at the Carbon Portal and how to get a valid station object (or list of):</p>
 <h4 id="stationgetidlist">station.getIdList()</h4>
+<p>The <code>station.getIdList</code> takes several parameters: </p>
+<pre><code>project: str = 'ICOS' 
+theme: list = None 
+sort: str = 'name'
+outfmt: str = 'pandas'
+icon=None
+</code></pre>
+<p>The default call <code>station.getIdList()</code>, which is the same as </p>
 <pre><code>station.getIdList(project='ICOS', sort='name')
 </code></pre>
-<p>This returns a DataFrame with columns:</p>
-<p><code>['uri', 'id', 'name', 'country', 'lat', 'lon', 'elevation', 'project', 'theme']</code></p>
-<p>By default, ICOS certified stations are returned. If project is set to 'all', all known 
-stations (to the Carbon Portal) are returned. By default, the DataFrame is sorted by name. You 
-can provide any column name as sorting parameter. The 'id' of the record, can be used to 
-instantiate  a station. Hence, it is easy to adjust and filter these records and use the column 
-'id' as input for station.get()</p>
-<ul>
-<li>Return Pandas DataFrame  </li>
-</ul>
+<p>returns a Pandas DataFrame with columns:</p>
+<p><code>['uri', 'id', 'name', 'icosClass', 'country', 'lat', 'lon', 'elevation', 'stationTheme', 'firstName', 'lastName', 'email', 'siteType', 'project', 'theme']</code></p>
+<p>By default, ICOS certified stations are returned. If project is set to <code>'all'</code>, all known 
+stations (to the Carbon Portal) are returned. By default, the DataFrame is sorted by the column <code>name</code>. You 
+can provide any column name as sorting parameter. The <code>'id'</code> of the record, can be used to 
+instantiate a station. Hence, it is easy to adjust and filter these records and use the column 
+<code>'id'</code> as input for <code>station.get()</code>. </p>
+<p>The theme parameter can be set to either <code>'AS'</code>, <code>'ES'</code> or <code>'OS'</code>, or a list with a combination of these strings. 
+Here <code>'AS'</code>, <code>'ES</code> and <code>'OS'</code> are short for atmospheric, ecosystem and ocean stations.    </p>
+<p>Thus, </p>
+<pre><code>station.getIdList(theme='AS')
+</code></pre>
+<p>will return a DataFrame with all atmospheric ICOS stations. </p>
+<p>If the optional argument <code>outfmt='map'</code> is provided</p>
 <pre><code>station.getIdList(project='ALL', outfmt='map', icon=None)
 </code></pre>
-<p>If the optional argument <code>outfmt='map'</code> is provided, a folium map is created with all the queried 
-stations provided by the <code>project</code> argument. Stations without a fixed location (like 
+<p>a folium map is created with, in this case, all stations (since we use <code>project='ALL'</code>). Stations without a fixed location (like 
 measurements collected from instrumented Ships of Opportunity) will not be included in the map. 
 Each marker in the map represents a station and contains station related information. A user can
 further customize the style of the map by providing the <code>icon</code> argument <code>[None, 'flag', 'path/to/image.png']</code>.</p>
