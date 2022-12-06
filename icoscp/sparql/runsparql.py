@@ -96,7 +96,7 @@ class RunSparql():
 
         url = 'https://meta.icos-cp.eu/sparql'
 
-        # r = requests.get(url, params={'query': self.__query})
+        # Disable cache control to get a response with correct content.
         headers = {"Cache-Control": "no-cache", "Pragma": "no-cache"}
         r = requests.get(url, params={'query': self.__query}, headers=headers)
         if not r.ok:
