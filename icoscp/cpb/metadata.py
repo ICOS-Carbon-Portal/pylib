@@ -6,6 +6,7 @@ Created on Tue May 24 11:56:23 2022
 from warnings import warn
 import pandas as pd
 import requests as re
+from icoscp import const as CPC
 
 d = 'https://meta.icos-cp.eu/objects/Igzec8qneVWBDV1qFrlvaxJI'
 
@@ -114,16 +115,51 @@ def __pid(pid):
        Transform the provided pid to a consistent format
        the user may provide the full url or only the pid, with or
        without the handle id.
+       
        Return the full url in form:
-        'https://meta.icos-cp.eu/objects/ + pid
+        https://meta.icos-cp.eu/objects/ + PID
+       OR
+        https://meta.fieldsites.se/objects/ + PID
+        
+       If the full url is provided, notthing to do and return the full url
+       Otherwise the handle.net API is called to resolve the PID and return
+       the full URL. This is valid for ICOS CP with handle prefix 11676
+       or FIELDSITES with prefix 11676.1
+       If only the unique part of the PID is provided both prefixes are tested
+       for validity.
     """
-    pid = str(pid)
-    if '/' in pid:
-        # this is the case of providing
-        # the full url or the handle/pid
-        pid = pid.split('/')[-1]
-    url = 'https://meta.icos-cp.eu/objects/' + pid
-    return url        
+    
+    pid_lower = str(pid).lower()
+    fullurl = ['meta.icos-cp.eu', 
+               'meta.fieldsites.se',
+               'hdl.handle.net'
+               ]
+    if any([e in pid_lower for e in fullurl]):
+        # we have to assume that the full URL to the data object is provided
+        # hence nothing to do
+        return pid
+    
+    checkpid = pid.split('/')
+    
+    if len(checkpid) == 2:
+        # we assume we got a pid in form of prefix/pid
+        url = f"{CPC.HANDLEURL}{pid}"
+        kernel = re.get(url).json()
+        if kernel['responseCode']:
+            return kernel['values'][0]['data']['value']
+        else:
+            return None
+       
+    if len(checkpid) == 1:        
+        # only the pid itself is provided, we need to check all prefixes
+        for prefix in CPC.HDL_PREFIX:
+            url = f"{CPC.HANDLEURL}{prefix}/{pid}"
+            kernel = re.get(url).json()
+            if kernel['responseCode'] == 1:
+                return kernel['values'][0]['data']['value']
+        
+    # It looks like we could not find the PID
+    return None        
     
     
 if __name__ == "__main__":
