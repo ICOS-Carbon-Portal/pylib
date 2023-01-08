@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""    
+"""
     Define global (to icoscp) constants
     mainly path variables and Url's used throught the package
     usage: import icoscp.const as CPC
     CPC.ST_PATH
-    
+
 """
 
 
@@ -26,7 +26,7 @@ METAFS = 'https://meta.fieldsites.se/objects/'
 # -------------------------------------------------------------
 # Resolve PID Kernel through the handl.net api
 HANDLEURL = 'https://hdl.handle.net/api/handles/'
-HDL_PREFIX = ['11676', '11676.1'] #prefix for [CP, SITES]
+HDL_PREFIX = ['11676', '11676.1'] #prefix for [CP, FIELDSITES]
 
 # -------------------------------------------------------------
 # Stilt specific
