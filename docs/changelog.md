@@ -4,6 +4,7 @@
  - https://github.com/ICOS-Carbon-Portal/pylib/pull/117 remove mutable default args in stiltobj.py
  - https://github.com/ICOS-Carbon-Portal/pylib/pull/118 xarray load multiple files, increase performance (read without cf_decoder, check for CF compatibility after concatenation).
  - https://github.com/ICOS-Carbon-Portal/pylib/pull/119 remove eval statements in stiltobj.py
+ -https://github.com/ICOS-Carbon-Portal/pylib/pull/125 use pd concat in Dobj.data. Adding series to a pandas dataframe creates a performance warning, append to dataframe is deprecated, use concat instead. https://github.com/pandas-dev/pandas/issues/35407
 
 ## 0.1.17
  - #### station module  
