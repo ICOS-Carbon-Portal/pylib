@@ -5,7 +5,7 @@
     Created on Fri Aug  9 10:40:27 2019
     This file contains an assembly of common sparql queries.
     Each function returns a valid sparql query as string.
-    Depending on query, there is an optional input parameter to 
+    Depending on query, there is an optional input parameter to
     "limit" how many results are returned. By default it is set to 0 (zero)
     returning all results from the sparql endpoint
 """
@@ -20,17 +20,18 @@ __status__      = "rc1"
 __date__        = "2019-08-09"
 
 from warnings import warn
+import icoscp.pid
 # --------------------------------------------------------------------
 # create internal helper functions to be used for ALL sparql queries
 # --------------------------------------------------------------------
 
 def __checklimit__(limit):
-    
+
     """
-        create a string to inject into sparql queries to limit the 
+        create a string to inject into sparql queries to limit the
         amount of returned results
     """
-    
+
     try:
         limit = int(limit)
         if limit > 0:
@@ -42,29 +43,15 @@ def __checklimit__(limit):
 
 
 
-def __dobjUrl__(dobj):
-    
+def __dobjUrl__(pid):
+
     """
        transform the provided digital object to a consistent format
        the user may provide the full url or only the pid.
-       this function will return the full url in form:
-        '<https://meta.icos-cp.eu/objects/'+ dobj + '>'
+       this function will return the full url
     """
-    
-    try: 
-        dobj = str(dobj)
-    except:
-       raise Exception('dobj not a string') 
-       
-       
-    if 'meta.icos-cp' in dobj:
-        # we assume a full ICOS URI is provided, we only need to add <>
-        return '<' + dobj + '>'
-    
-    # this case assumes either the PID only, or possibly the handle.net
-    pid = dobj.split('/')[-1]
-    url = '<https://meta.icos-cp.eu/objects/%s>' % pid
-    return url        
+    pid = icoscp.pid.resolve(pid)
+    return pid
 
 # --------------------------------------------------------------------
 #   sparqls query functions
@@ -103,14 +90,14 @@ def atc_co2_level2(limit=0):
 def objectSpec(spec='atcCo2L2DataObject', station='', limit=0):
 
     """ return digital objects sorted by station and sampling height based
-        on data specification  https://meta.icos-cp.eu/edit/cpmeta/ 
+        on data specification  https://meta.icos-cp.eu/edit/cpmeta/
         -> simple object specification
         by default ATC Level2 Data for CO2 is returned
     """
-        
+
     if station:
         station = 'FILTER(?station = "%s")' % station
-    
+
     query = """
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
 	    prefix prov: <http://www.w3.org/ns/prov#>
@@ -124,7 +111,7 @@ def objectSpec(spec='atcCo2L2DataObject', station='', limit=0):
 				prov:wasAssociatedWith ?stationIri ;
 				cpmeta:hasSamplingHeight ?samplingHeight
 			] .
-            ?stationIri cpmeta:hasName ?station .		
+            ?stationIri cpmeta:hasName ?station .
 			%s
 		}
 		order by ?station ?samplingHeight
@@ -141,7 +128,7 @@ def atc_co_level2(limit=0):
     query = """
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
         prefix prov: <http://www.w3.org/ns/prov#>
-        select ?dobj ?spec ?fileName ?size ?submTime ?timeStart ?timeEnd 
+        select ?dobj ?spec ?fileName ?size ?submTime ?timeStart ?timeEnd
         FROM <http://meta.icos-cp.eu/resources/atmprodcsv/>
         where {
                 BIND(<http://meta.icos-cp.eu/resources/cpmeta/atcCoL2DataObject> AS ?spec)
@@ -153,9 +140,9 @@ def atc_co_level2(limit=0):
                 prov:endedAtTime ?submTime ;
                 prov:wasAssociatedWith ?submitter
                 ] .
-                
+
                 ?dobj cpmeta:hasStartTime | (cpmeta:wasAcquiredBy / prov:startedAtTime) ?timeStart .
-                ?dobj cpmeta:hasEndTime | (cpmeta:wasAcquiredBy / prov:endedAtTime) ?timeEnd .                
+                ?dobj cpmeta:hasEndTime | (cpmeta:wasAcquiredBy / prov:endedAtTime) ?timeEnd .
         }
         %s
         """ % __checklimit__(limit)
@@ -206,7 +193,7 @@ def atc_nrt_level_1(limit=0):
 		where {
 		VALUES ?spec {<http://meta.icos-cp.eu/resources/cpmeta/atcMeteoGrowingNrtDataObject> <http://meta.icos-cp.eu/resources/cpmeta/atcCo2NrtGrowingDataObject> <http://meta.icos-cp.eu/resources/cpmeta/atcCh4NrtGrowingDataObject>}
 		?dobj cpmeta:hasObjectSpec ?spec .
-	
+
 		FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}
 		?dobj cpmeta:hasSizeInBytes ?size .
 		?dobj cpmeta:hasName ?fileName .
@@ -233,12 +220,12 @@ def collections(id=None):
     query : STR
         A query, which can be run against the SPARQL endpoint.
     """
-    
+
     if not id:
         coll = '' # create an empyt string insert into sparql query
     else:
         coll = ''.join(['FILTER(str(?collection) = "' + id+ '" || ?doi = "' + id + '") .'])
-       
+
     query = """
             prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
             prefix dcterms: <http://purl.org/dc/terms/>
@@ -258,10 +245,10 @@ def collections(id=None):
 
 # -----------------------------------------------------------------------------
 def collection_items(id):
-    
+
     """ Return all item for a collection """
-    
-    query = """    
+
+    query = """
             select * where{ %s <http://purl.org/dc/terms/hasPart> ?dobj}
             """ % __dobjUrl__(id)
     return query
@@ -503,8 +490,8 @@ def stationData(uri, level='2'):
     and all dataproducts are provided.
     Parameters
     ----------
-    uri : list , station URI, 
-    level : str , optional,  ['1','2','3','all'] 
+    uri : list , station URI,
+    level : str , optional,  ['1','2','3','all']
             find data products for icos level. The default is 2.
     Returns
     -------
@@ -515,7 +502,7 @@ def stationData(uri, level='2'):
         if not isinstance(level,str):
             return
         if level.lower() == 'all':
-            level = '>0'                    
+            level = '>0'
         elif not int(level) in accepted_levels:
             level=' >1'
         else:
@@ -536,14 +523,14 @@ def stationData(uri, level='2'):
             FILTER (?datalevel  %s)
             FILTER NOT EXISTS {?spec cpmeta:hasAssociatedProject/cpmeta:hasHideFromSearchPolicy "true"^^xsd:boolean}
             ?spec rdfs:label ?specLabel .
-    	}	
+    	}
 	VALUES ?station {%s}
-	?dobj cpmeta:hasObjectSpec ?spec .	
-	FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}				
+	?dobj cpmeta:hasObjectSpec ?spec .
+	FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}
 	?dobj cpmeta:wasAcquiredBy [
 		prov:startedAtTime ?timeStart ;
    		prov:endedAtTime ?timeEnd ;
-	 	prov:wasAssociatedWith ?station 
+	 	prov:wasAssociatedWith ?station
 	] .
 	?dobj cpmeta:hasSizeInBytes ?bytes .
 	OPTIONAL {?dobj cpmeta:wasAcquiredBy/cpmeta:hasSamplingHeight ?samplingheight} .
@@ -608,7 +595,7 @@ def getStations(station='', theme=''):
 def dobjStation(dobj):
     """
         Define SPARQL query to get information about a station
-        where the digitial object was sampled.        
+        where the digitial object was sampled.
         :param dobj pid
     """
     query = """
@@ -617,7 +604,7 @@ def dobjStation(dobj):
             select distinct ?dobj ?stationName ?stationId ?samplingHeight ?longitude ?latitude ?elevation ?theme
             where{
             		{	select ?dobj (min(?station0) as ?stationName)
-            			(sample(?stationId0) as ?stationId) 
+            			(sample(?stationId0) as ?stationId)
             			(sample(?stationLongitude) as ?longitude)
             			(sample(?stationLatitude) as ?latitude)
             			(sample(?stationElevation) as ?elevation)
@@ -649,11 +636,11 @@ def dobjStation(dobj):
 # -----------------------------------------------------------------------------
 
 def get_coords_icos_stations_atc():
-    
+
     """
     Input parameters: No input parameter/s
     Output:           pandas dataframe
-                      columns: 
+                      columns:
                             1. URL to station landing page (var_name: 'station', var_type: String)
                             2. Name of station PI (var_name: 'PI_names', var_type: String)
                             3. Station name (var_name: 'stationName', var_type: String)
@@ -662,7 +649,7 @@ def get_coords_icos_stations_atc():
                             6. Station Latitude (var_name: 'lat', var_type: String)
                             7. Station Longitude (var_name: 'lon', var_type: String)
     """
-    
+
     #Define SPARQL query:
     query = """
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
@@ -689,19 +676,19 @@ def get_coords_icos_stations_atc():
         }
         order by ?Short_name
     """
-    
+
     #Return string with SPARQL query:
     return query
 
 # -----------------------------------------------------------------------------
 
 def get_icos_stations_atc_L1():
-    
+
     """
     Description:      Download ICOS station names for all L1 gases from ICOS CP with a SPARQL-query.
     Input parameters: No input parameter/s
     Output:           Pandas Dataframe
-                      columns: 
+                      columns:
                             1. URL to ICOS RI Data Object Landing Page (var_name: 'dobj', var_type: String)
                             2. Filename for Data Object (var_name: 'filename', var_type: String)
                             3. Name of gas (var_name: 'variable', var_type: String)
@@ -710,7 +697,7 @@ def get_icos_stations_atc_L1():
                             6. Sampling Start Time (var_name: 'timeStart', var_type: String)
                             7. Sampling End Time (var_naem: 'timeEnd', var_type: String)
     """
-    
+
     #Define SPARQL query:
     query = """
         prefix cpres: <http://meta.icos-cp.eu/resources/cpmeta/>
@@ -734,25 +721,25 @@ def get_icos_stations_atc_L1():
               #prov:wasAssociatedWith/cpmeta:hasStationId ?stationId ;
               prov:startedAtTime ?timeStart ;
               prov:endedAtTime ?timeEnd ;
-              prov:wasAssociatedWith ?stationIri 
+              prov:wasAssociatedWith ?stationIri
             ] .
             ?stationIri cpmeta:hasName ?stationName .
             ?dobj cpmeta:wasAcquiredBy/cpmeta:hasSamplingHeight ?height .
         }
         order by ?variable ?stationName ?height
     """
-    
+
     #Return string with SPARQL query:
     return query
 
 # -----------------------------------------------------------------------------
 
 def get_icos_stations_atc_L2():
-    """    
+    """
     Description:      Download ICOS station names for all L2 gases from ICOS CP with a SPARQL-query.
     Input parameters: No input parameter/s
     Output:           pandas dataframe
-                      columns: 
+                      columns:
                             1. URL to ICOS RI Data Object Landing Page (var_name: 'dobj', var_type: String)
                             2. Filename for Data Object (var_name: 'filename', var_type: String)
                             3. Name of gas (var_name: 'variable', var_type: String)
@@ -761,7 +748,7 @@ def get_icos_stations_atc_L2():
                             6. Sampling Start Time (var_name: "timeStart", var_type: Datetime Object)
                             7. Sampling End Time (var_name: "timeEnd", var_type: Datetime Object)
     """
-    
+
     #Define SPARQL query:
     query = """
         prefix cpres: <http://meta.icos-cp.eu/resources/cpmeta/>
@@ -790,7 +777,7 @@ def get_icos_stations_atc_L2():
         }
         order by ?variable ?stationName ?height
     """
-    
+
     #Return string with SPARQL query:
     return query
 
@@ -816,7 +803,7 @@ def get_station_class():
       ?s st:hasLongName ?longName .
       filter (?stationClass = "1" || ?stationClass = "2")
     }
-    ORDER BY ?stationClass ?stationId 
+    ORDER BY ?stationClass ?stationId
     """
 
     return query
@@ -827,11 +814,11 @@ def atc_query(tracer,level=2):
         Return SPARQL query to get a list of
         ICOS Atmospheric CO2, CO or MTO, level 2 or level 1 (=NRT) data objects
        :return: SPARQL query to get all ATC Level <level> products for tracer <tracer>
-       :rtype: string 
+       :rtype: string
     """
     tracer = tracer.lower().title()
     dataobject = ["NrtGrowingDataObject","L2DataObject"]
-    
+
     query = """
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
         prefix prov: <http://www.w3.org/ns/prov#>
@@ -840,7 +827,7 @@ def atc_query(tracer,level=2):
         where {
                 BIND(<http://meta.icos-cp.eu/resources/cpmeta/atc"""+tracer+dataobject[level-1]+"""> AS ?spec)
                 ?dobj cpmeta:hasObjectSpec ?spec .
-	
+
                 FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}
                 ?dobj cpmeta:hasSizeInBytes ?size .
                 ?dobj cpmeta:hasName ?fileName .
@@ -854,18 +841,18 @@ def atc_query(tracer,level=2):
         """
     return query
 #------------------------------------------------------------------------------
-    
+
 def atc_stationlist(station,tracer='co2',level=2):
     """
         Return SPARQL query to get a list of
         ICOS Atmospheric CO2, CO or MTO, level 2 or level 1 (=NRT) data objects
         for all stations in list
        :return: SPARQL query to get all ATC products for specific stations, tracer and ICOS-level
-       :rtype: string 
+       :rtype: string
     """
     tracer = tracer.lower().title()
     dataobject = ["NrtGrowingDataObject","L2DataObject"]
-    
+
     if type(station) == str:
         station = [station]
     strUrl=" "
@@ -898,18 +885,18 @@ def atc_stationlist(station,tracer='co2',level=2):
 
 
 def icos_hist_L1_L2_sparql(station_code, icos_label):
-    
+
     '''
     Description: Function that returns a pandas DataFrame with file info
-                 for a specified station from the drought2018AtmoProduct. 
-                
+                 for a specified station from the drought2018AtmoProduct.
+
     Input:       1. Station code, characters (var_name: "station_code", var_type: String)
                  2. Station sampling height  (var_name: "samp_height", var_type: Int/Float)
-                 3. Label specifying if the station is an ICOS station 
+                 3. Label specifying if the station is an ICOS station
                     (var_name: "icos_label", var_type: Boolean)
-    
+
     Output:      Pandas DataFrame
-                
+
                  1. Data Object ID (var_name: "dobj", var_type: String)
                  2. Data specification (var_name: "spec", var_type: String)
                  3. Filename (var_name: "fileName", var_type: String)
@@ -918,19 +905,19 @@ def icos_hist_L1_L2_sparql(station_code, icos_label):
                  6. Observation starting time (var_name: "timeStart", var_type: String)
                  7. Observation end date (var_name: "timeEnd", var_type: String)
                  8. Station sampling height (var_name: "samplingHeight", var_type: String)
-                
-                
-    '''    
-    
+
+
+    '''
+
     #If the station is an ICOS station:
     if(icos_label):
         station_label = 'AS_' + station_code
-    
+
     #If the station is NOT an ICOS station:
     else:
         station_label = 'ATMO_' + station_code
 
-       
+
     #Define SPARQL query:
     query = '''
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
@@ -958,26 +945,26 @@ def icos_hist_L1_L2_sparql(station_code, icos_label):
 
 
 def icos_hist_sparql():
-    
+
     '''
     Description: Function that returns a pandas DataFrame with info
-                 for all stations included in the drought2018AtmoProduct. 
-                
+                 for all stations included in the drought2018AtmoProduct.
+
     Input:       No input parameters
-    
+
     Output:      Pandas DataFrame
-                
+
                  1. Station code, 3 characrers (var_name: "Short_name", var_type: String)
                  2. Country code, 2 characters (var_name: "Country", var_type: String)
                  3. Station latitude (var_name: "lat", var_type: String)
                  4. Station longitude (var_name: "lon", var_type: String)
                  5. Station name (var_name: "Long_name", var_type: String)
                  6. Sampling height (var_name: "height", var_type: String)
-                
-                
+
+
     '''
-  
-    #Define SPARQL query:    
+
+    #Define SPARQL query:
     query = """
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
 	prefix prov: <http://www.w3.org/ns/prov#>
@@ -1005,40 +992,40 @@ def icos_hist_sparql():
 	?s cpmeta:hasLongitude ?lon .
 	}
     """
-    
+
     return query
 #------------------------------------------------------------------------------
 
 
 
 def get_icos_citation(dataObject):
-    
+
     """
     Project:         'ICOS Carbon Portal'
     Created:          Fri May 10 12:35:00 2019
     Last Changed:     Fri May 15 09:55:00 2020
     Version:          1.1.0
     Author(s):        Oleg, Karolina
-    
+
     Description:      Function that takes a string variable representing the URL with data object ID as input and
                       returns a query-string with the citation for the corresponding data object. The data object ID is
                       a unique identifier of every separate ICOS dataset.
-    
+
     Input parameters: Data Object ID (var_name: "dataObject", var_type: String)
-    
+
     Output:           Citation (var_type: String)
     """
-    
+
     #Get data object URL regardless if dobj is expressed as an URL or as an alpharithmetical code (i.e. fraction of URL)
     dobj = __dobjUrl__(dataObject)
-    
+
     #Define SPARQL-query to get the citation for the given data object id:
     query = """
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
         select * where{
         optional{"""+dobj+""" cpmeta:hasCitationString ?cit}}
         """
-    
+
     #Return query-string:
     return query
 #------------------------------------------------------------------------------
@@ -1046,37 +1033,37 @@ def get_icos_citation(dataObject):
 
 
 def icos_prods_per_domain(domain='atmosphere'):
-    
+
     """
     Project:         'ICOS Carbon Portal'
     Created:          Fri Mar 19 09:35:00 2021
     Last Changed:     Fri Mar 19 09:35:00 2021
     Version:          1.0.0
     Author(s):        Oleg, Karolina
-    
+
     Description:      Function that creates a string for a SPARQL query.
-                      The query is supposed to return all ICOS L1 & L2 
+                      The query is supposed to return all ICOS L1 & L2
                       ICOS data product names/ spec labels (incl. pre-ICOS
                       data from InGos and Drought 2018 project data) for
                       the selected domain.
-    
+
     Input parameters: ICOS domain e.g. "atmosphere", "ecosystem" or "ocean"
                       (var_name: "domain", var_type: String)
-    
+
     Output:           SPARQL query (var_type: String)
-    
+
     """
-    
+
     #Check input value:
     if ((domain!='atmosphere') & (domain!='ecosystem') & (domain!='ocean')):
-        
+
         #Error message for invalid input entry:
         print("Invalid input variable! Acceptable domain values are: 'atmosphere', 'ecosystem' or 'ocean'")
         query = ''
-    
+
     #If input entry is valid:
     else:
-    
+
         #Define SPARQL-query to get the available data product names for a given domain:
         query = """ prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
@@ -1098,7 +1085,7 @@ def icos_prods_per_domain(domain='atmosphere'):
         }
         order by ?specLabel
         """
-    
+
     #Return query-string:
     return query
 #------------------------------------------------------------------------------
@@ -1106,38 +1093,38 @@ def icos_prods_per_domain(domain='atmosphere'):
 
 
 def prod_availability(dobj_spec_ls):
-    
+
     """
     Project:         'ICOS Carbon Portal'
     Created:          Fri Mar 19 09:35:00 2021
     Last Changed:     Fri Mar 19 09:35:00 2021
     Version:          1.0.0
     Author(s):        Oleg, Karolina
-    
+
     Description:      Function that creates a string for a SPARQL query.
                       The query is supposed to return a pandas dataframe
                       with metadata for all stations (within a certain domain)
-                      that produce the selected data products. The metadata 
-                      includes: data object id, station ID, station sampling height 
+                      that produce the selected data products. The metadata
+                      includes: data object id, station ID, station sampling height
                       (if applicable), data product specification label,
                       start-date of observations and end-date of observations.
-    
+
     Input parameters: List of ICOS data object specifications
                       (var_name: "dobj_spec_ls", var_type: List of strings)
-    
+
     Output:           SPARQL query (var_type: String)
-    
+
     """
-    
+
     #Check input:
     if (isinstance(dobj_spec_ls, list) & (len(dobj_spec_ls)>0) & (len(dobj_spec_ls)<4)):
-        
+
         #Add '<' and '>' at the begining and the end of every dobj spec label:
         dobj_spec_ls_frmt = ['<'+i+'>' for i in dobj_spec_ls if isinstance(i, str)]
-        
+
         #Export list items to a string:
         dobj_spec_labels = ' '.join(dobj_spec_ls_frmt)
-    
+
         #
         query = """prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
@@ -1161,14 +1148,14 @@ def prod_availability(dobj_spec_ls):
             ?station cpmeta:hasStationId ?stationId .
             ?spec rdfs:label ?specLabel
         }"""
-        
+
     else:
-        
+
         #Prompt error message:
         print('Invalid entry! The input has to be a list of 1 to max 3 items.')
-        
+
         #Empty query:
         query = ''
-    
+
     #Return query-string:
     return query

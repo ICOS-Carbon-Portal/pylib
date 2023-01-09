@@ -11,7 +11,7 @@
 # -*- coding: utf-8 -*-
 
 """
-    Informative description abouth module
+    Informative description about module
 """
 
 __author__      = ["Claudio D'Onofrio"]
