@@ -126,7 +126,7 @@ if __name__ == "__main__":
         or you can us
 
         import icoscp.pid
-        pid = pid.resolve('https://meta.icos-cp.eu/objects/Igzec8qneVWBDV1qFrlvaxJI')
+        pid = pid.resolve('Igzec8qneVWBDV1qFrlvaxJI')
         """
         print(MSG)
     else:
