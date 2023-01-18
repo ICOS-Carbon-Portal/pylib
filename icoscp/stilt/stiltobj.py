@@ -120,8 +120,8 @@ class StiltStation():
                         hours = ["10", "10:00", 10] returns timeslot 9
 
         columns : TYPE, optional
-            Valid entries are "default", "co2", "co", "rn", "wind", "latlon", "all"
-            default (or empty) will return
+            Valid entries are "default", "co2", "co", "rn", "wind", "latlon", "all".
+            'default', empty, or None will return:
             ["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement","co2.background"]
             A full description of the 'columns' can be found at
             https://icos-carbon-portal.github.io/pylib/modules/#stilt
@@ -386,9 +386,10 @@ class StiltStation():
     #returned with the STILT timeseries model output:
     def __columns(self, cols):
 
-        # make parameters case insensitive
-        cols = cols.lower()
-        
+        if cols:
+            # Convert user-specified columns to lower case.
+            cols = cols.lower()
+
         # check for a valid entry. If not...return default
         valid = ["default", "co2", "co", "rn", "wind", "latlon", "all"]
         if cols not in valid:
