@@ -8,12 +8,12 @@
 
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.1.3"
+__version__     = "0.1.4"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu']
 __status__      = "release"
-__date__        = "2022-11-23"
-__lastchange__  = ["Claudio DOnofrio"]
+__date__        = "2023-01-18"
+__lastchange__  = ["Zois Zogopoulos"]
 #################################################################################
 
 #Import modules
