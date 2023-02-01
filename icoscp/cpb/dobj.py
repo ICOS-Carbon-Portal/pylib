@@ -24,8 +24,9 @@ import re
 from icoscp import __version__ as release_version
 from icoscp.cpb import dtype_dict
 from icoscp.sparql.runsparql import RunSparql
+from icoscp.cpauth.authentication import Authentication
+from icoscp.cpauth.exceptions import AuthenticationError
 import icoscp.sparql.sparqls as sparqls
-from icoscp.exceptions import AuthenticationError
 
 
 class Dobj():
@@ -34,8 +35,9 @@ class Dobj():
         the method .getColumns() will return the actual data
     """
 
-    def __init__(self, digitalObject='', authentication=None):
-        
+    def __init__(self, digitalObject='', carbon_portal_authentication: Authentication = None):
+
+
         self._colSelected = None    # 'none' -> ALL columns are returned
         self._endian = 'big'        # default "big endian conversion 
         self._dtconvert = True      # convert Unixtimstamp to datetime object
@@ -68,7 +70,7 @@ class Dobj():
         # __payLoad() is exectued automatically to create json object 
         # for all columns#
         self.dobj = digitalObject   # this sets self._dobj, which is the PID
-        self._authentication = authentication
+        self.carbon_portal_authentication = carbon_portal_authentication
 
     #-----------
     @property
@@ -149,12 +151,12 @@ class Dobj():
     #-----------
 
     @property
-    def auth_object(self):
-        return self._authentication
+    def carbon_portal_authentication(self):
+        return self._carbon_portal_authentication
 
-    @auth_object.setter
-    def auth_object(self, authentication):
-        self._authentication = authentication
+    @carbon_portal_authentication.setter
+    def carbon_portal_authentication(self, carbon_portal_authentication):
+        self._carbon_portal_authentication = carbon_portal_authentication
         return
 # -------------------------------------------------    
 
@@ -340,12 +342,7 @@ class Dobj():
 
         else:
             self._islocal = False
-            # Grab the authentication token from the authentication
-            # object passed at the __init__ method. Token will be
-            # unavailable if no authentication was acquired.
-            token = \
-                self._authentication.token if self._authentication else None
-            headers = {'cookie': token}
+            headers = {'cookie': self.carbon_portal_authentication.token}
             response, content = None, None
             try:
                 response = requests.post(self._server,
