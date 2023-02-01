@@ -13,7 +13,12 @@
 # -------------------------------------------------------------
 # Dobj
 # read ICOS data through https calls
-DATA        = 'https://data.icos-cp.eu/portal/tabular'
+# No authentication required.
+# DATA        = 'https://data.icos-cp.eu/portal/tabular'
+# Authentication required.
+DATA        = 'https://data.icos-cp.eu/cpb'
+
+
 # read data from local file
 LOCALDATA   = '/data/dataAppStorage/'
 

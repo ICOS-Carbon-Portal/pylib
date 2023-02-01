@@ -35,7 +35,7 @@ class Dobj():
         the method .getColumns() will return the actual data
     """
 
-    def __init__(self, digitalObject = None, carbon_portal_authentication = None):
+    def __init__(self, digitalObject = None, cp_auth = None):
 
         self._dobj = None           # contains the pid
         self._colSelected = None    # 'none' -> ALL columns are returned
@@ -48,17 +48,17 @@ class Dobj():
         self._json = None           # holds the "payload" for requests
         self._islocal = None        # status if file is read from local store
                                     # if localpath + dobj is valid
-        
-        self._dobjValid = False     # -> see __set_meta()        
+
+        self._dobjValid = False     # -> see __set_meta()
         self._data = pd.DataFrame() # This holds the data pandas dataframe
                                     # persistent in the object.
         self._datapersistent = True # If True (default), data is kept persistent
                                     # in self._data. If False, force to reload
-                                    
+
         # this needs to be the last call within init. If dobj is provided
         # meta data is retrieved and .valid is True
-        self.dobj = digitalObject   
-        self.carbon_portal_authentication = carbon_portal_authentication
+        self.dobj = digitalObject
+        self.cp_auth = cp_auth
 
     #-----------
     @property
@@ -188,12 +188,12 @@ class Dobj():
 # -------------------------------------------------
 
     @property
-    def carbon_portal_authentication(self):
-        return self._carbon_portal_authentication
+    def cp_auth(self):
+        return self._cp_auth
 
-    @carbon_portal_authentication.setter
-    def carbon_portal_authentication(self, carbon_portal_authentication):
-        self._carbon_portal_authentication = carbon_portal_authentication
+    @cp_auth.setter
+    def cp_auth(self, cp_auth):
+        self._cp_auth = cp_auth
         return
 # -------------------------------------------------    
 
@@ -343,25 +343,11 @@ class Dobj():
             otherwise try to download from the cp server
         """
         
-<<<<<<< HEAD
         #assemble local file path
         folder = self.meta['specification']['format']['uri'].split('/')[-1]
         fileName = ''.join([self.dobj.split('/')[-1],'.cpb'])
         localfile = os.path.abspath(''.join([CPC.LOCALDATA,folder,'/',fileName]))
 
-=======
-        
-        # Assemble local file path.
-        folder = self._info2['objFormat'].iloc[0].split('/')[-1]
-        fileName = ''.join([self.dobj.split('/')[-1], '.cpb'])
-        localfile = os.path.abspath(''.join([self._localpath,folder,'/',fileName]))
-        # Todo: start comment
-        # Remove this line of code. It's only needed to test
-        # authentication using jupyter notebooks on ICOS services.
-        # Todo: end comment
-        localfile= ''
-        
->>>>>>> zz_cp_authentication
         if os.path.isfile(localfile):
             self._islocal = True
             with open(localfile, 'rb') as binData:
@@ -372,14 +358,10 @@ class Dobj():
 
         else:
             self._islocal = False
-<<<<<<< HEAD
-            r = requests.post(CPC.DATA, json=self._json, stream=True)
-=======
-            headers = {'cookie': self.carbon_portal_authentication.token}
+            headers = {'cookie': self.cp_auth.token}
             response, content = None, None
->>>>>>> zz_cp_authentication
             try:
-                response = requests.post(self._server,
+                response = requests.post(CPC.DATA,
                                          json=self._json,
                                          stream=True,
                                          headers=headers)
