@@ -368,7 +368,29 @@ class Dobj():
         # make sure the list is sorted by variable name, this is how the
         # binary fileformat is built.
         columns.sort()
+
+        """
+            Convert timestamps to a pandas date/time object
+        """
         
+        def prependOntology(segm):
+            return 'http://meta.icos-cp.eu/ontologies/cpmeta/' + segm
+
+        # Stored as seconds since midnight
+        timeFormats = list(map(prependOntology, ['iso8601timeOfDay']))
+        # Stored as days since epoch
+        dateFormats = list(map(prependOntology, ['iso8601date', 'etcDate']))
+        # Stored as milliseconds since epoch
+        dateTimeFormats = list(map(prependOntology, ['iso8601dateTime', 'isoLikeLocalDateTime', 'etcLocalDateTime']))
+        # Stored as integer
+        integerFormat = list(map(prependOntology, ['int32']))
+
+        def isTime(valueFormat): return valueFormat in timeFormats
+        def isDate(valueFormat): return valueFormat in dateFormats
+        def isDateTime(valueFormat): return valueFormat in dateTimeFormats
+        def isInt(valueFormat): return valueFormat in integerFormat
+
+        fmt = self.variables.sort_values('name')['format'].tolist()
         
         rows = int(self.meta['specificInfo']['nRows'])
 
@@ -378,37 +400,21 @@ class Dobj():
                 if self._colSchema[col] == 'CHAR':
                     #convert UTF-16 , this is often used in "Flag" columns
                     lst = [chr(i) for i in lst]
+                elif isDateTime(fmt[col]):
+                    lst = pd.to_datetime(lst, unit='ms')
+                elif isDate(fmt[col]):
+                    lst = pd.to_datetime(lst, unit='D')
+                elif isTime(fmt[col]):
+                    lst = pd.to_datetime(lst, unit='s')
+                elif isInt(fmt[col]):
+                    # Keep years and other integers as integers
+                    pass
+
                 df[columns[col]] = lst
                 
         except Exception as e:
             raise Exception('_unpackRawData')
-            print(e)
 
-        """
-            The ICOS Carbon Portal provides a TIMESTAMP which is
-            a unix timestamp in milliseconds [UTC]
-            Convert the "number" to a pandas date/time object
-        """
-        
-        if 'TIMESTAMP' in df.columns and self._dtconvert:
-            df['TIMESTAMP'] = pd.to_datetime(df.loc[:,'TIMESTAMP'],unit='ms')
-        
-        if 'TIMESTAMP_END' in df.columns and self._dtconvert:
-            df['TIMESTAMP_END'] = pd.to_datetime(df.loc[:,'TIMESTAMP_END'],unit='ms')
-
-        # there are files with date and time where
-        # date is a unixtimestamp
-        # time seconds per day
-        if 'date' in df.columns and self._dtconvert:
-            df['date'] = pd.to_datetime(df.loc[:,'date'],unit='D')
-
-        if 'time' in df.columns and self._dtconvert:
-            # convert unix timestamp
-            df['time'] = pd.to_datetime(df.loc[:,'time'],unit='s')
-            # remove the data, so that only time remains
-            df['time'] = pd.to_datetime(df.loc[:,'time'],format='%H:%M').dt.time
-
-        
         # store data in object
         if self._datapersistent:
             self._data = df

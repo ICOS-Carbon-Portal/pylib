@@ -44,5 +44,7 @@ For example with mini-conda (https://docs.conda.io/en/latest/miniconda.html) you
 - `activate icos`
 - `pip install icoscp`
 
+More information about installation is available in the [documentation](https://icos-carbon-portal.github.io/pylib/install/).
+
 ## Documentation
 The full documentation about the library and all the modules are available at [https://icos-carbon-portal.github.io/pylib/](https://icos-carbon-portal.github.io/pylib/)
