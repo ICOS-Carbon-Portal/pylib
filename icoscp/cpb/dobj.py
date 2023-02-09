@@ -35,7 +35,8 @@ class Dobj():
         the method .getColumns() will return the actual data
     """
 
-    def __init__(self, digitalObject = None, cp_auth = None):
+    def __init__(self, digitalObject = None, cp_auth: Authentication = None,
+                 debug_auth: str = False):
 
         self._dobj = None           # contains the pid
         self._colSelected = None    # 'none' -> ALL columns are returned
@@ -54,11 +55,12 @@ class Dobj():
                                     # persistent in the object.
         self._datapersistent = True # If True (default), data is kept persistent
                                     # in self._data. If False, force to reload
-
+        self.cp_auth = cp_auth
+        self._debug_auth = debug_auth
         # this needs to be the last call within init. If dobj is provided
         # meta data is retrieved and .valid is True
         self.dobj = digitalObject
-        self.cp_auth = cp_auth
+
 
     #-----------
     @property
@@ -185,17 +187,6 @@ class Dobj():
     @property
     def citation(self):
         return self.get_citation('plain')
-# -------------------------------------------------
-
-    @property
-    def cp_auth(self):
-        return self._cp_auth
-
-    @cp_auth.setter
-    def cp_auth(self, cp_auth):
-        self._cp_auth = cp_auth
-        return
-# -------------------------------------------------    
 
     def __str__(self):
         
@@ -348,6 +339,7 @@ class Dobj():
         fileName = ''.join([self.dobj.split('/')[-1],'.cpb'])
         localfile = os.path.abspath(''.join([CPC.LOCALDATA,folder,'/',fileName]))
 
+        # Local access on server.
         if os.path.isfile(localfile):
             self._islocal = True
             with open(localfile, 'rb') as binData:
@@ -355,24 +347,32 @@ class Dobj():
             # for local files, we always return ALL columns
             self._colSelected = list(range(0,len(self.variables)))
             self.__getPayload()
-
+            # Track data usage for data access on server.
+            self.__portalUse()
+        # Access through HTTP request.
         else:
             self._islocal = False
-            headers = {'cookie': self.cp_auth.token}
             response, content = None, None
             try:
-                response = requests.post(CPC.DATA,
-                                         json=self._json,
-                                         stream=True,
-                                         headers=headers)
+                # User authentication in place.
+                if self.cp_auth:
+                    response = \
+                        requests.post(CPC.SECURED_DATA,
+                                      json=self._json,
+                                      stream=True,
+                                      headers={'cookie': self.cp_auth.token})
+                # Anonymous access.
+                else:
+                    response = requests.post(CPC.ANONYMOUS_DATA,
+                                             json=self._json,
+                                             stream=True)
                 response.raise_for_status()
+                # Track data usage for anonymous data access.
+                self.__portalUse(service=CPC.ANONYMOUS_DATA)
                 if response.status_code == 200:
                     content = response.content
             except requests.exceptions.HTTPError:
                 raise AuthenticationError(response)
-
-        #track data usage
-        self.__portalUse()
         return self.__unpackRawData(content)
 
     def __unpackRawData(self, rawData):
@@ -434,21 +434,26 @@ class Dobj():
         return df
 
     # -------------------------------------------------
-    def __portalUse(self):
-
-        """ private function to track data usage """
-
-        counter = {'BinaryFileDownload':{
-        'params':{
-            'objId':self._dobj,
-            'columns': self.colNames,
-            'library':__name__,
-            'version':release_version,  # from '__init__.py'.
-            'internal': str(self._islocal)}
-            }
+    def __portalUse(self, service: str = None) -> None:
+        """Private function to track data usage."""
+        counter = {
+            'BinaryFileDownload':
+                {
+                    'params':
+                        {
+                            'objId': self._dobj,
+                            'columns': self.colNames,
+                            'library': __name__,
+                            # Retrieved from __init__.py
+                            'version': release_version,
+                            'internal': str(self._islocal),
+                            'service': service,
+                        },
+                }
         }
         server = 'https://cpauth.icos-cp.eu/logs/portaluse'
         requests.post(server, json=counter)
+        return
 
     # -------------------------------------------------
     def __setColumns(self, columns=None):

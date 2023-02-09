@@ -13,10 +13,11 @@
 # -------------------------------------------------------------
 # Dobj
 # read ICOS data through https calls
-# No authentication required.
-# DATA        = 'https://data.icos-cp.eu/portal/tabular'
+# No authentication required. This way of accessing data will be
+# disabled in future releases.
+ANONYMOUS_DATA = 'https://data.icos-cp.eu/portal/tabular'
 # Authentication required.
-DATA        = 'https://data.icos-cp.eu/cpb'
+SECURED_DATA = 'https://data.icos-cp.eu/cpb'
 
 
 # read data from local file
