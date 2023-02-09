@@ -337,15 +337,22 @@ class Dobj():
         #assemble local file path
         folder = self.meta['specification']['format']['uri'].split('/')[-1]
         fileName = ''.join([self.dobj.split('/')[-1],'.cpb'])
-        localfile = os.path.abspath(''.join([CPC.LOCALDATA,folder,'/',fileName]))
+        # Don't set the local path for data files when debugging the
+        # authentication module.
+        local_file = str()
+        if not self._debug_auth:
+            local_file = os.path.abspath(
+                f'{CPC.LOCALDATA}{folder}/{fileName}'
+            )
+        # localfile = os.path.abspath(''.join([CPC.LOCALDATA,folder,'/',fileName]))
 
         # Local access on server.
-        if os.path.isfile(localfile):
+        if os.path.isfile(local_file):
             self._islocal = True
-            with open(localfile, 'rb') as binData:
+            with open(local_file, 'rb') as binData:
                 content = binData.read()
-            # for local files, we always return ALL columns
-            self._colSelected = list(range(0,len(self.variables)))
+            # For local files, we always return all columns.
+            self._colSelected = list(range(0, len(self.variables)))
             self.__getPayload()
             # Track data usage for data access on server.
             self.__portalUse()
