@@ -124,17 +124,22 @@ class Authentication:
         return
 
     def _initialize(self) -> None:
-        """Prompts and resets user's credentials ."""
+        """Prompts and resets user's credentials."""
+        user_input = str()
+        configuration_file_size = os.path.getsize(self.configuration_file)
+        # Case of present configuration file with written content.
         if os.path.getsize(self.configuration_file):
             user_input = input(
                 f'Content detected in file {self.configuration_file}\n'
+                f'This action will reset your configuration file.\n'
                 f'Do you want to continue? [Y/n]: ')
-            if user_input == 'Y':
-                self.username = input('Enter your username: ')
-                self._password = getpass.getpass('Enter your password: ')
-                self._retrieve_token()
-                if self.valid_token:
-                    self._write_credentials()
+        # Case of user's confirmation or empty configuration.
+        if user_input == 'Y' or configuration_file_size == 0:
+            self.username = input('Enter your username: ')
+            self._password = getpass.getpass('Enter your password: ')
+            self._retrieve_token()
+            if self.valid_token:
+                self._write_credentials()
         return
 
     def _set_standard_configuration_path(self) -> None:
