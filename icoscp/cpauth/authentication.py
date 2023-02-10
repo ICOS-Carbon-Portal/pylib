@@ -195,12 +195,12 @@ class Authentication:
         """Retrieve user's credentials from the configuration file."""
         with open(file=self.configuration_file, mode='r') as json_handle:
             credentials = json.load(json_handle)
-        self.username = credentials['username'] \
-            if credentials['username'] else None
-        self._password = credentials['password'] \
-            if credentials['password'] else None
-        self.token = credentials['token'] \
-            if credentials['token'] else None
+        if 'username' in credentials.keys():
+            self.username = credentials['username']
+        if 'password' in credentials.keys():
+            self._password = credentials['password']
+        if 'token' in credentials.keys():
+            self.token = credentials['token']
         return
 
     def _write_credentials(self) -> None:
