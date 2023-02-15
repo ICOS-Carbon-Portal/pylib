@@ -1,7 +1,10 @@
 # Standard library imports.
+from datetime import datetime
+import base64
 import getpass
 import json
 import os
+import re
 
 # Related third party imports.
 from icoscp.cpauth.exceptions import AuthenticationError, CredentialsError
@@ -24,6 +27,7 @@ class Authentication:
         self.token = token
         self.read_configuration = read_configuration
         self.write_configuration = write_configuration
+        self.token_information = None
         # Set the configuration file property. Either the user
         # provides a custom file location or the authentication module
         # uses a system specific location.
@@ -46,14 +50,17 @@ class Authentication:
                 self._retrieve_token()
             # Case of set username, password, and token.
             elif self.username and self._password and self.token:
+                self._extract_token_information()
                 # Try to validate token first.
                 self._validate_token('no_raise')
                 # Try to validate using username & password if token
                 # is invalid.
                 if not self.valid_token:
                     self._retrieve_token()
+                    self._extract_token_information()
             # Case of set token only.
             elif self.token:
+                self._extract_token_information()
                 # Try to validate using token.
                 self._validate_token()
             # Error handling for wrong credentials' formatting in the
@@ -66,8 +73,10 @@ class Authentication:
             # Retrieve and set a valid token using the provided
             # credentials.
             self._retrieve_token()
+            self._extract_token_information()
         # User provides token as input.
         elif self.token:
+            self._extract_token_information()
             self._validate_token()
         # User provides initialization flag. The module will prompt
         # for username and password.
@@ -138,7 +147,8 @@ class Authentication:
             self.username = input('Enter your username: ')
             self._password = getpass.getpass('Enter your password: ')
             self._retrieve_token()
-            if self.valid_token:
+            self._extract_token_information()
+            if self.write_configuration:
                 self._write_credentials()
         return
 
@@ -161,6 +171,10 @@ class Authentication:
         try:
             # Post credentials to cp-auth and check for validity.
             response = requests.post(url=url, data=data)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError:
+            raise AuthenticationError(response)
+        else:
             if response.status_code == 200:
                 # Retrieve token from headers.
                 self.token = response.headers['Set-Cookie'].split()[0]
@@ -168,27 +182,36 @@ class Authentication:
                 # it was correctly retrieved (status_code == 200) using
                 # username and password.
                 self.valid_token = True
-            response.raise_for_status()
-        except requests.exceptions.HTTPError:
-            raise AuthenticationError(response)
         return
 
     def _validate_token(self, *args: str) -> None:
-        """Validate input or generated token."""
-        url = 'https://cpauth.icos-cp.eu/whoami'
-        headers = {'cookie': self.token}
-        response = None
-        try:
-            response = requests.get(url=url, headers=headers)
-            if response.status_code == 200:
-                self.valid_token = True
-            response.raise_for_status()
-        except requests.exceptions.HTTPError:
-            # Do not raise an exception if all credentials are present
-            # in the configuration file, and the provided token is
-            # invalid.
-            if 'no_raise' not in args:
-                raise AuthenticationError(response)
+        """Validate input or generated token (update this for token expiry case)."""
+        dt_token_expiration = datetime.fromtimestamp(
+            self.token_information['token_expiration'] / 1000.0
+        )
+        dt_now = datetime.now()
+        # Retrieved token is still valid.
+        if (dt_token_expiration - dt_now).total_seconds() > 0:
+            self.valid_token = True
+        # Retrieved token has expired.
+        else:
+            url = 'https://cpauth.icos-cp.eu/whoami'
+            headers = {'cookie': self.token}
+            response = None
+            try:
+                response = requests.get(url=url, headers=headers)
+                response.raise_for_status()
+            except requests.exceptions.HTTPError:
+                # Raise an exception if the token has expired, or it
+                # is invalid, and it is the only provided credential.
+                # In other cases the module will try to retrieve the
+                # token using username & password and the exception
+                # control is handled elsewhere.
+                if 'no_raise' not in args:
+                    raise AuthenticationError(response)
+            else:
+                if response.status_code == 200:
+                    self.valid_token = True
         return
 
     def _retrieve_credentials(self) -> None:
@@ -203,6 +226,30 @@ class Authentication:
             self.token = credentials['token']
         return
 
+    def _extract_token_information(self) -> None:
+        binary_token = base64.b64decode(self.token.split('cpauthToken=')[-1])
+        # Check for the record separator character in the binary
+        # token.
+        if ord('\x1e') in binary_token:
+            record_separator_index = binary_token.index(ord('\x1e'))
+            # Get the index of the character just before the record
+            # separator character.
+            square_bracket_index = record_separator_index - 1
+            # Just before the record separator character, there must
+            # be a closing square bracket character ']'. Only in that
+            # case extract the token information.
+            if binary_token[square_bracket_index] == ord(']'):
+                # Extract only the relevant part of the binary token.
+                binary_information = binary_token[0:square_bracket_index+1]
+                token_information = json.loads(
+                    binary_information.decode(encoding='utf-8')
+                )
+                self.token_information = dict(zip(
+                    ['token_expiration', 'username', 'source'],
+                    token_information
+                ))
+        return
+
     def _write_credentials(self) -> None:
         """Write validated credentials to configuration file."""
         credentials = dict({
@@ -213,6 +260,18 @@ class Authentication:
         with open(file=self.configuration_file, mode='w') as json_file_handle:
             json.dump(credentials, json_file_handle)
         return
+
+    def __str__(self):
+        dt_token_expiration = datetime.fromtimestamp(
+            self.token_information['token_expiration']/1000.0
+        )
+        dt_now = datetime.now()
+        time_to_expiration = dt_token_expiration - dt_now
+        token_information = \
+            f'Username: {self.token_information["username"]}\n' \
+            f'Token will expire in: {time_to_expiration}\n' \
+            f'Login source: {self.token_information["source"]}'
+        return token_information
 
     def print_configuration_location(self) -> None:
         """Print & return the location of the configuration file."""

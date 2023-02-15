@@ -26,7 +26,9 @@ from icoscp.cpb import dtype
 from icoscp.cpb import metadata
 import icoscp.const as CPC
 from icoscp.cpauth.authentication import Authentication
-from icoscp.cpauth.exceptions import AuthenticationError
+from icoscp.cpauth.exceptions import AuthenticationError, warn_for_authentication_bypass
+
+from json.decoder import JSONDecodeError
 
 
 class Dobj():
@@ -35,8 +37,8 @@ class Dobj():
         the method .getColumns() will return the actual data
     """
 
-    def __init__(self, digitalObject = None, cp_auth: Authentication = None,
-                 debug_auth: str = False):
+    def __init__(self, digitalObject = None, debug_auth: str = False,
+                 cp_auth: Authentication = None):
 
         self._dobj = None           # contains the pid
         self._colSelected = None    # 'none' -> ALL columns are returned
@@ -333,7 +335,7 @@ class Dobj():
             check if a local path is set and valid
             otherwise try to download from the cp server
         """
-        
+
         #assemble local file path
         folder = self.meta['specification']['format']['uri'].split('/')[-1]
         fileName = ''.join([self.dobj.split('/')[-1],'.cpb'])
@@ -341,10 +343,8 @@ class Dobj():
         # authentication module.
         local_file = str()
         if not self._debug_auth:
-            local_file = os.path.abspath(
-                f'{CPC.LOCALDATA}{folder}/{fileName}'
-            )
-        # localfile = os.path.abspath(''.join([CPC.LOCALDATA,folder,'/',fileName]))
+            local_file = \
+                os.path.abspath(f'{CPC.LOCALDATA}{folder}/{fileName}')
 
         # Local access on server.
         if os.path.isfile(local_file):
@@ -360,26 +360,46 @@ class Dobj():
         else:
             self._islocal = False
             response, content = None, None
-            try:
-                # User authentication in place.
+            request_url, request_headers = None, None
+            # User authentication not in place.
+            if not self.cp_auth:
+                # Try obtaining the default authentication configuration.
+                try:
+                    self.cp_auth = Authentication()
+                # Initialize the authentication process if the
+                # configuration at the default location is not set.
+                except JSONDecodeError as e:
+                    try:
+                        self.cp_auth = Authentication(initialize=True)
+                    except AuthenticationError as e:
+                        warn_for_authentication_bypass()
+                # Authentication was successful.
                 if self.cp_auth:
-                    response = \
-                        requests.post(CPC.SECURED_DATA,
-                                      json=self._json,
-                                      stream=True,
-                                      headers={'cookie': self.cp_auth.token})
-                # Anonymous access.
+                    request_url = CPC.SECURED_DATA
+                    # The API token should have been set by now either by
+                    # authentication provided as an argument,
+                    # authentication retrieved from the default location,
+                    # or authentication reset; thus, set the headers for
+                    # the post request.
+                    request_headers = {'cookie': self.cp_auth.token}
+                # Fall back to anonymous data access if all other ways
+                # fail.
                 else:
-                    response = requests.post(CPC.ANONYMOUS_DATA,
-                                             json=self._json,
-                                             stream=True)
-                response.raise_for_status()
-                # Track data usage for anonymous data access.
-                self.__portalUse(service=CPC.ANONYMOUS_DATA)
-                if response.status_code == 200:
-                    content = response.content
-            except requests.exceptions.HTTPError:
-                raise AuthenticationError(response)
+                    request_url = CPC.ANONYMOUS_DATA
+                # Request data either anonymously or in an authenticated way.
+                response = requests.post(url=request_url,
+                                         json=self._json,
+                                         stream=True,
+                                         headers=request_headers)
+                try:
+                    response.raise_for_status()
+                except requests.exceptions.HTTPError as e:
+                    raise e
+                else:
+                    if response.status_code == 200:
+                        content = response.content
+                        # Track usage for data access.
+                        self.__portalUse(service=request_url)
         return self.__unpackRawData(content)
 
     def __unpackRawData(self, rawData):

@@ -28,10 +28,21 @@ class CredentialsError(Exception):
 
 
 def warn_for_authentication() -> None:
-    authentication_warning = \
-            f'Due to updates in the python library of the ICOS carbon ' \
-            f'portal, starting\nfrom the next version, user authentication ' \
-            f'might be required. For more information, please, follow this ' \
-            f'link: [link to documentation]'
-    warnings.warn(authentication_warning, category=FutureWarning)
+    warning = \
+        f'Due to updates in the python library of the ICOS carbon portal, ' \
+        f'starting\nfrom the next version, user authentication might be ' \
+        f'required. For more information, please, follow this link: ' \
+        f'[link to documentation]'
+    warnings.warn(warning, category=FutureWarning)
+    return
+
+
+def warn_for_authentication_bypass() -> None:
+    warning = \
+        f'Your authentication was unsuccessful. Falling back to anonymous ' \
+        f'data access... \nPlease, revisit your authentication ' \
+        f'configurations or have a look at the documentation here: ' \
+        f'[link to documentation].\n' \
+        f'Authentication will gradually become mandatory for data access.'
+    warnings.warn(warning, category=UserWarning)
     return
