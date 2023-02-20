@@ -151,7 +151,6 @@ Let's create a station object and have a look what information is provided with 
 'lat': 60.0865,<br>
 'lon': 17.4795,<br>
 'eas': None,<br>
-'eag': '36',<br>
 'firstName': 'Meelis',<br>
 'lastName': 'Mölder',<br>
 'email': 'meelis.molder@nateko.lu.se',<br>

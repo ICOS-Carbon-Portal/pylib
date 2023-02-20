@@ -74,7 +74,6 @@ class Station:
         self._lat = None  # latitude
         self._lon = None  # longitude
         self._eas = None  # elevation above sea level
-        self._eag = None  # elevation above ground, height of tower
 
         # pi information
         self._firstName = None  # Station PI first name
@@ -163,15 +162,6 @@ class Station:
     @eas.setter
     def eas(self, eas):
         self._eas = eas
-        # -------------------------------------
-
-    @property
-    def eag(self):
-        return self._eag
-
-    @eag.setter
-    def eag(self, eag):
-        self._eag = eag
         # -------------------------------------
 
     @property
@@ -289,7 +279,7 @@ class Station:
         You can set attributes for the station by providing a dictionary        
         Parameters.      
         project & uri must be a list
-        lat, lon, eas, eag, must be convertible to float
+        lat, lon, eas, must be convertible to float
         everything else is a string.
         
         ----------
@@ -303,7 +293,6 @@ class Station:
         - latitude (convertible to float)
         - longitude (convertible to float)
         - eas (elevation above sea level) (convertible to float)
-        - eag (elevation above ground, height of the tower) (convertible to float)   
         - firstName (PI first name)
         - lastName (PI last name)
         - email (PI email)    
@@ -318,7 +307,7 @@ class Station:
             return
 
         # minimal sanity check
-        checkFloat = ['lat', 'lon', 'eag', 'eas']
+        checkFloat = ['lat', 'lon', 'eas']
         checkList = ['project', 'uri']
 
         # create 'keys' without the underscore
@@ -607,7 +596,6 @@ def get(stationId, station_df=None):
         my_stn.lastName = stn.lastName.values[0]
         my_stn.email = stn.email.values[0]
         my_stn.siteType = stn.siteType.values[0]
-        my_stn.eag = stn.elevation.values[0]
 
     return my_stn
 

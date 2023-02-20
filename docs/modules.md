@@ -227,12 +227,6 @@ how processed they are.
 
 - Return Pandas DataFrame
 
-### **Station.eag**
-Elevation above **ground**, if available. Please note, this is general information about the 
-height of the tower. This is NOT a sampling height, and it is not guaranteed to be accurate.
-
-- Return FLOAT
-
 ### **Station.eas**
 Elevation above **sea level** in meter.
 
