@@ -354,7 +354,7 @@ def __get_object(stations):
     return [StiltStation(stations[st]) for st in stations.keys()]
 
 
-def __get_stations(ids=[], progress=True):
+def __get_stations(ids=None, progress=True):
     """ get all stilt stations available on the server
         return dictionary with metadata, keys are stilt station id's
     """
@@ -419,10 +419,14 @@ def __get_stations(ids=[], progress=True):
         
         # check if station id is in the manual curated list at
         # CPC.STILTINFO
-        id = [a.lower() for a in df['STILT id'].values]
+        id = [a.lower() for a in df['STILT id'].values]        
+        
         if ist.lower() in id:
             stationName = str(df.loc[df['STILT id'] ==
                                      ist]['STILT name'].item())
+            # get the index for this station, to extract corresponding 
+            # ICOS sampling height from CPC.STILTINFO
+            idx = df.index[df['STILT id'] == id.tolist()]
         else:
             stationName = ''
         
@@ -434,6 +438,8 @@ def __get_stations(ids=[], progress=True):
         stn = stations[ist]['id'][0:3].upper()
         if stn in icos_stations_ls:
             stations[ist]['icos'] = cpstation.get(stn, icos_stations_df).info()
+            # add corresponding ICOS Sampling Height
+            stations[ist]['ICOS Sampling Height'] = df.iloc[idx]['ICOS height'].values
         else:
             stations[ist]['icos'] = False
 
