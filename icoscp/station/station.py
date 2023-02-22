@@ -603,7 +603,7 @@ def get(stationId: str = None,
 
     # Internally the station id is case-sensitive
     stationId = __validate_station_id(stationId)
-    if stationId is None:
+    if not stationId:
         return None
 
     # create the station instance
