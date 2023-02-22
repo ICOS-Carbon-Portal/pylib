@@ -437,12 +437,13 @@ def __get_stations(ids=None, progress=True):
         # set a flag if it is an ICOS station
         #   convert the ICOS id to strings
         df['ICOS id'] = df['ICOS id'].astype(str)
-        stn = df.iloc[idx]['ICOS id']
+        stn = df.iloc[idx]['ICOS id'].tolist()
         
-        if stn != 'nan':           
+        if 'nan' not in stn:
             stations[ist]['icos'] = cpstation.get(stn, icos_stations_df).info()
             # add corresponding ICOS Sampling Height
-            stations[ist]['icos']['SamplingHeight'] = df.iloc[idx]['ICOS height'].tolist()
+            sh = df.iloc[idx]['ICOS height'].tolist()
+            stations[ist]['icos']['SamplingHeight'] = float(sh[0])
         else:
             stations[ist]['icos'] = False
 
