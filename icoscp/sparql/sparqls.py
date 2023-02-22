@@ -1172,3 +1172,49 @@ def prod_availability(dobj_spec_ls):
     
     #Return query-string:
     return query
+
+def dobj_for_samplingheight(station, height):
+    """
+    Return a list of dobj, based on Station Id and SamplingHeight
+    used by stiltstation module
+
+    Parameters
+    ----------
+    station : STR
+        ICOS Atmospheric station ID.
+    height : INT|FLOAT
+        provide a valid sampling height for the station.
+        Input must be convertible to FLOAT
+
+    Returns
+    -------
+    A list of Dobj available for the station at sampling height.
+
+    """ 
+    # sanity check
+    height = float(height)
+
+    query = """prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
+    prefix prov: <http://www.w3.org/ns/prov#>
+    prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+    select ?dobj ?hasNextVersion ?spec ?fileName ?size ?submTime ?timeStart ?timeEnd
+    where {
+    	?spec cpmeta:hasDataLevel [] .
+    			FILTER(STRSTARTS(str(?spec), "http://meta.icos-cp.eu/"))
+    			FILTER NOT EXISTS {?spec cpmeta:hasAssociatedProject/cpmeta:hasHideFromSearchPolicy "true"^^xsd:boolean}
+    	?dobj cpmeta:hasObjectSpec ?spec .
+    	BIND(EXISTS{[] cpmeta:isNextVersionOf ?dobj} AS ?hasNextVersion)
+    	VALUES ?station {<http://meta.icos-cp.eu/resources/stations/AS_%s>}
+    			?dobj cpmeta:wasAcquiredBy/prov:wasAssociatedWith ?station .
+    	?dobj cpmeta:hasSizeInBytes ?size .
+    ?dobj cpmeta:hasName ?fileName .
+    ?dobj cpmeta:wasSubmittedBy/prov:endedAtTime ?submTime .
+    ?dobj cpmeta:hasStartTime | (cpmeta:wasAcquiredBy / prov:startedAtTime) ?timeStart .
+    ?dobj cpmeta:hasEndTime | (cpmeta:wasAcquiredBy / prov:endedAtTime) ?timeEnd .
+    	FILTER NOT EXISTS {[] cpmeta:isNextVersionOf ?dobj}
+    ?dobj cpmeta:wasAcquiredBy / cpmeta:hasSamplingHeight ?samplingHeight .
+    FILTER( ?samplingHeight = "%s"^^xsd:float )
+    }
+    order by desc(?submTime) """  % (station, height)
+
+    return query
