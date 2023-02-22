@@ -451,8 +451,8 @@ def __get_stations(ids=None, progress=True):
             
             # add corresponding data object with observations
             query = sparqls.dobj_for_samplingheight(stn, sh)
-            dobjs = runsparql.RunSparql(query).run()
-            stations[ist]['icos']['data'] = dobjs
+            dobjs = runsparql.RunSparql(query, 'pandas').run()
+            stations[ist]['icos']['data'] = dobjs.to_dict('records')
             
         else:
             stations[ist]['icos'] = False
