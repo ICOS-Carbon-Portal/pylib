@@ -426,7 +426,7 @@ def __get_stations(ids=None, progress=True):
                                      ist]['STILT name'].item())
             # get the index for this station, to extract corresponding 
             # ICOS sampling height from CPC.STILTINFO
-            idx = df.index[df['STILT id'] == id.tolist()]
+            idx = df.index[df['STILT id'] == id].tolist()
         else:
             stationName = ''
         
