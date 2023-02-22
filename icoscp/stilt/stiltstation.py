@@ -381,8 +381,7 @@ def __get_stations(ids=None, progress=True):
     df = pd.read_csv(CPC.STILTINFO)
 
     # add ICOS flag to the station
-    icos_stations_df = cpstation.getIdList(project='ICOS', theme='AS')
-    icos_stations_ls = list(icos_stations_df.id)
+    icos_stations_df = cpstation.getIdList(project='ICOS', theme='AS')    
 
     # dictionary to return
     stations = {}
@@ -436,9 +435,11 @@ def __get_stations(ids=None, progress=True):
                                               stations[ist]['alt'])
 
         # set a flag if it is an ICOS station
+        #   convert the ICOS id to strings
+        df['ICOS id'] = df['ICOS id'].astype(str)
+        stn = df.iloc[idx]['ICOS id']
         
-        if isinstance(df.iloc[idx]['ICOS id'], str):
-            stn = df.iloc[idx]['ICOS id']
+        if stn != 'nan':           
             stations[ist]['icos'] = cpstation.get(stn, icos_stations_df).info()
             # add corresponding ICOS Sampling Height
             stations[ist]['icos']['SamplingHeight'] = df.iloc[idx]['ICOS height'].tolist()
