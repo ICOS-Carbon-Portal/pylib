@@ -563,7 +563,7 @@ def __validate_station_id(st_id: str) -> str:
 
 
 def get(stationId: str = None,
-        station_df: pd.Dataframe = None) -> Station:
+        station_df=None) -> Station:
     """
     Parameters
     ----------
