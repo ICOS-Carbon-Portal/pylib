@@ -439,7 +439,7 @@ def __get_stations(ids=None, progress=True):
         
         #   convert the ICOS id to strings
         df['ICOS id'] = df['ICOS id'].astype(str)
-        stn = df.iloc[idx]['ICOS id'].tolist()
+        stn = df.iloc[idx]['ICOS id'].tolist()[0]
         
         if 'nan' not in stn:
             stations[ist]['icos'] = cpstation.get(stn, icos_stations_df).info()
