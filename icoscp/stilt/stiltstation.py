@@ -27,6 +27,7 @@ from icoscp.stilt import geoinfo
 from icoscp.stilt import fmap
 import icoscp.const as CPC
 import icoscp.country
+from icoscp.sparql import sparqls, runsparql
 
 from icoscp.stilt import timefuncs as tf
 
@@ -434,16 +435,25 @@ def __get_stations(ids=None, progress=True):
                                               stationName,
                                               stations[ist]['alt'])
 
-        # set a flag if it is an ICOS station
+        # set a flag and metadata if it is an ICOS station
+        
         #   convert the ICOS id to strings
         df['ICOS id'] = df['ICOS id'].astype(str)
         stn = df.iloc[idx]['ICOS id'].tolist()
         
         if 'nan' not in stn:
             stations[ist]['icos'] = cpstation.get(stn, icos_stations_df).info()
+            
             # add corresponding ICOS Sampling Height
             sh = df.iloc[idx]['ICOS height'].tolist()
-            stations[ist]['icos']['SamplingHeight'] = float(sh[0])
+            sh = float(sh[0])
+            stations[ist]['icos']['SamplingHeight'] = sh
+            
+            # add corresponding data object with observations
+            query = sparqls.dobj_for_samplingheight(stn, sh)
+            dobjs = runsparql.RunSparql(query).run()
+            stations[ist]['icos']['data'] = dobjs
+            
         else:
             stations[ist]['icos'] = False
 
