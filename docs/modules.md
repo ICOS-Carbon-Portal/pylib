@@ -679,7 +679,7 @@ List of years for which STILT results are available. Be aware that even if only 
 calculated for a year, `year` will be listed.
 
 #### .info
-Returns the diction with all metadata.
+Returns a dictionary with all metadata.
 
 #### .geoinfo
 Dictionary with geographical (country) information, if the station is within a country border.
