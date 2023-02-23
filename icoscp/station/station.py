@@ -504,64 +504,6 @@ class Station:
 
 # --EOF Station Class-----------------------------------------            
 # ------------------------------------------------------------
-def __validate_station_id(st_id: str) -> str:
-    """
-    The station id is case-sensitive, the function returns correct station-id if
-    there is a match, otherwise it returns an empty string.
-    """
-
-    id_dict = {'SE-STO': 'SE-Sto', 'IT-NOE': 'IT-Noe', 'UK-AMO': 'UK-AMo',
-               'FR-AUR': 'FR-Aur', '1199': '1199', '11BE': '11BE', '11SS': '11SS',
-               'DE-BER': 'DE-BeR', 'FR-BIL': 'FR-Bil', 'CZ-BK1': 'CZ-BK1',
-               'BIR': 'BIR', 'IT-BCI': 'IT-BCi', 'IT-BFT': 'IT-BFt',
-               'BE-BRA': 'BE-Bra', 'DE-BRS': 'DE-Brs', 'IT-CP2': 'IT-Cp2',
-               'FR-CLT': 'FR-CLt', '74WX': '74WX', '34FM': '34FM', '06AQ': '06AQ',
-               'CH-DAV': 'CH-Dav', 'SE-DEG': 'SE-Deg', 'GL-DSK': 'GL-Dsk',
-               'BE-DOR': 'BE-Dor', '687B': '687B', 'FR-EM2': 'FR-EM2',
-               '65DK': '65DK', 'DE-FEN': 'DE-Fen', 'FR-FBN': 'FR-FBn',
-               'FR-FON': 'FR-Fon', 'GAT': 'GAT', 'DE-GEB': 'DE-Geb',
-               'DK-GDS': 'DK-Gds', 'DE-GWG': 'DE-Gwg', 'FR-GRI': 'FR-Gri',
-               'DE-GRI': 'DE-Gri', 'DE-GSB': 'DE-GsB', 'GF-GUY': 'GF-Guy',
-               'DE-HAI': 'DE-Hai', 'DE-HAR': 'DE-Har', 'HEL': 'HEL',
-               'FR-HES': 'FR-Hes', 'DE-HZD': 'DE-Hzd', 'HPB': 'HPB',
-               'DE-HOH': 'DE-HoH', 'NO-HUR': 'NO-Hur', 'HTM': 'HTM',
-               'SE-HTM': 'SE-Htm', 'FI-HYY': 'FI-Hyy', 'SMR': 'SMR',
-               '48MB': '48MB', 'IPR': 'IPR', 'JFJ': 'JFJ', 'JUE': 'JUE',
-               'KIT': 'KIT', 'FI-KEN': 'FI-Ken', 'DE-KIE': 'DE-Kie',
-               'DE-KLI': 'DE-Kli', 'GL-KBF': 'GL-Kbf', 'FI-KVR': 'FI-Kvr',
-               'FI-KMP': 'FI-Kmp', 'KRE': 'KRE', 'FR-LGT': 'FR-LGt', 'RUN': 'RUN',
-               'FR-LAM': 'FR-Lam', 'LMP': 'LMP', 'CZ-LNZ': 'CZ-Lnz',
-               'FR-LQU': 'FR-Lqu', 'FI-LET': 'FI-Let', 'LIN': 'LIN',
-               'IT-LSN': 'IT-Lsn', 'BE-LCR': 'BE-Lcr', 'FI-LOM': 'FI-Lom',
-               'BE-LON': 'BE-Lon', 'NL-LOO': 'NL-Loo', 'FR-LUS': 'FR-Lus',
-               'LUT': 'LUT', 'BE-MAA': 'BE-Maa', 'FR-MEJ': 'FR-Mej',
-               'IT-MBO': 'IT-MBo', 'CMN': 'CMN', 'FR-MSS': 'FR-MsS',
-               'DE-MSR': 'DE-Msr', 'SE-MYC': 'SE-Myc', '58G2': '58G2',
-               '58US': '58US', '26NA': '26NA', 'BHNQ': 'BHNQ', '26RA': '26RA',
-               'IT-NIV': 'IT-Niv', 'SE-NOR': 'SE-Nor', 'NOR': 'NOR',
-               'GF-NRG': 'GF-Nrg', 'GL-NUF': 'GL-NuF', 'DE-OKD': 'DE-Okd',
-               'OPE': 'OPE', 'OXK': 'OXK', 'PAL': 'PAL', 'IT-PCM': 'IT-PCm',
-               'PRS': 'PRS', 'FR-PUE': 'FR-Pue', 'PUI': 'PUI', 'PUY': 'PUY',
-               'IT-REN': 'IT-Ren', 'RGL': 'RGL', 'DK-RCW': 'DK-RCW',
-               'DE-RUR': 'DE-RuR', 'SAC': 'SAC', 'IT-SR2': 'IT-SR2',
-               'SSL': 'SSL', 'DE-SFN': 'DE-SfN', 'DE-RUS': 'DE-RuS',
-               'FI-SII': 'FI-Sii', 'DK-SKJ': 'DK-Skj', 'FI-SOD': 'FI-Sod',
-               'DK-SOR': 'DK-Sor', 'SNO': 'SNO', 'STE': 'STE',
-               'SE-SVB': 'SE-Svb', 'SVB': 'SVB', 'DE-THA': 'DE-Tha',
-               'TOH': 'TOH', 'IT-TOR': 'IT-Tor', 'FR-TOU': 'FR-Tou',
-               'TRN': 'TRN', 'CZ-WET': 'CZ-wet', '74FS': '74FS',
-               '642B': '642B', 'UTO': 'UTO', 'FI-VAR': 'FI-Var',
-               'BE-VIE': 'BE-Vie', 'DK-VNG': 'DK-Vng', 'WES': 'WES',
-               'WAO': 'WAO', 'DE-RUW': 'DE-RuW', 'CD-YGB': 'CD-Ygb',
-               'GL-ZAF': 'GL-ZaF', 'GL-ZAH': 'GL-ZaH', 'ZEP': 'ZEP',
-               'ZSF': 'ZSF'}
-
-    try:
-        return id_dict.get(st_id.upper(), '')
-    except AttributeError as a:
-        return ''
-
-
 def get(stationId: str = None,
         station_df=None) -> Station:
     """
@@ -601,36 +543,31 @@ def get(stationId: str = None,
 
     """
 
-    # Internally the station id is case-sensitive
-    stationId = __validate_station_id(stationId)
-    if not stationId:
-        return None
-
     # create the station instance
     my_stn = Station()
 
-    if isinstance(station_df, pd.DataFrame) and not station_df.empty:
+    try:
+        stn = station_df.loc[station_df.id.str.upper() == stationId.upper()]
+    except:
         try:
-            stn = station_df.loc[station_df.id == stationId]
+            station_df = getIdList(project='ALL')
+            stn = station_df.loc[station_df.id.str.upper() == stationId.upper()]
         except:
-            filter = {'station': stationId}
-            query = sparqls.station_query(filter)
-            stn = RunSparql(query, 'pandas').run()
-    else:
-        filter = {'station': stationId}
-        query = sparqls.station_query(filter)
-        stn = RunSparql(query, 'pandas').run()
+            stn = None
 
-    if not isinstance(stn, pd.DataFrame) or stn.empty:
-        my_stn.stationId = stationId
-        my_stn.valid = False
-        return my_stn
-    else:
+    try:
         if 'project' not in stn.columns or stn['project'] is None:
             stn['project'] = stn.apply(lambda x: __project(x['uri']), axis=1)
         if 'theme' not in stn.columns or stn['theme'] is None:
             stn['theme'] = stn.apply(lambda x: x['stationTheme'].split('/')[-1],
                                      axis=1)
+    except:
+        stn = None
+
+    if not (isinstance(stn, pd.DataFrame) and not stn.empty):
+        my_stn.stationId = stationId
+        my_stn.valid = False
+        return my_stn
 
     # we have found a valid id
     my_stn.stationId = stn.id.values[0]
