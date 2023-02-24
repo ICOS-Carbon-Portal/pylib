@@ -311,6 +311,7 @@ def _avail(stations):
         avail_per_stn ={}
         if stations[stn]['icos']: 
             avail_per_stn['ICOS id'] = stations[stn]['icos']['stationId']
+            avail_per_stn['ICOS alt'] = stations[stn]['icos']['SamplingHeight']
         else: 
             avail_per_stn['ICOS id'] = ''
         if stations[stn]['alt'] != None: 
