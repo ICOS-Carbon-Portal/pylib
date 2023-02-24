@@ -333,7 +333,9 @@ def _avail(stations):
     # Fill in the gaps.
     df[year_list] = df[year_list].fillna(0)
     df[['Alt'] + year_list] = df[['Alt'] + year_list].applymap(int)
-
+    
+    # sort by StiltStation id
+    df.sort_index(inplace=True)    
     return df
 
 
