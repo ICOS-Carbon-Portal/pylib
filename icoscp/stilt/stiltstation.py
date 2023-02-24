@@ -27,7 +27,6 @@ from icoscp.stilt import geoinfo
 from icoscp.stilt import fmap
 import icoscp.const as CPC
 import icoscp.country
-from icoscp.sparql import sparqls, runsparql
 
 from icoscp.stilt import timefuncs as tf
 
@@ -326,7 +325,7 @@ def _avail(stations):
     
     year_list = list(range(min ({int(x) for x in years_set}),
                               max ({int(x) for x in years_set}) + 1 ))
-    columns_list = ['Alt'] + year_list + ['ICOS id']
+    columns_list = ['Alt'] + year_list + ['ICOS id'] + ['ICOS alt']
       
     df = pd.DataFrame(data = list(availability[x] for x in availability.keys()), 
                       index = list(availability.keys()), 
@@ -450,12 +449,7 @@ def __get_stations(ids=None, progress=True):
             # add corresponding ICOS Sampling Height
             sh = df.iloc[idx]['ICOS height'].tolist()
             sh = float(sh[0])
-            stations[ist]['icos']['SamplingHeight'] = sh
-            
-            # add corresponding data object with observations
-            query = sparqls.dobj_for_samplingheight(stn, sh)
-            dobjs = runsparql.RunSparql(query, 'pandas').run()
-            stations[ist]['icos']['data'] = dobjs.to_dict('records')
+            stations[ist]['icos']['SamplingHeight'] = sh            
             
         else:
             stations[ist]['icos'] = False
