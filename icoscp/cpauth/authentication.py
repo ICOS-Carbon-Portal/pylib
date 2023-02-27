@@ -32,7 +32,7 @@ class Authentication:
         username: str, optional, default=None
             The username required for authentication.
         password: str, optional, default=None
-            the password required for authentication.
+            Τhe password required for authentication.
         token: str, optional, default=None
             The authentication token allows data access without the
             need for a username and password. The token can be
@@ -377,12 +377,12 @@ class Authentication:
         return token_information
 
     def print_configuration_location(self) -> None:
-        """Print & return the location of the configuration file."""
+        """Print the location of the configuration file."""
         print(f'Absolute path to the configuration file: '
               f'{os.path.abspath(self.configuration_file)}')
         return
 
-    def print_credentials(self) -> None:
+    def _print_credentials(self) -> None:
         user_input = input('This action might expose critical information ('
                            'such as username & password) on your screen.\n'
                            'Do you want to continue? [Y/n]: ')

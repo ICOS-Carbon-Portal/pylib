@@ -115,12 +115,12 @@ useful information to the users.
   - `user warning` messages are used to notify the user that there is something 
     potentially incorrect or risky in the program, but that the program is 
     still able to run. Here is an example of a `user warning` message:
-        
-        /pylib/icoscp/cpauth/exceptions.py:39: UserWarning:
-        Your authentication was unsuccessful. Falling back to anonymous data access.
-        Please, revisit your authentication configuration or have a look at the
-        documentation. Authentication will become mandatory for data access.
-        warnings.warn(warning, category=UserWarning)
+ 
+            /pylib/icoscp/cpauth/exceptions.py:39: UserWarning:
+            Your authentication was unsuccessful. Falling back to anonymous data access.
+            Please, revisit your authentication configuration or have a look at the
+            documentation. Authentication will become mandatory for data access.
+            warnings.warn(warning, category=UserWarning)
 
     To suppress such a message, users need to add the code below in their 
     scripts:
