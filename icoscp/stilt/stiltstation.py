@@ -334,6 +334,10 @@ def _avail(stations):
     df[year_list] = df[year_list].fillna(0)
     df[['Alt'] + year_list] = df[['Alt'] + year_list].applymap(int)
     
+    # convert alt to string, so that we can remove nan values
+    df['ICOS alt'] = df['ICOS alt'].astype(str)
+    df['ICOS alt'] = df['ICOS alt'].str.replace('nan','')
+    
     # sort by StiltStation id
     df.sort_index(inplace=True)    
     return df
