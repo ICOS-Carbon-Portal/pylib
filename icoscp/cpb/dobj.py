@@ -367,39 +367,42 @@ class Dobj():
                 try:
                     self.cp_auth = Authentication()
                 # Initialize the authentication process if the
-                # configuration at the default location is not set.
+                # configuration at the default location is not set or
+                # if it is wrongly formatted.
                 except JSONDecodeError as e:
                     try:
                         self.cp_auth = Authentication(initialize=True)
                     except AuthenticationError as e:
                         warn_for_authentication_bypass()
-                # Authentication was successful.
-                if self.cp_auth:
-                    request_url = CPC.SECURED_DATA
-                    # The API token should have been set by now either by
-                    # authentication provided as an argument,
-                    # authentication retrieved from the default location,
-                    # or authentication reset; thus, set the headers for
-                    # the post request.
-                    request_headers = {'cookie': self.cp_auth.token}
-                # Fall back to anonymous data access if all other ways
-                # fail.
-                else:
-                    request_url = CPC.ANONYMOUS_DATA
-                # Request data either anonymously or in an authenticated way.
-                response = requests.post(url=request_url,
-                                         json=self._json,
-                                         stream=True,
-                                         headers=request_headers)
-                try:
-                    response.raise_for_status()
-                except requests.exceptions.HTTPError as e:
-                    raise e
-                else:
-                    if response.status_code == 200:
-                        content = response.content
-                        # Track usage for data access.
-                        self.__portalUse(service=request_url)
+                except AuthenticationError as e:
+                    warn_for_authentication_bypass()
+            # Authentication was successful.
+            if self.cp_auth:
+                request_url = CPC.SECURED_DATA
+                # The API token should have been set by now either by
+                # authentication provided as an argument,
+                # authentication retrieved from the default location,
+                # or authentication reset; thus, set the headers for
+                # the post request.
+                request_headers = {'cookie': self.cp_auth.token}
+            # Fall back to anonymous data access if all other
+            # authentication ways fail.
+            else:
+                request_url = CPC.ANONYMOUS_DATA
+            # Request data either anonymously or in an authenticated way.
+            response = requests.post(url=request_url,
+                                     json=self._json,
+                                     stream=True,
+                                     headers=request_headers)
+            try:
+                response.raise_for_status()
+            except requests.exceptions.HTTPError as e:
+                raise e
+            else:
+                if response.status_code == 200:
+                    content = response.content
+                    # Track usage for data access.
+                    self.__portalUse(service=request_url)
         return self.__unpackRawData(content)
 
     def __unpackRawData(self, rawData):

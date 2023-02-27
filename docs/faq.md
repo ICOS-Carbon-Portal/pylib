@@ -92,7 +92,42 @@ data. The following code snippet will loop through the pid, returning the newest
 		else:
 			break
 	# Now dobj is the newest version.
-	
+
+## How do I suppress warnings?
+Internally the `icoscp` python library uses the `warnings` module to provide
+useful information to the users.
+
+  - `future warning` messages are connected to components of the library that
+    will change in a future release. Here is an example of a `future warning`
+    message:
+
+        /pylib/icoscp/cpauth/exceptions.py:28: FutureWarning:
+        Due to updates in the python library of the ICOS carbon portal, starting from
+        the next version, user authentication might be required.
+        warnings.warn(warning, category=FutureWarning)
+
+    To suppress such a message, users need to add the code below in their 
+    scripts:
+
+        import warnings
+        warnings.simplefilter("ignore", FutureWarning)
+
+  - `user warning` messages are used to notify the user that there is something 
+    potentially incorrect or risky in the program, but that the program is 
+    still able to run. Here is an example of a `user warning` message:
+        
+        /pylib/icoscp/cpauth/exceptions.py:39: UserWarning:
+        Your authentication was unsuccessful. Falling back to anonymous data access.
+        Please, revisit your authentication configuration or have a look at the
+        documentation. Authentication will become mandatory for data access.
+        warnings.warn(warning, category=UserWarning)
+
+    To suppress such a message, users need to add the code below in their 
+    scripts:
+
+        import warnings
+        warnings.simplefilter("ignore", UserWarning)
+
 ## Good to Know
 
 - Stations are associated with the stationID. This means that at the moment a combined station, certified for Ecosystem 

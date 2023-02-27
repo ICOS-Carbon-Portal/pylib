@@ -1,23 +1,72 @@
 # Standard library imports.
+import binascii
 from datetime import datetime
 import base64
 import getpass
 import json
 import os
-import re
 
 # Related third party imports.
 from icoscp.cpauth.exceptions import AuthenticationError, CredentialsError
 import requests
 
 
+def init_auth():
+    """Initialize authentication configuration."""
+    input_username = input('Enter your username: ')
+    input_password = getpass.getpass('Enter your password: ')
+    Authentication(username=input_username, password=input_password)
+    return
+
+
 class Authentication:
+    """
+    A class used to authenticate a user on https://cpauth.icos-cp.eu.
+
+    The authentication class is a tool that provides access to
+    envri-specific data objects. The user can gain access to these
+    objects by providing a valid username and password, or by using an
+    API token, which can be supplied in a number of different ways.
+
+    Attributes:
+        username: str, optional, default=None
+            The username required for authentication.
+        password: str, optional, default=None
+            the password required for authentication.
+        token: str, optional, default=None
+            The authentication token allows data access without the
+            need for a username and password. The token can be
+            manually retrieved from https://cpauth.icos-cp.eu after
+            signing in with a password. Please note that the token has
+            a limited lifespan and must be refreshed periodically to
+            maintain data access.
+        read_configuration: bool, optional, default=True
+            This attribute controls whether the configuration is read
+            from a file. The default setting is to read from a
+            system-specific location.
+        write_configuration: bool, optional, default=True
+            This attribute controls whether valid configuration will
+            be stored to a system-specific location.
+        configuration_file: str, optional, default=None
+            This attribute specifies the path to the configuration
+            file. By default, the configuration file is located in a
+            directory called icoscp in the user's home directory.
+
+    Examples:
+        >>> from icoscp.cpauth.authentication import Authentication
+        >>> Authentication()
+
+        >>> from icoscp.cpauth.authentication import Authentication
+        >>> Authentication(username='test@some.where', password='12345')
+
+    """
 
     def __init__(self, username: str = None, password: str = None,
                  token: str = None, read_configuration: bool = True,
                  write_configuration: bool = True,
                  configuration_file: str = None,
                  initialize: bool = False):
+
         self.valid_token = False
         self.username = username
         # Set user password as private property in a conventional
@@ -42,8 +91,9 @@ class Authentication:
                          self._password or
                          self.token or
                          initialize)):
-            # Retrieve credentials from the configuration file.
-            self._retrieve_credentials()
+            if os.path.getsize(self.configuration_file):
+                # Retrieve credentials from the configuration file.
+                self._retrieve_credentials()
             # Case of set username and password, but not token.
             if self.username and self._password and not self.token:
                 # Try to validate using username & password.
@@ -51,8 +101,10 @@ class Authentication:
             # Case of set username, password, and token.
             elif self.username and self._password and self.token:
                 self._extract_token_information()
-                # Try to validate token first.
-                self._validate_token('no_raise')
+                # Token information was retrieved correctly.
+                if self.token_information:
+                    # Try to validate token first.
+                    self._validate_token('no_raise')
                 # Try to validate using username & password if token
                 # is invalid.
                 if not self.valid_token:
@@ -61,8 +113,14 @@ class Authentication:
             # Case of set token only.
             elif self.token:
                 self._extract_token_information()
-                # Try to validate using token.
-                self._validate_token()
+                # Token information was retrieved correctly.
+                if self.token_information:
+                    # Try to validate using token.
+                    self._validate_token()
+            elif not self.write_configuration:
+                self._initialize_no_store()
+            else:
+                self._initialize()
             # Error handling for wrong credentials' formatting in the
             # configuration file.
             if (not self.username and not self.token)\
@@ -74,6 +132,11 @@ class Authentication:
             # credentials.
             self._retrieve_token()
             self._extract_token_information()
+        # User provides username only. In this case credentials will
+        # not be stored.
+        elif self.username and not self._password:
+            self.write_configuration = False
+            self._initialize_no_store()
         # User provides token as input.
         elif self.token:
             self._extract_token_information()
@@ -133,13 +196,14 @@ class Authentication:
         return
 
     def _initialize(self) -> None:
-        """Prompts and resets user's credentials."""
+        """Prompt and reset user's credentials."""
         user_input = str()
         configuration_file_size = os.path.getsize(self.configuration_file)
         # Case of present configuration file with written content.
         if os.path.getsize(self.configuration_file):
             user_input = input(
-                f'Content detected in file {self.configuration_file}\n'
+                f'Detected content or wrongly formatted content '
+                f'in configuration\nfile: \'{self.configuration_file}\'.\n'
                 f'This action will reset your configuration file.\n'
                 f'Do you want to continue? [Y/n]: ')
         # Case of user's confirmation or empty configuration.
@@ -152,15 +216,23 @@ class Authentication:
                 self._write_credentials()
         return
 
+    def _initialize_no_store(self) -> None:
+        """Prompt, authenticate, & discard user password."""
+        if not self._username:
+            self.username = input('Enter your username: ')
+        self._password = getpass.getpass('Enter your password: ')
+        self._retrieve_token()
+        self._extract_token_information()
+        return
+
     def _set_standard_configuration_path(self) -> None:
         """Set & create the standard configuration locations."""
         configuration_dir = os.path.join(os.path.expanduser('~'), 'icoscp')
         os.makedirs(configuration_dir, exist_ok=True)
         self.configuration_file = os.path.join(configuration_dir,
-                                               '.car_bone_paw_r_tall')
+                                               '.icos_carbon_portal')
         with open(self.configuration_file, 'a'):
             os.utime(self.configuration_file)
-
         return
 
     def _retrieve_token(self) -> None:
@@ -221,47 +293,78 @@ class Authentication:
         if 'username' in credentials.keys():
             self.username = credentials['username']
         if 'password' in credentials.keys():
-            self._password = credentials['password']
+            self._extract_password(credentials['password'])
         if 'token' in credentials.keys():
             self.token = credentials['token']
         return
 
     def _extract_token_information(self) -> None:
-        binary_token = base64.b64decode(self.token.split('cpauthToken=')[-1])
-        # Check for the record separator character in the binary
-        # token.
-        if ord('\x1e') in binary_token:
-            record_separator_index = binary_token.index(ord('\x1e'))
-            # Get the index of the character just before the record
-            # separator character.
-            square_bracket_index = record_separator_index - 1
-            # Just before the record separator character, there must
-            # be a closing square bracket character ']'. Only in that
-            # case extract the token information.
-            if binary_token[square_bracket_index] == ord(']'):
-                # Extract only the relevant part of the binary token.
-                binary_information = binary_token[0:square_bracket_index+1]
-                token_information = json.loads(
-                    binary_information.decode(encoding='utf-8')
-                )
-                self.token_information = dict(zip(
-                    ['token_expiration', 'username', 'source'],
-                    token_information
-                ))
+        try:
+            binary_token = base64.b64decode(
+                self.token.split('cpauthToken=')[-1]
+            )
+        except binascii.Error as e:
+            pass
+        else:
+            # Check for the record separator character in the binary
+            # token.
+            if ord('\x1e') in binary_token:
+                record_separator_index = binary_token.index(ord('\x1e'))
+                # Get the index of the character just before the
+                # record separator character.
+                square_bracket_index = record_separator_index - 1
+                # Just before the record separator character, there
+                # must be a closing square bracket character ']'. Only
+                # in that case extract the token information.
+                if binary_token[square_bracket_index] == ord(']'):
+                    # Extract only the relevant part of the binary
+                    # token.
+                    binary_information = \
+                        binary_token[0:square_bracket_index+1]
+                    token_information = json.loads(
+                        binary_information.decode(encoding='utf-8')
+                    )
+                    self.token_information = dict(zip(
+                        ['token_expiration', 'username', 'source'],
+                        token_information
+                    ))
         return
 
     def _write_credentials(self) -> None:
         """Write validated credentials to configuration file."""
         credentials = dict({
             'username': self.username,
-            'password': self._password,
+            'password': self._encode_password() if self._password else None,
             'token': self.token
         })
         with open(file=self.configuration_file, mode='w') as json_file_handle:
             json.dump(credentials, json_file_handle)
         return
 
+    def _encode_password(self):
+        """Base64 encode given password."""
+        password_bytes = self._password.encode(encoding='utf-8')
+        b64_password_bytes = base64.b64encode(password_bytes)
+        b64_password_string = b64_password_bytes.decode(encoding='utf-8')
+        return b64_password_string
+
+    def _extract_password(self, password_value: str = None) -> None:
+        """Decode or extract clear text password."""
+        try:
+            password_bytes = base64.b64decode(password_value)
+        # Password in file was not encoded.
+        except binascii.Error as e:
+            self._password = password_value
+        # Password in file was None.
+        except TypeError as e:
+            self._password = None
+        else:
+            # Decode base64 formatted password.
+            self._password = password_bytes.decode(encoding='utf-8')
+        return
+
     def __str__(self):
+        """Handle printing of the Authentication class."""
         dt_token_expiration = datetime.fromtimestamp(
             self.token_information['token_expiration']/1000.0
         )

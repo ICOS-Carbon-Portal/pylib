@@ -39,3 +39,6 @@ STILTTS = 'https://stilt.icos-cp.eu/viewer/stiltresult'
 
 # stiltresults all columns, raw
 STILTRAW = 'https://stilt.icos-cp.eu/viewer/stiltrawresult'
+
+# Documentation
+PYLIB_DOC = 'https://icos-carbon-portal.github.io/pylib/'
