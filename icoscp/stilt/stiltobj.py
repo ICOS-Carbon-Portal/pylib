@@ -386,6 +386,19 @@ class StiltStation():
         return df
     
     def get_dobj_list(self):
+        """
+        If the stiltstation has a corresponding ICOS station
+        this function will return a dictionary filled with corresponding
+        dataobjects PID's. A sparql query is executed with ICOS Station id
+        and the sampling height.
+
+        Returns
+        -------
+        DICT
+            A dictionary with the following keys:
+            [dobj,hasNextVersion,spec,fileName,size,submTime,timeStart,timeEnd]
+
+        """
         
         if not self.valid:
             return
