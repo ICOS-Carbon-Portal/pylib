@@ -227,12 +227,6 @@ how processed they are.
 
 - Return Pandas DataFrame
 
-### **Station.eag**
-Elevation above **ground**, if available. Please note, this is general information about the 
-height of the tower. This is NOT a sampling height, and it is not guaranteed to be accurate.
-
-- Return FLOAT
-
 ### **Station.eas**
 Elevation above **sea level** in meter.
 
@@ -314,26 +308,43 @@ The following three functions are recommended to get information about the avail
 stations at the Carbon Portal and how to get a valid station object (or list of):
 
 #### station.getIdList()
+The `station.getIdList` takes several parameters: 
+```
+project: str = 'ICOS' 
+theme: list = None 
+sort: str = 'name'
+outfmt: str = 'pandas'
+icon=None
+``` 
+The default call `station.getIdList()`, which is the same as 
 ```
 station.getIdList(project='ICOS', sort='name')
 ```
+returns a Pandas DataFrame with columns:
 
-This returns a DataFrame with columns:
 
-`['uri', 'id', 'name', 'country', 'lat', 'lon', 'elevation', 'project', 'theme']`
+`['uri', 'id', 'name', 'icosClass', 'country', 'lat', 'lon', 'elevation', 'stationTheme', 'firstName', 'lastName', 'email', 'siteType', 'project', 'theme']`
 
-By default, ICOS certified stations are returned. If project is set to 'all', all known 
-stations (to the Carbon Portal) are returned. By default, the DataFrame is sorted by name. You 
-can provide any column name as sorting parameter. The 'id' of the record, can be used to 
-instantiate  a station. Hence, it is easy to adjust and filter these records and use the column 
-'id' as input for station.get()
+By default, ICOS certified stations are returned. If project is set to `'all'`, all known 
+stations (to the Carbon Portal) are returned. By default, the DataFrame is sorted by the column `name`. You 
+can provide any column name as sorting parameter. The `'id'` of the record, can be used to 
+instantiate a station. Hence, it is easy to adjust and filter these records and use the column 
+`'id'` as input for `station.get()`. 
 
-- Return Pandas DataFrame  
+The theme parameter can be set to either `'AS'`, `'ES'` or `'OS'`, or a list with a combination of these strings. 
+Here `'AS'`, `'ES` and `'OS'` are short for atmospheric, ecosystem and ocean stations.    
+
+Thus, 
+```
+station.getIdList(theme='AS')
+```
+will return a DataFrame with all atmospheric ICOS stations. 
+
+If the optional argument `outfmt='map'` is provided
 ```
 station.getIdList(project='ALL', outfmt='map', icon=None)
 ```
-If the optional argument `outfmt='map'` is provided, a folium map is created with all the queried 
-stations provided by the `project` argument. Stations without a fixed location (like 
+a folium map is created with, in this case, all stations (since we use `project='ALL'`). Stations without a fixed location (like 
 measurements collected from instrumented Ships of Opportunity) will not be included in the map. 
 Each marker in the map represents a station and contains station related information. A user can
 further customize the style of the map by providing the `icon` argument `[None, 'flag', 'path/to/image.png']`.
