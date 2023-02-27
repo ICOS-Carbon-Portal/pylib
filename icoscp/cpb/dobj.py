@@ -378,7 +378,7 @@ class Dobj():
                 if self._colSchema[col] == 'CHAR':
                     #convert UTF-16 , this is often used in "Flag" columns
                     lst = [chr(i) for i in lst]
-                df[columns[col]] = lst
+                df = pd.concat([df, pd.Series(lst).rename(columns[col])],axis=1)
                 
         except Exception as e:
             raise Exception('_unpackRawData')
