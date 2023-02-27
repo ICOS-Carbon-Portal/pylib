@@ -9,11 +9,11 @@
 __author__      = ["Claudio D'Onofrio"]
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.1.7"
+__version__     = "0.1.8"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "stable"
-__date__        = "2022-05-24"
+__date__        = "2023-02-27"
 
 import os
 from warnings import warn
@@ -373,7 +373,7 @@ class Dobj():
         # in future release.
         def prepend_ontology(segm):
             """Convert timestamps to a pandas date/time object."""
-            return 'http://meta.icos-cp.eu/ontologies/cpmeta/' + segm
+            return f'{CPC.CP_META}{segm}'
         # Stored as seconds since midnight.
         time_formats = list(map(prepend_ontology, ['iso8601timeOfDay']))
         # Stored as days since epoch.
