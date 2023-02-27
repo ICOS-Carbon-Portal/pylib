@@ -368,17 +368,46 @@ class Dobj():
         # make sure the list is sorted by variable name, this is how the
         # binary fileformat is built.
         columns.sort()
-        
-        
-        rows = int(self.meta['specificInfo']['nRows'])
 
+        # Patch code for timestamp conversions. To be reworked
+        # in future release.
+        def prepend_ontology(segm):
+            """Convert timestamps to a pandas date/time object."""
+            return 'http://meta.icos-cp.eu/ontologies/cpmeta/' + segm
+        # Stored as seconds since midnight.
+        time_formats = list(map(prepend_ontology, ['iso8601timeOfDay']))
+        # Stored as days since epoch.
+        date_formats = list(map(prepend_ontology, ['iso8601date', 'etcDate']))
+        # Stored as milliseconds since epoch.
+        datetime_formats = list(map(prepend_ontology, ['iso8601dateTime',
+                                                       'isoLikeLocalDateTime',
+                                                       'etcLocalDateTime']))
+        # Stored as integer.
+        integer_format = list(map(prepend_ontology, ['int32']))
+        def is_time(value_format): return value_format in time_formats
+        def is_date(value_format): return value_format in date_formats
+        def is_datetime(value_format): return value_format in datetime_formats
+        def is_int(value_format): return value_format in integer_format
+        fmt = self.variables.sort_values('name')['format'].tolist()
+        rows = int(self.meta['specificInfo']['nRows'])
         try:
-            for idx,col in enumerate(self._colSelected):
+            for idx, col in enumerate(self._colSelected):
                 lst = list(data[idx*rows:(idx+1)*rows])
                 if self._colSchema[col] == 'CHAR':
-                    #convert UTF-16 , this is often used in "Flag" columns
+                    # Convert UTF-16, which is often used in "Flag"
+                    # columns.
                     lst = [chr(i) for i in lst]
-                df = pd.concat([df, pd.Series(lst).rename(columns[col])],axis=1)
+                elif is_datetime(fmt[col]):
+                    lst = pd.to_datetime(lst, unit='ms')
+                elif is_date(fmt[col]):
+                    lst = pd.to_datetime(lst, unit='D')
+                elif is_time(fmt[col]):
+                    lst = pd.to_datetime(lst, unit='s')
+                elif is_int(fmt[col]):
+                    # Keep years and other integers as integers.
+                    pass
+                df = pd.concat([df, pd.Series(lst).rename(columns[col])],
+                               axis=1)
                 
         except Exception as e:
             raise Exception('_unpackRawData')
