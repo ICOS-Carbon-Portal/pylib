@@ -392,8 +392,7 @@ class StiltStation():
         self.__portalUse('timeseries')
         #Return dataframe:
         return df
-<<<<<<< HEAD
-    
+
     def get_dobj_list(self):
         """
         If the stiltstation has a corresponding ICOS station
