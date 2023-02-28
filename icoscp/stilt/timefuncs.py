@@ -8,10 +8,10 @@
 __author__      = ["Karolina Pantazatou", "Claudio DOnofrio"]
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.0.2"
+__version__     = "0.0.3"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'karolina.pantazatou@nateko.lu.se']
-__date__        = "2021-09-20"
+__date__        = "2022-11-23"
 __lastchange__  = ["Claudio DOnofrio"]
 ###############################################################################
 
@@ -60,28 +60,30 @@ def get_hours(hours):
     
     valid = [0,3,6,9,12,15,18,21,24]
     valid_hours = []
-    for h in hours:
-        # for back compatibility, we need to check input for str format
-        # hh:mm -> convert to int
-        if isinstance(h, str):
-            if re.match('[0-9][0-9]:[0-9][0-9]', h):
-                h = h[0:2]
-                
-        h = int(h)
-        if h < 0 or h > 24:
-            pass
-        for i in range(0,8):
-            if h >= valid[i] and h < valid[i+1]:
-                valid_hours.append(valid[i])
-                break                
-    # make sure we have unique values
-    valid_hours = list(set(valid_hours))
     
     if not hours:
         # return ALL in case no hours or only invalid hours are provided
-        return valid[0:8]
+        valid_hours = valid[0:8]
+    
     else:
-        return valid_hours
+        for h in hours:
+            # for back compatibility, we need to check input for str format
+            # hh:mm -> convert to int
+            if isinstance(h, str):
+                if re.match('[0-9][0-9]:[0-9][0-9]', h):
+                    h = h[0:2]
+                    
+            h = int(h)
+            if h < 0 or h > 24:
+                pass
+            for i in range(0,8):
+                if h >= valid[i] and h < valid[i+1]:
+                    valid_hours.append(valid[i])
+                    break                
+        # make sure we have unique values
+        valid_hours = list(set(valid_hours))
+    
+    return valid_hours
     
 ###############################################################################
 

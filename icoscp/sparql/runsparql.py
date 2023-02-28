@@ -11,11 +11,13 @@
 __author__      = ["Claudio D'Onofrio"]
 __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
-__version__     = "0.1.0"
+__version__     = "0.2.0"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
-__email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
+__email__       = ['info@icos-cp.eu']
 __status__      = "rc1"
-__date__        = "2019-08-09"
+__date__        = "2023-01-20"
+__lastchange__  = ["Zois Zogopoulos"]
+
 
 
 import requests
@@ -96,7 +98,9 @@ class RunSparql():
 
         url = 'https://meta.icos-cp.eu/sparql'
 
-        r = requests.get(url, params={'query': self.__query})
+        # Disable cache control to get a response with correct content.
+        headers = {"Cache-Control": "no-cache", "Pragma": "no-cache"}
+        r = requests.get(url, params={'query': self.__query}, headers=headers)
         if not r.ok:
             print(r.ok, r.reason)
             return r.ok, r.reason
