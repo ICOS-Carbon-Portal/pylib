@@ -510,21 +510,23 @@ class Station:
 
 # --EOF Station Class-----------------------------------------            
 # ------------------------------------------------------------
-def get(stationId, station_df=None):
+def get(stationId: str = None,
+        station_df=None) -> Station:
     """
     Parameters
     ----------
     stationId : str
-        Here `stationId` is case-sensitive, for example 'NOR' is the `stationId`
-        for the ICOS atmosphere station Norunda while 'FR-Aur' is the
-        `stationId` for the ICOS ecosystem station Aurade.
-        A list of all stationIds can be extracted using `getIdList()`.
+        Here `stationId` is the id of a station, for example
+        'NOR' is the `stationId` for the ICOS atmosphere station
+        Norunda, while 'FR-Aur' is the `stationId` for the ICOS ecosystem
+        station Aurade. A list of all stationIds can be extracted using
+        `getIdList()`.
 
     station_df : pandas.Dataframe
         By default `station_df` is None. However, if `station_df`
         is provided it is assumed it will be a dataframe as generated
-        by `getIdList()`. This is used by `getList()` via `_station_list()`
-        in order to increase performance
+        by `getIdList()`. This is used internally by `getList()` via
+        `_station_list()` in order to increase performance
 
     Returns
     -------
@@ -550,27 +552,28 @@ def get(stationId, station_df=None):
     # create the station instance
     my_stn = Station()
 
-    if isinstance(station_df, pd.DataFrame) and not station_df.empty:
+    try:
+        stn = station_df.loc[station_df.id.str.upper() == stationId.upper()]
+    except:
         try:
-            stn = station_df.loc[station_df.id == stationId]
+            station_df = getIdList(project='ALL')
+            stn = station_df.loc[station_df.id.str.upper() == stationId.upper()]
         except:
-            filter = {'station': stationId}
-            query = sparqls.station_query(filter)
-            stn = RunSparql(query, 'pandas').run()
-    else:
-        filter = {'station': stationId}
-        query = sparqls.station_query(filter)
-        stn = RunSparql(query, 'pandas').run()
+            stn = None
 
-    if not isinstance(stn, pd.DataFrame) or stn.empty:
-        my_stn.stationId = stationId
-        my_stn.valid = False
-        return my_stn
-    else:
+    try:
         if 'project' not in stn.columns or stn['project'] is None:
             stn['project'] = stn.apply(lambda x: __project(x['uri']), axis=1)
         if 'theme' not in stn.columns or stn['theme'] is None:
-            stn['theme'] = stn.apply(lambda x: x['stationTheme'].split('/')[-1], axis=1)
+            stn['theme'] = stn.apply(lambda x: x['stationTheme'].split('/')[-1],
+                                     axis=1)
+    except:
+        stn = None
+
+    if not (isinstance(stn, pd.DataFrame) and not stn.empty):
+        my_stn.stationId = stationId
+        my_stn.valid = False
+        return my_stn
 
     # we have found a valid id
     my_stn.stationId = stn.id.values[0]
@@ -604,7 +607,7 @@ def get(stationId, station_df=None):
     # if the station belongs to ICOS
     # add information from the labeling app.
     # this is an interim step and should be removed after the full metadata
-    # flow from the thematic centres is achieved.        
+    # flow from the thematic centres is achieved.
 
     if 'ICOS' in my_stn.project:
         my_stn.theme = stn.stationTheme.values[0].split('/')[-1]
@@ -817,8 +820,8 @@ def __project(uri):
     Parameters
     ----------
     uri : Carbon Portal resource descriptor
-    
-    Returns 
+
+    Returns
     -------
     project : str, from predefined dict
 
