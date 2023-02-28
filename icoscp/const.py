@@ -3,10 +3,10 @@
 
 """    
     Define global (to icoscp) constants
-    mainly path variables and Url's used throught the package
-    usage: import icoscp.const as CPC
-    CPC.ST_PATH
-    
+    mainly path variables and Url's used throughout the package
+    Usage:
+    >>> import icoscp.const as CPC
+    >>> CPC.CP_META
 """
 
 
@@ -33,3 +33,6 @@ STILTTS = 'https://stilt.icos-cp.eu/viewer/stiltresult'
 
 # stiltresults all columns, raw
 STILTRAW = 'https://stilt.icos-cp.eu/viewer/stiltrawresult'
+
+# Metadata-schema concepts from Carbon Portal's ontologies.
+CP_META = 'http://meta.icos-cp.eu/ontologies/cpmeta/'
