@@ -100,3 +100,55 @@ AND Atmosphere, has two different stationId's and hence to access ALL data for s
 stationId's to find a complete set of data products. Example Norunda, Sweden (stationId "SE-Nor" for Ecosystem, 
 stationId "NOR" for Atmosphere).
 
+## Iteration over `station_id_df` displays `station.name` as an index 
+The dataframe provided by `station.getIdList` has a column for station names called "name", and `pandas.DataFrame` has an 
+implementation where each column is turned into an attribute. However, an iteration over the rows, like in the below example, will not 
+give the station name
+
+	from icoscp.station import station
+    df = station.getIdList(project='all')
+    for _, row in df.iterrows():
+        if row.theme in ['ES', 'FluxnetStation']:
+            print(row.name, row.id, row.uri)
+	
+	0 SE-Sto http://meta.icos-cp.eu/resources/stations/ES_SE-Sto
+    1 ES-Agu http://meta.icos-cp.eu/resources/stations/FLUXNET_ES-Agu
+    ...
+    214 GL-ZaF http://meta.icos-cp.eu/resources/stations/ES_GL-ZaF
+    215 GL-ZaH http://meta.icos-cp.eu/resources/stations/ES_GL-ZaH
+
+The reason is that each `row` that is unpacked in the loop is a `pandas.Series` object, and every `Series` object has an attribute 
+called `name`, holding the name of the series. In this case the name is the rownumber from the dataframe index.
+
+Examples on how to avoid this.
+
+1. Use a dictionary-style call instead of a attribute-style call:
+
+        ...
+        for _, row in df.iterrows():
+            if row.theme in ['ES', 'FluxnetStation']:
+                print(row['name'], row.id, row.uri)
+    
+
+2. Print a subframe and avoid the iteration:
+
+	    ...
+	    df2 = df[df['theme'].isin(['ES', 'FluxnetStation'])]
+	    print(df2[['name', 'id', 'uri']].to_string())
+	
+
+3. Use the "name"-column as the index:
+	    
+		...
+		df.set_index('name', inplace=True)
+	    for _, row in df.iterrows():
+	        if row.theme in ['ES', 'FluxnetStation']:
+                print(row.name, row.id, row.uri)
+
+4. Rename the column "name":
+
+        ...
+		df.rename(columns={'name': 'station_name'}, inplace=True)
+        for _, row in df.iterrows():
+            if row.theme in ['ES', 'FluxnetStation']:
+                print(row.station_name, row.id, row.uri)

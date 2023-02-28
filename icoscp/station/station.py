@@ -2,9 +2,12 @@
 # -*- coding: utf-8 -*-
 
 """    
-    The Station module is used to explore ICOS stations and the corresponding
-    data products. Since you need to know the "station id" to create a station
-    object, convenience functions are provided:
+    The Station module is used to explore ICOS stations and the
+    corresponding data products. Since you need to know the "station id"
+    to create a station object, the function getIdList() might be useful.
+    For further details on the station module, please vist:
+    https://icos-carbon-portal.github.io/pylib/modules/#station
+
     
     Example usage:
         
@@ -18,6 +21,19 @@
 
     # Create a list of station objects for the atmospheric ICOS stations
     atm_ls = station.getList('AS')
+
+    A remark:
+    When using a dataframe as provided by station.getIdList(),
+    it has a column called 'name', this might lead to confusion when
+    extracting pandas Series objects out of the dataframe. Hence, some users
+    might wish to rename the column:
+
+    # Renaming the "name" column
+    df.rename(columns={'name': 'station_name'}, inplace=True)
+
+    For more details and other suggestions we refer to the FAQ:
+    https://icos-carbon-portal.github.io/pylib/faq/
+
 """
 
 __author__ = ["Claudio D'Onofrio", "Zois Zogopoulos", "Anders Dahlner"]
@@ -25,7 +41,8 @@ __credits__ = "ICOS Carbon Portal"
 __license__ = "GPL-3.0"
 __version__ = "0.1.3"
 __maintainer__ = "ICOS Carbon Portal, elaborated products team"
-__email__ = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se', 'zois.zogopoulos@nateko.lu.se',
+__email__ = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se',
+             'zois.zogopoulos@nateko.lu.se',
              'anders.dahlner@nateko.lu.se']
 __status__ = "rc1"
 __date__ = "2021-09-20"
