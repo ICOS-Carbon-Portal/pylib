@@ -7,7 +7,9 @@
  - https://github.com/ICOS-Carbon-Portal/pylib/pull/125 use pd concat in Dobj.data. Adding series to a pandas dataframe creates a performance warning, append to dataframe is deprecated, use concat instead. ( https://github.com/pandas-dev/pandas/issues/35407 )
  - https://github.com/ICOS-Carbon-Portal/pylib/pull/137
     - output of stiltstation find with availability table shows the correct corresponding ICOS id
-    - if the stilstation is connected to a ICOS station, two new keys are available in the metadata. SamplingHeight (corresponding sampling height for observation) **station.icos['SamplingHeight'] -> return float** and a list of corresponding data objects **station.icos['data'] -> return dict**
+    - if the stilstation is connected to a ICOS station
+      - a new key is available for the sampling height (corresponding ICOS sampling height for observation) **station.icos['SamplingHeight'] -> return float**
+      - and a new function **station.get_dobj_list() -> return [DICT]** with corresponding data objects with observations.
 
 ## 0.1.17
  - #### station module  
