@@ -101,7 +101,7 @@ stationId's to find a complete set of data products. Example Norunda, Sweden (st
 stationId "NOR" for Atmosphere).
 
 ## Iteration over `station_id_df` displays `station.name` as an index 
-The dataframe provided by `station.getIdList` has a column for station names called "name", `pandas.DataFrame` has an 
+The dataframe provided by `station.getIdList` has a column for station names called "name", and `pandas.DataFrame` has an 
 implementation where each column is turned into an attribute. However, an iteration over the rows, like in the below example, will not 
 give the station name
 
@@ -117,8 +117,8 @@ give the station name
     214 GL-ZaF http://meta.icos-cp.eu/resources/stations/ES_GL-ZaF
     215 GL-ZaH http://meta.icos-cp.eu/resources/stations/ES_GL-ZaH
 
-The reason is that each `row` that is unpacked in the loop is a pandas Series object, and the Series object has an attribute 
-called `name`, holding the name of the series - in this case it is the dataframe index of the row.
+The reason is that each `row` that is unpacked in the loop is a `pandas.Series` object, and every `Series` object has an attribute 
+called `name`, holding the name of the series. In this case the name is the rownumber from the dataframe index.
 
 Examples on how to avoid this.
 
