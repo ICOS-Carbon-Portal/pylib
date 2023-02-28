@@ -25,6 +25,7 @@ import json
 import xarray as xr
 import icoscp.const as CPC
 from icoscp.stilt import timefuncs as tf
+from icoscp.sparql import sparqls, runsparql
 from icoscp import __version__ as release_version
 ##############################################################################
 
@@ -64,6 +65,8 @@ class StiltStation():
         self.icos = None
         self.years = None
         self.geoinfo = None
+        self.dobjs_list = None               # Store a list of associated dobjs
+        self.dobjs_valid = False        # If True, dobjs sparql query already executed        
 
         self._set(st_dict)
 
@@ -389,10 +392,42 @@ class StiltStation():
         self.__portalUse('timeseries')
         #Return dataframe:
         return df
+<<<<<<< HEAD
+    
+    def get_dobj_list(self):
+        """
+        If the stiltstation has a corresponding ICOS station
+        this function will return a dictionary filled with corresponding
+        dataobjects PID's. A sparql query is executed with ICOS Station id
+        and the sampling height.
 
-    #Function that checks the selection of columns that are to be
-    #returned with the STILT timeseries model output:
+        Returns
+        -------
+        DICT
+            A dictionary with the following keys:
+            [dobj,hasNextVersion,spec,fileName,size,submTime,timeStart,timeEnd]
+
+        """
+        
+        if not self.valid:
+            return
+        
+        if not self.dobjs_valid and self.icos:
+            # add corresponding data object with observations
+            query = sparqls.dobj_for_samplingheight(\
+                            self.icos['stationId'], \
+                            self.icos['SamplingHeight'])
+            df = runsparql.RunSparql(query, 'pandas').run()
+            
+            self.dobjs_list = df.to_dict('records')
+            self.dobjs_valid = True        
+        
+        return self.dobjs_list
+        
+        
     def __columns(self, cols):
+        #Function that checks the selection of columns that are to be
+        #returned with the STILT timeseries model output:
         if cols:
             # Convert user-specified columns to lower case.
             cols = cols.lower()
