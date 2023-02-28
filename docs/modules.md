@@ -686,7 +686,7 @@ Dictionary with geographical (country) information, if the station is within a c
 
 <h2>Methods:</h2>
 
-#### .get_ts(start_date, end_date, hours=[], columns=''):
+#### .get_ts(start_date, end_date, hours=None, columns=''):
 STILT concentration time series for a given time period, with optional selection of specific 
 hours and columns. Returns time series as a `pandas.DataFrame`.
 
@@ -749,7 +749,7 @@ hours and columns. Returns time series as a `pandas.DataFrame`.
 				rn, rn.era, rn.noah, wind.dir,
 				wind.u, wind.v, latstart, lonstart
 
-#### .get_fp(start_date, end_date, hours=[]):
+#### .get_fp(start_date, end_date, hours=None):
 STILT footprints for a given time period, with optional selection of specific hours.
 `Returns` the footprints as `xarray` 
 [http://xarray.pydata.org/en/stable/](http://xarray.pydata.org/en/stable/) with latitude, 
@@ -768,6 +768,25 @@ longitude, time, and ppm per (micromole m-2 s-1).
 						hours = [2,3,4,5,6] will return Timeslots for 0,3 and 6
 						hours = [] return ALL
 						hours = ["10", "10:00", 10] returns timeslot 9
+
+#### .get_dobj_list():
+If the stiltstation has a corresponding ICOS station, this function will return a dictionary filled with corresponding data objects. A sparql query is executed with ICOS Station id and the sampling height as constraint, returning all data objects (Level 1, 2, 3).
+
+Returns: List of DICT Each dictionary with the following keys: [dobj,hasNextVersion,spec,fileName,size,submTime,timeStart,timeEnd]
+
+Example output:
+	
+		[{
+			'dobj': 'https://meta.icos-cp.eu/objects/1DZZOAmmB8YAfYPvXuHMj7Er',
+			'hasNextVersion': 'false',
+			'spec': 'http://meta.icos-cp.eu/resources/cpmeta/atcN2oNrtGrowingDataObject',
+			'fileName': 'ICOS_ATC_NRT_OXK_2022-03-01_2023-02-27_23.0_534_N2O.zip',
+			'size': '110076',
+			'submTime': '2023-02-28T11:16:27.804Z',
+			'timeStart': '2022-03-01T00:00:00Z',
+			'timeEnd': '2023-02-27T23:00:00Z'
+		},
+		...
 <hr>
 	
 ## Sparql
