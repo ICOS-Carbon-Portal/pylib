@@ -101,7 +101,7 @@ stationId's to find a complete set of data products. Example Norunda, Sweden (st
 stationId "NOR" for Atmosphere).
 
 ## Iteration over `station_id_df` displays `station.name` as an index 
-The dataframe provided by `station.getIdList` have a column for station names called "name", `pandas.DataFrame` has an 
+The dataframe provided by `station.getIdList` has a column for station names called "name", `pandas.DataFrame` has an 
 implementation where each column is turned into a attribute. An iteration over the rows, like in the below example, will not 
 give the station name
 
