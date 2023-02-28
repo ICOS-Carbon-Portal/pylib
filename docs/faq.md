@@ -143,7 +143,7 @@ Examples on how to avoid this.
 		df.set_index('name', inplace=True)
 	    for _, row in df.iterrows():
 	        if row.theme in ['ES', 'FluxnetStation']:
-            print(row.name, row.id, row.uri)
+                print(row.name, row.id, row.uri)
 
 4. Rename the column "name":
 
