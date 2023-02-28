@@ -1,7 +1,13 @@
 # Changelog
 
 ## 0.1.17
- - #### station module
+ - #### station module  
+   The station class has been somewhat optimized:
+     - `station.getList()` is faster 
+     - `station.getIdList()` has a new parameter `theme` (as in `getList`)
+ - #### sparql module 
+   In the background the station class use sparql queries, and `sparqls.py` has been endowed with station query function:  
+     - `sparqls.station_query()`, the function has a filter parameter with which the experienced user for example can use to fetch stations in a list of countries.	 
  - #### stilt module
      - Update `xarray` call in `stiltobj.py`.
  - #### other changes

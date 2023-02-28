@@ -2,9 +2,12 @@
 # -*- coding: utf-8 -*-
 
 """    
-    The Station module is used to explore ICOS stations and the corresponding
-    data products. Since you need to know the "station id" to create a station
-    object, convenience functions are provided:
+    The Station module is used to explore ICOS stations and the
+    corresponding data products. Since you need to know the "station id"
+    to create a station object, the function getIdList() might be useful.
+    For further details on the station module, please vist:
+    https://icos-carbon-portal.github.io/pylib/modules/#station
+
     
     Example usage:
         
@@ -18,6 +21,19 @@
 
     # Create a list of station objects for the atmospheric ICOS stations
     atm_ls = station.getList('AS')
+
+    A remark:
+    When using a dataframe as provided by station.getIdList(),
+    it has a column called 'name', this might lead to confusion when
+    extracting pandas Series objects out of the dataframe. Hence, some users
+    might wish to rename the column:
+
+    # Renaming the "name" column
+    df.rename(columns={'name': 'station_name'}, inplace=True)
+
+    For more details and other suggestions we refer to the FAQ:
+    https://icos-carbon-portal.github.io/pylib/faq/
+
 """
 
 __author__ = ["Claudio D'Onofrio", "Zois Zogopoulos", "Anders Dahlner"]
@@ -25,7 +41,8 @@ __credits__ = "ICOS Carbon Portal"
 __license__ = "GPL-3.0"
 __version__ = "0.1.3"
 __maintainer__ = "ICOS Carbon Portal, elaborated products team"
-__email__ = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se', 'zois.zogopoulos@nateko.lu.se',
+__email__ = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se',
+             'zois.zogopoulos@nateko.lu.se',
              'anders.dahlner@nateko.lu.se']
 __status__ = "rc1"
 __date__ = "2021-09-20"
@@ -74,7 +91,6 @@ class Station:
         self._lat = None  # latitude
         self._lon = None  # longitude
         self._eas = None  # elevation above sea level
-        self._eag = None  # elevation above ground, height of tower
 
         # pi information
         self._firstName = None  # Station PI first name
@@ -163,15 +179,6 @@ class Station:
     @eas.setter
     def eas(self, eas):
         self._eas = eas
-        # -------------------------------------
-
-    @property
-    def eag(self):
-        return self._eag
-
-    @eag.setter
-    def eag(self, eag):
-        self._eag = eag
         # -------------------------------------
 
     @property
@@ -289,7 +296,7 @@ class Station:
         You can set attributes for the station by providing a dictionary        
         Parameters.      
         project & uri must be a list
-        lat, lon, eas, eag, must be convertible to float
+        lat, lon, eas, must be convertible to float
         everything else is a string.
         
         ----------
@@ -303,7 +310,6 @@ class Station:
         - latitude (convertible to float)
         - longitude (convertible to float)
         - eas (elevation above sea level) (convertible to float)
-        - eag (elevation above ground, height of the tower) (convertible to float)   
         - firstName (PI first name)
         - lastName (PI last name)
         - email (PI email)    
@@ -318,7 +324,7 @@ class Station:
             return
 
         # minimal sanity check
-        checkFloat = ['lat', 'lon', 'eag', 'eas']
+        checkFloat = ['lat', 'lon', 'eas']
         checkList = ['project', 'uri']
 
         # create 'keys' without the underscore
@@ -504,21 +510,23 @@ class Station:
 
 # --EOF Station Class-----------------------------------------            
 # ------------------------------------------------------------
-def get(stationId, station_df=None):
+def get(stationId: str = None,
+        station_df=None) -> Station:
     """
     Parameters
     ----------
     stationId : str
-        Here `stationId` is case-sensitive, for example 'NOR' is the `stationId`
-        for the ICOS atmosphere station Norunda while 'FR-Aur' is the
-        `stationId` for the ICOS ecosystem station Aurade.
-        A list of all stationIds can be extracted using `getIdList()`.
+        Here `stationId` is the id of a station, for example
+        'NOR' is the `stationId` for the ICOS atmosphere station
+        Norunda, while 'FR-Aur' is the `stationId` for the ICOS ecosystem
+        station Aurade. A list of all stationIds can be extracted using
+        `getIdList()`.
 
     station_df : pandas.Dataframe
         By default `station_df` is None. However, if `station_df`
         is provided it is assumed it will be a dataframe as generated
-        by `getIdList()`. This is used by `getList()` via `_station_list()`
-        in order to increase performance
+        by `getIdList()`. This is used internally by `getList()` via
+        `_station_list()` in order to increase performance
 
     Returns
     -------
@@ -544,27 +552,28 @@ def get(stationId, station_df=None):
     # create the station instance
     my_stn = Station()
 
-    if isinstance(station_df, pd.DataFrame) and not station_df.empty:
+    try:
+        stn = station_df.loc[station_df.id.str.upper() == stationId.upper()]
+    except:
         try:
-            stn = station_df.loc[station_df.id == stationId]
+            station_df = getIdList(project='ALL')
+            stn = station_df.loc[station_df.id.str.upper() == stationId.upper()]
         except:
-            filter = {'station': stationId}
-            query = sparqls.station_query(filter)
-            stn = RunSparql(query, 'pandas').run()
-    else:
-        filter = {'station': stationId}
-        query = sparqls.station_query(filter)
-        stn = RunSparql(query, 'pandas').run()
+            stn = None
 
-    if not isinstance(stn, pd.DataFrame) or stn.empty:
-        my_stn.stationId = stationId
-        my_stn.valid = False
-        return my_stn
-    else:
+    try:
         if 'project' not in stn.columns or stn['project'] is None:
             stn['project'] = stn.apply(lambda x: __project(x['uri']), axis=1)
         if 'theme' not in stn.columns or stn['theme'] is None:
-            stn['theme'] = stn.apply(lambda x: x['stationTheme'].split('/')[-1], axis=1)
+            stn['theme'] = stn.apply(lambda x: x['stationTheme'].split('/')[-1],
+                                     axis=1)
+    except:
+        stn = None
+
+    if not (isinstance(stn, pd.DataFrame) and not stn.empty):
+        my_stn.stationId = stationId
+        my_stn.valid = False
+        return my_stn
 
     # we have found a valid id
     my_stn.stationId = stn.id.values[0]
@@ -598,7 +607,7 @@ def get(stationId, station_df=None):
     # if the station belongs to ICOS
     # add information from the labeling app.
     # this is an interim step and should be removed after the full metadata
-    # flow from the thematic centres is achieved.        
+    # flow from the thematic centres is achieved.
 
     if 'ICOS' in my_stn.project:
         my_stn.theme = stn.stationTheme.values[0].split('/')[-1]
@@ -607,7 +616,6 @@ def get(stationId, station_df=None):
         my_stn.lastName = stn.lastName.values[0]
         my_stn.email = stn.email.values[0]
         my_stn.siteType = stn.siteType.values[0]
-        my_stn.eag = stn.elevation.values[0]
 
     return my_stn
 
@@ -812,8 +820,8 @@ def __project(uri):
     Parameters
     ----------
     uri : Carbon Portal resource descriptor
-    
-    Returns 
+
+    Returns
     -------
     project : str, from predefined dict
 
