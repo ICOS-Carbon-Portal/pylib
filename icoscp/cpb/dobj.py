@@ -37,6 +37,11 @@ class Dobj():
         the method .getColumns() will return the actual data
     """
 
+    # Private class attribute used to bypass authentication for consecutive
+    # requests of data objects if the first authentication attempt was
+    # unsuccessful. It is only applicable to off-server data access.
+    _bypass_auth = False
+
     def __init__(self, digitalObject = None, debug_auth: str = False,
                  cp_auth: Authentication = None):
 
@@ -191,7 +196,6 @@ class Dobj():
         return self.get_citation('plain')
 
     def __str__(self):
-        
         if not self.valid:
             return ''
         
@@ -362,7 +366,7 @@ class Dobj():
             response, content = None, None
             request_url, request_headers = None, None
             # User authentication not in place.
-            if not self.cp_auth:
+            if not self.cp_auth and not Dobj._bypass_auth:
                 # Try obtaining the default authentication configuration.
                 try:
                     self.cp_auth = Authentication()
@@ -388,6 +392,7 @@ class Dobj():
             # Fall back to anonymous data access if all other
             # authentication ways fail.
             else:
+                Dobj._bypass_auth = True
                 request_url = CPC.ANONYMOUS_DATA
             # Request data either anonymously or in an authenticated way.
             response = requests.post(url=request_url,
