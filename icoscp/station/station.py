@@ -24,13 +24,15 @@
 
     A remark:
     When using a dataframe as provided by station.getIdList(),
-    has a column called 'name', this might lead to confusion when
-    extracting pandas Series objects out of the dataframe (see
-    https://icos-carbon-portal.github.io/pylib/faq/). Hence, some users
+    it has a column called 'name', this might lead to confusion when
+    extracting pandas Series objects out of the dataframe. Hence, some users
     might wish to rename the column:
 
     # Renaming the "name" column
     df.rename(columns={'name': 'station_name'}, inplace=True)
+
+    For more details and other suggestions we refer to the FAQ:
+    https://icos-carbon-portal.github.io/pylib/faq/
 
 """
 
