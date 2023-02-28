@@ -18,6 +18,8 @@
 ANONYMOUS_DATA = 'https://data.icos-cp.eu/portal/tabular'
 # Authentication required.
 SECURED_DATA = 'https://data.icos-cp.eu/cpb'
+# Carbon portal authentication end-point.
+CP_AUTH = 'https://cpauth.icos-cp.eu/'
 
 
 # read data from local file
@@ -41,4 +43,7 @@ STILTTS = 'https://stilt.icos-cp.eu/viewer/stiltresult'
 STILTRAW = 'https://stilt.icos-cp.eu/viewer/stiltrawresult'
 
 # Documentation
-PYLIB_DOC = 'https://icos-carbon-portal.github.io/pylib/'
+DOC_PYLIB = 'https://icos-carbon-portal.github.io/pylib/'
+DOC_M_AUTH = 'https://icos-carbon-portal.github.io/pylib/modules/#authentication'
+DOC_FAQ = 'https://icos-carbon-portal.github.io/pylib/faq/'
+DOC_FAQ_WARNINGS = 'https://icos-carbon-portal.github.io/pylib/faq/#how-do-i-suppress-warnings'

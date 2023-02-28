@@ -377,9 +377,9 @@ class Dobj():
                     try:
                         self.cp_auth = Authentication(initialize=True)
                     except AuthenticationError as e:
-                        warn_for_authentication_bypass()
+                        warn_for_authentication_bypass(reason=e)
                 except AuthenticationError as e:
-                    warn_for_authentication_bypass()
+                    warn_for_authentication_bypass(reason=e)
             # Authentication was successful.
             if self.cp_auth:
                 request_url = CPC.SECURED_DATA
