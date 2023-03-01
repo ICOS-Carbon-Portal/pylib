@@ -100,23 +100,18 @@ class Authentication:
                 self._retrieve_token()
             # Case of set username, password, and token.
             elif self.username and self._password and self.token:
-                self._extract_token_information()
-                # Token information was retrieved correctly.
-                if self.token_information:
-                    # Try to validate token first.
-                    self._validate_token('no_raise')
+                self._validate_token('no_raise')
+                if self._valid_token:
+                    self._extract_token_information()
                 # Try to validate using username & password if token
                 # is invalid.
-                if not self.valid_token:
+                else:
                     self._retrieve_token()
                     self._extract_token_information()
             # Case of set token only.
             elif self.token:
+                self._validate_token()
                 self._extract_token_information()
-                # Token information was retrieved correctly.
-                if self.token_information:
-                    # Try to validate using token.
-                    self._validate_token()
             elif not self.write_configuration:
                 self._initialize_no_store()
             else:
@@ -139,8 +134,8 @@ class Authentication:
             self._initialize_no_store()
         # User provides token as input.
         elif self.token:
-            self._extract_token_information()
             self._validate_token()
+            self._extract_token_information()
         # User provides initialization flag. The module will prompt
         # for username and password.
         elif initialize:
@@ -258,32 +253,24 @@ class Authentication:
 
     def _validate_token(self, *args: str) -> None:
         """Validate input or generated token (update this for token expiry case)."""
-        dt_token_expiration = datetime.fromtimestamp(
-            self.token_information['token_expiration'] / 1000.0
-        )
-        dt_now = datetime.now()
-        # Retrieved token is still valid.
-        if (dt_token_expiration - dt_now).total_seconds() > 0:
-            self.valid_token = True
-        # Retrieved token has expired.
+        url = 'https://cpauth.icos-cp.eu/whoami'
+        headers = {'cookie': self.token}
+        response = None
+        # Validate given token.
+        try:
+            response = requests.get(url=url, headers=headers)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            # Raise an exception if the token has expired, or it
+            # is invalid, and it is the only provided credential.
+            # In other cases the module will try to retrieve the
+            # token using username & password and the exception
+            # control is handled elsewhere.
+            if 'no_raise' not in args:
+                raise AuthenticationError(response)
         else:
-            url = 'https://cpauth.icos-cp.eu/whoami'
-            headers = {'cookie': self.token}
-            response = None
-            try:
-                response = requests.get(url=url, headers=headers)
-                response.raise_for_status()
-            except requests.exceptions.HTTPError:
-                # Raise an exception if the token has expired, or it
-                # is invalid, and it is the only provided credential.
-                # In other cases the module will try to retrieve the
-                # token using username & password and the exception
-                # control is handled elsewhere.
-                if 'no_raise' not in args:
-                    raise AuthenticationError(response)
-            else:
-                if response.status_code == 200:
-                    self.valid_token = True
+            if response.status_code == 200:
+                self.valid_token = True
         return
 
     def _retrieve_credentials(self) -> None:
@@ -370,17 +357,14 @@ class Authentication:
         )
         dt_now = datetime.now()
         time_to_expiration = dt_token_expiration - dt_now
-        token_information = \
-            f'Username: {self.token_information["username"]}\n' \
-            f'Token will expire in: {time_to_expiration}\n' \
-            f'Login source: {self.token_information["source"]}'
+        token_information = (
+            f'Username: {self.token_information["username"]}\n'
+            f'Token will expire in: {time_to_expiration}\n'
+            f'Login source: {self.token_information["source"]}\n'
+            f'Path to configuration file: '
+            f'{os.path.abspath(self.configuration_file)}'
+        )
         return token_information
-
-    def print_configuration_location(self) -> None:
-        """Print the location of the configuration file."""
-        print(f'Absolute path to the configuration file: '
-              f'{os.path.abspath(self.configuration_file)}')
-        return
 
     def _print_credentials(self) -> None:
         user_input = input('This action might expose critical information ('
