@@ -362,7 +362,7 @@ class Authentication:
             f'Token will expire in: {time_to_expiration}\n'
             f'Login source: {self.token_information["source"]}\n'
             f'Path to configuration file: '
-            f'{os.path.abspath(self.configuration_file)}'
+            f'\'{os.path.abspath(self.configuration_file)}\''
         )
         return token_information
 

@@ -855,15 +855,35 @@ sparql query is not executable because of syntax errors, for example, a TUPLE is
 <hr>  
 
 ## Authentication
-To ensure users' **licence** acceptance, when **accessing data objects**  through the icoscp python library, the `cpauth` module is introduced. The module will be available from icoscp version 0.1.18 and onwards. Starting with the next release (0.1.19) users MUST have ICOS Carbon Portal login credentials to access ICOS data. 
+To ensure users' **licence** acceptance, when **accessing data objects**
+through the icoscp python library, the `cpauth` module is introduced. The
+module will be available from icoscp version 0.1.18 and onwards. Starting with
+the next release (0.1.19) users MUST have ICOS Carbon Portal login credentials
+to access ICOS data. 
 
 ### Overview
-In order to fetch data, users make their requests to data objects and must provide an API token to do so. The `cpauth` module helps to retrieve the ICOS API token using a variety of ways. Authentication is required only for off-server data access (users who are not using our ICOS Jupyter services). Users with direct access to the data files, namely, **users of our [ICOS Jupyter services](https://www.icos-cp.eu/data-services/tools/jupyter-notebook), are excluded from authentication**. Metadata access remains unaffected from these changes. For security reasons the API token is valid for 100'000 seconds (27 hours) and must be refreshed regularly; thus the authentication process can be automated to simplify the user experience.
+In order to fetch data, users make their requests to data objects and must
+provide an API token to do so. The `cpauth` module helps to retrieve the ICOS
+API token using a variety of ways. Authentication is required only for 
+off-server data access (users who are not using our ICOS Jupyter services).
+Users with direct access to the data files, namely, **users of our 
+[ICOS Jupyter services](
+https://www.icos-cp.eu/data-services/tools/jupyter-notebook), are excluded
+from authentication**. Metadata access remains unaffected from these changes.
+For security reasons the API token is valid for 100'000 seconds (27 hours) and
+must be refreshed regularly; thus the authentication process can be automated
+to simplify the user experience.
 
-To use the `cpauth` module, users need to provide one of the following validation options:
+To use the `cpauth` module, users need to provide one of the following
+validation options:
 
-1. **Username and password** as input when instantiating the authentication object. These are the same credentials used for validating oneself at the ICOS Carbon Portal authentication service hosted on [https://cpauth.icos-cp.eu/](https://cpauth.icos-cp.eu/).
-2. An **API Token** as input when instantiating the authentication object. The user specific API Token can be found at the bottom of the home page [here](https://cpauth.icos-cp.eu/home/). Password sign-in is required.
+1. **Username and password** as input when instantiating the authentication
+   object. These are the same credentials used for validating oneself at the
+   ICOS Carbon Portal authentication service hosted on 
+   [https://cpauth.icos-cp.eu/](https://cpauth.icos-cp.eu/).
+2. An **API Token** as input when instantiating the authentication object. The
+   user specific API Token can be found at the bottom of the home page 
+   [here](https://cpauth.icos-cp.eu/home/). Password sign-in is required.
 3. A **credentials file** containing any of the above validation options.
 
 ### Quickstart
@@ -929,7 +949,8 @@ argument to the `Dobj()` class instantiation.**
       - **Login information is saved**
   
           The most efficient and easy way to use the `cpauth` module in an 
-          automated manner is by adding these two lines of code to your script:
+          automated manner is by adding these two lines of code to your 
+          script:
 
               from icoscp.cpauth.authentication import Authentication
               Authentication()
@@ -964,9 +985,9 @@ argument to the `Dobj()` class instantiation.**
   
 - ##### Authentication using username and password
 Authentication is also possible by using username and password as string
-arguments to the `Authentication()` class. If only the username is
-provided, the module prompts the user for the password, and by default, does not
-store credentials.
+arguments to the `Authentication()` class. If only the username is provided,
+the module prompts the user for the password, and by default, does not store
+credentials.
 
     - **Login information is saved**
   
@@ -1046,7 +1067,8 @@ sign-in is required.
             print(dobj.data.head())
       
         **Remember, the token lasts for 100'000 seconds.** After the validity
-        of the token has expired (27 hours), users need to provide a refreshed token. 
+        of the token has expired (27 hours), users need to provide a refreshed 
+        token. 
 
     <hr>
 
@@ -1131,7 +1153,9 @@ to the instantiation of the `Authentication()` class.
 		[here](https://cpauth.icos-cp.eu/home/). Password sign-in is required.
 
 ### Authentication parameters
-The authentication class is a tool that provides access to data objects at the ICOS Carbon Portal, by providing a valid username and password, or by using an API token, which can be supplied in a number of different ways.
+The authentication class is a tool that provides access to data objects at the
+ICOS Carbon Portal, by providing a valid username and password, or by using an
+API token, which can be supplied in a number of different ways.
 
 ```python
 class cpauth.Authentication
@@ -1167,22 +1191,25 @@ file is located in a directory called icoscp in the user's home directory.
 <br>
   
 ### Convenience functions
-The following functions provide information and improve the user experience with the cpauth module.
+The following functions provide information and improve the user experience
+with the cpauth module.
 
 - ##### authentication.init()
 
         from icoscp.cpauth.authentication import init_auth
         init_auth()
 
-    This function is designed to run the authentication for the first time or to
-    complete the authentication process easily in a terminal-like environment.
-    The function prompts for username and password (password masking is
-    utilized) and instantiates the `Authentication()` class given these
-    credentials.  
+    This function is designed to run the authentication for the first time or
+    to complete the authentication process easily in a terminal-like
+    environment. The function prompts for username and password (password
+    masking is utilized) and instantiates the `Authentication()` class given
+    these credentials.  
 <br>
   
 - ##### print(Authentication())
-Users can utilize the standard python `print()` function with the `Authentication()` class as an argument, to get some extra information regarding their log-in information.
+Users can utilize the standard python `print()` function with the
+`Authentication()` class as an argument, to get some extra information
+regarding their log-in information and their configuration.
 
         from icoscp.cpauth.authentication import Authentication
         print(Authentication())
@@ -1192,13 +1219,15 @@ Users can utilize the standard python `print()` function with the `Authenticatio
         Username: rbon@portoca.lis
         Token will expire in: 1 day, 2:39:44.773148
         Login source: Password
-		Config-Path: `/home/[user]/icoscp/`
-If the `Authentication()` class was instantiated using the default `configuration_file` parameter, the standard location of the credentials file directory varies depending on the operating system.  		
-       - For Linux: `/home/[user]/icoscp/`<br> 
-       - For Windows: `C:\\Users\\[user]\\icoscp\\`<br> 
-       - For macOS: `/Users/[user]/icoscp/`
+        Path to configuration file: '/home/[user]/icoscp/'
+    If the `Authentication()` class was instantiated using the default 
+    `configuration_file` parameter, the standard location of the credentials
+    file directory varies depending on the operating system.
 
-<br>  
+    - For Linux: `/home/[user]/icoscp/` 
+    - For Windows: `C:\\Users\\[user]\\icoscp\\` 
+    - For macOS: `/Users/[user]/icoscp/`  
+
 ### Suppressing warning messages
 To suppress `future warnings` or `user warnings` messages, please, refer to 
 [this](../faq/#how-do-i-suppress-warnings) section of the documentation.
