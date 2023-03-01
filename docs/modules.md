@@ -854,38 +854,16 @@ sparql query is not executable because of syntax errors, for example, a TUPLE is
 
 <hr>  
 
-
-
 ## Authentication
-To ensure users' **licence** acceptance, when **accessing data objects** 
-through the icoscp python library, the `cpauth` module is introduced. The
-module will be available from icoscp version 0.1.18 and onwards, gradually
-disabling previous versions of the icoscp python library from accessing icos 
-data. 
+To ensure users' **licence** acceptance, when **accessing data objects**  through the icoscp python library, the `cpauth` module is introduced. The module will be available from icoscp version 0.1.18 and onwards. Starting with the next release (0.1.19) users MUST have ICOS Carbon Portal login credentials to access ICOS data. 
 
 ### Overview
-In order to fetch secured data, users make their requests to data objects
-and must provide an API token to do so. The `cpauth` module helps retrieve 
-the ICOS API token using a variety of ways. Generally authentication is
-required only for off-server data accessing (users who are not using our ICOS
-Jupyter services). User with direct access to the data files, namely, **users 
-of our [ICOS Jupyter services](
-https://www.icos-cp.eu/data-services/tools/jupyter-notebook), are excluded
-from authentication**. Metadata accessing remains unaffected from these
-changes. For security reasons the API token is valid for 100.000 seconds and
-must be refreshed regularly; thus the authentication process can be automated
-to simplify the user experience.
+In order to fetch data, users make their requests to data objects and must provide an API token to do so. The `cpauth` module helps to retrieve the ICOS API token using a variety of ways. Authentication is required only for off-server data access (users who are not using our ICOS Jupyter services). Users with direct access to the data files, namely, **users of our [ICOS Jupyter services](https://www.icos-cp.eu/data-services/tools/jupyter-notebook), are excluded from authentication**. Metadata access remains unaffected from these changes. For security reasons the API token is valid for 100'000 seconds (27 hours) and must be refreshed regularly; thus the authentication process can be automated to simplify the user experience.
 
-To use the `cpauth` module, users need to provide one of the following
-validation options:
+To use the `cpauth` module, users need to provide one of the following validation options:
 
-1. **Username and password** as input when instantiating the authentication 
-object. These are the same credentials used for validating oneself at the 
-ICOS Carbon Portal authentication service hosted on 
-[https://cpauth.icos-cp.eu/](https://cpauth.icos-cp.eu/).
-2. An **API Token** as input when instantiating the authentication object. The
-user specific API Token can be found at the bottom of the home page [here](
-https://cpauth.icos-cp.eu/home/). Password sign-in is required.
+1. **Username and password** as input when instantiating the authentication object. These are the same credentials used for validating oneself at the ICOS Carbon Portal authentication service hosted on [https://cpauth.icos-cp.eu/](https://cpauth.icos-cp.eu/).
+2. An **API Token** as input when instantiating the authentication object. The user specific API Token can be found at the bottom of the home page [here](https://cpauth.icos-cp.eu/home/). Password sign-in is required.
 3. A **credentials file** containing any of the above validation options.
 
 ### Quickstart
@@ -931,7 +909,7 @@ https://cpauth.icos-cp.eu/home/). Password sign-in is required.
        - `Authentication(initialize=True)` will re-initialize the credentials
          file in a diligent way.
 
-### Authentication ways
+### Authentication methods
 - **Note to users:**  
 By default, the `cpauth` module is set to store valid credentials to the ICOS
 carbon portal configuration file. Internally this is handled by performing a
@@ -956,8 +934,8 @@ argument to the `Dobj()` class instantiation.**
               from icoscp.cpauth.authentication import Authentication
               Authentication()
 
-          If there is no already present authentication configuration, the above
-          code can also initialize the configuration, by prompting for username
+          If there is no authentication configuration, the above
+          code will initialize the configuration, by prompting for username
           and password. If the credentials are valid the call to 
           `Authentication()` will store those credentials and reuse them in
           subsequent calls to data access. In this case, these two lines of
@@ -985,9 +963,9 @@ argument to the `Dobj()` class instantiation.**
 <br>
   
 - ##### Authentication using username and password
-Authentication is also possible using username and password as string
-arguments to the `Authentication()` class. If only the username argument is
-provided, the module prompts the user for password, and by default, does not
+Authentication is also possible by using username and password as string
+arguments to the `Authentication()` class. If only the username is
+provided, the module prompts the user for the password, and by default, does not
 store credentials.
 
     - **Login information is saved**
@@ -1039,8 +1017,8 @@ store credentials.
             # Check if data access was successful.
             print(dobj.data.head())
 
-        If only the username argument is provided, the module prompts for 
-        user's password. Subsequent calls to the code above will always
+        If only the username is provided, the module prompts for 
+        the password. Subsequent calls to the code above will always
         require input of password.  
 <br>
   
@@ -1067,8 +1045,8 @@ sign-in is required.
             # Check if data access was successful.
             print(dobj.data.head())
       
-        **Remember, the token lasts for 100.000 seconds.** After the validity
-        of the token has expired, users need to provide a refreshed token. 
+        **Remember, the token lasts for 100'000 seconds.** After the validity
+        of the token has expired (27 hours), users need to provide a refreshed token. 
 
     <hr>
 
@@ -1084,7 +1062,7 @@ sign-in is required.
             # Check if data access was successful.
             print(dobj.data.head())
       
-        **Remember, the token lasts for 100.000 seconds.** After the validity
+        **Remember, the token lasts for 100'000 seconds.** After the validity
         of the token has expired, users need to provide a refreshed token.  
 <br>
   
@@ -1107,7 +1085,7 @@ to the instantiation of the `Authentication()` class.
 		# Check if data access was successful.
 		print(dobj.data.head())
 
-	Below you can find examples of the necessary components and format for a
+	Below you can find an example of the necessary components and format for a
     credentials file that can be used with the code above to complete the 
 	authentication process. 
 
@@ -1147,16 +1125,14 @@ to the instantiation of the `Authentication()` class.
 
 		In the case that only an API token exists in the credentials file, 
 		users need to make sure that it is a valid one. **Remember, the token
-		lasts for 100.000 seconds.** After the validity of the token has
+		lasts for 100'000 seconds.** After the validity of the token has
 		expired, users need to provide a refreshed token. The user specific 
 		API Token can be found at the bottom of the home page 
 		[here](https://cpauth.icos-cp.eu/home/). Password sign-in is required.
 
 ### Authentication parameters
-The authentication class is a tool that provides access to envri-specific
-data objects. The user can gain access to these objects by providing a valid
-username and password, or by using an API token, which can be supplied in a
-number of different ways.
+The authentication class is a tool that provides access to data objects at the ICOS Carbon Portal, by providing a valid username and password, or by using an API token, which can be supplied in a number of different ways.
+
 ```python
 class cpauth.Authentication
 (
@@ -1177,7 +1153,7 @@ authentication.
 - **token: str, optional, default=None** -> The authentication token allows
 data access without the need for a username and password. The token can be
 manually retrieved from https://cpauth.icos-cp.eu after signing in with a
-password. Please note that the token has a limited lifespan (100.000 seconds)
+password. Please note that the token has a limited lifespan (100'000 seconds)
 and must be refreshed periodically to maintain data access.
 - **read_configuration: bool, optional, default=True** -> This attribute
 controls whether the configuration is read from a file. The default setting is
@@ -1191,43 +1167,22 @@ file is located in a directory called icoscp in the user's home directory.
 <br>
   
 ### Convenience functions
-The following functions provide information and improve the user experience
-with the cpauth module.
+The following functions provide information and improve the user experience with the cpauth module.
 
 - ##### authentication.init()
 
         from icoscp.cpauth.authentication import init_auth
         init_auth()
 
-    This function is designed to run authentication for the first time or to
+    This function is designed to run the authentication for the first time or to
     complete the authentication process easily in a terminal-like environment.
     The function prompts for username and password (password masking is
     utilized) and instantiates the `Authentication()` class given these
     credentials.  
 <br>
   
-- ##### Authentication.print_configuration_location()
-
-        from icoscp.cpauth.authentication import Authentication
-  	
-  	
-        cp_auth = Authentication()
-        cp_auth.print_configuration_location()
-
-    This function is used to print the location of the authentication
-    configuration file. If the `Authentication()` class was instantiated using
-    the default `configuration_file` parameter, the standard location of the
-    credentials file directory varies depending on the operating system.
-  		
-       - For Linux: `/home/[user]/icoscp/`
-       - For Windows: `C:\\Users\\[user]\\icoscp\\`
-       - For macOS: `/Users/[user]/icoscp/`
-<br>
-  
 - ##### print(Authentication())
-Users can utilize the standard python `print()` function with the 
-`Authentication()` class as an argument, to get some extra information
-regarding their log-in information.
+Users can utilize the standard python `print()` function with the `Authentication()` class as an argument, to get some extra information regarding their log-in information.
 
         from icoscp.cpauth.authentication import Authentication
         print(Authentication())
@@ -1237,8 +1192,13 @@ regarding their log-in information.
         Username: rbon@portoca.lis
         Token will expire in: 1 day, 2:39:44.773148
         Login source: Password
-<br>
-  
+		Config-Path: `/home/[user]/icoscp/`
+If the `Authentication()` class was instantiated using the default `configuration_file` parameter, the standard location of the credentials file directory varies depending on the operating system.  		
+       - For Linux: `/home/[user]/icoscp/`<br> 
+       - For Windows: `C:\\Users\\[user]\\icoscp\\`<br> 
+       - For macOS: `/Users/[user]/icoscp/`
+
+<br>  
 ### Suppressing warning messages
 To suppress `future warnings` or `user warnings` messages, please, refer to 
 [this](../faq/#how-do-i-suppress-warnings) section of the documentation.
