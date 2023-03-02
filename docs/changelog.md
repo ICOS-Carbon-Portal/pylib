@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.1.18
+ - #### cpauth module
+   Implement authentication for secure data access. The full documentation of
+   the authentication module can be found [here](
+   https://icos-carbon-portal.github.io/pylib/modules/#authentication).
+ - #### cpb module
+     - Rework code in `Dobj()` class to correctly add `series` to pandas
+       `DataFrame` and avoid pandas performance warning.
+     - Verify timestamp format of binary files and convert accordingly to
+       avoid error in data accessing.
+ - #### stilt module
+     - Remove mutable default arguments from functions in the `stilt` module.
+     - Update availability table, such that only 'real' ICOS stations get an
+       ICOS id.
+     - Add ICOS sampling height to the ICOS dictionary.
+     - Add corresponding data files to the ICOS dictionary.
+     - Increase performance when reading `STILT` footprints.
+     - Replace `eval()` statement to prevent security risks.
+     - Make function `station.get()` case-insensitive.
+ - #### station module
+     - Remove elevation above ground attribute from `Station()` class.
+     - Update documentation on how to correctly retrieve station names when
+       iterating over pandas `DataFrames'` rows.
+
 ## 0.1.17
  - #### station module  
    The station class has been somewhat optimized:
