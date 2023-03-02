@@ -1,12 +1,28 @@
 # Changelog
 
 ## 0.1.18
- - https://github.com/ICOS-Carbon-Portal/pylib/pull/117 remove mutable default args in stiltobj.py
- - https://github.com/ICOS-Carbon-Portal/pylib/pull/118 xarray load multiple files, increase performance (read without cf_decoder, check for CF compatibility after concatenation).
- - https://github.com/ICOS-Carbon-Portal/pylib/pull/119 remove eval statements in stiltobj.py
- - https://github.com/ICOS-Carbon-Portal/pylib/pull/125 use pd concat in Dobj.data. Adding series to a pandas dataframe creates a performance warning, append to dataframe is deprecated, use concat instead. ( https://github.com/pandas-dev/pandas/issues/35407 )
- - https://github.com/ICOS-Carbon-Portal/pylib/pull/137
-    Output of stiltstation find with availability table shows the correct corresponding ICOS id and the sampling height. If the stilstation is connected to a ICOS station, a new key is available for the sampling height (corresponding ICOS sampling height for observation) station.icos['SamplingHeight'] -> return float  and a new function station.get_dobj_list() -> return [DICT] with corresponding data objects with observations.
+ - #### cpauth module
+   Implement authentication for secure data access. The full documentation of
+   the authentication module can be found [here](
+   https://icos-carbon-portal.github.io/pylib/modules/#authentication).
+ - #### cpb module
+     - Rework code in `Dobj()` class to correctly add `series` to pandas
+       `DataFrame` and avoid pandas performance warning.
+     - Verify timestamp format of binary files and convert accordingly to
+       avoid error in data accessing.
+ - #### stilt module
+     - Remove mutable default arguments from functions in the `stilt` module.
+     - Update availability table, such that only 'real' ICOS stations get an
+       ICOS id.
+     - Add ICOS sampling height to the ICOS dictionary.
+     - Add corresponding data files to the ICOS dictionary.
+     - Increase performance when reading `STILT` footprints.
+     - Replace `eval()` statement to prevent security risks.
+     - Make function `station.get()` case-insensitive.
+ - #### station module
+     - Remove elevation above ground attribute from `Station()` class.
+     - Update documentation on how to correctly retrieve station names when
+       iterating over pandas `DataFrames'` rows.
 
 ## 0.1.17
  - #### station module  
