@@ -18,7 +18,7 @@ class AuthenticationError(Exception):
                     f'Invalid token format. Please re-enter your token.'
                 )
         else:
-            exception_message = response.text
+            exception_message = f'{response.text}.'
         self.exception_message = exception_message
         super().__init__(exception_message)
         return
@@ -45,10 +45,10 @@ def warn_for_authentication() -> None:
 
 def warn_for_authentication_bypass(reason: AuthenticationError = None) -> None:
     warning = (
-        f'\nYour authentication was unsuccessful due to: {reason}\n'
-        'Falling back to anonymous data access. Please, revisit your authentication configuration.\n'
-        'Authentication will become mandatory for data access for external users.\n'
-        f'To suppress this message we refer to the documentation here: {CPC.DOC_FAQ_WARNINGS}'
+        f'\nYour authentication at the ICOS Carbon Portal was unsuccessful due to: {reason}\n'
+        'Falling back to anonymous data access. Please, revisit your authentication configuration\n'
+        f'({CPC.DOC_M_AUTH}).\n'
+        f'Authentication will become mandatory (icoscp >= 0.1.19) for external users.'
         )
     warnings.warn(warning, category=UserWarning)
     return

@@ -60,7 +60,14 @@ class Authentication:
         >>> Authentication(username='test@some.where', password='12345')
 
     """
+
+    # Private class attribute used to bypass authentication if the
+    # first authentication attempt was unsuccessful. It is only
+    # applicable to off-server data access.
     _bypass_auth = False
+    # Private class attribute used to provide a more user-friendly
+    # error messaging when authentication fails in combination with
+    # the Dobj() class.
     _bypass_exception = None
 
     def __init__(self, username: str = None, password: str = None,
@@ -201,10 +208,11 @@ class Authentication:
         # Case of present configuration file with written content.
         if os.path.getsize(self.configuration_file):
             user_input = input(
-                f'Detected content or wrongly formatted content '
+                'Detected content or wrongly formatted content '
                 f'in configuration\nfile: \'{self.configuration_file}\'.\n'
-                f'This action will reset your configuration file.\n'
-                f'Do you want to continue? [Y/n]: ')
+                'This action will reset your configuration file.\n'
+                'Do you want to continue? [Y/n]: '
+            )
         # Case of user's confirmation or empty configuration.
         if user_input == 'Y' or configuration_file_size == 0:
             self.username = input('Enter your username: ')
@@ -270,11 +278,14 @@ class Authentication:
             response = requests.get(url=url, headers=headers)
             response.raise_for_status()
         except requests.exceptions.HTTPError as e:
-            # Raise an exception if the token has expired, or it
-            # is invalid, and it is the only provided credential.
+            # Try to raise an exception if the token has expired, or
+            # it is invalid, and it is the only provided credential.
             # In other cases the module will try to retrieve the
             # token using username & password and the exception
-            # control is handled elsewhere.
+            # control is handled elsewhere. In fact this will not
+            # actually raise the exception but will give the error
+            # handling control to the Dobj class using
+            # Authentication's class attributes.
             if 'no_raise' not in args:
                 try:
                     raise AuthenticationError(response)
