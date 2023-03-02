@@ -11,6 +11,10 @@ icoscp.egg-info/requires.txt
 icoscp.egg-info/top_level.txt
 icoscp/collection/__init__.py
 icoscp/collection/collection.py
+icoscp/cpauth/__init__.py
+icoscp/cpauth/authentication.py
+icoscp/cpauth/exceptions.py
+icoscp/cpauth/test_authentication.py
 icoscp/cpb/__init__.py
 icoscp/cpb/dobj.py
 icoscp/cpb/dtype.py
