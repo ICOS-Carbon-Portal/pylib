@@ -13,7 +13,15 @@
 # -------------------------------------------------------------
 # Dobj
 # read ICOS data through https calls
-DATA        = 'https://data.icos-cp.eu/portal/tabular'
+# No authentication required. This way of accessing data will be
+# disabled in future releases.
+ANONYMOUS_DATA = 'https://data.icos-cp.eu/portal/tabular'
+# Authentication required.
+SECURED_DATA = 'https://data.icos-cp.eu/cpb'
+# Carbon portal authentication end-point.
+CP_AUTH = 'https://cpauth.icos-cp.eu/'
+
+
 # read data from local file
 LOCALDATA   = '/data/dataAppStorage/'
 
@@ -34,5 +42,10 @@ STILTTS = 'https://stilt.icos-cp.eu/viewer/stiltresult'
 # stiltresults all columns, raw
 STILTRAW = 'https://stilt.icos-cp.eu/viewer/stiltrawresult'
 
+# Documentation
+DOC_PYLIB = 'https://icos-carbon-portal.github.io/pylib/'
+DOC_M_AUTH = 'https://icos-carbon-portal.github.io/pylib/modules/#authentication'
+DOC_FAQ = 'https://icos-carbon-portal.github.io/pylib/faq/'
+DOC_FAQ_WARNINGS = 'https://icos-carbon-portal.github.io/pylib/faq/#how-do-i-suppress-warnings'
 # Metadata-schema concepts from Carbon Portal's ontologies.
 CP_META = 'http://meta.icos-cp.eu/ontologies/cpmeta/'

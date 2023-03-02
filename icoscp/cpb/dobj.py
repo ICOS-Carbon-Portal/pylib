@@ -25,6 +25,10 @@ from icoscp import __version__ as release_version
 from icoscp.cpb import dtype
 from icoscp.cpb import metadata
 import icoscp.const as CPC
+from icoscp.cpauth.authentication import Authentication
+from icoscp.cpauth.exceptions import AuthenticationError, warn_for_authentication_bypass
+
+from json.decoder import JSONDecodeError
 
 
 class Dobj():
@@ -33,7 +37,13 @@ class Dobj():
         the method .getColumns() will return the actual data
     """
 
-    def __init__(self, digitalObject = None):
+    # Private class attribute used to bypass authentication for consecutive
+    # requests of data objects if the first authentication attempt was
+    # unsuccessful. It is only applicable to off-server data access.
+    _bypass_auth = False
+
+    def __init__(self, digitalObject = None, debug_auth: str = False,
+                 cp_auth: Authentication = None):
 
         self._dobj = None           # contains the pid
         self._colSelected = None    # 'none' -> ALL columns are returned
@@ -46,16 +56,17 @@ class Dobj():
         self._json = None           # holds the "payload" for requests
         self._islocal = None        # status if file is read from local store
                                     # if localpath + dobj is valid
-        
-        self._dobjValid = False     # -> see __set_meta()        
+
+        self._dobjValid = False     # -> see __set_meta()
         self._data = pd.DataFrame() # This holds the data pandas dataframe
                                     # persistent in the object.
         self._datapersistent = True # If True (default), data is kept persistent
                                     # in self._data. If False, force to reload
-                                    
+        self.cp_auth = cp_auth
+        self._debug_auth = debug_auth
         # this needs to be the last call within init. If dobj is provided
         # meta data is retrieved and .valid is True
-        self.dobj = digitalObject   
+        self.dobj = digitalObject
 
 
     #-----------
@@ -183,10 +194,8 @@ class Dobj():
     @property
     def citation(self):
         return self.get_citation('plain')
-# -------------------------------------------------
 
     def __str__(self):
-        
         if not self.valid:
             return ''
         
@@ -330,31 +339,84 @@ class Dobj():
             check if a local path is set and valid
             otherwise try to download from the cp server
         """
-        
+
         #assemble local file path
         folder = self.meta['specification']['format']['uri'].split('/')[-1]
         fileName = ''.join([self.dobj.split('/')[-1],'.cpb'])
-        localfile = os.path.abspath(''.join([CPC.LOCALDATA,folder,'/',fileName]))
+        # Don't set the local path for data files when debugging the
+        # authentication module.
+        local_file = str()
+        if not self._debug_auth:
+            local_file = \
+                os.path.abspath(f'{CPC.LOCALDATA}{folder}/{fileName}')
 
-        if os.path.isfile(localfile):
+        # Local access on server.
+        if os.path.isfile(local_file):
             self._islocal = True
-            with open(localfile, 'rb') as binData:
+            with open(local_file, 'rb') as binData:
                 content = binData.read()
-            # for local files, we always return ALL columns
-            self._colSelected = list(range(0,len(self.variables)))
+            # For local files, we always return all columns.
+            self._colSelected = list(range(0, len(self.variables)))
             self.__getPayload()
-
+            # Track data usage for data access on server.
+            self.__portalUse()
+        # Access through HTTP request.
         else:
             self._islocal = False
-            r = requests.post(CPC.DATA, json=self._json, stream=True)
+            response, content = None, None
+            request_url, request_headers = None, None
+            if Authentication._bypass_auth:
+                warn_for_authentication_bypass(
+                    reason=Authentication._bypass_exception
+                )
+            # User authentication not in place.
+            elif not self.cp_auth and not Dobj._bypass_auth:
+                # Try obtaining the default authentication configuration.
+                try:
+                    self.cp_auth = Authentication()
+                # Initialize the authentication process if the
+                # configuration at the default location is not set or
+                # if it is wrongly formatted.
+                except JSONDecodeError as e:
+                    try:
+                        self.cp_auth = Authentication(initialize=True)
+                    except AuthenticationError as e:
+                        warn_for_authentication_bypass(reason=e)
+                except AuthenticationError as e:
+                    warn_for_authentication_bypass(reason=e)
+                else:
+                    if Authentication._bypass_auth:
+                        warn_for_authentication_bypass(
+                            reason=Authentication._bypass_exception
+                        )
+            # Authentication was successful.
+            if self.cp_auth and self.cp_auth.valid_token:
+                request_url = CPC.SECURED_DATA
+                # The API token should have been set by now either by
+                # authentication provided as an argument,
+                # authentication retrieved from the default location,
+                # or authentication reset; thus, set the headers for
+                # the post request.
+                request_headers = {'cookie': self.cp_auth.token}
+            # Fall back to anonymous data access if all other
+            # authentication ways fail.
+            else:
+                Dobj._bypass_auth = True
+                request_url = CPC.ANONYMOUS_DATA
+            # Request data either anonymously or in an authenticated way.
+            response = requests.post(url=request_url,
+                                     json=self._json,
+                                     stream=True,
+                                     headers=request_headers)
             try:
-                r.raise_for_status()
-                content = r.content
+                response.raise_for_status()
             except requests.exceptions.HTTPError as e:
-                raise Exception(e)
-
-        #track data usage
-        self.__portalUse()
+                raise e
+            else:
+                if response.status_code == 200:
+                    content = response.content
+                    # Track usage for data access.
+                    self.__portalUse(service=request_url)
         return self.__unpackRawData(content)
 
     def __unpackRawData(self, rawData):
@@ -445,21 +507,26 @@ class Dobj():
         return df
 
     # -------------------------------------------------
-    def __portalUse(self):
-
-        """ private function to track data usage """
-
-        counter = {'BinaryFileDownload':{
-        'params':{
-            'objId':self._dobj,
-            'columns': self.colNames,
-            'library':__name__,
-            'version':release_version,  # from '__init__.py'.
-            'internal': str(self._islocal)}
-            }
+    def __portalUse(self, service: str = None) -> None:
+        """Private function to track data usage."""
+        counter = {
+            'BinaryFileDownload':
+                {
+                    'params':
+                        {
+                            'objId': self._dobj,
+                            'columns': self.colNames,
+                            'library': __name__,
+                            # Retrieved from __init__.py
+                            'version': release_version,
+                            'internal': str(self._islocal),
+                            'service': service,
+                        },
+                }
         }
         server = 'https://cpauth.icos-cp.eu/logs/portaluse'
         requests.post(server, json=counter)
+        return
 
     # -------------------------------------------------
     def __setColumns(self, columns=None):
