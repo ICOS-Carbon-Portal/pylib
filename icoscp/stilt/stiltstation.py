@@ -310,6 +310,7 @@ def _avail(stations):
         avail_per_stn ={}
         if stations[stn]['icos']: 
             avail_per_stn['ICOS id'] = stations[stn]['icos']['stationId']
+            avail_per_stn['ICOS alt'] = stations[stn]['icos']['SamplingHeight']
         else: 
             avail_per_stn['ICOS id'] = ''
         if stations[stn]['alt'] != None: 
@@ -324,7 +325,7 @@ def _avail(stations):
     
     year_list = list(range(min ({int(x) for x in years_set}),
                               max ({int(x) for x in years_set}) + 1 ))
-    columns_list = ['Alt'] + year_list + ['ICOS id']
+    columns_list = ['Alt'] + year_list + ['ICOS id'] + ['ICOS alt']
       
     df = pd.DataFrame(data = list(availability[x] for x in availability.keys()), 
                       index = list(availability.keys()), 
@@ -332,7 +333,13 @@ def _avail(stations):
     # Fill in the gaps.
     df[year_list] = df[year_list].fillna(0)
     df[['Alt'] + year_list] = df[['Alt'] + year_list].applymap(int)
-
+    
+    # convert alt to string, so that we can remove nan values
+    df['ICOS alt'] = df['ICOS alt'].astype(str)
+    df['ICOS alt'] = df['ICOS alt'].str.replace('nan','')
+    
+    # sort by StiltStation id
+    df.sort_index(inplace=True)    
     return df
 
 
@@ -354,7 +361,7 @@ def __get_object(stations):
     return [StiltStation(stations[st]) for st in stations.keys()]
 
 
-def __get_stations(ids=[], progress=True):
+def __get_stations(ids=None, progress=True):
     """ get all stilt stations available on the server
         return dictionary with metadata, keys are stilt station id's
     """
@@ -381,8 +388,7 @@ def __get_stations(ids=[], progress=True):
     df = pd.read_csv(CPC.STILTINFO)
 
     # add ICOS flag to the station
-    icos_stations_df = cpstation.getIdList(project='ICOS', theme='AS')
-    icos_stations_ls = list(icos_stations_df.id)
+    icos_stations_df = cpstation.getIdList(project='ICOS', theme='AS')    
 
     # dictionary to return
     stations = {}
@@ -419,10 +425,15 @@ def __get_stations(ids=[], progress=True):
         
         # check if station id is in the manual curated list at
         # CPC.STILTINFO
-        id = [a.lower() for a in df['STILT id'].values]
+        id = [a.lower() for a in df['STILT id'].values]        
+        
         if ist.lower() in id:
             stationName = str(df.loc[df['STILT id'] ==
                                      ist]['STILT name'].item())
+            # get the index for this station, to extract corresponding 
+            # ICOS sampling height from CPC.STILTINFO
+            idx = df.index[df['STILT id'] == ist].tolist()
+            
         else:
             stationName = ''
         
@@ -430,10 +441,20 @@ def __get_stations(ids=[], progress=True):
                                               stationName,
                                               stations[ist]['alt'])
 
-        # set a flag if it is an ICOS station
-        stn = stations[ist]['id'][0:3].upper()
-        if stn in icos_stations_ls:
+        # set a flag and metadata if it is an ICOS station
+        
+        #   convert the ICOS id to strings
+        df['ICOS id'] = df['ICOS id'].astype(str)
+        stn = df.iloc[idx]['ICOS id'].tolist()[0]
+        
+        if 'nan' not in stn:
             stations[ist]['icos'] = cpstation.get(stn, icos_stations_df).info()
+            
+            # add corresponding ICOS Sampling Height
+            sh = df.iloc[idx]['ICOS height'].tolist()
+            sh = float(sh[0])
+            stations[ist]['icos']['SamplingHeight'] = sh            
+            
         else:
             stations[ist]['icos'] = False
 
