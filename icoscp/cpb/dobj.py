@@ -365,8 +365,10 @@ class Dobj():
             self._islocal = False
             response, content = None, None
             request_url, request_headers = None, None
+            if Authentication._bypass_auth:
+                warn_for_authentication_bypass(reason=Authentication._bypass_exception)
             # User authentication not in place.
-            if not self.cp_auth and not Dobj._bypass_auth:
+            elif not self.cp_auth and not Dobj._bypass_auth:
                 # Try obtaining the default authentication configuration.
                 try:
                     self.cp_auth = Authentication()
@@ -380,8 +382,11 @@ class Dobj():
                         warn_for_authentication_bypass(reason=e)
                 except AuthenticationError as e:
                     warn_for_authentication_bypass(reason=e)
+                else:
+                    if Authentication._bypass_auth:
+                        warn_for_authentication_bypass(reason=Authentication._bypass_exception)
             # Authentication was successful.
-            if self.cp_auth:
+            if self.cp_auth and self.cp_auth.valid_token:
                 request_url = CPC.SECURED_DATA
                 # The API token should have been set by now either by
                 # authentication provided as an argument,

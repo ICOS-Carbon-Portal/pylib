@@ -10,7 +10,7 @@ class AuthenticationError(Exception):
             exception_message = 'Missing credentials.'
         elif response.status_code == 401:
             if 'Authentication token has expired' in response.text:
-                exception_message = response.text.replace('\n', '.')
+                exception_message = 'Authentication token has expired.'
             # All cases except token expiration have a more technical
             # explanation in the response message, so make it simpler.
             else:

@@ -23,10 +23,10 @@ class Authentication:
     """
     A class used to authenticate a user on https://cpauth.icos-cp.eu.
 
-    The authentication class is a tool that provides access to
-    envri-specific data objects. The user can gain access to these
-    objects by providing a valid username and password, or by using an
-    API token, which can be supplied in a number of different ways.
+    The authentication class is a tool that provides access to data
+    objects at the ICOS Carbon Portal, by providing a valid username
+    and password, or by using an API token, which can be supplied in a
+    number of different ways.
 
     Attributes:
         username: str, optional, default=None
@@ -38,8 +38,8 @@ class Authentication:
             need for a username and password. The token can be
             manually retrieved from https://cpauth.icos-cp.eu after
             signing in with a password. Please note that the token has
-            a limited lifespan and must be refreshed periodically to
-            maintain data access.
+            a limited lifespan (100'000 seconds) and must be refreshed
+            periodically to maintain data access.
         read_configuration: bool, optional, default=True
             This attribute controls whether the configuration is read
             from a file. The default setting is to read from a
@@ -60,6 +60,8 @@ class Authentication:
         >>> Authentication(username='test@some.where', password='12345')
 
     """
+    _bypass_auth = False
+    _bypass_exception = None
 
     def __init__(self, username: str = None, password: str = None,
                  token: str = None, read_configuration: bool = True,
@@ -101,7 +103,7 @@ class Authentication:
             # Case of set username, password, and token.
             elif self.username and self._password and self.token:
                 self._validate_token('no_raise')
-                if self._valid_token:
+                if self.valid_token:
                     self._extract_token_information()
                 # Try to validate using username & password if token
                 # is invalid.
@@ -126,7 +128,8 @@ class Authentication:
             # Retrieve and set a valid token using the provided
             # credentials.
             self._retrieve_token()
-            self._extract_token_information()
+            if self.valid_token:
+                self._extract_token_information()
         # User provides username only. In this case credentials will
         # not be stored.
         elif self.username and not self._password:
@@ -135,7 +138,8 @@ class Authentication:
         # User provides token as input.
         elif self.token:
             self._validate_token()
-            self._extract_token_information()
+            if self.valid_token:
+                self._extract_token_information()
         # User provides initialization flag. The module will prompt
         # for username and password.
         elif initialize:
@@ -206,7 +210,8 @@ class Authentication:
             self.username = input('Enter your username: ')
             self._password = getpass.getpass('Enter your password: ')
             self._retrieve_token()
-            self._extract_token_information()
+            if self.valid_token:
+                self._extract_token_information()
             if self.write_configuration:
                 self._write_credentials()
         return
@@ -239,8 +244,12 @@ class Authentication:
             # Post credentials to cp-auth and check for validity.
             response = requests.post(url=url, data=data)
             response.raise_for_status()
-        except requests.exceptions.HTTPError:
-            raise AuthenticationError(response)
+        except requests.exceptions.HTTPError as e:
+            try:
+                raise AuthenticationError(response)
+            except AuthenticationError as e:
+                Authentication._bypass_exception = e
+                Authentication._bypass_auth = True
         else:
             if response.status_code == 200:
                 # Retrieve token from headers.
@@ -267,7 +276,11 @@ class Authentication:
             # token using username & password and the exception
             # control is handled elsewhere.
             if 'no_raise' not in args:
-                raise AuthenticationError(response)
+                try:
+                    raise AuthenticationError(response)
+                except AuthenticationError as e:
+                    Authentication._bypass_exception = e
+                    Authentication._bypass_auth = True
         else:
             if response.status_code == 200:
                 self.valid_token = True
@@ -291,6 +304,8 @@ class Authentication:
                 self.token.split('cpauthToken=')[-1]
             )
         except binascii.Error as e:
+            pass
+        except AttributeError as e:
             pass
         else:
             # Check for the record separator character in the binary
@@ -375,3 +390,4 @@ class Authentication:
                   f'  password: {self._password}\n'
                   f'  token: {self.token}')
         return
+
