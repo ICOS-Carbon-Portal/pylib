@@ -67,7 +67,11 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#how-can-i-retrieve-the-latestnewest-version-of-a-dataset">How can I retrieve the latest/newest version of a dataset?</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#how-do-i-suppress-warnings">How do I suppress warnings?</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#good-to-know">Good to Know</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#iteration-over-station_id_df-displays-stationname-as-an-index">Iteration over station_id_df displays station.name as an index</a>
     </li>
     </ul>
                 </li>
@@ -89,13 +93,13 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
-      <li>FAQ</li>
+    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li><li>FAQ</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
   <hr/>
 </div>
+
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
@@ -185,6 +189,42 @@ while dobj.valid:
         break
 # Now dobj is the newest version.
 </code></pre>
+<h2 id="how-do-i-suppress-warnings">How do I suppress warnings?</h2>
+<p>Internally the <code>icoscp</code> python library uses the <code>warnings</code> module to provide
+useful information to the users.</p>
+<ul>
+<li>
+<p><code>future warning</code> messages are connected to components of the library that
+    will change in a future release. Here is an example of a <code>future warning</code>
+    message:</p>
+<pre><code>/pylib/icoscp/cpauth/exceptions.py:28: FutureWarning:
+Due to updates in the python library of the ICOS carbon portal, starting from
+the next version, user authentication might be required.
+warnings.warn(warning, category=FutureWarning)
+</code></pre>
+<p>To suppress such a message, users need to add the code below in their 
+scripts:</p>
+<pre><code>import warnings
+warnings.simplefilter("ignore", FutureWarning)
+</code></pre>
+</li>
+<li>
+<p><code>user warning</code> messages are used to notify the user that there is something 
+    potentially incorrect or risky in the program, but that the program is 
+    still able to run. Here is an example of a <code>user warning</code> message:</p>
+<pre><code>    /pylib/icoscp/cpauth/exceptions.py:39: UserWarning:
+    Your authentication was unsuccessful. Falling back to anonymous data access.
+    Please, revisit your authentication configuration or have a look at the
+    documentation. Authentication will become mandatory for data access.
+    warnings.warn(warning, category=UserWarning)
+</code></pre>
+<p>To suppress such a message, users need to add the code below in their 
+scripts:</p>
+<pre><code>import warnings
+warnings.simplefilter("ignore", UserWarning)
+</code></pre>
+</li>
+</ul>
 <h2 id="good-to-know">Good to Know</h2>
 <ul>
 <li>Stations are associated with the stationID. This means that at the moment a combined station, certified for Ecosystem 
@@ -192,6 +232,60 @@ AND Atmosphere, has two different stationId's and hence to access ALL data for s
 stationId's to find a complete set of data products. Example Norunda, Sweden (stationId "SE-Nor" for Ecosystem, 
 stationId "NOR" for Atmosphere).</li>
 </ul>
+<h2 id="iteration-over-station_id_df-displays-stationname-as-an-index">Iteration over <code>station_id_df</code> displays <code>station.name</code> as an index</h2>
+<p>The dataframe provided by <code>station.getIdList</code> has a column for station names called "name", and <code>pandas.DataFrame</code> has an 
+implementation where each column is turned into an attribute. However, an iteration over the rows, like in the below example, will not 
+give the station name</p>
+<pre><code>from icoscp.station import station
+df = station.getIdList(project='all')
+for _, row in df.iterrows():
+    if row.theme in ['ES', 'FluxnetStation']:
+        print(row.name, row.id, row.uri)
+
+0 SE-Sto http://meta.icos-cp.eu/resources/stations/ES_SE-Sto
+1 ES-Agu http://meta.icos-cp.eu/resources/stations/FLUXNET_ES-Agu
+...
+214 GL-ZaF http://meta.icos-cp.eu/resources/stations/ES_GL-ZaF
+215 GL-ZaH http://meta.icos-cp.eu/resources/stations/ES_GL-ZaH
+</code></pre>
+<p>The reason is that each <code>row</code> that is unpacked in the loop is a <code>pandas.Series</code> object, and every <code>Series</code> object has an attribute 
+called <code>name</code>, holding the name of the series. In this case the name is the rownumber from the dataframe index.</p>
+<p>Examples on how to avoid this.</p>
+<ol>
+<li>
+<p>Use a dictionary-style call instead of a attribute-style call:</p>
+<pre><code>...
+for _, row in df.iterrows():
+    if row.theme in ['ES', 'FluxnetStation']:
+        print(row['name'], row.id, row.uri)
+</code></pre>
+</li>
+<li>
+<p>Print a subframe and avoid the iteration:</p>
+<pre><code>...
+df2 = df[df['theme'].isin(['ES', 'FluxnetStation'])]
+print(df2[['name', 'id', 'uri']].to_string())
+</code></pre>
+</li>
+<li>
+<p>Use the "name"-column as the index:</p>
+<pre><code>...
+df.set_index('name', inplace=True)
+for _, row in df.iterrows():
+    if row.theme in ['ES', 'FluxnetStation']:
+        print(row.name, row.id, row.uri)
+</code></pre>
+</li>
+<li>
+<p>Rename the column "name":</p>
+<pre><code>...
+df.rename(columns={'name': 'station_name'}, inplace=True)
+for _, row in df.iterrows():
+    if row.theme in ['ES', 'FluxnetStation']:
+        print(row.station_name, row.id, row.uri)
+</code></pre>
+</li>
+</ol>
               
             </div>
           </div><footer>

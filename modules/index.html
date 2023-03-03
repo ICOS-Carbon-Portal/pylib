@@ -105,8 +105,6 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#stationdatalevelnone">Station.data(level=None)</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#stationeag">Station.eag</a>
-    </li>
     <li class="toctree-l3"><a class="reference internal" href="#stationeas">Station.eas</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#stationicosclass">Station.icosclass</a>
@@ -239,9 +237,11 @@
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#geoinfo">.geoinfo</a>
     </li>
-    <li class="toctree-l4"><a class="reference internal" href="#get_tsstart_date-end_date-hours-columns">.get_ts(start_date, end_date, hours=[], columns=''):</a>
+    <li class="toctree-l4"><a class="reference internal" href="#get_tsstart_date-end_date-hoursnone-columns">.get_ts(start_date, end_date, hours=None, columns=''):</a>
     </li>
-    <li class="toctree-l4"><a class="reference internal" href="#get_fpstart_date-end_date-hours">.get_fp(start_date, end_date, hours=[]):</a>
+    <li class="toctree-l4"><a class="reference internal" href="#get_fpstart_date-end_date-hoursnone">.get_fp(start_date, end_date, hours=None):</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#get_dobj_list">.get_dobj_list():</a>
     </li>
         </ul>
     </li>
@@ -256,6 +256,42 @@
     <li class="toctree-l3"><a class="reference internal" href="#runsparqlformat-fmt">RunSparql.format = 'fmt'</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#runsparqlrun">RunSparql.run()</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#authentication">Authentication</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#quickstart">Quickstart</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#running-the-authentication-for-the-first-time">Running the authentication for the first time.</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#authentication-methods">Authentication methods</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#default-authentication">Default authentication</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#authentication-using-username-and-password">Authentication using username and password</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#authenticate-using-an-api-token">Authenticate using an API token</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#authenticate-using-a-configuration-file-on-a-custom-path">Authenticate using a configuration file on a custom path</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#authentication-parameters">Authentication parameters</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#convenience-functions_2">Convenience functions</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#authenticationinit">authentication.init()</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#printauthentication">print(Authentication())</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#suppressing-warning-messages">Suppressing warning messages</a>
     </li>
         </ul>
     </li>
@@ -299,13 +335,13 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
-      <li>Modules</li>
+    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li><li>Modules</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
   <hr/>
 </div>
+
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
@@ -557,12 +593,6 @@ how processed they are.</p>
 </code></pre>
 <ul>
 <li>Return Pandas DataFrame</li>
-</ul>
-<h3 id="stationeag"><strong>Station.eag</strong></h3>
-<p>Elevation above <strong>ground</strong>, if available. Please note, this is general information about the 
-height of the tower. This is NOT a sampling height, and it is not guaranteed to be accurate.</p>
-<ul>
-<li>Return FLOAT</li>
 </ul>
 <h3 id="stationeas"><strong>Station.eas</strong></h3>
 <p>Elevation above <strong>sea level</strong> in meter.</p>
@@ -965,12 +995,12 @@ object. Once you have the object, the following attributes and methods are avail
 <p>List of years for which STILT results are available. Be aware that even if only one day is 
 calculated for a year, <code>year</code> will be listed.</p>
 <h4 id="info">.info</h4>
-<p>Returns the diction with all metadata.</p>
+<p>Returns a dictionary with all metadata.</p>
 <h4 id="geoinfo">.geoinfo</h4>
 <p>Dictionary with geographical (country) information, if the station is within a country border.</p>
 <h2>Methods:</h2>
 
-<h4 id="get_tsstart_date-end_date-hours-columns">.get_ts(start_date, end_date, hours=[], columns=''):</h4>
+<h4 id="get_tsstart_date-end_date-hoursnone-columns">.get_ts(start_date, end_date, hours=None, columns=''):</h4>
 <p>STILT concentration time series for a given time period, with optional selection of specific 
 hours and columns. Returns time series as a <code>pandas.DataFrame</code>.</p>
 <ul>
@@ -1044,7 +1074,7 @@ all
 </ul>
 </li>
 </ul>
-<h4 id="get_fpstart_date-end_date-hours">.get_fp(start_date, end_date, hours=[]):</h4>
+<h4 id="get_fpstart_date-end_date-hoursnone">.get_fp(start_date, end_date, hours=None):</h4>
 <p>STILT footprints for a given time period, with optional selection of specific hours.
 <code>Returns</code> the footprints as <code>xarray</code> 
 <a href="http://xarray.pydata.org/en/stable/">http://xarray.pydata.org/en/stable/</a> with latitude, 
@@ -1070,6 +1100,22 @@ Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
 </ul>
 </li>
 </ul>
+<h4 id="get_dobj_list">.get_dobj_list():</h4>
+<p>If the stiltstation has a corresponding ICOS station, this function will return a dictionary filled with corresponding data objects. A sparql query is executed with ICOS Station id and the sampling height as constraint, returning all data objects (Level 1, 2, 3).</p>
+<p>Returns: List of DICT Each dictionary with the following keys: [dobj,hasNextVersion,spec,fileName,size,submTime,timeStart,timeEnd]</p>
+<p>Example output:</p>
+<pre><code>    [{
+        'dobj': 'https://meta.icos-cp.eu/objects/1DZZOAmmB8YAfYPvXuHMj7Er',
+        'hasNextVersion': 'false',
+        'spec': 'http://meta.icos-cp.eu/resources/cpmeta/atcN2oNrtGrowingDataObject',
+        'fileName': 'ICOS_ATC_NRT_OXK_2022-03-01_2023-02-27_23.0_534_N2O.zip',
+        'size': '110076',
+        'submTime': '2023-02-28T11:16:27.804Z',
+        'timeStart': '2022-03-01T00:00:00Z',
+        'timeEnd': '2023-02-27T23:00:00Z'
+    },
+    ...
+</code></pre>
 <hr>
 
 <h2 id="sparql">Sparql</h2>
@@ -1118,6 +1164,399 @@ sparql query is not executable because of syntax errors, for example, a TUPLE is
 <ul>
 <li>Return TUPLE | FMT</li>
 </ul>
+<hr>
+
+<h2 id="authentication">Authentication</h2>
+<p>To ensure users' <strong>licence</strong> acceptance, when <strong>accessing data objects</strong>
+through the icoscp python library, the <code>cpauth</code> module is introduced. The
+module will be available from icoscp version 0.1.18 and onwards. Starting with
+the next release (0.1.19) users MUST have ICOS Carbon Portal login credentials
+to access ICOS data. </p>
+<h3 id="overview">Overview</h3>
+<p>In order to fetch data, users make their requests to data objects and must
+provide an API token to do so. The <code>cpauth</code> module helps to retrieve the ICOS
+API token using a variety of ways. Authentication is required only for 
+off-server data access (users who are not using our ICOS Jupyter services).
+Users with direct access to the data files, namely, <strong>users of our 
+<a href="https://www.icos-cp.eu/data-services/tools/jupyter-notebook">ICOS Jupyter services</a>, are excluded
+from authentication</strong>. Metadata access remains unaffected from these changes.
+For security reasons the API token is valid for 100'000 seconds (27 hours) and
+must be refreshed regularly; thus the authentication process can be automated
+to simplify the user experience.</p>
+<p>To use the <code>cpauth</code> module, users need to provide one of the following
+validation options:</p>
+<ol>
+<li><strong>Username and password</strong> as input when instantiating the authentication
+   object. These are the same credentials used for validating oneself at the
+   ICOS Carbon Portal authentication service hosted on 
+   <a href="https://cpauth.icos-cp.eu/">https://cpauth.icos-cp.eu/</a>.</li>
+<li>An <strong>API Token</strong> as input when instantiating the authentication object. The
+   user specific API Token can be found at the bottom of the home page 
+   <a href="https://cpauth.icos-cp.eu/home/">here</a>. Password sign-in is required.</li>
+<li>A <strong>credentials file</strong> containing any of the above validation options.</li>
+</ol>
+<h3 id="quickstart">Quickstart</h3>
+<ul>
+<li>
+<h5 id="running-the-authentication-for-the-first-time">Running the authentication for the first time.</h5>
+<p>To initialize the authentication configuration a user can run:</p>
+<ul>
+<li>
+<pre><code>from icoscp.cpauth.authentication import Authentication
+Authentication()
+</code></pre>
+</li>
+</ul>
+<p>or</p>
+<ul>
+<li>
+<pre><code>from icoscp.cpauth.authentication import init_auth
+init_auth()
+</code></pre>
+</li>
+</ul>
+<p>Both of the above snippets will <strong>prompt the user for username and 
+password</strong> and will do the necessary preparations for the <code>cpauth</code> module.
+After running either of the above, the snippet is no longer needed and
+should be removed from the user's code.</p>
+<p>Under the hood <code>init_auth()</code> and <code>Authentication()</code> will:</p>
+<ol>
+<li>
+<p>Create a hidden credentials file in a system specific location. The
+   standard location of the credentials file directory varies depending
+   on the operating system.</p>
+<ul>
+<li>For Linux: <code>/home/[user]/icoscp/</code></li>
+<li>For Windows: <code>C:\\Users\\[user]\\icoscp\\</code></li>
+<li>For macOS: <code>/Users/[user]/icoscp/</code></li>
+</ul>
+</li>
+<li>
+<p>Store user's username, password (in an encoded base64 format), and API
+   token. The API token will be retrieved automatically given that 
+   username and password are valid.</p>
+</li>
+</ol>
+<p>Also, users can re-initialize the credentials file using either one of the
+calls below (with their respective import statements).</p>
+<ul>
+<li><code>init_auth()</code> will re-initialize the credentials file in a forceful 
+      way (no confirmation is needed.)</li>
+<li><code>Authentication(initialize=True)</code> will re-initialize the credentials
+     file in a diligent way.</li>
+</ul>
+</li>
+</ul>
+<h3 id="authentication-methods">Authentication methods</h3>
+<ul>
+<li>
+<p><strong>Note to users:</strong><br />
+By default, the <code>cpauth</code> module is set to store valid credentials to the ICOS
+carbon portal configuration file. Internally this is handled by performing a
+validation against https://cpauth.icos-cp.eu/password/login using the provided
+credentials and setting <code>write_configuration=True</code> during the instantiation of
+the authentication class.<br />
+<strong>Users can change this default behaviour to prioritize for security and 
+privacy, especially in cases where storing login information is not feasible
+or poses a risk. This can be achieved by explicitly setting 
+<code>write_configuration=False</code> in any of the authentication ways described below.
+In these cases, users must also provide the authentication itself as an
+argument to the <code>Dobj()</code> class instantiation.</strong><br />
+<br></p>
+</li>
+<li>
+<h5 id="default-authentication">Default authentication</h5>
+<ul>
+<li>
+<p><strong>Login information is saved</strong></p>
+<p>The most efficient and easy way to use the <code>cpauth</code> module in an 
+  automated manner is by adding these two lines of code to your 
+  script:</p>
+<pre><code>  from icoscp.cpauth.authentication import Authentication
+  Authentication()
+</code></pre>
+<p>If there is no authentication configuration, the above
+  code will initialize the configuration, by prompting for username
+  and password. If the credentials are valid the call to 
+  <code>Authentication()</code> will store those credentials and reuse them in
+  subsequent calls to data access. In this case, these two lines of
+  code can be removed from users' scripts. </p>
+</li>
+</ul>
+<hr>
+<ul>
+<li>
+<p><strong>Login information is not saved</strong></p>
+<p>If the <code>write_configuration</code> argument is set to <code>False</code> login 
+information will not be stored. In this case the authentication class
+must be passed on as an argument to the <code>Dobj()</code> class:</p>
+<pre><code>from icoscp.cpauth.authentication import Authentication            
+from icoscp.cpb.dobj import Dobj
+
+cp_auth = Authentication(write_configuration=False)
+dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj', cp_auth=cp_auth)
+# Check if data access was successful.
+print(dobj.data.head())
+</code></pre>
+<p>Subsequent calls to the code above will always require input of 
+username and password.<br />
+<br></p>
+</li>
+</ul>
+</li>
+<li>
+<h5 id="authentication-using-username-and-password">Authentication using username and password</h5>
+<p>Authentication is also possible by using username and password as string
+arguments to the <code>Authentication()</code> class. If only the username is provided,
+the module prompts the user for the password, and by default, does not store
+credentials.</p>
+<ul>
+<li>
+<p><strong>Login information is saved</strong></p>
+<p>By default, if the credentials are valid, they will be stored in the
+configuration file. Thus, for subsequent calls, re-authentication is
+performed automatically and the authentication part in the code below
+can be removed.</p>
+<pre><code>from icoscp.cpauth.authentication import Authentication            
+from icoscp.cpb.dobj import Dobj
+
+# Instantiate the Authentication class, using username and password.
+Authentication(username='rbon@portoca.lis', password='pa$$w0rd')
+digital_object = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj')
+# Fetch the specified data. 
+obtained_data = digital_object.data
+# Print a part of the specified data.
+print(obtained_data.head())
+</code></pre>
+</li>
+</ul>
+<hr>
+<ul>
+<li>
+<p><strong>Login information is not saved</strong></p>
+<pre><code>from icoscp.cpauth.authentication import Authentication            
+from icoscp.cpb.dobj import Dobj
+
+cp_auth = Authentication(
+    username='rbon@portoca.lis', 
+    password='pa$$w0rd',
+    write_configuration=False
+)
+dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj', cp_auth=cp_auth)
+# Check if data access was successful.
+print(dobj.data.head())
+</code></pre>
+<p>or</p>
+<pre><code>from icoscp.cpauth.authentication import Authentication            
+from icoscp.cpb.dobj import Dobj
+
+cp_auth = Authentication(
+    username='rbon@portoca.lis'
+)
+dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj', cp_auth=cp_auth)
+# Check if data access was successful.
+print(dobj.data.head())
+</code></pre>
+<p>If only the username is provided, the module prompts for 
+the password. Subsequent calls to the code above will always
+require input of password.<br />
+<br></p>
+</li>
+</ul>
+</li>
+<li>
+<h5 id="authenticate-using-an-api-token">Authenticate using an API token</h5>
+<p>Authentication is also possible using an API token as a string argument to the
+<code>Authentication()</code> class. The user specific API Token can be found at the
+bottom of the home page <a href="https://cpauth.icos-cp.eu/home/">here</a>. Password
+sign-in is required.</p>
+<ul>
+<li>
+<p><strong>Login information is saved</strong></p>
+<p>If the token is valid, by default, it will be stored in the 
+configuration file. Thus, for subsequent calls, re-authentication is
+performed automatically and the authentication part in the code below
+can be removed.</p>
+<pre><code>from icoscp.cpauth.authentication import Authentication
+from icoscp.cpb.dobj import Dobj
+
+token = 'cpauthToken=Wzb+ananas/in+pajamasRA='
+Authentication(token=token)
+dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj')
+# Check if data access was successful.
+print(dobj.data.head())
+</code></pre>
+<p><strong>Remember, the token lasts for 100'000 seconds.</strong> After the validity
+of the token has expired (27 hours), users need to provide a refreshed 
+token. </p>
+</li>
+</ul>
+<hr>
+<ul>
+<li>
+<p><strong>Login information is not saved</strong></p>
+<pre><code>from icoscp.cpauth.authentication import Authentication
+from icoscp.cpb.dobj import Dobj
+
+token = 'cpauthToken=Wfluffy-bunny-slippersA='
+cp_auth = Authentication(token=token, write_configuration=False)
+dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj', cp_auth=cp_auth)
+# Check if data access was successful.
+print(dobj.data.head())
+</code></pre>
+<p><strong>Remember, the token lasts for 100'000 seconds.</strong> After the validity
+of the token has expired, users need to provide a refreshed token.<br />
+<br></p>
+</li>
+</ul>
+</li>
+<li>
+<h5 id="authenticate-using-a-configuration-file-on-a-custom-path">Authenticate using a configuration file on a custom path</h5>
+<p>Authentication is also possible using a configuration file on a custom path.
+Users can create their own file and use the path to the file as an argument
+to the instantiation of the <code>Authentication()</code> class.</p>
+<p>For the purpose of this example, let us assume that the credentials file
+is located at a path specified by the user, such as: 
+<code>'/home/sam/my-folder/icos_carbon_portal.json'</code>. <br />
+Here is the code:</p>
+<pre><code>from icoscp.cpauth.authentication import Authentication
+from icoscp.cpb.dobj import Dobj
+
+conf_file_path = '/home/sam/my-folder/icos_carbon_portal.json'
+cp_auth = Authentication(configuration_file=conf_file_path)
+dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj', cp_auth=cp_auth)
+# Check if data access was successful.
+print(dobj.data.head())
+</code></pre>
+<p>Below you can find an example of the necessary components and format for a
+credentials file that can be used with the code above to complete the 
+authentication process. </p>
+<ul>
+<li>
+<p>Case of username and password</p>
+<pre><code>{
+  "username": "rbon@portoca.lis",
+  "password": "pa$$w0rd"
+}
+</code></pre>
+<p>In this case username and password will be used to try and fetch a
+valid token. At the end of the authentication process, if the 
+credentials are correct, the password will be converted in base64
+format and an API token will be generated and stored in a "token"
+field in the file. For subsequent calls the token is used first to
+authenticate a user.</p>
+</li>
+<li>
+<p>Case of username, password, and API token</p>
+<pre><code>{
+  "username": "rbon@portoca.lis",
+  "password": "pa$$w0rd",
+  "token": "cpauthToken=WzE2Nzc1MTIt+works/on!my0machine!U4NzSpc2k="
+}
+</code></pre>
+<p>In this case the token will be checked first for its validity. If it
+is a valid token, it will be used to fetch the requested data. If the
+token is invalid or has expired, the provided username and password
+will be utilized to retrieve a valid token. For subsequent calls the
+token is used first to authenticate a user.</p>
+</li>
+<li>
+<p>Case of API token only</p>
+<pre><code>{
+  "token": "cpauthToken=WzNzcIkode+there4I/m!caffeinatedU4NzSpck="
+}
+</code></pre>
+<p>In the case that only an API token exists in the credentials file, 
+users need to make sure that it is a valid one. <strong>Remember, the token
+lasts for 100'000 seconds.</strong> After the validity of the token has
+expired, users need to provide a refreshed token. The user specific 
+API Token can be found at the bottom of the home page 
+<a href="https://cpauth.icos-cp.eu/home/">here</a>. Password sign-in is required.</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="authentication-parameters">Authentication parameters</h3>
+<p>The authentication class is a tool that provides access to data objects at the
+ICOS Carbon Portal, by providing a valid username and password, or by using an
+API token, which can be supplied in a number of different ways.</p>
+<pre><code class="language-python">class cpauth.Authentication
+(
+    username: str = None, 
+    password: str = None,
+    token: str = None, 
+    read_configuration: bool = True,
+    write_configuration: bool = True, 
+    configuration_file: str = None,
+    initialize: bool = False
+)
+</code></pre>
+<ul>
+<li><strong>username: str, optional, default=None</strong> -&gt; The username required for
+authentication.</li>
+<li><strong>password: str, optional, default=None</strong> -&gt; The password required for
+authentication.</li>
+<li><strong>token: str, optional, default=None</strong> -&gt; The authentication token allows
+data access without the need for a username and password. The token can be
+manually retrieved from https://cpauth.icos-cp.eu after signing in with a
+password. Please note that the token has a limited lifespan (100'000 seconds)
+and must be refreshed periodically to maintain data access.</li>
+<li><strong>read_configuration: bool, optional, default=True</strong> -&gt; This attribute
+controls whether the configuration is read from a file. The default setting is
+to read from a system-specific location.</li>
+<li><strong>write_configuration: bool, optional, default=True</strong> -&gt; This attribute
+controls whether valid configuration will be stored to a system-specific
+location.</li>
+<li><strong>configuration_file: str, optional, default=None</strong> -&gt; This attribute
+specifies the path to the configuration file. By default, the configuration
+file is located in a directory called icoscp in the user's home directory.
+<br></li>
+</ul>
+<h3 id="convenience-functions_2">Convenience functions</h3>
+<p>The following functions provide information and improve the user experience
+with the cpauth module.</p>
+<ul>
+<li>
+<h5 id="authenticationinit">authentication.init()</h5>
+<pre><code>from icoscp.cpauth.authentication import init_auth
+init_auth()
+</code></pre>
+<p>This function is designed to run the authentication for the first time or
+to complete the authentication process easily in a terminal-like
+environment. The function prompts for username and password (password
+masking is utilized) and instantiates the <code>Authentication()</code> class given
+these credentials.<br />
+<br></p>
+</li>
+<li>
+<h5 id="printauthentication">print(Authentication())</h5>
+<p>Users can utilize the standard python <code>print()</code> function with the
+<code>Authentication()</code> class as an argument, to get some extra information
+regarding their log-in information and their configuration.</p>
+<pre><code>from icoscp.cpauth.authentication import Authentication
+print(Authentication())
+</code></pre>
+<p>Here is an example output of the snippet above:</p>
+<pre><code>Username: rbon@portoca.lis
+Token will expire in: 1 day, 2:39:44.773148
+Login source: Password
+Path to configuration file: '/home/[user]/icoscp/'
+</code></pre>
+<p>If the <code>Authentication()</code> class was instantiated using the default 
+<code>configuration_file</code> parameter, the standard location of the credentials
+file directory varies depending on the operating system.</p>
+<ul>
+<li>For Linux: <code>/home/[user]/icoscp/</code> </li>
+<li>For Windows: <code>C:\\Users\\[user]\\icoscp\\</code> </li>
+<li>For macOS: <code>/Users/[user]/icoscp/</code>  </li>
+</ul>
+</li>
+</ul>
+<h3 id="suppressing-warning-messages">Suppressing warning messages</h3>
+<p>To suppress <code>future warnings</code> or <code>user warnings</code> messages, please, refer to 
+<a href="../faq/#how-do-i-suppress-warnings">this</a> section of the documentation.</p>
+<hr>
+
 <h2 id="country">Country</h2>
 <p>Search country information, define global (to icoscp) a common tool to search for country 
 information based on a static local file within the library (<code>country.json</code>). Search is 

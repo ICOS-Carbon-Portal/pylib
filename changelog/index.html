@@ -63,13 +63,25 @@
               <ul class="current">
                 <li class="toctree-l1 current"><a class="reference internal current" href="./">Changelog</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#0118">0.1.18</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#cpauth-module">cpauth module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#cpb-module">cpb module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module">stilt module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#station-module">station module</a>
+    </li>
+        </ul>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#0117">0.1.17</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#station-module">station module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#station-module_1">station module</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#sparql-module">sparql module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#stilt-module">stilt module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_1">stilt module</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#other-changes">other changes</a>
     </li>
@@ -79,15 +91,15 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#sparql">sparql</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#station-module_1">station module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#station-module_2">station module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_1">stilt module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_2">stilt module</a>
     </li>
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#0115">0.1.15</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#cpb-module">cpb module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#cpb-module_1">cpb module</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#access-to-data">access to data</a>
     </li>
@@ -137,21 +149,58 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li>
-      <li>Changelog</li>
+    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li><li>Changelog</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
   <hr/>
 </div>
+
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
                 <h1 id="changelog">Changelog</h1>
+<h2 id="0118">0.1.18</h2>
+<ul>
+<li>
+<h4 id="cpauth-module">cpauth module</h4>
+   Implement authentication for secure data access. The full documentation of
+   the authentication module can be found <a href="https://icos-carbon-portal.github.io/pylib/modules/#authentication">here</a>.</li>
+<li>
+<h4 id="cpb-module">cpb module</h4>
+<ul>
+<li>Rework code in <code>Dobj()</code> class to correctly add <code>series</code> to pandas
+   <code>DataFrame</code> and avoid pandas performance warning.</li>
+<li>Verify timestamp format of binary files and convert accordingly to
+   avoid error in data accessing.</li>
+</ul>
+</li>
+<li>
+<h4 id="stilt-module">stilt module</h4>
+<ul>
+<li>Remove mutable default arguments from functions in the <code>stilt</code> module.</li>
+<li>Update availability table, such that only 'real' ICOS stations get an
+   ICOS id.</li>
+<li>Add ICOS sampling height to the ICOS dictionary.</li>
+<li>Add corresponding data files to the ICOS dictionary.</li>
+<li>Increase performance when reading <code>STILT</code> footprints.</li>
+<li>Replace <code>eval()</code> statement to prevent security risks.</li>
+<li>Make function <code>station.get()</code> case-insensitive.</li>
+</ul>
+</li>
+<li>
+<h4 id="station-module">station module</h4>
+<ul>
+<li>Remove elevation above ground attribute from <code>Station()</code> class.</li>
+<li>Update documentation on how to correctly retrieve station names when
+   iterating over pandas <code>DataFrames'</code> rows.</li>
+</ul>
+</li>
+</ul>
 <h2 id="0117">0.1.17</h2>
 <ul>
 <li>
-<h4 id="station-module">station module</h4>
+<h4 id="station-module_1">station module</h4>
    The station class has been somewhat optimized:<ul>
 <li><code>station.getList()</code> is faster </li>
 <li><code>station.getIdList()</code> has a new parameter <code>theme</code> (as in <code>getList</code>)</li>
@@ -159,12 +208,12 @@
 </li>
 <li>
 <h4 id="sparql-module">sparql module</h4>
-   In the background the station class use sparql queries, and <code>sparqls.py</code> has been endowed with the station query function:  <ul>
+   In the background the station class use sparql queries, and <code>sparqls.py</code> has been endowed with station query function:  <ul>
 <li><code>sparqls.station_query()</code>, the function has a filter parameter with which the experienced user for example can use to fetch stations in a list of countries.  </li>
 </ul>
 </li>
 <li>
-<h4 id="stilt-module">stilt module</h4>
+<h4 id="stilt-module_1">stilt module</h4>
 <ul>
 <li>Update <code>xarray</code> call in <code>stiltobj.py</code>.</li>
 </ul>
@@ -190,13 +239,13 @@
 </ul>
 </li>
 <li>
-<h4 id="station-module_1">station module</h4>
+<h4 id="station-module_2">station module</h4>
 <ul>
 <li>Filter out non icos stations when querying themed stations in <code>getList()</code>. </li>
 </ul>
 </li>
 <li>
-<h4 id="stilt-module_1">stilt module</h4>
+<h4 id="stilt-module_2">stilt module</h4>
 <ul>
 <li>Regenerate STILT module's static file <code>stations.json</code>.</li>
 </ul>
@@ -205,7 +254,7 @@
 <h2 id="0115">0.1.15</h2>
 <ul>
 <li>
-<h4 id="cpb-module">cpb module</h4>
+<h4 id="cpb-module_1">cpb module</h4>
 <ul>
 <li>Dobj change to read metadata from http request. Instead of using sparql queries, a http request is used to load 
    the same meta data as available from the website.</li>
