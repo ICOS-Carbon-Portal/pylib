@@ -380,6 +380,8 @@ class Dobj():
         timeFormats = list(map(prependOntology, ['iso8601timeOfDay']))
         # Stored as days since epoch
         dateFormats = list(map(prependOntology, ['iso8601date', 'etcDate']))
+        # Stored as YYYYMM
+        yearMonthFormat = list(map(prependOntology, ['iso8601month']))
         # Stored as milliseconds since epoch
         dateTimeFormats = list(map(prependOntology, ['iso8601dateTime', 'isoLikeLocalDateTime', 'etcLocalDateTime']))
         # Stored as integer
@@ -387,6 +389,7 @@ class Dobj():
 
         def isTime(valueFormat): return valueFormat in timeFormats
         def isDate(valueFormat): return valueFormat in dateFormats
+        def isYearMonth(valueFormat): return valueFormat in yearMonthFormat
         def isDateTime(valueFormat): return valueFormat in dateTimeFormats
         def isInt(valueFormat): return valueFormat in integerFormat
 
@@ -404,6 +407,8 @@ class Dobj():
                     lst = pd.to_datetime(lst, unit='ms')
                 elif isDate(fmt[col]):
                     lst = pd.to_datetime(lst, unit='D')
+                elif isYearMonth(fmt[col]):
+                    lst = [str(i)[:4] + '-' + str(i)[4:] for i in lst]
                 elif isTime(fmt[col]):
                     lst = pd.to_datetime(lst, unit='s')
                 elif isInt(fmt[col]):

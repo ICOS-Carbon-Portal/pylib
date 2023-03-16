@@ -61,8 +61,8 @@ def resolve(pid):
     """
 
     pid_lower = str(pid).lower()
-    fullurl = ['meta.icos-cp.eu',
-               'meta.fieldsites.se',
+    fullurl = ['icos-cp.eu',
+               'fieldsites.se',
                'handle.net'
                ]
 

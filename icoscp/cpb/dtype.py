@@ -92,13 +92,14 @@ def map_type(valueFormatUrl):
 			'float64': 'DOUBLE',
 			'bmpChar': 'CHAR',
 			'etcDate': 'INT',
-			'iso8601date':'INT',
-			'iso8601timeOfDay':'INT',
+			'iso8601date': 'INT',
+			'iso8601month': 'INT',
+			'iso8601timeOfDay': 'INT',
 			'iso8601dateTime': 'DOUBLE',
 			'isoLikeLocalDateTime' : 'DOUBLE',
 			'etcLocalDateTime': 'DOUBLE',
-			'int32':'INT',
-			'string':'STRING'
+			'int32': 'INT',
+			'string': 'STRING'
 			}
     return dictionary.get(valueFormatUrl.split('/')[-1], False)
 #-----------------------------------------------------------------------
