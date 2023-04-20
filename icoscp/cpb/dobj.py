@@ -15,6 +15,7 @@ __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "stable"
 __date__        = "2022-05-24"
 
+import math
 import os
 from warnings import warn
 import requests
@@ -380,7 +381,7 @@ class Dobj():
         timeFormats = list(map(prependOntology, ['iso8601timeOfDay']))
         # Stored as days since epoch
         dateFormats = list(map(prependOntology, ['iso8601date', 'etcDate']))
-        # Stored as YYYYMM
+        # Stored as 32-bit integer of format YYYY * 12 + MM - 1
         yearMonthFormat = list(map(prependOntology, ['iso8601month']))
         # Stored as milliseconds since epoch
         dateTimeFormats = list(map(prependOntology, ['iso8601dateTime', 'isoLikeLocalDateTime', 'etcLocalDateTime']))
@@ -392,6 +393,11 @@ class Dobj():
         def isYearMonth(valueFormat): return valueFormat in yearMonthFormat
         def isDateTime(valueFormat): return valueFormat in dateTimeFormats
         def isInt(valueFormat): return valueFormat in integerFormat
+
+        def presentYearMonth(val) :
+            year =  math.floor(val / 12)
+            month = val % 12 + 1
+            return f'{year}-{month:02}'
 
         fmt = self.variables.sort_values('name')['format'].tolist()
         
@@ -408,7 +414,7 @@ class Dobj():
                 elif isDate(fmt[col]):
                     lst = pd.to_datetime(lst, unit='D')
                 elif isYearMonth(fmt[col]):
-                    lst = [str(i)[:4] + '-' + str(i)[4:] for i in lst]
+                    lst = [presentYearMonth(i) for i in lst]
                 elif isTime(fmt[col]):
                     lst = pd.to_datetime(lst, unit='s')
                 elif isInt(fmt[col]):
