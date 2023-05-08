@@ -75,7 +75,8 @@ covhtml = [
 ]
 clean = [
     "rm -f .coverage",
-    "rm -fr htmlcov/",
+    "rm -rf htmlcov/",
+    "rm -rf dist"
 ]
 
 
