@@ -1,8 +1,12 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "icoscp"
+dynamic = ["version"]
 description = "Access to ICOS data objects hosted at https://data.icos-cp.eu"
 readme = "README.md"
-version = "0.1.18a"
 
 authors = [
     {name = "Claudio D'Onofrio", email = "claudio.donofrio@nateko.lu.se"},
@@ -44,17 +48,13 @@ dependencies = [
 "DataPortal" =  "https://data.icos-cp.eu/portal/"
 "SparqlEndpoint" = "https://meta.icos-cp.eu/sparqlclient/?type=CSV"
 
+[tool.hatch.version]
+path = "icoscp/__init__.py"
+
 # include_package_data=True,
 # data_files=[("icoscp/.", ["icoscp/countries.json"])],
 # long_description=readme(),
 # long_description_content_type="text/markdown",
-
-
-# HATCH
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 
 # HATCH - Default environment
 # Used to run lint, coverage and testing using the default environment.
