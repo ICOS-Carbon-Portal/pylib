@@ -5,3 +5,4 @@ __pycache__/
 *.egg-info
 *.pylint.d/
 .idea/
+/.coverage
