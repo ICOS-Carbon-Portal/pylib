@@ -3,7 +3,6 @@ name = "icoscp"
 description = "Access to ICOS data objects hosted at https://data.icos-cp.eu"
 readme = "README.md"
 version = "0.1.18a"
-license = "GPLv3+"
 
 authors = [
     {name = "Claudio D'Onofrio", email = "claudio.donofrio@nateko.lu.se"},
