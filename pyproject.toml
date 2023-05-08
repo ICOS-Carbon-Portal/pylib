@@ -49,7 +49,7 @@ dependencies = [
 "SparqlEndpoint" = "https://meta.icos-cp.eu/sparqlclient/?type=CSV"
 
 [tool.hatch.version]
-path = "icoscp/__init__.py"
+path = "src/icoscp/__init__.py"
 
 # include_package_data=True,
 # data_files=[("icoscp/.", ["icoscp/countries.json"])],
@@ -68,7 +68,7 @@ dependencies = [
 ]
 
 [tool.hatch.envs.default.scripts]
-test = "pytest -s --cov -vv {args}"
+test = "coverage run -m pytest {args:tests}"
 covhtml = [
     "coverage html",
     "python3 -m webbrowser htmlcov/index.html",
@@ -80,7 +80,6 @@ clean = [
 ]
 
 
-
 # PYTEST
 [tool.pytest.ini_option]
 testpaths = ["tests"]
@@ -90,4 +89,24 @@ testpaths = ["tests"]
 [tool.coverage.run]
 branch = true
 parallel = true
-source = ["icoscp", "tests"]
+source = ["src/icoscp", "tests"]
+
+
+# LINTING
+[tool.hatch.envs.lint]
+detached = true
+dependencies = [
+  "ruff>=0.0.243",
+]
+[tool.hatch.envs.lint.scripts]
+style = [
+  "ruff {args:.}",
+]
+
+[tool.ruff]
+target-version = "py39"
+# FIXE: Change once the code has been reformatted.
+line-length = 120
+ignore = [
+  "E101",
+]
