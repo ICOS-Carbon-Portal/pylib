@@ -21,7 +21,7 @@ def test_dobj(test_input, expected):
     assert do.valid == expected
 
 def test_lat_lon_alt():
-    
+
     assert dobj.lat == 45.7719
     assert dobj.lon == 2.9658
     assert dobj.alt == 1465.0
@@ -33,10 +33,10 @@ def test_colNames():
 
 def test_data():
     assert len(dobj.data) == 8806
-    
-    
+
+
 def test_return_values():
-    assert isinstance(dobj.dobj, str) 
+    assert isinstance(dobj.dobj, str)
     assert isinstance(dobj.id, str)
     assert isinstance(dobj.previous, str)
     assert isinstance(dobj.next, str)
@@ -55,7 +55,7 @@ def test_return_values():
     assert isinstance(dobj.citation, str)
     assert isinstance(dobj.get(), pandas.DataFrame)
     assert isinstance(dobj.size(), tuple)
-    
+
 def test_citation():
     assert isinstance(dobj.get_citation(), str)
     assert isinstance(dobj.get_citation('plain'), str)
@@ -65,16 +65,15 @@ def test_citation():
     assert dobj.citation == dobj.get_citation()
 
 
-    
+
 def test_properties():
     assert dobj.previous == 'https://meta.icos-cp.eu/objects/Jn7Cl2eN09XGyxizaeFIe9IQ'
     assert dobj.next == 'https://meta.icos-cp.eu/objects/rHXuyoW3I-JVLZzuNYA6zhQ6'
     assert dobj.id == pid
-    
+
     keys = ['accessUrl', 'coverageGeo', 'fileName', 'hash', \
-            'nextVersion', 'parentCollections', 'pid', \
+            'latestVersion', 'nextVersion', 'parentCollections', 'pid', \
                 'previousVersion', 'references', 'size', \
                     'specificInfo', 'specification', 'submission']
     assert list(dobj.meta.keys()) == keys
-    assert len(dobj.variables) == 5  
-    
+    assert len(dobj.variables) == 5
