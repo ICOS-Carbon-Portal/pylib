@@ -54,3 +54,36 @@ dependencies = [
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+
+[tool.hatch.envs.default]
+dependencies = [
+  # make sure we install the "[toml]" extra so that coverage picks
+  # configuration from pyproject.toml.
+  "coverage[toml]",
+  "pytest",
+  "pytest-cov",
+]
+
+[tool.hatch.envs.default.scripts]
+test = "pytest {args}"
+covhtml = [
+    "pytest -s --cov -vv",
+    "coverage html",
+    "python3 -m webbrowser htmlcov/index.html",
+]
+clean = [
+    "rm -f .coverage",
+    "rm -fr htmlcov/",
+]
+
+
+# PYTEST
+[tool.pytest.ini_option]
+testpaths = ["tests"]
+
+# COVERAGE
+[tool.coverage.run]
+branch = true
+parallel = true
+source = ["icoscp", "tests"]
