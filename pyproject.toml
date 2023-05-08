@@ -60,12 +60,14 @@ path = "src/icoscp/__init__.py"
 # data_files=[("icoscp/.", ["icoscp/countries.json"])],
 
 
-# The default hatch environment, used to run testing and coverage.
+# The default hatch environment, used to run testing and coverage, and to build
+# documentation.
 [tool.hatch.envs.default]
 dependencies = [
   "coverage[toml]",
   "pytest",
   "pytest-cov",
+  "mkdocs"
 ]
 
 [tool.hatch.envs.default.scripts]
