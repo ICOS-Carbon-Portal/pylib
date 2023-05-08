@@ -42,66 +42,83 @@ dependencies = [
 
 
 [project.urls]
-"Homepage" = "https://www.icos-cp.eu/"
-"Source" = "https://github.com/ICOS-Carbon-Portal/pylib"
-"Documentation" = "https://icos-carbon-portal.github.io/pylib/"
-"DataPortal" =  "https://data.icos-cp.eu/portal/"
-"SparqlEndpoint" = "https://meta.icos-cp.eu/sparqlclient/?type=CSV"
+Homepage = "https://www.icos-cp.eu/"
+Source = "https://github.com/ICOS-Carbon-Portal/pylib"
+Documentation = "https://icos-carbon-portal.github.io/pylib/"
+DataPortal = "https://data.icos-cp.eu/portal/"
+SparqlEndpoint = "https://meta.icos-cp.eu/sparqlclient/?type=CSV"
 
 [tool.hatch.version]
 path = "src/icoscp/__init__.py"
 
+
+# FIXME: Right now countries.json is included in the wheel.
+# However, the preferred way would be to use "shared-data", see
+# https://github.com/pypa/hatch/issues/773 for more details.
+# Below are the old instructions for packaging countries.json
 # include_package_data=True,
 # data_files=[("icoscp/.", ["icoscp/countries.json"])],
-# long_description=readme(),
-# long_description_content_type="text/markdown",
 
-# HATCH - Default environment
-# Used to run lint, coverage and testing using the default environment.
+
+# The default hatch environment, used to run testing and coverage.
 [tool.hatch.envs.default]
 dependencies = [
-  # make sure we install the "[toml]" extra so that coverage picks
-  # configuration from pyproject.toml.
   "coverage[toml]",
   "pytest",
   "pytest-cov",
 ]
 
 [tool.hatch.envs.default.scripts]
-test = "coverage run -m pytest {args:tests}"
+test = "pytest {args:tests}"
+cov = "coverage run -m pytest {args:tests}"
 covhtml = [
-    "coverage html",
-    "python3 -m webbrowser htmlcov/index.html",
+  "coverage combine",
+  "coverage html",
+  "python3 -m webbrowser htmlcov/index.html",
 ]
 clean = [
-    "rm -f .coverage",
-    "rm -rf htmlcov/",
-    "rm -rf dist"
+  "rm -f .coverage*",
+  "rm -rf htmlcov/",
+  "rm -rf dist"
 ]
 
 
-# PYTEST
-[tool.pytest.ini_option]
-testpaths = ["tests"]
-
-
-# COVERAGE
-[tool.coverage.run]
-branch = true
-parallel = true
-source = ["src/icoscp", "tests"]
-
-
-# LINTING
+# The second hatch environment is used for linting.
 [tool.hatch.envs.lint]
 detached = true
 dependencies = [
-  "ruff>=0.0.243",
+  "ruff>=0.0.263",
 ]
 [tool.hatch.envs.lint.scripts]
 style = [
   "ruff {args:.}",
 ]
+
+# The third hatch environment does multi-version python testing.
+[tool.hatch.envs.test]
+dependencies = [
+  "coverage[toml]",
+  "pytest",
+  "pytest-cov",
+]
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.7", "3.8", "3.9", "3.10", "3.11"]
+
+[tool.hatch.envs.test.scripts]
+all = "coverage run -m pytest {args:tests}"
+
+
+# Tool configuration.
+[tool.pytest.ini_option]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+disable_warnings = ['no-data-collected']
+branch = true
+parallel = true
+source = ["src/icoscp"]
+omit = ["tests"]
 
 [tool.ruff]
 target-version = "py39"
