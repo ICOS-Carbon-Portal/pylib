@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jan 25 22:14:49 2022
-@author: Claudio
-"""
-
-
 import pytest
 from icoscp.cpb.dobj import Dobj
 import pandas

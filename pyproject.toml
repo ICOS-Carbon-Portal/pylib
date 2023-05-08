@@ -82,6 +82,7 @@ clean = [
 [tool.pytest.ini_option]
 testpaths = ["tests"]
 
+
 # COVERAGE
 [tool.coverage.run]
 branch = true
