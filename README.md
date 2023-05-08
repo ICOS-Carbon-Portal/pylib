@@ -46,3 +46,8 @@ For example with mini-conda (https://docs.conda.io/en/latest/miniconda.html) you
 
 ## Documentation
 The full documentation about the library and all the modules are available at [https://icos-carbon-portal.github.io/pylib/](https://icos-carbon-portal.github.io/pylib/)
+
+
+## Development
+
+For instructions about how to go about extending and testing this software, please see <development.md>
