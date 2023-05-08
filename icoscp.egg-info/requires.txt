@@ -1,4 +1,0 @@
-folium
-pandas
-requests
-tqdm
