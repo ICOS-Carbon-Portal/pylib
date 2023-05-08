@@ -1,0 +1,57 @@
+[project]
+name = "icoscp",
+description = "Access to ICOS data objects hosted at https://data.icos-cp.eu",
+readme = "README.md"
+version = "0.1.18a",
+license = "GPLv3+",
+
+authors = [
+    {name = "Claudio D'Onofrio", email = "claudio.donofrio@nateko.lu.se"},
+    {name = "Zois Zogopoulos", email = "zois.zogopoulos@nateko.lu.se"},
+    {name = "Anders Dahlner", email = "anders.dahlner@nateko.lu.se"},
+    {name = "ICOS Carbon Portal", email = "info@icos-cp.eu"},
+]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Natural Language :: English",
+    "Topic :: Scientific/Engineering :: Atmospheric Science",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Utilities",
+]
+
+requires-python = ">=3.7"
+dependencies = [
+    "pandas",
+    "requests",
+    "tqdm",
+    "folium",
+]
+
+
+[project.urls]
+"Homepage" = "https://www.icos-cp.eu/"
+"Source" = "https://github.com/ICOS-Carbon-Portal/pylib"
+"Documentation" = "https://icos-carbon-portal.github.io/pylib/"
+"DataPortal" =  "https://data.icos-cp.eu/portal/"
+"SparqlEndpoint" = "https://meta.icos-cp.eu/sparqlclient/?type=CSV"
+
+# include_package_data=True,
+# data_files=[("icoscp/.", ["icoscp/countries.json"])],
+# long_description=readme(),
+# long_description_content_type="text/markdown",
+
+
+# HATCH
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
