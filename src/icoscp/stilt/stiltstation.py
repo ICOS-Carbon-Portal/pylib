@@ -461,6 +461,10 @@ def __get_stations(ids=None, progress=True):
         # set years and month of available data
         years = [y for y in os.listdir(CPC.STILTPATH + '/' + ist) if
                  os.path.exists(CPC.STILTPATH + '/' + ist + '/' + y)]
+        
+        # for atmo access zip files may exist  for download. we need to exclude them
+        years = [y for y in years if not y.endswith('.zip')]
+        
         stations[ist]['years'] = years
         for yy in sorted(stations[ist]['years']):
             stations[ist][yy] = {}
