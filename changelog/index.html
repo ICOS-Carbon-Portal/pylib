@@ -34,7 +34,7 @@
           <a href=".." class="icon icon-home"> ICOS Carbon Portal pylib
         </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
@@ -63,13 +63,23 @@
               <ul class="current">
                 <li class="toctree-l1 current"><a class="reference internal current" href="./">Changelog</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#0119">0.1.19</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module">stilt module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#documentation">documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#project-structure">project-structure</a>
+    </li>
+        </ul>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#0118">0.1.18</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#cpauth-module">cpauth module</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#cpb-module">cpb module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#stilt-module">stilt module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_1">stilt module</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#station-module">station module</a>
     </li>
@@ -81,7 +91,7 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#sparql-module">sparql module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_1">stilt module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_2">stilt module</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#other-changes">other changes</a>
     </li>
@@ -93,7 +103,7 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#station-module_2">station module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_2">stilt module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_3">stilt module</a>
     </li>
         </ul>
     </li>
@@ -149,17 +159,41 @@
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" alt="Docs"></a> &raquo;</li><li>Changelog</li>
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
+      <li>Changelog</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
   <hr/>
 </div>
-
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
                 <h1 id="changelog">Changelog</h1>
+<h2 id="0119">0.1.19</h2>
+<ul>
+<li>
+<h4 id="stilt-module">stilt module</h4>
+<ul>
+<li>Filter out <code>.zip</code> data files from <code>stiltweb</code> data structure.</li>
+</ul>
+</li>
+<li>
+<h4 id="documentation">documentation</h4>
+<ul>
+<li>Apply <a href="https://github.com/tylere">Tyler's</a> changes in the file 
+ <code>README.md</code>.</li>
+</ul>
+</li>
+<li>
+<h4 id="project-structure">project-structure</h4>
+<ul>
+<li>Introduce a streamlined development workflow for the library, using
+ <a href="https://pytest.org">pytest</a>, <a href="https://beta.ruff.rs/docs/">ruff</a>, and
+ <a href="https://hatch.pypa.io/latest/">hatch</a>. </li>
+</ul>
+</li>
+</ul>
 <h2 id="0118">0.1.18</h2>
 <ul>
 <li>
@@ -176,7 +210,7 @@
 </ul>
 </li>
 <li>
-<h4 id="stilt-module">stilt module</h4>
+<h4 id="stilt-module_1">stilt module</h4>
 <ul>
 <li>Remove mutable default arguments from functions in the <code>stilt</code> module.</li>
 <li>Update availability table, such that only 'real' ICOS stations get an
@@ -213,7 +247,7 @@
 </ul>
 </li>
 <li>
-<h4 id="stilt-module_1">stilt module</h4>
+<h4 id="stilt-module_2">stilt module</h4>
 <ul>
 <li>Update <code>xarray</code> call in <code>stiltobj.py</code>.</li>
 </ul>
@@ -245,7 +279,7 @@
 </ul>
 </li>
 <li>
-<h4 id="stilt-module_2">stilt module</h4>
+<h4 id="stilt-module_3">stilt module</h4>
 <ul>
 <li>Regenerate STILT module's static file <code>stations.json</code>.</li>
 </ul>

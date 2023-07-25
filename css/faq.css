@@ -1,9 +1,0 @@
-#zois:target {
-  animation: highlight 5s;
-}
-
-@keyframes highlight {
-  from {
-    background-color: yellow;
-  }
-}
