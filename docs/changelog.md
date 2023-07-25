@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.19
+ - #### stilt module
+     - Filter out `.zip` data files from `stiltweb` data structure.
+ - #### documentation
+     - Apply [Tyler's](https://github.com/tylere) changes in the file 
+     `README.md`.
+ - #### project-structure
+     - Introduce a streamlined development workflow for the library, using
+     [pytest](https://pytest.org), [ruff](https://beta.ruff.rs/docs/), and
+     [hatch](https://hatch.pypa.io/latest/). 
+
 ## 0.1.18
  - #### cpauth module
    Implement authentication for secure data access. The full documentation of
