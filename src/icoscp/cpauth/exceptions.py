@@ -33,7 +33,7 @@ class CredentialsError(Exception):
 
 def warn_for_authentication() -> None:
     warning = (
-        '\nThe ICOS Carbon Portal python library (>=0.1.19) requires user authentication for external users.\n'
+        '\nThe ICOS Carbon Portal python library (>=0.1.20) requires user authentication for external users.\n'
         f'Only credentials used for password sign-in at {CPC.CP_AUTH} can be used for authentication.\n'
         'Internal users (ICOS CP Jupyter Notebook services) are exempt.\n'
         f'For the authentication module documentation, follow this link: {CPC.DOC_M_AUTH}\n'
@@ -48,7 +48,7 @@ def warn_for_authentication_bypass(reason: AuthenticationError = None) -> None:
         f'\nYour authentication at the ICOS Carbon Portal was unsuccessful due to: {reason}\n'
         'Falling back to anonymous data access. Please, revisit your authentication configuration\n'
         f'({CPC.DOC_M_AUTH}).\n'
-        f'Authentication will become mandatory (icoscp >= 0.1.19) for external users.'
+        f'Authentication will become mandatory (icoscp >= 0.1.20) for external users.'
         )
     warnings.warn(warning, category=UserWarning)
     return
