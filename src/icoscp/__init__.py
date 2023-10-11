@@ -22,4 +22,4 @@ __email__ = ['info@icos-cp.eu']
 __status__ = "stable"
 __date__ = "2023-07-25"
 
-warn_for_authentication()
+# warn_for_authentication()
