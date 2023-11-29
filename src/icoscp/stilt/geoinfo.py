@@ -20,7 +20,7 @@ from icoscp.station import station as cpstation
 import icoscp.const as CPC
 import os
 from tqdm import tqdm
-from icoscp import country
+from icoscp import countries
 
 
 STN = 'stations.json'
@@ -108,7 +108,7 @@ def __save_all():
         
         # set the name and id
         stations[ist]['id'] = ist
-                
+
         # set a flag if it is an ICOS station
         stn = ist[0:3].upper()
         if stn in icosStations:
@@ -120,7 +120,7 @@ def __save_all():
             lat = stations[ist]['lat']
             lon = stations[ist]['lon']
                         
-        stations[ist]['geoinfo'] = country.get(latlon=[lat,lon])
+        stations[ist]['geoinfo'] = countries.get(latlon=[lat, lon])
         
     return stations
 

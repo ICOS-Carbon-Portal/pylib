@@ -26,7 +26,7 @@ from icoscp.stilt.stiltobj import StiltStation
 from icoscp.stilt import geoinfo
 from icoscp.stilt import fmap
 import icoscp.const as CPC
-import icoscp.country
+from icoscp.countries import country
 
 from icoscp.stilt import timefuncs as tf
 
@@ -477,10 +477,7 @@ def __get_stations(ids=None, progress=True):
             stations[ist][yy]['nmonths'] = len(stations[ist][yy]['months'])
             
         # add geoinfo
-        if ist in geo.keys():
-            #get the precomputed country info
-            stations[ist]['geoinfo'] = geo[ist]['geoinfo']
-        elif stations[ist]['icos']:
+        if stations[ist]['icos']:
             # get country from ICOS coordinates
             stations[ist]['geoinfo'] = __country([stations[ist]['icos']['lat'],stations[ist]['icos']['lon']])
         else:
@@ -494,7 +491,7 @@ def __get_stations(ids=None, progress=True):
 def __country(latlon):
     # be aware, that by providing latlon
     # triggers an external reverse geocoder.
-    return icoscp.country.get(latlon=latlon)
+    return country.get(latlon=latlon)
 
 
 def __stationName(idx, name, alt):
