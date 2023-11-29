@@ -144,8 +144,7 @@ def _c_reverse(lat: float, lon: float):
     world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
     but I chose to be 100% offline and to provide the world borders
-    as static file inside the module. The shape file and curation
-    is provided by Bjorn Sandvik, http://thematicmapping.org see readme.txt
+    as static file inside the module.
     '''
 
     shapefile_path = ("/data/project/cartopy/shapefiles/natural_earth/"
