@@ -149,7 +149,8 @@ def _c_reverse(lat: float, lon: float):
     '''
 
 
-    world = gpd.read_file('TM_WORLD_BORDERS-0.3.shp')
+    world = pkgres.read_text(icoscp.countries, 'TM_WORLD_BORDERS-0.3.shp')
+    world = gpd.read_file(world)
     country = False
 
     for index, row in world.iterrows():
