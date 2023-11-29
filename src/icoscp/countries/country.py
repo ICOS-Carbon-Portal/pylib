@@ -11,11 +11,10 @@
 
 import importlib.resources as pkgres
 import json
-import requests
 import icoscp
 import geopandas as gpd
 from shapely.geometry import Point
-
+import icoscp.const as CPC
 
 def get(**kwargs):
     """
@@ -147,9 +146,7 @@ def _c_reverse(lat: float, lon: float):
     as static file inside the module.
     '''
 
-    shapefile_path = ("/data/project/cartopy/shapefiles/natural_earth/"
-                      "cultural/10m_admin_0_countries.shp")
-    world = gpd.read_file(shapefile_path)
+    world = gpd.read_file(CPC.COUNTRY_SHAPE)
     country = False
 
     for index, row in world.iterrows():
