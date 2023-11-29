@@ -60,7 +60,7 @@ def get(**kwargs):
     """
 
     # create a ressource file and read
-    countries = pkgres.read_text(icoscp, 'countries.json')
+    countries = pkgres.read_text(icoscp, 'countries/countries.json')
     countries  = json.loads(countries)
 
     if not kwargs:
