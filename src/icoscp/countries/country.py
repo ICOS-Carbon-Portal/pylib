@@ -16,6 +16,9 @@ import geopandas as gpd
 from shapely.geometry import Point
 import icoscp.const as CPC
 
+
+WORLD = gpd.read_file(CPC.COUNTRY_SHAPE)
+
 def get(**kwargs):
     """
     Search country information.
@@ -146,10 +149,9 @@ def _c_reverse(lat: float, lon: float):
     as static file inside the module.
     '''
 
-    world = gpd.read_file(CPC.COUNTRY_SHAPE)
     country = False
 
-    for index, row in world.iterrows():
+    for index, row in WORLD.iterrows():
         if row.geometry.contains(Point(lon, lat)):
             country = row.SOV_A3.lower()
 
