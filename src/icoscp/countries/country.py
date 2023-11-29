@@ -148,14 +148,14 @@ def _c_reverse(lat: float, lon: float):
     is provided by Bjorn Sandvik, http://thematicmapping.org see readme.txt
     '''
 
-
-    world = pkgres.read_text(icoscp.countries, 'TM_WORLD_BORDERS-0.3.shp')
-    world = gpd.read_file(world)
+    shapefile_path = ("/data/project/cartopy/shapefiles/natural_earth/"
+                      "cultural/10m_admin_0_countries.shp")
+    world = gpd.read_file(shapefile_path)
     country = False
 
     for index, row in world.iterrows():
         if row.geometry.contains(Point(lon, lat)):
-            country = row.ISO2.lower()
+            country = row.SOV_A3.lower()
 
     return country
 
