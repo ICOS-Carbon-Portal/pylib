@@ -394,7 +394,7 @@ def __get_stations(ids=None, progress=True):
     stations = {}
 
     # load precomputed geoinfo
-    geo = geoinfo.get()
+    # geo = geoinfo.get()
 
     # fill dictionary with ICOS station id, latitude, longitude and altitude
     # implement progress True/False
