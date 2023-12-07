@@ -32,10 +32,11 @@ class RunSparql():
         :return False, if query is not successful otherwise output_format(results)
     """
 
-    def __init__(self, sparql_query='', output_format='txt'):
+    def __init__(self, sparql_query='', output_format='txt', disable_cache=False):
 
         self.format = output_format
         self.query = sparql_query
+        self.__disable_cache = disable_cache
         self.__result = False
 
     @property
@@ -98,9 +99,13 @@ class RunSparql():
 
         url = 'https://meta.icos-cp.eu/sparql'
 
-        # Disable cache control to get a response with correct content.
-        headers = {"Cache-Control": "no-cache", "Pragma": "no-cache"}
-        r = requests.get(url, params={'query': self.__query}, headers=headers)
+        headers = {"Accept": "application/json"}
+
+        if self.__disable_cache:
+            headers["Cache-Control"] = "no-cache"
+            headers["Pragma"] = "no-cache"
+
+        r = requests.post(url=url, headers=headers, data=bytes(self.__query, "utf-8"))
         if not r.ok:
             print(r.ok, r.reason)
             return r.ok, r.reason
