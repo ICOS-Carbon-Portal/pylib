@@ -26,7 +26,8 @@ from icoscp.cpb import dtype
 from icoscp.cpb import metadata
 import icoscp.const as CPC
 from icoscp.cpauth.authentication import Authentication
-from icoscp.cpauth.exceptions import AuthenticationError, warn_for_authentication_bypass
+from icoscp.cpauth.exceptions import AuthenticationError
+from icoscp.cpauth.exceptions import warn_for_authentication
 
 from json.decoder import JSONDecodeError
 
@@ -362,48 +363,49 @@ class Dobj():
             self.__portalUse()
         # Access through HTTP request.
         else:
+            warn_for_authentication()
             self._islocal = False
             response, content = None, None
             request_url, request_headers = None, None
-            if Authentication._bypass_auth:
-                warn_for_authentication_bypass(
-                    reason=Authentication._bypass_exception
-                )
-            # User authentication not in place.
-            elif not self.cp_auth and not Dobj._bypass_auth:
-                # Try obtaining the default authentication configuration.
-                try:
-                    self.cp_auth = Authentication()
-                # Initialize the authentication process if the
-                # configuration at the default location is not set or
-                # if it is wrongly formatted.
-                except JSONDecodeError as e:
-                    try:
-                        self.cp_auth = Authentication(initialize=True)
-                    except AuthenticationError as e:
-                        warn_for_authentication_bypass(reason=e)
-                except AuthenticationError as e:
-                    warn_for_authentication_bypass(reason=e)
-                else:
-                    if Authentication._bypass_auth:
-                        warn_for_authentication_bypass(
-                            reason=Authentication._bypass_exception
-                        )
-            # Authentication was successful.
-            if self.cp_auth and self.cp_auth.valid_token:
-                request_url = CPC.SECURED_DATA
-                # The API token should have been set by now either by
-                # authentication provided as an argument,
-                # authentication retrieved from the default location,
-                # or authentication reset; thus, set the headers for
-                # the post request.
-                request_headers = {'cookie': self.cp_auth.token}
-            # Fall back to anonymous data access if all other
-            # authentication ways fail.
-            else:
-                Dobj._bypass_auth = True
-                request_url = CPC.ANONYMOUS_DATA
-            # Request data either anonymously or in an authenticated way.
+
+            if not self.cp_auth or not self.cp_auth.valid_token:
+                self.cp_auth = Authentication()
+            request_url = CPC.SECURED_DATA
+            request_headers = {'cookie': self.cp_auth.token}
+
+            # # Authentication was successful.
+            # if self.cp_auth and self.cp_auth.valid_token:
+            #     request_url = CPC.SECURED_DATA
+            #     # The API token should have been set by now either by
+            #     # authentication provided as an argument,
+            #     # authentication retrieved from the default location,
+            #     # or authentication reset; thus, set the headers for
+            #     # the post request.
+            #     request_headers = {'cookie': self.cp_auth.token}
+            # else:
+            #     self.cp_auth = Authentication()
+            # # User authentication not in place.
+            # if not self.cp_auth and not Dobj._bypass_auth:
+            #     # Try obtaining the default authentication configuration.
+            #     try:
+            #         self.cp_auth = Authentication()
+            #     # Initialize the authentication process if the
+            #     # configuration at the default location is not set or
+            #     # if it is wrongly formatted.
+            #     except JSONDecodeError as e:
+            #         try:
+            #             self.cp_auth = Authentication(initialize=True)
+            #         except AuthenticationError as e:
+            #             warn_for_authentication_bypass(reason=e)
+            #     except AuthenticationError as e:
+            #         warn_for_authentication_bypass(reason=e)
+            #     else:
+            #         if Authentication._bypass_auth:
+            #             warn_for_authentication_bypass(
+            #                 reason=Authentication._bypass_exception
+            #             )
+
+            # Request secure data.
             response = requests.post(url=request_url,
                                      json=self._json,
                                      stream=True,

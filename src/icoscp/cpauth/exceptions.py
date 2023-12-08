@@ -1,6 +1,17 @@
 import warnings
 import icoscp.const as CPC
+import sys, traceback
 
+
+def exception_hook(exception_type, value, tb):
+    trace = traceback.format_tb(tb, limit=1)
+    trace = trace[0].split("\n")[0]
+    exc = traceback.format_exception_only(exception_type, value)[0]
+    print(trace + "\n" + exc)
+    return
+
+
+sys.excepthook = exception_hook
 
 class AuthenticationError(Exception):
 
@@ -33,22 +44,14 @@ class CredentialsError(Exception):
 
 def warn_for_authentication() -> None:
     warning = (
-        '\nThe ICOS Carbon Portal python library (>=0.1.20) requires user authentication for external users.\n'
-        f'Only credentials used for password sign-in at {CPC.CP_AUTH} can be used for authentication.\n'
+        '\nThe ICOS Carbon Portal python library (>=0.1.20) requires user '
+        'authentication for external users.\nOnly credentials used for '
+        'password sign-in at {CPC.CP_AUTH} can be used for authentication.\n'
         'Internal users (ICOS CP Jupyter Notebook services) are exempt.\n'
-        f'For the authentication module documentation, follow this link: {CPC.DOC_M_AUTH}\n'
-        f'To suppress this message we refer to the documentation here: {CPC.DOC_FAQ_WARNINGS}'
+        f'For the authentication module documentation, follow this link: '
+        f'{CPC.DOC_M_AUTH}\nTo suppress this message we refer to the '
+        f'documentation here: {CPC.DOC_FAQ_WARNINGS}'
     )
     warnings.warn(warning, category=FutureWarning)
     return
 
-
-def warn_for_authentication_bypass(reason: AuthenticationError = None) -> None:
-    warning = (
-        f'\nYour authentication at the ICOS Carbon Portal was unsuccessful due to: {reason}\n'
-        'Falling back to anonymous data access. Please, revisit your authentication configuration\n'
-        f'({CPC.DOC_M_AUTH}).\n'
-        f'Authentication will become mandatory (icoscp >= 0.1.20) for external users.'
-        )
-    warnings.warn(warning, category=UserWarning)
-    return

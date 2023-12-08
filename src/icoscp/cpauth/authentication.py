@@ -61,15 +61,6 @@ class Authentication:
 
     """
 
-    # Private class attribute used to bypass authentication if the
-    # first authentication attempt was unsuccessful. It is only
-    # applicable to off-server data access.
-    _bypass_auth = False
-    # Private class attribute used to provide a more user-friendly
-    # error messaging when authentication fails in combination with
-    # the Dobj() class.
-    _bypass_exception = None
-
     def __init__(self, username: str = None, password: str = None,
                  token: str = None, read_configuration: bool = True,
                  write_configuration: bool = True,
@@ -252,12 +243,8 @@ class Authentication:
             # Post credentials to cp-auth and check for validity.
             response = requests.post(url=url, data=data)
             response.raise_for_status()
-        except requests.exceptions.HTTPError as e:
-            try:
-                raise AuthenticationError(response)
-            except AuthenticationError as e:
-                Authentication._bypass_exception = e
-                Authentication._bypass_auth = True
+        except requests.exceptions.HTTPError:
+            raise AuthenticationError(response)
         else:
             if response.status_code == 200:
                 # Retrieve token from headers.
@@ -266,6 +253,8 @@ class Authentication:
                 # it was correctly retrieved (status_code == 200) using
                 # username and password.
                 self.valid_token = True
+            else:
+                print("something: " + response.text)
         return
 
     def _validate_token(self, *args: str) -> None:
@@ -277,21 +266,17 @@ class Authentication:
         try:
             response = requests.get(url=url, headers=headers)
             response.raise_for_status()
-        except requests.exceptions.HTTPError as e:
-            # Try to raise an exception if the token has expired, or
-            # it is invalid, and it is the only provided credential.
-            # In other cases the module will try to retrieve the
-            # token using username & password and the exception
-            # control is handled elsewhere. In fact this will not
-            # actually raise the exception but will give the error
-            # handling control to the Dobj class using
-            # Authentication's class attributes.
-            if 'no_raise' not in args:
-                try:
-                    raise AuthenticationError(response)
-                except AuthenticationError as e:
-                    Authentication._bypass_exception = e
-                    Authentication._bypass_auth = True
+        except requests.exceptions.HTTPError:
+            # Raise an exception (else-clause) if the token has
+            # expired, or it is invalid, and it is the only provided
+            # credential.
+            # In other cases (if-clause) the module will try to
+            # retrieve the token using username & password and the
+            # exception control is handled elsewhere.
+            if 'no_raise' in args:
+                pass
+            else:
+                raise AuthenticationError(response)
         else:
             if response.status_code == 200:
                 self.valid_token = True
