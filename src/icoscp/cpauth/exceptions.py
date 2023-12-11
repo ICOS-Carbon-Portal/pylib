@@ -44,13 +44,15 @@ class CredentialsError(Exception):
 
 def warn_for_authentication() -> None:
     warning = (
-        '\nThe ICOS Carbon Portal python library (>=0.1.20) requires user '
-        'authentication for external users.\nOnly credentials used for '
-        'password sign-in at {CPC.CP_AUTH} can be used for authentication.\n'
+        '\nThe ICOS Carbon Portal python library (>=0.1.20) requires user'
+        ' authentication for external users.\n'
+        f'Only credentials used for password sign-in at {CPC.CP_AUTH} can be'
+        f' used for authentication.\n'
         'Internal users (ICOS CP Jupyter Notebook services) are exempt.\n'
-        f'For the authentication module documentation, follow this link: '
-        f'{CPC.DOC_M_AUTH}\nTo suppress this message we refer to the '
-        f'documentation here: {CPC.DOC_FAQ_WARNINGS}'
+        'For the authentication module documentation, follow this link: '
+        f'{CPC.DOC_M_AUTH}\n'
+        'To suppress this message we refer to the documentation here: '
+        f'{CPC.DOC_FAQ_WARNINGS}'
     )
     warnings.warn(warning, category=FutureWarning)
     return
