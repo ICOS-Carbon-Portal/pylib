@@ -42,6 +42,9 @@ STILTTS = 'https://stilt.icos-cp.eu/viewer/stiltresult'
 # stiltresults all columns, raw
 STILTRAW = 'https://stilt.icos-cp.eu/viewer/stiltrawresult'
 
+# World's country shape file from natural earth.
+COUNTRY_SHAPE = "/data/project/cartopy/shapefiles/natural_earth/cultural/10m_admin_0_countries.shp"
+
 # Documentation
 DOC_PYLIB = 'https://icos-carbon-portal.github.io/pylib/'
 DOC_M_AUTH = 'https://icos-carbon-portal.github.io/pylib/modules/#authentication'

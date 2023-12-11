@@ -23,10 +23,9 @@ import pandas as pd
 from tqdm.notebook import tqdm
 from icoscp.station import station as cpstation
 from icoscp.stilt.stiltobj import StiltStation
-from icoscp.stilt import geoinfo
 from icoscp.stilt import fmap
 import icoscp.const as CPC
-import icoscp.country
+from icoscp.countries import country
 
 from icoscp.stilt import timefuncs as tf
 
@@ -386,6 +385,7 @@ def __get_stations(ids=None, progress=True):
     # from stations.csv file used in stiltweb.
     # this is available from the backend through a url
     df = pd.read_csv(CPC.STILTINFO)
+    df['Country'] = df['Country'].astype(str)
 
     # add ICOS flag to the station
     icos_stations_df = cpstation.getIdList(project='ICOS', theme='AS')    
@@ -393,8 +393,6 @@ def __get_stations(ids=None, progress=True):
     # dictionary to return
     stations = {}
 
-    # load precomputed geoinfo
-    geo = geoinfo.get()
 
     # fill dictionary with ICOS station id, latitude, longitude and altitude
     # implement progress True/False
@@ -432,15 +430,22 @@ def __get_stations(ids=None, progress=True):
                                      ist]['STILT name'].item())
             # get the index for this station, to extract corresponding 
             # ICOS sampling height from CPC.STILTINFO
-            idx = df.index[df['STILT id'] == ist].tolist()
+            idx = df.index[df['STILT id'] == ist].tolist()            
+            # set country code
+            
+            c_code = df.iloc[idx[0]]['Country']            
+            if not c_code =='nan':
+                 stations[ist]['country'] = c_code
             
         else:
+            country_code = ''
             stationName = ''
         
         stations[ist]['name'] = __stationName(stations[ist]['id'],
                                               stationName,
                                               stations[ist]['alt'])
 
+        
         # set a flag and metadata if it is an ICOS station
         
         #   convert the ICOS id to strings
@@ -477,24 +482,23 @@ def __get_stations(ids=None, progress=True):
             stations[ist][yy]['nmonths'] = len(stations[ist][yy]['months'])
             
         # add geoinfo
-        if ist in geo.keys():
-            #get the precomputed country info
-            stations[ist]['geoinfo'] = geo[ist]['geoinfo']
-        elif stations[ist]['icos']:
+        # if station is in the manual curated list, see above where where the
+        # stationname is set..... the dict contains now a key country
+        
+        if 'country' in stations[ist]:
+            stations[ist]['geoinfo'] = country.get(code=stations[ist]['country'])
+        
+        # else.. use lat lon for a reverse lookup.. ICOS coordiantes have preference
+        elif stations[ist]['icos']:            
             # get country from ICOS coordinates
-            stations[ist]['geoinfo'] = __country([stations[ist]['icos']['lat'],stations[ist]['icos']['lon']])
+            stations[ist]['geoinfo'] = country.get(latlon=[stations[ist]['icos']['lat'],stations[ist]['icos']['lon']])
+            
         else:
             # get country from STILT coordiantes
-            stations[ist]['geoinfo'] = __country([stations[ist]['lat'],stations[ist]['lon']])
+            stations[ist]['geoinfo'] = country.get(latlon=[stations[ist]['lat'],stations[ist]['lon']])
             
-
+        
     return stations
-
-
-def __country(latlon):
-    # be aware, that by providing latlon
-    # triggers an external reverse geocoder.
-    return icoscp.country.get(latlon=latlon)
 
 
 def __stationName(idx, name, alt):
