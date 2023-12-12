@@ -1,13 +1,15 @@
 import warnings
 import icoscp.const as CPC
 import sys, traceback
+from typing import Optional
 
 
 def exception_hook(exception_type, value, tb):
-    trace = traceback.format_tb(tb, limit=1)
-    trace = trace[0].split("\n")[0]
-    exc = traceback.format_exception_only(exception_type, value)[0]
-    print(trace + "\n" + exc)
+    if exception_type in [AuthenticationError, CredentialsError]:
+        traceback.print_exception(exception_type, value, tb, limit=1)
+    else:
+        # Handle standard exceptions
+        traceback.print_exception(exception_type, value, tb)
     return
 
 
@@ -15,7 +17,7 @@ sys.excepthook = exception_hook
 
 class AuthenticationError(Exception):
 
-    def __init__(self, response=None):
+    def __init__(self, config_file: Optional[str] = None, response=None):
         self.exception_message = None
         if response is None:
             exception_message = 'Missing credentials.'
@@ -26,7 +28,8 @@ class AuthenticationError(Exception):
             # explanation in the response message, so make it simpler.
             else:
                 exception_message = (
-                    f'Invalid token format. Please re-enter your token.'
+                    f"Token and/or password in {config_file} have"
+                    " invalid format. Please remove your configuration file."
                 )
         else:
             exception_message = f'{response.text}.'
@@ -38,7 +41,8 @@ class AuthenticationError(Exception):
 class CredentialsError(Exception):
 
     def __init__(self, configuration_file):
-        exception_message = f'Incomplete login information in file: \'{configuration_file}\''
+        exception_message = \
+            f'Incomplete login information in file: \'{configuration_file}\''
         super().__init__(exception_message)
 
 
@@ -55,5 +59,6 @@ def warn_for_authentication() -> None:
         f'{CPC.DOC_FAQ_WARNINGS}'
     )
     warnings.warn(warning, category=FutureWarning)
+    sys.stderr.flush()
     return
 

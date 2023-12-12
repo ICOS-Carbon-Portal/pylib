@@ -1,14 +1,18 @@
 # Standard library imports.
-import binascii
 from datetime import datetime
+from typing import Optional
 import base64
+import binascii
 import getpass
 import json
 import os
 
 # Related third party imports.
-from icoscp.cpauth.exceptions import AuthenticationError, CredentialsError
 import requests
+
+# Local library imports.
+from icoscp.cpauth.exceptions import AuthenticationError, CredentialsError, \
+    warn_for_authentication
 
 
 def init_auth():
@@ -115,6 +119,7 @@ class Authentication:
             elif not self.write_configuration:
                 self._initialize_no_store()
             else:
+                warn_for_authentication()
                 self._initialize()
             # Error handling for wrong credentials' formatting in the
             # configuration file.
@@ -199,8 +204,8 @@ class Authentication:
         # Case of present configuration file with written content.
         if os.path.getsize(self.configuration_file):
             user_input = input(
-                'Detected content or wrongly formatted content '
-                f'in configuration\nfile: \'{self.configuration_file}\'.\n'
+                'Detected wrongly formatted content in configuration\n'
+                f'file: \'{self.configuration_file}\'.\n'
                 'This action will reset your configuration file.\n'
                 'Do you want to continue? [Y/n]: '
             )
@@ -244,7 +249,7 @@ class Authentication:
             response = requests.post(url=url, data=data)
             response.raise_for_status()
         except requests.exceptions.HTTPError:
-            raise AuthenticationError(response)
+            raise AuthenticationError(response=response)
         else:
             if response.status_code == 200:
                 # Retrieve token from headers.
@@ -253,8 +258,6 @@ class Authentication:
                 # it was correctly retrieved (status_code == 200) using
                 # username and password.
                 self.valid_token = True
-            else:
-                print("something: " + response.text)
         return
 
     def _validate_token(self, *args: str) -> None:
@@ -276,7 +279,8 @@ class Authentication:
             if 'no_raise' in args:
                 pass
             else:
-                raise AuthenticationError(response)
+                raise AuthenticationError(config_file=self.configuration_file,
+                                          response=response)
         else:
             if response.status_code == 200:
                 self.valid_token = True
@@ -346,19 +350,19 @@ class Authentication:
         b64_password_string = b64_password_bytes.decode(encoding='utf-8')
         return b64_password_string
 
-    def _extract_password(self, password_value: str = None) -> None:
+    def _extract_password(self, password_value: Optional[str]) -> None:
         """Decode or extract clear text password."""
         try:
             password_bytes = base64.b64decode(password_value)
+            self._password = password_bytes.decode(encoding='utf-8')
         # Password in file was not encoded.
-        except binascii.Error as e:
+        except binascii.Error:
             self._password = password_value
         # Password in file was None.
-        except TypeError as e:
+        except TypeError:
             self._password = None
-        else:
-            # Decode base64 formatted password.
-            self._password = password_bytes.decode(encoding='utf-8')
+        except UnicodeDecodeError:
+            self._password = None
         return
 
     def __str__(self):

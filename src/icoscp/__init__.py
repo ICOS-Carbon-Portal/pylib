@@ -1,5 +1,3 @@
-from icoscp.cpauth.exceptions import warn_for_authentication
-
 """
     The ICOS CarbonPortal package provides access to data hosted at the
     Carbon Portal. ( https://data.icos-cp.eu/ )    
