@@ -5,13 +5,6 @@ from typing import Optional
 from IPython.core.getipython import get_ipython
 ipython = get_ipython()
 
-def hide_traceback(exc_tuple=None, filename=None, tb_offset=None,
-                   exception_only=False, running_compiled_code=False):
-    print(exc_tuple)
-    etype, value, tb = sys.exc_info()
-    return ipython._showtraceback(
-        etype, value, ipython.InteractiveTB.get_exception_only(etype, value)
-    )
 
 def exception_hook(exception_type, value, tb):
     if exception_type in [AuthenticationError, CredentialsError]:
@@ -21,12 +14,7 @@ def exception_hook(exception_type, value, tb):
         traceback.print_exception(exception_type, value, tb)
     return
 
-# Limit traceback stack.
-if ipython:
-    ipython.showtraceback = hide_traceback
-else:
-    sys.excepthook = exception_hook
-
+sys.excepthook = exception_hook
 
 
 class AuthenticationError(Exception):
@@ -48,7 +36,14 @@ class AuthenticationError(Exception):
         else:
             exception_message = f'{response.text}.'
         self.exception_message = exception_message
-        super().__init__(exception_message)
+        if ipython:
+            ipython.showtraceback = None
+            exception = str(AuthenticationError).\
+                replace("<class '", "").\
+                replace("'>", "")
+            print(f"{exception}: {self.exception_message}")
+        else:
+            super().__init__(self.exception_message)
         return
 
 
@@ -57,7 +52,14 @@ class CredentialsError(Exception):
     def __init__(self, configuration_file):
         exception_message = \
             f'Incomplete login information in file: \'{configuration_file}\''
-        super().__init__(exception_message)
+        if ipython:
+            ipython.showtraceback = None
+            exception = str(CredentialsError).\
+                replace("<class '", "").\
+                replace("'>", "")
+            print(f"{exception}: {exception_message}")
+        else:
+            super().__init__(exception_message)
 
 
 def warn_for_authentication() -> None:
