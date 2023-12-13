@@ -2,7 +2,16 @@ import warnings
 import icoscp.const as CPC
 import sys, traceback
 from typing import Optional
+from IPython.core.getipython import get_ipython
+ipython = get_ipython()
 
+def hide_traceback(exc_tuple=None, filename=None, tb_offset=None,
+                   exception_only=False, running_compiled_code=False):
+    print(exc_tuple)
+    etype, value, tb = sys.exc_info()
+    return ipython._showtraceback(
+        etype, value, ipython.InteractiveTB.get_exception_only(etype, value)
+    )
 
 def exception_hook(exception_type, value, tb):
     if exception_type in [AuthenticationError, CredentialsError]:
@@ -12,8 +21,13 @@ def exception_hook(exception_type, value, tb):
         traceback.print_exception(exception_type, value, tb)
     return
 
+# Limit traceback stack.
+if ipython:
+    ipython.showtraceback = hide_traceback
+else:
+    sys.excepthook = exception_hook
 
-sys.excepthook = exception_hook
+
 
 class AuthenticationError(Exception):
 
@@ -55,10 +69,8 @@ def warn_for_authentication() -> None:
         'Internal users (ICOS CP Jupyter Notebook services) are exempt.\n'
         'For the authentication module documentation, follow this link: '
         f'{CPC.DOC_M_AUTH}\n'
-        'To suppress this message we refer to the documentation here: '
-        f'{CPC.DOC_FAQ_WARNINGS}'
     )
-    warnings.warn(warning, category=FutureWarning)
+    warnings.warn(warning, category=Warning)
     sys.stderr.flush()
     return
 
