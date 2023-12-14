@@ -110,7 +110,7 @@ class Authentication:
                 # Try to validate using username & password if token
                 # is invalid.
                 else:
-                    self._retrieve_token()
+                    self._retrieve_token('reset_config')
                     self._extract_token_information()
             # Case of set token only.
             elif self.token:
@@ -239,7 +239,7 @@ class Authentication:
             os.utime(self.configuration_file)
         return
 
-    def _retrieve_token(self) -> None:
+    def _retrieve_token(self, *args: str) -> None:
         """Retrieve token using username and password."""
         url = 'https://cpauth.icos-cp.eu/password/login'
         data = {'mail': self.username, 'password': self._password}
@@ -249,7 +249,11 @@ class Authentication:
             response = requests.post(url=url, data=data)
             response.raise_for_status()
         except requests.exceptions.HTTPError:
-            raise AuthenticationError(response=response)
+            if "reset_config" in args:
+                raise AuthenticationError("reset_config", response=response,
+                                          config_file=self.configuration_file)
+            else:
+                raise AuthenticationError(response=response)
         else:
             if response.status_code == 200:
                 # Retrieve token from headers.

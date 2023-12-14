@@ -19,18 +19,19 @@ sys.excepthook = exception_hook
 
 class AuthenticationError(Exception):
 
-    def __init__(self, config_file: Optional[str] = None, response=None):
+    def __init__(self, *args: str, config_file: Optional[str] = None,
+                 response=None) -> None:
         self.exception_message = None
         if response is None:
             exception_message = 'Missing credentials.'
-        elif response.status_code == 401:
+        elif response.status_code == 401 or "reset_config" in args:
             if 'Authentication token has expired' in response.text:
                 exception_message = 'Authentication token has expired.'
             # All cases except token expiration have a more technical
             # explanation in the response message, so make it simpler.
             else:
                 exception_message = (
-                    f"Token and/or password in {config_file} have"
+                    f"Token and/or password in \"{config_file}\" have"
                     " invalid format. Please remove your configuration file."
                 )
         else:
