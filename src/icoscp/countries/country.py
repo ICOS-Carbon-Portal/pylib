@@ -27,7 +27,7 @@ except DriverError as e:
     WORLD = None
     off_server_countries_warning = (
         "Please be aware, that the reverse geocoding functionality of the "
-        "COUNTRIES module is not available locally (outside of the Virtual "
+        "\"countries\" module is not available locally (outside of the Virtual "
         "Environment at the ICOS Carbon Portal). You must use one of our "
         "Jupyter Services. Visit "
         "https://www.icos-cp.eu/data-services/tools/jupyter-notebook for "
