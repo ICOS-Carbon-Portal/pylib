@@ -164,7 +164,7 @@ def _c_reverse(lat: float, lon: float):
     to on-server use.
     """
     country = False
-    if WORLD:
+    if WORLD.empty:
         for index, row in WORLD.iterrows():
             if row.geometry.contains(Point(lon, lat)):
                 country = row.SOV_A3.lower()
