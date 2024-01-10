@@ -11,13 +11,30 @@
 
 import importlib.resources as pkgres
 import json
+import sys
+import warnings
+
+from fiona.errors import DriverError
 import icoscp
 import geopandas as gpd
 from shapely.geometry import Point
 import icoscp.const as CPC
 
 
-WORLD = gpd.read_file(CPC.COUNTRY_SHAPE)
+try:
+    WORLD = gpd.read_file(CPC.COUNTRY_SHAPE)
+except DriverError as e:
+    WORLD = None
+    off_server_countries_warning = (
+        "Please be aware, that the reverse geocoding functionality of the "
+        "\"countries\" module is not available locally (outside of the Virtual "
+        "Environment at the ICOS Carbon Portal). You must use one of our "
+        "Jupyter Services. Visit "
+        "https://www.icos-cp.eu/data-services/tools/jupyter-notebook for "
+        "further information."
+    )
+    warnings.warn(off_server_countries_warning, category=Warning)
+    sys.stderr.flush()
 
 def get(**kwargs):
     """
@@ -139,22 +156,18 @@ def _c_name(name, countries):
 
 
 def _c_reverse(lat: float, lon: float):
-    '''
-    reverse geocoder using geopanda and shapely
-    we could use the in-built dataset from natural earth like this
+    """
+    Reverse geocoder using geopandas and shapely.
 
-    world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-
-    but I chose to be 100% offline and to provide the world borders
-    as static file inside the module.
-    '''
-
+    Shapefiles are directly accessed from the /data directory of
+    the ICOS Carbon Portal; currently, this functionality is limited
+    to on-server use.
+    """
     country = False
-
-    for index, row in WORLD.iterrows():
-        if row.geometry.contains(Point(lon, lat)):
-            country = row.SOV_A3.lower()
-
+    if WORLD.empty:
+        for index, row in WORLD.iterrows():
+            if row.geometry.contains(Point(lon, lat)):
+                country = row.SOV_A3.lower()
     return country
 
 

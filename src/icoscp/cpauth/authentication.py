@@ -1,14 +1,18 @@
 # Standard library imports.
-import binascii
 from datetime import datetime
+from typing import Optional
 import base64
+import binascii
 import getpass
 import json
 import os
 
 # Related third party imports.
-from icoscp.cpauth.exceptions import AuthenticationError, CredentialsError
 import requests
+
+# Local library imports.
+from icoscp.cpauth.exceptions import AuthenticationError, CredentialsError, \
+    warn_for_authentication
 
 
 def init_auth():
@@ -61,15 +65,6 @@ class Authentication:
 
     """
 
-    # Private class attribute used to bypass authentication if the
-    # first authentication attempt was unsuccessful. It is only
-    # applicable to off-server data access.
-    _bypass_auth = False
-    # Private class attribute used to provide a more user-friendly
-    # error messaging when authentication fails in combination with
-    # the Dobj() class.
-    _bypass_exception = None
-
     def __init__(self, username: str = None, password: str = None,
                  token: str = None, read_configuration: bool = True,
                  write_configuration: bool = True,
@@ -115,7 +110,7 @@ class Authentication:
                 # Try to validate using username & password if token
                 # is invalid.
                 else:
-                    self._retrieve_token()
+                    self._retrieve_token('reset_config')
                     self._extract_token_information()
             # Case of set token only.
             elif self.token:
@@ -124,6 +119,7 @@ class Authentication:
             elif not self.write_configuration:
                 self._initialize_no_store()
             else:
+                warn_for_authentication()
                 self._initialize()
             # Error handling for wrong credentials' formatting in the
             # configuration file.
@@ -208,8 +204,8 @@ class Authentication:
         # Case of present configuration file with written content.
         if os.path.getsize(self.configuration_file):
             user_input = input(
-                'Detected content or wrongly formatted content '
-                f'in configuration\nfile: \'{self.configuration_file}\'.\n'
+                'Detected wrongly formatted content in configuration\n'
+                f'file: \'{self.configuration_file}\'.\n'
                 'This action will reset your configuration file.\n'
                 'Do you want to continue? [Y/n]: '
             )
@@ -243,7 +239,7 @@ class Authentication:
             os.utime(self.configuration_file)
         return
 
-    def _retrieve_token(self) -> None:
+    def _retrieve_token(self, *args: str) -> None:
         """Retrieve token using username and password."""
         url = 'https://cpauth.icos-cp.eu/password/login'
         data = {'mail': self.username, 'password': self._password}
@@ -252,12 +248,12 @@ class Authentication:
             # Post credentials to cp-auth and check for validity.
             response = requests.post(url=url, data=data)
             response.raise_for_status()
-        except requests.exceptions.HTTPError as e:
-            try:
-                raise AuthenticationError(response)
-            except AuthenticationError as e:
-                Authentication._bypass_exception = e
-                Authentication._bypass_auth = True
+        except requests.exceptions.HTTPError:
+            if "reset_config" in args:
+                raise AuthenticationError("reset_config", response=response,
+                                          config_file=self.configuration_file)
+            else:
+                raise AuthenticationError(response=response)
         else:
             if response.status_code == 200:
                 # Retrieve token from headers.
@@ -277,21 +273,18 @@ class Authentication:
         try:
             response = requests.get(url=url, headers=headers)
             response.raise_for_status()
-        except requests.exceptions.HTTPError as e:
-            # Try to raise an exception if the token has expired, or
-            # it is invalid, and it is the only provided credential.
-            # In other cases the module will try to retrieve the
-            # token using username & password and the exception
-            # control is handled elsewhere. In fact this will not
-            # actually raise the exception but will give the error
-            # handling control to the Dobj class using
-            # Authentication's class attributes.
-            if 'no_raise' not in args:
-                try:
-                    raise AuthenticationError(response)
-                except AuthenticationError as e:
-                    Authentication._bypass_exception = e
-                    Authentication._bypass_auth = True
+        except requests.exceptions.HTTPError:
+            # Raise an exception (else-clause) if the token has
+            # expired, or it is invalid, and it is the only provided
+            # credential.
+            # In other cases (if-clause) the module will try to
+            # retrieve the token using username & password and the
+            # exception control is handled elsewhere.
+            if 'no_raise' in args:
+                pass
+            else:
+                raise AuthenticationError(config_file=self.configuration_file,
+                                          response=response)
         else:
             if response.status_code == 200:
                 self.valid_token = True
@@ -361,19 +354,19 @@ class Authentication:
         b64_password_string = b64_password_bytes.decode(encoding='utf-8')
         return b64_password_string
 
-    def _extract_password(self, password_value: str = None) -> None:
+    def _extract_password(self, password_value: Optional[str]) -> None:
         """Decode or extract clear text password."""
         try:
             password_bytes = base64.b64decode(password_value)
+            self._password = password_bytes.decode(encoding='utf-8')
         # Password in file was not encoded.
-        except binascii.Error as e:
+        except binascii.Error:
             self._password = password_value
         # Password in file was None.
-        except TypeError as e:
+        except TypeError:
             self._password = None
-        else:
-            # Decode base64 formatted password.
-            self._password = password_bytes.decode(encoding='utf-8')
+        except UnicodeDecodeError:
+            self._password = None
         return
 
     def __str__(self):
