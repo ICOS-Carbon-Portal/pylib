@@ -38,10 +38,12 @@ classifiers = [
 
 requires-python = ">=3.7"
 dependencies = [
+    "fiona",
+    "folium",
+    "geopandas",
     "pandas",
     "requests",
     "tqdm",
-    "folium",
 ]
 
 
