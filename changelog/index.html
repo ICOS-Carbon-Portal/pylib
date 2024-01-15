@@ -1,71 +1,88 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Changelog - ICOS Carbon Portal pylib</title>
-    <link rel="stylesheet" href="../css/theme.css" />
-    <link rel="stylesheet" href="../css/theme_extra.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
-    
-      <script>
-        // Current page data
-        var mkdocs_page_name = "Changelog";
-        var mkdocs_page_input_path = "changelog.md";
-        var mkdocs_page_url = null;
-      </script>
-    
-    <script src="../js/jquery-3.6.0.min.js" defer></script>
-    <!--[if lt IE 9]>
-      <script src="../js/html5shiv.min.js"></script>
-    <![endif]-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-      <script>hljs.initHighlightingOnLoad();</script> 
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Changelog - ICOS Carbon Portal pylib</title>
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Changelog";
+    var mkdocs_page_input_path = "changelog.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
 </head>
 
 <body class="wy-body-for-nav" role="document">
 
   <div class="wy-grid-for-nav">
+
+    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
-          <a href=".." class="icon icon-home"> ICOS Carbon Portal pylib
-        </a><div role="search">
+        <a href=".." class="icon icon-home"> ICOS Carbon Portal pylib</a>
+        <div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="..">About</a>
-                </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../install/">Installation</a>
-                </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../modules/">Modules</a>
-                </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../examples/">Examples</a>
-                </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../faq/">FAQ</a>
-                </li>
-              </ul>
-              <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href="./">Changelog</a>
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">About</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../install/">Installation</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../modules/">Modules</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../examples/">Examples</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../faq/">FAQ</a>
+                    </li>
+                </ul>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Changelog</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#0120">0.1.20</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#country-module">country module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#cpauth-module">cpauth module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sparql-module">sparql module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module">stilt module</a>
+    </li>
+        </ul>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#0119">0.1.19</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#stilt-module">stilt module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_1">stilt module</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#documentation">documentation</a>
     </li>
@@ -75,11 +92,11 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#0118">0.1.18</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#cpauth-module">cpauth module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#cpauth-module_1">cpauth module</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#cpb-module">cpb module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_1">stilt module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_2">stilt module</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#station-module">station module</a>
     </li>
@@ -89,9 +106,9 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#station-module_1">station module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#sparql-module">sparql module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#sparql-module_1">sparql module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_2">stilt module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_3">stilt module</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#other-changes">other changes</a>
     </li>
@@ -103,7 +120,7 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#station-module_2">station module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_3">stilt module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_4">stilt module</a>
     </li>
         </ul>
     </li>
@@ -144,36 +161,75 @@
     <li class="toctree-l2"><a class="reference internal" href="#012">0.1.2</a>
     </li>
     </ul>
-                </li>
-              </ul>
+                    </li>
+                </ul>
       </div>
     </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="..">ICOS Carbon Portal pylib</a>
-        
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">ICOS Carbon Portal pylib</a>
       </nav>
+
+      
       <div class="wy-nav-content">
-        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
-      <li>Changelog</li>
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Changelog</li>
     <li class="wy-breadcrumbs-aside">
+      
     </li>
   </ul>
+  
   <hr/>
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-            <div class="section" itemprop="articleBody">
+          <div role="main">
+            <div class="section">
               
                 <h1 id="changelog">Changelog</h1>
+<h2 id="0120">0.1.20</h2>
+<ul>
+<li>
+<h4 id="country-module">country module</h4>
+<ul>
+<li>Make the reverse geocoding functionality available only to users
+   with access to the ICOS Jupyter Hub.</li>
+<li>Replace the nominatim reverse geocoder with on-server access to 
+   shapefiles.</li>
+</ul>
+</li>
+<li>
+<h4 id="cpauth-module">cpauth module</h4>
+<ul>
+<li>Enforce secure data access via mandatory authentication.</li>
+</ul>
+</li>
+<li>
+<h4 id="sparql-module">sparql module</h4>
+<ul>
+<li>Accept cached SPARQL responses by default.</li>
+</ul>
+</li>
+<li>
+<h4 id="stilt-module">stilt module</h4>
+<ul>
+<li>Obtain country information more accurately.</li>
+</ul>
+</li>
+</ul>
 <h2 id="0119">0.1.19</h2>
 <ul>
 <li>
-<h4 id="stilt-module">stilt module</h4>
+<h4 id="stilt-module_1">stilt module</h4>
 <ul>
 <li>Filter out <code>.zip</code> data files from <code>stiltweb</code> data structure.</li>
 </ul>
@@ -197,7 +253,7 @@
 <h2 id="0118">0.1.18</h2>
 <ul>
 <li>
-<h4 id="cpauth-module">cpauth module</h4>
+<h4 id="cpauth-module_1">cpauth module</h4>
    Implement authentication for secure data access. The full documentation of
    the authentication module can be found <a href="https://icos-carbon-portal.github.io/pylib/modules/#authentication">here</a>.</li>
 <li>
@@ -210,7 +266,7 @@
 </ul>
 </li>
 <li>
-<h4 id="stilt-module_1">stilt module</h4>
+<h4 id="stilt-module_2">stilt module</h4>
 <ul>
 <li>Remove mutable default arguments from functions in the <code>stilt</code> module.</li>
 <li>Update availability table, such that only 'real' ICOS stations get an
@@ -241,13 +297,13 @@
 </ul>
 </li>
 <li>
-<h4 id="sparql-module">sparql module</h4>
+<h4 id="sparql-module_1">sparql module</h4>
    In the background the station class use sparql queries, and <code>sparqls.py</code> has been endowed with station query function:  <ul>
 <li><code>sparqls.station_query()</code>, the function has a filter parameter with which the experienced user for example can use to fetch stations in a list of countries.  </li>
 </ul>
 </li>
 <li>
-<h4 id="stilt-module_2">stilt module</h4>
+<h4 id="stilt-module_3">stilt module</h4>
 <ul>
 <li>Update <code>xarray</code> call in <code>stiltobj.py</code>.</li>
 </ul>
@@ -279,7 +335,7 @@
 </ul>
 </li>
 <li>
-<h4 id="stilt-module_3">stilt module</h4>
+<h4 id="stilt-module_4">stilt module</h4>
 <ul>
 <li>Regenerate STILT module's static file <code>stations.json</code>.</li>
 </ul>
@@ -423,20 +479,27 @@
 </ul>
               
             </div>
-          </div><footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../faq/" class="btn btn-neutral float-left" title="FAQ"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../faq/" class="btn btn-neutral" title="FAQ"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
     </div>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <!-- Copyright etc -->
+    
   </div>
 
-  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
-          
+      
         </div>
       </div>
 
@@ -444,17 +507,16 @@
 
   </div>
 
-  <div class="rst-versions" role="note" aria-label="Versions">
-  <span class="rst-current-version" data-toggle="rst-current-version">
-    
-    
-      <span><a href="../faq/" style="color: #fcfcfc">&laquo; Previous</a></span>
-    
-    
-  </span>
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../faq/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+    </span>
 </div>
     <script>var base_url = '..';</script>
-    <script src="../js/theme_extra.js" defer></script>
     <script src="../js/theme.js" defer></script>
       <script src="../search/main.js" defer></script>
     <script defer>
