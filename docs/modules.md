@@ -856,10 +856,10 @@ sparql query is not executable because of syntax errors, for example, a TUPLE is
 
 ## Authentication
 To ensure users' **licence** acceptance, when **accessing data objects**
-through the icoscp python library, the `cpauth` module is introduced. The
-module will be available from icoscp version 0.1.18 and onwards. Starting with
-the next release (0.1.19) users MUST have ICOS Carbon Portal login credentials
-to access ICOS data. 
+through the icoscp python library, the `cpauth` module is introduced. Users
+MUST have 
+[ICOS Carbon Portal login credentials](https://cpauth.icos-cp.eu/login/) to 
+access ICOS data. 
 
 ### Overview
 In order to fetch data, users make their requests to data objects and must
@@ -1234,13 +1234,12 @@ To suppress `future warnings` or `user warnings` messages, please, refer to
 
 <hr>  
 
-## Country
-Search country information, define global (to icoscp) a common tool to search for country 
-information based on a static local file within the library (`country.json`). Search is 
-facilitated through Alphanumeric 2 & 3 Code characters and arbitrary text search. Credit to  
-[https://github.com/mledoze/countries](https://github.com/mledoze/countries). Further a reverse 
-geocoder search is provided through OSM. (credit to 
-[https://nominatim.openstreetmap.org](https://nominatim.openstreetmap.org)). 
+## Countries
+Search for country information based on a static local file within the 
+library (`countries.json`). Search is facilitated through Alphanumeric
+2 & 3 Code characters and arbitrary text search. Credit to
+[https://github.com/mledoze/countries](https://github.com/mledoze/countries). 
+Further a reverse geocoder search is provided using on-server shapefiles.
 
 Please note: in case you provide more than one parameter, the order of keywords is not 
 respected. The execution order is always like the function signature and as soon as a result is 
@@ -1262,20 +1261,19 @@ Accepted keywords: code='', name='', latlon=[], search=''
         Search by ISO 3166-1 2-letter or 3-letter country codes
 
     name : STR
-        search by country name, including alternativ spellings.
+        search by country name, including alternative spellings.
         It can be the native name or a partial name.
 
     latlon : List[]
         List with two integer or floating point numbers representing
-        latitude and longitude. BE AWARE: using an external service
-        from openstreetmap for reverse geocoding
+        latitude and longitude. BE AWARE: This functionality is only available
+		to users with access to the ICOS Carbon Portal Jupyter Hub.
 
     search : STR
-        arbitrary text search, not case sensitiv, search in all fields
+        arbitrary text search, not case sensitive, search in all fields
 
 #### Returns
 
 - DICT: if a single country is found
 - LIST[DICT]: list of dictionaries if more than one country is found
 - BOOL (False) if no result
-

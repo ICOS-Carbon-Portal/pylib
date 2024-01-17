@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.20
+ - #### country module
+     - Make the reverse geocoding functionality available only to users
+       with access to the ICOS Jupyter Hub.
+     - Replace the nominatim reverse geocoder with on-server access to 
+       shapefiles.
+ - #### cpauth module
+     - Enforce secure data access via mandatory authentication.
+ - #### sparql module
+     - Accept cached SPARQL responses by default.
+ - #### stilt module
+     - Obtain country information more accurately.
+
 ## 0.1.19
  - #### stilt module
      - Filter out `.zip` data files from `stiltweb` data structure.
