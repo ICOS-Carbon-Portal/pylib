@@ -1,12 +1,13 @@
-from icoscp_core.icos import meta, data, auth
+from icoscp_core.icos import meta, data
 from icoscp_core.metacore import DataObject, URI, StationTimeSeriesMeta
 from icoscp_todo import constants as c
 from icoscp_todo.exceptions import UriValueError, FormatValueError, \
     MetaTypeError
-from typing import Optional, Any, TypedDict
+from typing import Optional, Any, TypedDict, TypeAlias, Literal
 from dataclasses import asdict
 import pandas as pd
 
+CitationFormat: TypeAlias = Literal["plain", "bibtex", "ris"]
 
 class LicenceDict(TypedDict):
     baseLicence: Optional[str]
@@ -45,35 +46,26 @@ class Dobj:
         return asdict(self.metadata)
 
     @property
-    def citation(self) -> Optional[str]:
-        # Mypy will complain if we set the return statement without
-        # the None fallback.
-        return self.metadata.references.citationString or None
+    def citation(self) -> str | None:
+        return self.metadata.references.citationString
 
     @property
-    # def licence(self) -> dict[str, Optional[str]]:
-    #     licence = self.metadata.references.licence
-    #     return {
-    #         "baseLicence": licence.baseLicence,
-    #         "name": licence.name,
-    #         "url": licence.url,
-    #         "webpage": licence.webpage
-    #     }
-    def licence(self) -> LicenceDict:
+    def licence(self) -> LicenceDict | None:
         licence = self.metadata.references.licence
+
         return LicenceDict(
             baseLicence=licence.baseLicence,
             name=licence.name,
             url=licence.url,
             webpage=licence.webpage
-        )
+        ) if licence else None
 
     @property
-    def previous(self) -> Optional[URI | list[URI]]:
+    def previous(self) -> URI | list[URI] | None:
         return self.metadata.previousVersion
 
     @property
-    def next(self) -> Optional[URI | list[URI]]:
+    def next(self) -> URI | list[URI] | None:
         return self.metadata.nextVersion
 
     @property
@@ -90,7 +82,7 @@ class Dobj:
     def data(self) -> pd.DataFrame:
         return self.get(columns=None)
 
-    def get_citation(self, format: str = "plain") -> Optional[str]:
+    def get_citation(self, format: CitationFormat = "plain") -> str | None:
         """
         Extract the citation string in the requested format.
 
@@ -102,23 +94,18 @@ class Dobj:
         """
 
         references = self.metadata.references
-        format_attr = {
-            "plain": "citationString",
-            "bibtex": "citationBibTex",
-            "ris": "citationRis"
-        }.get(format)
-        if format_attr is not None:
-            citation = getattr(references, format_attr)
-            return str(citation) if citation else None
-        else:
-            raise FormatValueError(unsupported_format=format)
+        match format:
+            case "plain":  return references.citationString
+            case "bibtex": return references.citationBibTex
+            case "ris":    return references.citationRis
+            case _:        raise FormatValueError(unsupported_format=format) # type: ignore
 
     def variables(self) -> pd.DataFrame:
         """
         Extracts all variables from a metadata object.
 
         Please remember that this list contains variables which are
-        "preview-able" at https://data.icoscp.eu. These variables are
+        "preview-able" at https://data.icos-cp.eu. These variables are
         considered the most useful for a quick glance. More variables
         may be available, If you download the data to your computer.
 
