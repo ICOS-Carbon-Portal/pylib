@@ -32,7 +32,9 @@ Install directly from our github master branch. Please be aware that this is not
 ## Dependencies
 The following modules are required by the library:
 
-	- requests
-	- pandas
-	- tqdm
-	- folium
+    - fiona
+    - folium
+    - geopandas
+    - pandas
+    - requests
+    - tqdm
