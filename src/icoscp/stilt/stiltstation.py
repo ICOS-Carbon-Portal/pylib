@@ -21,11 +21,12 @@ import os
 import json
 import pandas as pd
 from tqdm.notebook import tqdm
-from icoscp.station import station as cpstation
+from icoscp.station import station as icos_station
 from icoscp.stilt.stiltobj import StiltStation
 from icoscp.stilt import fmap
 import icoscp.const as CPC
 from icoscp.countries import country
+from pathlib import Path
 
 from icoscp.stilt import timefuncs as tf
 
@@ -365,21 +366,13 @@ def __get_stations(ids=None, progress=True):
         return dictionary with metadata, keys are stilt station id's
     """
 
-    # invert the progress parameter, tqdm interpretation is
-    # DEFAULT disable = False -> progressbar is visible
-    progress = not progress
-    
     # Use directory listing from stilt-web data. Ignore stations that
     # may be in the queue but are not finished yet.
-    allStations = [s for s in os.listdir(CPC.STILTPATH) if os.path.exists(CPC.STILTPATH + s)]
-    
-    # if ids are provided, select only valid ids from allstations
-    if ids:
-        # make sure they are all upper case
-        ids = [i.upper() for i in ids]
-        #select only valid id from allstations
-        allStations = list(set(ids).intersection(allStations))
-
+    p = Path(CPC.STILTPATH)
+    all_stations = [x.name for x in p.iterdir() if x.is_dir()]
+    requested_stations = list(
+        set([i.upper() for i in ids]).intersection(all_stations)
+    ) if ids else all_stations
         
     # add information on station name (and new STILT station id)
     # from stations.csv file used in stiltweb.
@@ -388,7 +381,7 @@ def __get_stations(ids=None, progress=True):
     df['Country'] = df['Country'].astype(str)
 
     # add ICOS flag to the station
-    icos_stations_df = cpstation.getIdList(project='ICOS', theme='AS')    
+    icos_stations_df = icos_station.getIdList(project='ICOS', theme='AS')    
 
     # dictionary to return
     stations = {}
@@ -396,7 +389,7 @@ def __get_stations(ids=None, progress=True):
 
     # fill dictionary with ICOS station id, latitude, longitude and altitude
     # implement progress True/False
-    for ist in tqdm(sorted(allStations), disable=progress):
+    for ist in tqdm(requested_stations, disable=not progress):
         
         stations[ist] = {}
         # get filename of link (original stiltweb directory structure) and
@@ -453,7 +446,7 @@ def __get_stations(ids=None, progress=True):
         stn = df.iloc[idx]['ICOS id'].tolist()[0]
         
         if 'nan' not in stn:
-            stations[ist]['icos'] = cpstation.get(stn, icos_stations_df).info()
+            stations[ist]['icos'] = icos_station.get(stn, icos_stations_df).info()
             
             # add corresponding ICOS Sampling Height
             sh = df.iloc[idx]['ICOS height'].tolist()
