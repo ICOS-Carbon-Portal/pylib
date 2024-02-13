@@ -27,6 +27,7 @@ from icoscp.stilt import fmap
 import icoscp.const as CPC
 from icoscp.countries import country
 from pathlib import Path
+from typing import Any
 
 from icoscp.stilt import timefuncs as tf
 
@@ -361,23 +362,29 @@ def __get_object(stations):
     return [StiltStation(stations[st]) for st in stations.keys()]
 
 
-def __get_stations(ids=None, progress=True):
+def __get_stations(ids: list | None = None,
+                   progress: bool = True,
+                   stilt_path: str = CPC.STILTPATH,
+                   stilt_info: str = CPC.STILTINFO
+                   ) -> dict[Any, Any]:
     """ get all stilt stations available on the server
         return dictionary with metadata, keys are stilt station id's
     """
 
+    print(ids, progress, stilt_path, stilt_info)
     # Use directory listing from stilt-web data. Ignore stations that
     # may be in the queue but are not finished yet.
-    p = Path(CPC.STILTPATH)
+    p = Path(stilt_path)
     all_stations = [x.name for x in p.iterdir() if x.is_dir()]
+    print(all_stations)
     requested_stations = list(
         set([i.upper() for i in ids]).intersection(all_stations)
     ) if ids else all_stations
-        
+
     # add information on station name (and new STILT station id)
     # from stations.csv file used in stiltweb.
     # this is available from the backend through a url
-    df = pd.read_csv(CPC.STILTINFO)
+    df = pd.read_csv(stilt_info)
     df['Country'] = df['Country'].astype(str)
 
     # add ICOS flag to the station
@@ -386,16 +393,15 @@ def __get_stations(ids=None, progress=True):
     # dictionary to return
     stations = {}
 
-
     # fill dictionary with ICOS station id, latitude, longitude and altitude
     # implement progress True/False
     for ist in tqdm(requested_stations, disable=not progress):
-        
+
         stations[ist] = {}
         # get filename of link (original stiltweb directory structure) and
         # extract location information
 
-        loc_ident = os.readlink(CPC.STILTPATH+ist)
+        loc_ident = os.readlink(stilt_path+ist)
         clon = loc_ident[-13:-6]
         lon = float(clon[:-1])
         if clon[-1:] == 'W':
@@ -457,8 +463,8 @@ def __get_stations(ids=None, progress=True):
             stations[ist]['icos'] = False
 
         # set years and month of available data
-        years = [y for y in os.listdir(CPC.STILTPATH + '/' + ist) if
-                 os.path.exists(CPC.STILTPATH + '/' + ist + '/' + y)]
+        years = [y for y in os.listdir(stilt_path + '/' + ist) if
+                 os.path.exists(stilt_path + '/' + ist + '/' + y)]
         
         # for atmo access zip files may exist  for download. we need to exclude them
         years = [y for y in years if not y.endswith('.zip')]
@@ -466,8 +472,8 @@ def __get_stations(ids=None, progress=True):
         stations[ist]['years'] = years
         for yy in sorted(stations[ist]['years']):
             stations[ist][yy] = {}
-            months = [m for m in os.listdir(CPC.STILTPATH + '/' + ist + '/' + yy) if
-                      os.path.exists(CPC.STILTPATH + '/' + ist + '/' + yy + '/' + m)]
+            months = [m for m in os.listdir(stilt_path + '/' + ist + '/' + yy) if
+                      os.path.exists(stilt_path + '/' + ist + '/' + yy + '/' + m)]
             # remove cache txt entry
             sub = 'cache'
             months = sorted([m for m in months if not sub.lower() in m.lower()])
