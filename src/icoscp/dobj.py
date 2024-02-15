@@ -81,6 +81,29 @@ class Dobj:
     def citation(self) -> str | None:
         return self.metadata.references.citationString
 
+    def get_citation(self, format: CitationFormat = "plain") -> str | None:
+        """
+        Extract the citation string in the requested format.
+
+        :param format: The format of the citation ("plain", "bibtex",
+            or "ris").
+        :return: The citation string in the specified format.
+        :raise FormatValueError: A ValueError is raised when an
+            unsupported format is provided.
+        """
+        references = self.metadata.references
+        citation = None
+        match format:
+            case "plain":
+                citation = references.citationString
+            case "bibtex":
+                citation = references.citationBibTex
+            case "ris":
+                citation = references.citationRis
+            case _:  # type: ignore
+                raise FormatValueError(unsupported_format=format)
+        return citation
+
     @property
     def licence(self) -> LicenceDict | None:
         licence = self.metadata.references.licence
@@ -110,10 +133,6 @@ class Dobj:
                                 caller="colNames")
 
     @property
-    def data(self) -> pd.DataFrame:
-        return self.get(columns=None)
-
-    @property
     def lat(self) -> float | None:
         p = self._position
         return None if p is None else p.lat
@@ -133,7 +152,7 @@ class Dobj:
         warnings.warn(
             message=(
                 "In the next release, the property 'Dobj.elevation' will be"
-                "deprecated. Please, use 'Dobj.alt' instead."),
+                " deprecated. Please, use 'Dobj.alt' instead."),
             category=FutureWarning)
         return self.alt
 
@@ -156,29 +175,11 @@ class Dobj:
         s = self._station_meta
         return None if s is None else s.location
 
-    def get_citation(self, format: CitationFormat = "plain") -> str | None:
-        """
-        Extract the citation string in the requested format.
+    @property
+    def data(self) -> pd.DataFrame:
+        return self.get(columns=None)
 
-        :param format: The format of the citation ("plain", "bibtex",
-         or "ris").
-        :return: The citation string in the specified format.
-        :raise FormatValueError: A ValueError is raised when an
-         unsupported format is provided.
-        """
-        references = self.metadata.references
-        citation = None
-        match format:
-            case "plain":
-                citation = references.citationString
-            case "bibtex":
-                citation = references.citationBibTex
-            case "ris":
-                citation = references.citationRis
-            case _:  # type: ignore
-                raise FormatValueError(unsupported_format=format)
-        return citation
-
+    @property
     def variables(self) -> pd.DataFrame:
         """
         Extracts all variables from a metadata object.
@@ -196,15 +197,15 @@ class Dobj:
         """
 
         spec_info = self.metadata.specificInfo
-        is_time_ser = isinstance(spec_info, StationTimeSeriesMeta)
-        cols = spec_info.columns if is_time_ser else spec_info.variables
+        is_time_series = isinstance(spec_info, StationTimeSeriesMeta)
+        cols = spec_info.columns if is_time_series else spec_info.variables
         if cols is None:
             raise MetaValueError
         return pd.DataFrame({
             "name": [v.label for v in cols],
             "unit": [v.valueType.unit for v in cols],
             "type": [v.valueType.self.label for v in cols],
-            "format": [v.valueFormat if is_time_ser
+            "format": [v.valueFormat if is_time_series
                        else c.FLOAT_64_VALUEFORMAT
                        for v in cols]
         })
