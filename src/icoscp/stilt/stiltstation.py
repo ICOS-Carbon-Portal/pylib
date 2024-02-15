@@ -374,137 +374,124 @@ def __get_stations(ids: list | None = None,
     print(ids, progress, stilt_path, stilt_info)
     # Use directory listing from stilt-web data. Ignore stations that
     # may be in the queue but are not finished yet.
-    p = Path(stilt_path)
-    all_stations = [x.name for x in p.iterdir() if x.is_dir()]
-    print(all_stations)
+    all_stations = {}
+
+    for p in Path(stilt_path).iterdir():
+        if p.is_symlink() and p.exists():
+            all_stations[p.name] = p
+
+    all_station_ids = all_stations.keys()
     requested_stations = list(
-        set([i.upper() for i in ids]).intersection(all_stations)
-    ) if ids else all_stations
+        set([i.upper() for i in ids]).intersection(all_station_ids)
+    ) if ids else all_station_ids
 
     # add information on station name (and new STILT station id)
     # from stations.csv file used in stiltweb.
     # this is available from the backend through a url
     df = pd.read_csv(stilt_info)
-    df['Country'] = df['Country'].astype(str)
-
-    # add ICOS flag to the station
     icos_stations_df = icos_station.getIdList(project='ICOS', theme='AS')    
-
-    # dictionary to return
     stations = {}
 
     # fill dictionary with ICOS station id, latitude, longitude and altitude
     # implement progress True/False
-    for ist in tqdm(requested_stations, disable=not progress):
+    for station_id in tqdm(requested_stations, disable=not progress):
 
-        stations[ist] = {}
+        stations[station_id] = {}
         # get filename of link (original stiltweb directory structure) and
         # extract location information
 
-        loc_ident = os.readlink(stilt_path+ist)
-        clon = loc_ident[-13:-6]
-        lon = float(clon[:-1])
-        if clon[-1:] == 'W':
-            lon = -lon
-        clat = loc_ident[-20:-14]
-        lat = float(clat[:-1])
-        if clat[-1:] == 'S':
-            lat = -lat
-        alt = int(loc_ident[-5:])
+        loc = all_stations[station_id].readlink().name
 
-        stations[ist]['lat']=lat
-        stations[ist]['lon']=lon
-        stations[ist]['alt']=alt
-        stations[ist]['locIdent']=os.path.split(loc_ident)[-1]
+        lon, lat, alt = loc.split("x")
 
-        # set the name and id
-        stations[ist]['id'] = ist
-        
+        stations[station_id] = {
+            'lat': float(-lat[:-1] if lat[-1] == "S" else lat[:-1]),
+            'lon': float(-lon[:-1] if lon[-1] == "W" else lon[:-1]),
+            'alt': int(alt),
+            'locIdent': loc,
+            'id': station_id,
+        }
+
+        station_name = station_id
+
         # check if station id is in the manual curated list at
         # CPC.STILTINFO
-        id = [a.lower() for a in df['STILT id'].values]        
-        
-        if ist.lower() in id:
-            stationName = str(df.loc[df['STILT id'] ==
-                                     ist]['STILT name'].item())
-            # get the index for this station, to extract corresponding 
-            # ICOS sampling height from CPC.STILTINFO
-            idx = df.index[df['STILT id'] == ist].tolist()            
-            # set country code
-            
-            c_code = df.iloc[idx[0]]['Country']            
-            if not c_code =='nan':
-                 stations[ist]['country'] = c_code
-            
-        else:
-            country_code = ''
-            stationName = ''
-        
-        stations[ist]['name'] = __stationName(stations[ist]['id'],
-                                              stationName,
-                                              stations[ist]['alt'])
+        if station_id in list(df['STILT id'].values):
+            stiltinfo_row = df.loc[df['STILT id'] == station_id]
+            station_name = stiltinfo_row['STILT name'].item()
+            country_code = stiltinfo_row['Country'].item()
 
-        
+            if not country_code == 'nan':
+                stations[station_id]['country'] = country_code
+
+        stations[station_id]['name'] = __stationName(station_id,
+                                                     station_name,
+                                                     alt)
+
+
+        # TODO everything beneath this line
+        # use stiltinfo_row instead of index to get column data
+
         # set a flag and metadata if it is an ICOS station
-        
         #   convert the ICOS id to strings
         df['ICOS id'] = df['ICOS id'].astype(str)
         stn = df.iloc[idx]['ICOS id'].tolist()[0]
-        
+
         if 'nan' not in stn:
-            stations[ist]['icos'] = icos_station.get(stn, icos_stations_df).info()
+            stations[station_id]['icos'] = icos_station.get(stn, icos_stations_df).info()
             
             # add corresponding ICOS Sampling Height
             sh = df.iloc[idx]['ICOS height'].tolist()
             sh = float(sh[0])
-            stations[ist]['icos']['SamplingHeight'] = sh            
+            stations[station_id]['icos']['SamplingHeight'] = sh            
             
         else:
-            stations[ist]['icos'] = False
+            stations[station_id]['icos'] = False
 
         # set years and month of available data
-        years = [y for y in os.listdir(stilt_path + '/' + ist) if
-                 os.path.exists(stilt_path + '/' + ist + '/' + y)]
+        years = [y for y in os.listdir(stilt_path + station_id) if
+                 os.path.exists(stilt_path + station_id + '/' + y)]
         
         # for atmo access zip files may exist  for download. we need to exclude them
         years = [y for y in years if not y.endswith('.zip')]
         
-        stations[ist]['years'] = years
-        for yy in sorted(stations[ist]['years']):
-            stations[ist][yy] = {}
-            months = [m for m in os.listdir(stilt_path + '/' + ist + '/' + yy) if
-                      os.path.exists(stilt_path + '/' + ist + '/' + yy + '/' + m)]
+        stations[station_id]['years'] = years
+        for yy in sorted(stations[station_id]['years']):
+            stations[station_id][yy] = {}
+            months = [m for m in os.listdir(stilt_path + '/' + station_id + '/' + yy) if
+                      os.path.exists(stilt_path + '/' + station_id + '/' + yy + '/' + m)]
             # remove cache txt entry
             sub = 'cache'
             months = sorted([m for m in months if not sub.lower() in m.lower()])
-            stations[ist][yy]['months'] = months
-            stations[ist][yy]['nmonths'] = len(stations[ist][yy]['months'])
-            
+            stations[station_id][yy]['months'] = months
+            stations[station_id][yy]['nmonths'] = len(stations[station_id][yy]['months'])
+        
+        # TODO: create another function out of the following code
         # add geoinfo
         # if station is in the manual curated list, see above where where the
         # stationname is set..... the dict contains now a key country
         
-        if 'country' in stations[ist]:
-            stations[ist]['geoinfo'] = country.get(code=stations[ist]['country'])
+        # if 'country' in stations[ist]:
+        #     stations[ist]['geoinfo'] = country.get(code=stations[ist]['country'])
         
-        # else.. use lat lon for a reverse lookup.. ICOS coordiantes have preference
-        elif stations[ist]['icos']:            
-            # get country from ICOS coordinates
-            stations[ist]['geoinfo'] = country.get(latlon=[stations[ist]['icos']['lat'],stations[ist]['icos']['lon']])
+        # # else.. use lat lon for a reverse lookup.. ICOS coordiantes have preference
+        # elif stations[ist]['icos']:            
+        #     # get country from ICOS coordinates
+        #     stations[ist]['geoinfo'] = country.get(latlon=[stations[ist]['icos']['lat'],stations[ist]['icos']['lon']])
             
-        else:
-            # get country from STILT coordiantes
-            stations[ist]['geoinfo'] = country.get(latlon=[stations[ist]['lat'],stations[ist]['lon']])
+        # else:
+        #     # get country from STILT coordiantes
+        #     stations[ist]['geoinfo'] = country.get(latlon=[stations[ist]['lat'],stations[ist]['lon']])
             
         
     return stations
 
 
-def __stationName(idx, name, alt):
-    if name=='nan' or not name:
-        name = idx
-    if not (name[-1]=='m' and name[-2].isdigit()):
-        name = name + ' ' + str(alt) + 'm'
+def __stationName(station_id, name, alt):
+    if name == 'nan':
+        return station_id
+    if not (name[-1] == 'm' and name[-2].isdigit()):
+        return name + ' ' + str(alt) + 'm'
     return name
 
 
