@@ -28,6 +28,7 @@ class LicenceDict(TypedDict):
 
 class Dobj:
     def __init__(self, digitalObject: str | DataObjectLite | Any) -> None:
+	print("This is a test, which will be removed!")
         if (not isinstance(digitalObject, str) and
                 not isinstance(digitalObject, DataObjectLite)):
             raise UriValueError
