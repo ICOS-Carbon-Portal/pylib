@@ -123,7 +123,7 @@ class StiltStation():
                         hours = ["10", "10:00", 10] returns timeslot 9
 
         columns : TYPE, optional
-            Valid entries are "default", "co2", "co", "rn", "wind", "latlon", "all".
+            Valid entries are "default", "co2", "ch4",  "co", "rn", "wind", "latlon", "all".
             'default', empty, or None will return:
             ["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement","co2.background"]
             A full description of the 'columns' can be found at
@@ -432,7 +432,7 @@ class StiltStation():
             cols = cols.lower()
 
         # check for a valid entry. If not...return default
-        valid = ["default", "co2", "co", "rn", "wind", "latlon", "all"]
+        valid = ["default", "co2", "ch4", "co", "rn", "wind", "latlon", "all"]
         if cols not in valid:
             cols = 'default'
 
