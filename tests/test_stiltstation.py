@@ -47,7 +47,7 @@ STILTINFO = "tests/stiltweb/station_info.csv"
             'icos': False, 'years': []
         },
     }),
-    (['ZUR200'], True, STILTPATH, STILTINFO, {
+    (['ZUR200'], False, STILTPATH, STILTINFO, {
         'ZUR200': {
             'lat': 47.39,
             'lon': 8.54,
@@ -59,9 +59,23 @@ STILTINFO = "tests/stiltweb/station_info.csv"
             'icos': False, 'years': []
         },
     }),
+    (['ZSF'], False, STILTPATH, STILTINFO, {
+    'ZSF': {
+        'lat': 10.98,
+        'lon': 47.42,
+        'alt': 730,
+        'locIdent': '47.42Nx010.98Ex00730',
+        'id': 'ZSF',
+        'country': 'DE',
+        'name': 'Zugspitze 00730m',
+        },
+    }),
     (['XXX123'], False, STILTPATH, STILTINFO, {})
 ])
 def test_get_stations(ids, progress, stilt_path, stilt_info, expected):
     ''' test different formats of pid. We accept PID, HANDLE/PID, URI '''
+    from pprint import pprint
     res = __get_stations(ids, progress, stilt_path, stilt_info)
+    pprint(res)
+    pprint(expected)
     assert res == expected

@@ -28,7 +28,7 @@ import icoscp.const as CPC
 from icoscp.countries import country
 from pathlib import Path
 from typing import Any
-
+import math
 from icoscp.stilt import timefuncs as tf
 
 
@@ -377,10 +377,11 @@ def __get_stations(ids: list | None = None,
     all_stations = {}
 
     for p in Path(stilt_path).iterdir():
+        # A symbolic link might exist but not have a target.
         if p.is_symlink() and p.exists():
             all_stations[p.name] = p
 
-    all_station_ids = all_stations.keys()
+    all_station_ids = list(all_stations.keys())
     requested_stations = list(
         set([i.upper() for i in ids]).intersection(all_station_ids)
     ) if ids else all_station_ids
@@ -395,7 +396,6 @@ def __get_stations(ids: list | None = None,
     # fill dictionary with ICOS station id, latitude, longitude and altitude
     # implement progress True/False
     for station_id in tqdm(requested_stations, disable=not progress):
-
         stations[station_id] = {}
         # get filename of link (original stiltweb directory structure) and
         # extract location information
@@ -427,44 +427,38 @@ def __get_stations(ids: list | None = None,
         stations[station_id]['name'] = __stationName(station_id,
                                                      station_name,
                                                      alt)
+        icos_id = stiltinfo_row["ICOS id"].item()
+        # if not isinstance(str, type(icos_id)) and math.isnan(icos_id):
+        if pd.isna(icos_id):
+            stations[station_id]["icos"] = False
+        else:
+            stations[station_id]["icos"] = \
+                icos_station.get(icos_id, icos_stations_df).info()
+            stations[station_id]["icos"]["SamplingHeight"] = \
+                stiltinfo_row["ICOS height"].item()
 
 
         # TODO everything beneath this line
-        # use stiltinfo_row instead of index to get column data
 
-        # set a flag and metadata if it is an ICOS station
-        #   convert the ICOS id to strings
-        df['ICOS id'] = df['ICOS id'].astype(str)
-        stn = df.iloc[idx]['ICOS id'].tolist()[0]
-
-        if 'nan' not in stn:
-            stations[station_id]['icos'] = icos_station.get(stn, icos_stations_df).info()
-            
-            # add corresponding ICOS Sampling Height
-            sh = df.iloc[idx]['ICOS height'].tolist()
-            sh = float(sh[0])
-            stations[station_id]['icos']['SamplingHeight'] = sh            
-            
-        else:
-            stations[station_id]['icos'] = False
-
-        # set years and month of available data
-        years = [y for y in os.listdir(stilt_path + station_id) if
-                 os.path.exists(stilt_path + station_id + '/' + y)]
+        # # set years and month of available data
+        years = sorted(
+            p.name for p in Path(f"{stilt_path}{station_id}/").iterdir()
+            if p.is_dir()
+            )
         
-        # for atmo access zip files may exist  for download. we need to exclude them
-        years = [y for y in years if not y.endswith('.zip')]
+        # # for atmo access zip files may exist  for download. we need to exclude them
+        # years = [y for y in years if not y.endswith('.zip')]
         
-        stations[station_id]['years'] = years
-        for yy in sorted(stations[station_id]['years']):
-            stations[station_id][yy] = {}
-            months = [m for m in os.listdir(stilt_path + '/' + station_id + '/' + yy) if
-                      os.path.exists(stilt_path + '/' + station_id + '/' + yy + '/' + m)]
-            # remove cache txt entry
-            sub = 'cache'
-            months = sorted([m for m in months if not sub.lower() in m.lower()])
-            stations[station_id][yy]['months'] = months
-            stations[station_id][yy]['nmonths'] = len(stations[station_id][yy]['months'])
+        # stations[station_id]['years'] = years
+        # for yy in sorted(stations[station_id]['years']):
+        #     stations[station_id][yy] = {}
+        #     months = [m for m in os.listdir(stilt_path + '/' + station_id + '/' + yy) if
+        #               os.path.exists(stilt_path + '/' + station_id + '/' + yy + '/' + m)]
+        #     # remove cache txt entry
+        #     sub = 'cache'
+        #     months = sorted([m for m in months if not sub.lower() in m.lower()])
+        #     stations[station_id][yy]['months'] = months
+        #     stations[station_id][yy]['nmonths'] = len(stations[station_id][yy]['months'])
         
         # TODO: create another function out of the following code
         # add geoinfo
