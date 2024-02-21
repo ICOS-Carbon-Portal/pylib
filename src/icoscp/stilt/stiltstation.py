@@ -13,11 +13,12 @@ __credits__     = "ICOS Carbon Portal"
 __license__     = "GPL-3.0"
 __version__     = "0.1.1"
 __maintainer__  = "ICOS Carbon Portal, elaborated products team"
-__email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
+__email__       = ["info@icos-cp.eu", "claudio.donofrio@nateko.lu.se"]
 __status__      = "rc1"
 __date__        = "2021-11-04"
 
 import os
+import re
 import json
 import pandas as pd
 from tqdm.notebook import tqdm
@@ -35,7 +36,7 @@ from icoscp.stilt import timefuncs as tf
 # --- START KEYWORD FUNCTIONS ---
 def _id(kwargs, stations):
 
-    ids = kwargs['id']
+    ids = kwargs["id"]
     if isinstance(ids,str):
         ids=[ids]
     if not isinstance(ids,list):
@@ -421,7 +422,7 @@ def __get_stations(ids: list | None = None,
             station_name = stiltinfo_row['STILT name'].item()
             country_code = stiltinfo_row['Country'].item()
 
-            if not country_code == 'nan':
+            if not pd.isna(country_code):
                 stations[station_id]['country'] = country_code
 
         stations[station_id]['name'] = __stationName(station_id,
@@ -438,46 +439,36 @@ def __get_stations(ids: list | None = None,
                 stiltinfo_row["ICOS height"].item()
 
 
-        # TODO everything beneath this line
-
-        # # set years and month of available data
         years = sorted(
-            p.name for p in Path(f"{stilt_path}{station_id}/").iterdir()
-            if p.is_dir()
+            p.name for p in Path(f'{stilt_path}{station_id}/').iterdir()
+            if p.is_dir() and re.match(r'\d{4}', p.name)
             )
         
-        # # for atmo access zip files may exist  for download. we need to exclude them
-        # years = [y for y in years if not y.endswith('.zip')]
-        
-        # stations[station_id]['years'] = years
-        # for yy in sorted(stations[station_id]['years']):
-        #     stations[station_id][yy] = {}
-        #     months = [m for m in os.listdir(stilt_path + '/' + station_id + '/' + yy) if
-        #               os.path.exists(stilt_path + '/' + station_id + '/' + yy + '/' + m)]
-        #     # remove cache txt entry
-        #     sub = 'cache'
-        #     months = sorted([m for m in months if not sub.lower() in m.lower()])
-        #     stations[station_id][yy]['months'] = months
-        #     stations[station_id][yy]['nmonths'] = len(stations[station_id][yy]['months'])
+        stations[station_id]['years'] = years
+        for year in years:
+            months = sorted(
+                p.name for p in Path(f'{stilt_path}{station_id}/{year}').iterdir()
+                if p.is_dir() and re.match(r'\d{2}', p.name)
+            )
+            stations[station_id][year] = {
+                'months': months,
+                'nmonths': len(months)
+            }
         
         # TODO: create another function out of the following code
         # add geoinfo
         # if station is in the manual curated list, see above where where the
         # stationname is set..... the dict contains now a key country
-        
-        # if 'country' in stations[ist]:
-        #     stations[ist]['geoinfo'] = country.get(code=stations[ist]['country'])
-        
-        # # else.. use lat lon for a reverse lookup.. ICOS coordiantes have preference
-        # elif stations[ist]['icos']:            
-        #     # get country from ICOS coordinates
-        #     stations[ist]['geoinfo'] = country.get(latlon=[stations[ist]['icos']['lat'],stations[ist]['icos']['lon']])
-            
-        # else:
-        #     # get country from STILT coordiantes
-        #     stations[ist]['geoinfo'] = country.get(latlon=[stations[ist]['lat'],stations[ist]['lon']])
-            
-        
+        if 'country' in stations[station_id]:
+            stations[station_id]['geoinfo'] = country.get(code=stations[station_id]['country'])
+        # Else.. use lat lon for a reverse lookup.. ICOS coordiantes have preference
+        elif stations[station_id]['icos']:
+            # get country from ICOS coordinates
+            stations[station_id]['geoinfo'] = country.get(latlon=[stations[station_id]['icos']['lat'], stations[station_id]['icos']['lon']])
+        else:
+            # get country from STILT coordiantes
+            stations[station_id]['geoinfo'] = country.get(latlon=[stations[station_id]['lat'], stations[station_id]['lon']])
+       
     return stations
 
 

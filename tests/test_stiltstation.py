@@ -1,8 +1,11 @@
 import pytest
 from icoscp.stilt.stiltstation import __get_stations
+import json
 
 STILTPATH = "tests/stiltweb/stations/"
 STILTINFO = "tests/stiltweb/station_info.csv"
+with open(file='tests/ZSF.json', mode='r') as json_handle:
+    x = json.load(json_handle)
 
 
 @pytest.mark.parametrize('ids, progress, stilt_path, stilt_info, expected', [
@@ -59,17 +62,7 @@ STILTINFO = "tests/stiltweb/station_info.csv"
             'icos': False, 'years': []
         },
     }),
-    (['ZSF'], False, STILTPATH, STILTINFO, {
-    'ZSF': {
-        'lat': 10.98,
-        'lon': 47.42,
-        'alt': 730,
-        'locIdent': '47.42Nx010.98Ex00730',
-        'id': 'ZSF',
-        'country': 'DE',
-        'name': 'Zugspitze 00730m',
-        },
-    }),
+    (['ZSF'], False, STILTPATH, STILTINFO, {"ZSF": x}),
     (['XXX123'], False, STILTPATH, STILTINFO, {})
 ])
 def test_get_stations(ids, progress, stilt_path, stilt_info, expected):
