@@ -25,12 +25,10 @@ from icoscp import __version__ as release_version
 from icoscp.cpb import dtype
 from icoscp.cpb import metadata
 import icoscp.const as CPC
-from icoscp.cpauth.authentication import Authentication
-from icoscp.cpauth.exceptions import AuthenticationError
-from icoscp.cpauth.exceptions import warn_for_authentication
-
 from json.decoder import JSONDecodeError
-
+from icoscp_core.icos import auth
+from icoscp_core.auth import parse_auth_token, PasswordAuth, TokenAuth, ConfigFileAuth
+ 
 
 class Dobj():
     """ Use an ICOS digital object id to query the sparql endpoint
@@ -38,13 +36,8 @@ class Dobj():
         the method .getColumns() will return the actual data
     """
 
-    # Private class attribute used to bypass authentication for consecutive
-    # requests of data objects if the first authentication attempt was
-    # unsuccessful. It is only applicable to off-server data access.
-    _bypass_auth = False
-
-    def __init__(self, digitalObject = None, debug_auth: str = False,
-                 cp_auth: Authentication = None):
+    def __init__(self, digitalObject=None,
+                 external_auth: PasswordAuth | TokenAuth = None):
 
         self._dobj = None           # contains the pid
         self._colSelected = None    # 'none' -> ALL columns are returned
@@ -63,11 +56,10 @@ class Dobj():
                                     # persistent in the object.
         self._datapersistent = True # If True (default), data is kept persistent
                                     # in self._data. If False, force to reload
-        self.cp_auth = cp_auth
-        self._debug_auth = debug_auth
         # this needs to be the last call within init. If dobj is provided
         # meta data is retrieved and .valid is True
         self.dobj = digitalObject
+        self.auth = external_auth if external_auth else auth
 
 
     #-----------
@@ -347,10 +339,6 @@ class Dobj():
         # Don't set the local path for data files when debugging the
         # authentication module.
         local_file = str()
-        if not self._debug_auth:
-            local_file = \
-                os.path.abspath(f'{CPC.LOCALDATA}{folder}/{fileName}')
-
         # Local access on server.
         if os.path.isfile(local_file):
             self._islocal = True
@@ -366,11 +354,31 @@ class Dobj():
             self._islocal = False
             response, content = None, None
             request_url, request_headers = None, None
-
-            if not self.cp_auth or not self.cp_auth.valid_token:
-                self.cp_auth = Authentication()
+            cookie_value = None
+            try:
+                 cookie_value = self.auth.get_token().cookie_value
+            except Exception as e:
+                try:
+                    auth_sel = input(
+                        "1. Username & password\n2. Token\nPlease, choose "
+                        "authentication method (1 or 2) and press enter: ")
+                    if auth_sel == "1":
+                        self.auth.init_config_file()
+                        cookie_value = self.auth.get_token().cookie_value
+                    elif auth_sel == "2":
+                        input_cookie = input("Please, paste your token: ")
+                        cookie_value = (
+                            parse_auth_token(cookie_value=input_cookie)
+                            ).cookie_value
+                    else:
+                        return "Invalid selection. Please, try again."
+                except Exception as e:
+                    # TODO: Talk to Oleg about exceptions.
+                    return "Incorrect credentials. Please, try again."
+                # cookie = auth.get_token().cookie_value
+            
             request_url = CPC.SECURED_DATA
-            request_headers = {'cookie': self.cp_auth.token}
+            request_headers = {"cookie": cookie_value}
             # Request secure data.
             response = requests.post(url=request_url,
                                      json=self._json,
