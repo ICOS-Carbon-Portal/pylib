@@ -6,14 +6,14 @@
     to load a binary representation of the data object.
 """
 
-__author__      = ["Claudio D'Onofrio"]
-__credits__     = "ICOS Carbon Portal"
-__license__     = "GPL-3.0"
-__version__     = "0.1.8"
-__maintainer__  = "ICOS Carbon Portal, elaborated products team"
+__author__      = ['Claudio D\'Onofrio']
+__credits__     = 'ICOS Carbon Portal'
+__license__     = 'GPL-3.0'
+__version__     = '0.1.8'
+__maintainer__  = 'ICOS Carbon Portal, elaborated products team'
 __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
-__status__      = "stable"
-__date__        = "2023-02-27"
+__status__      = 'stable'
+__date__        = '2023-02-27'
 
 import os
 from warnings import warn
@@ -26,13 +26,13 @@ from icoscp.cpb import dtype
 from icoscp.cpb import metadata
 import icoscp.const as CPC
 from json.decoder import JSONDecodeError
-from icoscp_core.icos import auth
-from icoscp_core.auth import parse_auth_token, PasswordAuth, TokenAuth, ConfigFileAuth
- 
+from icoscp.cpb.dobj_auth import wrap_auth
+from icoscp_core.auth import PasswordAuth, TokenAuth
+
 
 class Dobj():
     """ Use an ICOS digital object id to query the sparql endpoint
-        for infos, and create the "payload" to retrieve the binary data
+        for infos, and create the 'payload' to retrieve the binary data
         the method .getColumns() will return the actual data
     """
 
@@ -59,7 +59,7 @@ class Dobj():
         # this needs to be the last call within init. If dobj is provided
         # meta data is retrieved and .valid is True
         self.dobj = digitalObject
-        self.auth = external_auth if external_auth else auth
+        self._external_auth = external_auth
 
 
     #-----------
@@ -354,31 +354,8 @@ class Dobj():
             self._islocal = False
             response, content = None, None
             request_url, request_headers = None, None
-            cookie_value = None
-            try:
-                 cookie_value = self.auth.get_token().cookie_value
-            except Exception as e:
-                try:
-                    auth_sel = input(
-                        "1. Username & password\n2. Token\nPlease, choose "
-                        "authentication method (1 or 2) and press enter: ")
-                    if auth_sel == "1":
-                        self.auth.init_config_file()
-                        cookie_value = self.auth.get_token().cookie_value
-                    elif auth_sel == "2":
-                        input_cookie = input("Please, paste your token: ")
-                        cookie_value = (
-                            parse_auth_token(cookie_value=input_cookie)
-                            ).cookie_value
-                    else:
-                        return "Invalid selection. Please, try again."
-                except Exception as e:
-                    # TODO: Talk to Oleg about exceptions.
-                    return "Incorrect credentials. Please, try again."
-                # cookie = auth.get_token().cookie_value
-            
             request_url = CPC.SECURED_DATA
-            request_headers = {"cookie": cookie_value}
+            request_headers = {'cookie': wrap_auth(self._external_auth)}
             # Request secure data.
             response = requests.post(url=request_url,
                                      json=self._json,
