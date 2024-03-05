@@ -13,7 +13,7 @@ import importlib.resources as pkgres
 import json
 import sys
 import warnings
-
+from geopandas import GeoDataFrame
 from fiona.errors import DriverError
 import icoscp
 import geopandas as gpd
@@ -155,7 +155,8 @@ def _c_name(name, countries):
     return country
 
 
-def _c_reverse(lat: float, lon: float):
+def _c_reverse(lat: float, lon: float) -> str:
+            #    world: GeoDataFrame = WORLD) -> str:
     """
     Reverse geocoder using geopandas and shapely.
 
@@ -164,6 +165,8 @@ def _c_reverse(lat: float, lon: float):
     to on-server use.
     """
     country = False
+    WORLD = gpd.read_file('tests/10m_admin_0_countries.shp')
+    print('*****', WORLD)
     if WORLD.empty:
         for index, row in WORLD.iterrows():
             if row.geometry.contains(Point(lon, lat)):

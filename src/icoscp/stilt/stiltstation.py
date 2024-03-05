@@ -20,6 +20,7 @@ __date__        = "2021-11-04"
 import os
 import re
 import json
+import csv
 import pandas as pd
 from tqdm.notebook import tqdm
 from icoscp.station import station as icos_station
@@ -371,8 +372,7 @@ def __get_stations(ids: list | None = None,
     """ get all stilt stations available on the server
         return dictionary with metadata, keys are stilt station id's
     """
-
-    print(ids, progress, stilt_path, stilt_info)
+    print('*****', ids, progress, stilt_path, stilt_info)
     # Use directory listing from stilt-web data. Ignore stations that
     # may be in the queue but are not finished yet.
     all_stations = {}
@@ -391,30 +391,25 @@ def __get_stations(ids: list | None = None,
     # from stations.csv file used in stiltweb.
     # this is available from the backend through a url
     df = pd.read_csv(stilt_info)
-    icos_stations_df = icos_station.getIdList(project='ICOS', theme='AS')    
+    icos_stations_df = icos_station.getIdList(project='ICOS', theme='AS')
     stations = {}
 
     # fill dictionary with ICOS station id, latitude, longitude and altitude
     # implement progress True/False
     for station_id in tqdm(requested_stations, disable=not progress):
-        stations[station_id] = {}
+        stn_info = {}
         # get filename of link (original stiltweb directory structure) and
         # extract location information
-
         loc = all_stations[station_id].readlink().name
-
-        lon, lat, alt = loc.split("x")
-
-        stations[station_id] = {
-            'lat': float(-lat[:-1] if lat[-1] == "S" else lat[:-1]),
-            'lon': float(-lon[:-1] if lon[-1] == "W" else lon[:-1]),
+        lon, lat, alt = loc.split('x')
+        stn_info = {
+            'lat': float(-lat[:-1] if lat[-1] == 'S' else lat[:-1]),
+            'lon': float(-lon[:-1] if lon[-1] == 'W' else lon[:-1]),
             'alt': int(alt),
             'locIdent': loc,
             'id': station_id,
         }
-
         station_name = station_id
-
         # check if station id is in the manual curated list at
         # CPC.STILTINFO
         if station_id in list(df['STILT id'].values):
@@ -423,19 +418,17 @@ def __get_stations(ids: list | None = None,
             country_code = stiltinfo_row['Country'].item()
 
             if not pd.isna(country_code):
-                stations[station_id]['country'] = country_code
+                stn_info['country'] = country_code
 
-        stations[station_id]['name'] = __stationName(station_id,
-                                                     station_name,
-                                                     alt)
+        stn_info['name'] = __stationName(station_id, station_name, alt)
         icos_id = stiltinfo_row["ICOS id"].item()
         # if not isinstance(str, type(icos_id)) and math.isnan(icos_id):
         if pd.isna(icos_id):
-            stations[station_id]["icos"] = False
+            stn_info["icos"] = False
         else:
-            stations[station_id]["icos"] = \
+            stn_info["icos"] = \
                 icos_station.get(icos_id, icos_stations_df).info()
-            stations[station_id]["icos"]["SamplingHeight"] = \
+            stn_info["icos"]["SamplingHeight"] = \
                 stiltinfo_row["ICOS height"].item()
 
 
@@ -444,32 +437,35 @@ def __get_stations(ids: list | None = None,
             if p.is_dir() and re.match(r'\d{4}', p.name)
             )
         
-        stations[station_id]['years'] = years
+        stn_info['years'] = years
         for year in years:
             months = sorted(
                 p.name for p in Path(f'{stilt_path}{station_id}/{year}').iterdir()
                 if p.is_dir() and re.match(r'\d{2}', p.name)
             )
-            stations[station_id][year] = {
+            stn_info[year] = {
                 'months': months,
                 'nmonths': len(months)
             }
-        
-        # TODO: create another function out of the following code
-        # add geoinfo
-        # if station is in the manual curated list, see above where where the
-        # stationname is set..... the dict contains now a key country
-        if 'country' in stations[station_id]:
-            stations[station_id]['geoinfo'] = country.get(code=stations[station_id]['country'])
-        # Else.. use lat lon for a reverse lookup.. ICOS coordiantes have preference
-        elif stations[station_id]['icos']:
-            # get country from ICOS coordinates
-            stations[station_id]['geoinfo'] = country.get(latlon=[stations[station_id]['icos']['lat'], stations[station_id]['icos']['lon']])
-        else:
-            # get country from STILT coordiantes
-            stations[station_id]['geoinfo'] = country.get(latlon=[stations[station_id]['lat'], stations[station_id]['lon']])
-       
+        stn_info['geoinfo'] = get_geo_info(stn_info)
+        stations[station_id] = stn_info
     return stations
+
+
+def get_geo_info(stn_info: dict[Any, Any]) -> dict[str, Any]:
+    # if station is in the manual curated list, see above where where the
+    # stationname is set..... the dict contains now a key country
+    geo_info = {}
+    if 'country' in stn_info:
+        geo_info = country.get(code=stn_info['country'])
+    # Else.. use lat lon for a reverse lookup.. ICOS coordiantes have preference
+    elif stn_info['icos']:
+        # get country from ICOS coordinates
+        geo_info = country.get(latlon=[stn_info['icos']['lat'], stn_info['icos']['lon']])
+    else:
+        # get country from STILT coordiantes
+        geo_info = country.get(latlon=[stn_info['lat'], stn_info['lon']])
+    return geo_info
 
 
 def __stationName(station_id, name, alt):
