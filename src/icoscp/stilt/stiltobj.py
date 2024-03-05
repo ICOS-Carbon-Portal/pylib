@@ -16,7 +16,7 @@ __date__        = "2023-01-18"
 __lastchange__  = ["Zois Zogopoulos"]
 #################################################################################
 
-#Import modules
+# Import modules
 import os
 import numpy as np
 import pandas as pd
@@ -45,12 +45,12 @@ class StiltStation():
 
     """
 
-    #Import modules:
+    # Import modules:
 
-    #Function that initializes the attributes of an object:
+    # Function that initializes the attributes of an object:
     def __init__(self, st_dict):
 
-        #Object attributes:
+        # Object attributes:
         self._path_fp = CPC.STILTFP     # Path to location where STILT footprints are stored
         self._path_ts = CPC.STILTPATH   # Path to location where STILT time series are stored
         self._url = CPC.STILTTS         # URL to STILT information
@@ -113,19 +113,25 @@ class StiltStation():
             Example: end_date = '2018-01-31'
         hours : STR | INT, optional
             If hours is empty or None, ALL Timeslots are returned.
-            [0,3,6,9,12,15,18,21]
+            [0, 3, 6, 9, 12 ,15, 18, 21]
 
-            Valid results are returned as result with LOWER BOUND values.
-            For backwards compatibility, input for str format hh:mm is accepted
-            Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
-                        hours = [2,3,4,5,6] will return Timeslots for 0,3 and 6
-                        hours = [] return ALL
-                        hours = ["10", "10:00", 10] returns timeslot 9
+        Valid results are returned as result with LOWER BOUND values.
+        For backwards compatibility, input for str format hh:mm is
+        accepted.
+
+        Examples
+        --------
+        hours = ['02:00', 3, 4] will return Timeslots for 0, 3
+        hours = [2, 3, 4, 5, 6] will return Timeslots for 0, 3 and 6
+        hours = [] return ALL
+        hours = ['10', '10:00', 10] returns timeslot 9
 
         columns : TYPE, optional
-            Valid entries are "default", "co2", "ch4",  "co", "rn", "wind", "latlon", "all".
-            'default', empty, or None will return:
-            ["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement","co2.background"]
+            Valid entries are:
+            'default', 'co2', 'ch4', 'co', 'rn', 'wind', 'latlon', 'all'
+            Using 'default', empty, or None will return:
+            ['isodate', 'co2.stilt', 'co2.bio', 'co2.fuel',
+            'co2.cement', 'co2.background']
             A full description of the 'columns' can be found at
             https://icos-carbon-portal.github.io/pylib/modules/#stilt
 
@@ -134,100 +140,77 @@ class StiltStation():
         Pandas Dataframe
         """
 
-
-        #Convert date-strings to date objs:
+        # Convert date-strings to date objs:
         s_date = tf.parse(start_date)
         e_date = tf.parse(end_date)
         hours = tf.get_hours(hours)
-
         # Check input parameters:
         if e_date < s_date:
             return False
-
         if not hours:
             return False
-
-        #Create an empty dataframe to store the timeseries:
+        # Create an empty dataframe to store the timeseries:
         df=pd.DataFrame({'A' : []})
-
-        #Add headers:
+        # Add headers:
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-
-        #Create an empty list, to store the new time range with available STILT model results:
+        # Create an empty list, to store the new time range with
+        # available STILT model results:
         new_range=[]
-
-        #Create a pandas dataframe containing one column of datetime objects with 3-hour intervals:
-        #date_range = pd.date_range(start_date, end_date+dt.timedelta(hours=24), freq='3H')
+        # Create a pandas dataframe containing one column of datetime
+        # objects with 3-hour intervals:
+        # date_range = pd.date_range(start_date, end_date+dt.timedelta(hours=24), freq='3H')
         date_range = pd.date_range(s_date, e_date, freq='3H')
-
-        #Loop through every Datetime object in the dataframe:
+        # Loop through every Datetime object in the dataframe:
         for zDate in date_range:
-
-            #Check if STILT results exist:
+            # Check if STILT results exist:
             if os.path.exists(self._path_fp + self.locIdent + '/' +
                               str(zDate.year)+'/'+str(zDate.month).zfill(2)+'/'+
                               str(zDate.year)+'x'+str(zDate.month).zfill(2)+'x'+str(zDate.day).zfill(2)+'x'+
                               str(zDate.hour).zfill(2)+'/'):
 
-                #If STILT-results exist for the current Datetime object, append current Datetime object to list:
+                # If STILT-results exist for the current Datetime
+                # object, append current Datetime object to list:
                 new_range.append(zDate)
-
-        #If the list is not empty:
+        # If the list is not empty:
         if len(new_range) > 0:
-
-            #Assign the new time range to date_range:
+            # Assign the new time range to date_range:
             date_range = new_range
-
-            #Get new starting date:
+            # Get new starting date:
             fromDate = date_range[0].strftime('%Y-%m-%d')
-
-            #Get new ending date:
+            # Get new ending date:
             toDate = date_range[-1].strftime('%Y-%m-%d')
-
-            #Store the STILT result column names to a variable:
+            # Store the STILT result column names to a variable:
             columns  = self.__columns(columns)
-
-            #Store the STILT result data column names to a variable:
+            # Store the STILT result data column names to a variable:
             data = '{"columns": '+columns+', "fromDate": "'+fromDate+'", "toDate": "'+toDate+'", "stationId": "'+self.id+'"}'
-
-            #Send request to get STILT results:
+            # Send request to get STILT results:
             response = requests.post(self._url, headers=headers, data=data)
-
-            #Check if response is successful:
+            # Check if response is successful:
             if response.status_code != 500:
-
-                #Get response in json-format and read it in to a numpy array:
+                # Get response in json-format and read it in to a numpy array:
                 output=np.asarray(response.json())
-
-                #Convert numpy array with STILT results to a pandas dataframe
+                # Convert numpy array with STILT results to a pandas dataframe
                 cols = columns[1:-1].replace('"','').replace(' ','')
                 cols = list(cols.split(','))
                 df = pd.DataFrame(output[:,:], columns=cols)
-
-                #Replace 'null'-values with numpy NaN-values:
+                # Replace 'null'-values with numpy NaN-values:
                 df = df.replace('null',np.NaN)
-
-                #Set dataframe data type to float:
+                # Set dataframe data type to float:
                 df = df.astype(float)
-
-                #Convert the data type of the 'date'-column to Datetime Object:
+                # Convert the data type of the 'date'-column to Datetime Object:
                 df['date'] = pd.to_datetime(df['isodate'], unit='s')
-
-                #Set 'date'-column as index:
+                # Set 'date'-column as index:
                 df.set_index(['date'],inplace=True)
-
-                #Filter dataframe values by timeslots:
+                # Filter dataframe values by timeslots:
                 hours = [str(h).zfill(2) for h in hours]
                 df = df.loc[df.index.strftime('%H').isin(hours)]
-
             else:
-
-                #Print message:
+                # Print message:
                 print("\033[0;31;1m Error...\nToo big STILT dataset!\nSelect data for a shorter time period.\n\n")
 
         # track data usage
         self.__portalUse('timeseries')
-        #Return dataframe:
+        # Return dataframe:
         return df
     #----------------------------------------------------------------------------------------------------------
 
@@ -262,7 +245,7 @@ class StiltStation():
         Pandas Dataframe
         """
 
-        #Convert date-strings to date objs:
+        # Convert date-strings to date objs:
         s_date = tf.parse(start_date)
         e_date = tf.parse(end_date)
         hours = tf.get_hours(hours)
@@ -274,16 +257,16 @@ class StiltStation():
         if not hours:
             return False
 
-        #Define & initialize footprint variable:
+        # Define & initialize footprint variable:
         fp = xr.DataArray()
 
-        #Create a pandas dataframe containing one column of datetime objects with 3-hour intervals:
+        # Create a pandas dataframe containing one column of datetime objects with 3-hour intervals:
         date_range = pd.date_range(start_date, end_date, freq='3H')
 
-        #Filter date_range by timeslots:
+        # Filter date_range by timeslots:
         date_range = [t for t in date_range if int(t.strftime('%H')) in hours]
 
-        #Loop over all dates and store the corresponding fp filenames in a list:
+        # Loop over all dates and store the corresponding fp filenames in a list:
         fp_files = [(self._path_fp + self.locIdent +'/'+
                      str(dd.year)+'/'+str(dd.month).zfill(2)+'/'+
                      str(dd.year)+'x'+str(dd.month).zfill(2)+'x'+
@@ -294,7 +277,7 @@ class StiltStation():
                                       str(dd.year)+'x'+str(dd.month).zfill(2)+'x'+
                                       str(dd.day).zfill(2)+'x'+str(dd.hour).zfill(2)+'/foot')]
 
-        #Concatenate xarrays on time axis:
+        # Concatenate xarrays on time axis:
         fp = xr.open_mfdataset(fp_files, combine='by_coords',
                                data_vars='minimal', coords='minimal',
                                compat='override', parallel=True,
@@ -303,21 +286,21 @@ class StiltStation():
         # now check for CF compatibility
         fp = xr.decode_cf(fp)
 
-        #Format time attributes:
+        # Format time attributes:
         fp.time.attrs["standard_name"] = "time"
         fp.time.attrs["axis"] = "T"
 
-        #Format latitude attributes:
+        # Format latitude attributes:
         fp.lat.attrs["axis"] = "Y"
         fp.lat.attrs["standard_name"] = "latitude"
 
-        #Format longitude attributes:
+        # Format longitude attributes:
         fp.lon.attrs["axis"] = "X"
         fp.lon.attrs["standard_name"] = "longitude"
 
         # track data usage
         self.__portalUse('footprint')
-        #Return footprint array:
+        # Return footprint array:
         return fp
 
     def get_raw(self, start_date, end_date, cols):
@@ -340,7 +323,7 @@ class StiltStation():
         columns : Pandas DataFrame
             returns the raw results in form of a pandas data frame
         """
-        #Convert date-strings to date objs:
+        # Convert date-strings to date objs:
         s_date = tf.parse(start_date).strftime('%Y-%m-%d')
         e_date = tf.parse(end_date).strftime('%Y-%m-%d')
 
@@ -367,30 +350,30 @@ class StiltStation():
 
         if response.status_code != 500:
 
-            #Get response in json-format and read it in to a numpy array:
+            # Get response in json-format and read it in to a numpy array:
             output=np.asarray(response.json())
 
-            #Convert numpy array with STILT results to a pandas dataframe
+            # Convert numpy array with STILT results to a pandas dataframe
             cols = columns[1:-1].replace('"','').replace(' ','')
             cols = list(cols.split(','))
             df = pd.DataFrame(output[:,:], columns=cols)
 
-            #Replace 'null'-values with numpy NaN-values:
+            # Replace 'null'-values with numpy NaN-values:
             df = df.replace('null',np.NaN)
 
-            #Set dataframe data type to float:
+            # Set dataframe data type to float:
             df = df.astype(float)
 
-            #Convert the data type of the 'date'-column to Datetime Object:
+            # Convert the data type of the 'date'-column to Datetime Object:
             df['date'] = pd.to_datetime(df['isodate'], unit='s')
 
-            #Set 'date'-column as index:
+            # Set 'date'-column as index:
             df.set_index(['date'],inplace=True)
 
 
         # track data usage
         self.__portalUse('timeseries')
-        #Return dataframe:
+        # Return dataframe:
         return df
 
     def get_dobj_list(self):
@@ -425,8 +408,8 @@ class StiltStation():
         
         
     def __columns(self, cols):
-        #Function that checks the selection of columns that are to be
-        #returned with the STILT timeseries model output:
+        # Function that checks the selection of columns that are to be
+        # returned with the STILT timeseries model output:
         if cols:
             # Convert user-specified columns to lower case.
             cols = cols.lower()
@@ -436,7 +419,7 @@ class StiltStation():
         if cols not in valid:
             cols = 'default'
 
-        #Check columns-input:
+        # Check columns-input:
         if cols=='default':
             columns = ('["isodate","co2.stilt","co2.bio","co2.fuel",'+
                        '"co2.cement","co2.non_fuel",'+
@@ -505,7 +488,7 @@ class StiltStation():
                        '"wind.dir","wind.u","wind.v",'+
                        '"latstart","lonstart"]')
 
-        #Return variable:
+        # Return variable:
         return columns
 
     def __portalUse(self, dtype):
