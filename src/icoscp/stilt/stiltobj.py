@@ -16,7 +16,7 @@ __date__        = "2023-01-18"
 __lastchange__  = ["Zois Zogopoulos"]
 #################################################################################
 
-#Import modules
+# Import modules
 import os
 import numpy as np
 import pandas as pd
@@ -45,12 +45,12 @@ class StiltStation():
 
     """
 
-    #Import modules:
+    # Import modules:
 
-    #Function that initializes the attributes of an object:
+    # Function that initializes the attributes of an object:
     def __init__(self, st_dict):
 
-        #Object attributes:
+        # Object attributes:
         self._path_fp = CPC.STILTFP     # Path to location where STILT footprints are stored
         self._path_ts = CPC.STILTPATH   # Path to location where STILT time series are stored
         self._url = CPC.STILTTS         # URL to STILT information
@@ -113,19 +113,25 @@ class StiltStation():
             Example: end_date = '2018-01-31'
         hours : STR | INT, optional
             If hours is empty or None, ALL Timeslots are returned.
-            [0,3,6,9,12,15,18,21]
+            [0, 3, 6, 9, 12 ,15, 18, 21]
 
-            Valid results are returned as result with LOWER BOUND values.
-            For backwards compatibility, input for str format hh:mm is accepted
-            Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
-                        hours = [2,3,4,5,6] will return Timeslots for 0,3 and 6
-                        hours = [] return ALL
-                        hours = ["10", "10:00", 10] returns timeslot 9
+        Valid results are returned as result with LOWER BOUND values.
+        For backwards compatibility, input for str format hh:mm is
+        accepted.
+
+        Examples
+        --------
+        hours = ['02:00', 3, 4] will return Timeslots for 0, 3
+        hours = [2, 3, 4, 5, 6] will return Timeslots for 0, 3 and 6
+        hours = [] return ALL
+        hours = ['10', '10:00', 10] returns timeslot 9
 
         columns : TYPE, optional
-            Valid entries are "default", "co2", "co", "rn", "wind", "latlon", "all".
-            'default', empty, or None will return:
-            ["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement","co2.background"]
+            Valid entries are:
+            'default', 'co2', 'ch4', 'co', 'rn', 'wind', 'latlon', 'all'
+            Using 'default', empty, or None will return:
+            ['isodate', 'co2.stilt', 'co2.bio', 'co2.fuel',
+            'co2.cement', 'co2.background']
             A full description of the 'columns' can be found at
             https://icos-carbon-portal.github.io/pylib/modules/#stilt
 
@@ -134,100 +140,77 @@ class StiltStation():
         Pandas Dataframe
         """
 
-
-        #Convert date-strings to date objs:
+        # Convert date-strings to date objs:
         s_date = tf.parse(start_date)
         e_date = tf.parse(end_date)
         hours = tf.get_hours(hours)
-
         # Check input parameters:
         if e_date < s_date:
             return False
-
         if not hours:
             return False
-
-        #Create an empty dataframe to store the timeseries:
+        # Create an empty dataframe to store the timeseries:
         df=pd.DataFrame({'A' : []})
-
-        #Add headers:
+        # Add headers:
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-
-        #Create an empty list, to store the new time range with available STILT model results:
+        # Create an empty list, to store the new time range with
+        # available STILT model results:
         new_range=[]
-
-        #Create a pandas dataframe containing one column of datetime objects with 3-hour intervals:
-        #date_range = pd.date_range(start_date, end_date+dt.timedelta(hours=24), freq='3H')
+        # Create a pandas dataframe containing one column of datetime
+        # objects with 3-hour intervals:
+        # date_range = pd.date_range(start_date, end_date+dt.timedelta(hours=24), freq='3H')
         date_range = pd.date_range(s_date, e_date, freq='3H')
-
-        #Loop through every Datetime object in the dataframe:
+        # Loop through every Datetime object in the dataframe:
         for zDate in date_range:
-
-            #Check if STILT results exist:
+            # Check if STILT results exist:
             if os.path.exists(self._path_fp + self.locIdent + '/' +
                               str(zDate.year)+'/'+str(zDate.month).zfill(2)+'/'+
                               str(zDate.year)+'x'+str(zDate.month).zfill(2)+'x'+str(zDate.day).zfill(2)+'x'+
                               str(zDate.hour).zfill(2)+'/'):
 
-                #If STILT-results exist for the current Datetime object, append current Datetime object to list:
+                # If STILT-results exist for the current Datetime
+                # object, append current Datetime object to list:
                 new_range.append(zDate)
-
-        #If the list is not empty:
+        # If the list is not empty:
         if len(new_range) > 0:
-
-            #Assign the new time range to date_range:
+            # Assign the new time range to date_range:
             date_range = new_range
-
-            #Get new starting date:
+            # Get new starting date:
             fromDate = date_range[0].strftime('%Y-%m-%d')
-
-            #Get new ending date:
+            # Get new ending date:
             toDate = date_range[-1].strftime('%Y-%m-%d')
-
-            #Store the STILT result column names to a variable:
+            # Store the STILT result column names to a variable:
             columns  = self.__columns(columns)
-
-            #Store the STILT result data column names to a variable:
+            # Store the STILT result data column names to a variable:
             data = '{"columns": '+columns+', "fromDate": "'+fromDate+'", "toDate": "'+toDate+'", "stationId": "'+self.id+'"}'
-
-            #Send request to get STILT results:
+            # Send request to get STILT results:
             response = requests.post(self._url, headers=headers, data=data)
-
-            #Check if response is successful:
+            # Check if response is successful:
             if response.status_code != 500:
-
-                #Get response in json-format and read it in to a numpy array:
+                # Get response in json-format and read it in to a numpy array:
                 output=np.asarray(response.json())
-
-                #Convert numpy array with STILT results to a pandas dataframe
+                # Convert numpy array with STILT results to a pandas dataframe
                 cols = columns[1:-1].replace('"','').replace(' ','')
                 cols = list(cols.split(','))
                 df = pd.DataFrame(output[:,:], columns=cols)
-
-                #Replace 'null'-values with numpy NaN-values:
+                # Replace 'null'-values with numpy NaN-values:
                 df = df.replace('null',np.NaN)
-
-                #Set dataframe data type to float:
+                # Set dataframe data type to float:
                 df = df.astype(float)
-
-                #Convert the data type of the 'date'-column to Datetime Object:
+                # Convert the data type of the 'date'-column to Datetime Object:
                 df['date'] = pd.to_datetime(df['isodate'], unit='s')
-
-                #Set 'date'-column as index:
+                # Set 'date'-column as index:
                 df.set_index(['date'],inplace=True)
-
-                #Filter dataframe values by timeslots:
+                # Filter dataframe values by timeslots:
                 hours = [str(h).zfill(2) for h in hours]
                 df = df.loc[df.index.strftime('%H').isin(hours)]
-
             else:
-
-                #Print message:
+                # Print message:
                 print("\033[0;31;1m Error...\nToo big STILT dataset!\nSelect data for a shorter time period.\n\n")
 
         # track data usage
         self.__portalUse('timeseries')
-        #Return dataframe:
+        # Return dataframe:
         return df
     #----------------------------------------------------------------------------------------------------------
 
@@ -262,7 +245,7 @@ class StiltStation():
         Pandas Dataframe
         """
 
-        #Convert date-strings to date objs:
+        # Convert date-strings to date objs:
         s_date = tf.parse(start_date)
         e_date = tf.parse(end_date)
         hours = tf.get_hours(hours)
@@ -274,16 +257,16 @@ class StiltStation():
         if not hours:
             return False
 
-        #Define & initialize footprint variable:
+        # Define & initialize footprint variable:
         fp = xr.DataArray()
 
-        #Create a pandas dataframe containing one column of datetime objects with 3-hour intervals:
+        # Create a pandas dataframe containing one column of datetime objects with 3-hour intervals:
         date_range = pd.date_range(start_date, end_date, freq='3H')
 
-        #Filter date_range by timeslots:
+        # Filter date_range by timeslots:
         date_range = [t for t in date_range if int(t.strftime('%H')) in hours]
 
-        #Loop over all dates and store the corresponding fp filenames in a list:
+        # Loop over all dates and store the corresponding fp filenames in a list:
         fp_files = [(self._path_fp + self.locIdent +'/'+
                      str(dd.year)+'/'+str(dd.month).zfill(2)+'/'+
                      str(dd.year)+'x'+str(dd.month).zfill(2)+'x'+
@@ -294,7 +277,7 @@ class StiltStation():
                                       str(dd.year)+'x'+str(dd.month).zfill(2)+'x'+
                                       str(dd.day).zfill(2)+'x'+str(dd.hour).zfill(2)+'/foot')]
 
-        #Concatenate xarrays on time axis:
+        # Concatenate xarrays on time axis:
         fp = xr.open_mfdataset(fp_files, combine='by_coords',
                                data_vars='minimal', coords='minimal',
                                compat='override', parallel=True,
@@ -303,21 +286,21 @@ class StiltStation():
         # now check for CF compatibility
         fp = xr.decode_cf(fp)
 
-        #Format time attributes:
+        # Format time attributes:
         fp.time.attrs["standard_name"] = "time"
         fp.time.attrs["axis"] = "T"
 
-        #Format latitude attributes:
+        # Format latitude attributes:
         fp.lat.attrs["axis"] = "Y"
         fp.lat.attrs["standard_name"] = "latitude"
 
-        #Format longitude attributes:
+        # Format longitude attributes:
         fp.lon.attrs["axis"] = "X"
         fp.lon.attrs["standard_name"] = "longitude"
 
         # track data usage
         self.__portalUse('footprint')
-        #Return footprint array:
+        # Return footprint array:
         return fp
 
     def get_raw(self, start_date, end_date, cols):
@@ -340,7 +323,7 @@ class StiltStation():
         columns : Pandas DataFrame
             returns the raw results in form of a pandas data frame
         """
-        #Convert date-strings to date objs:
+        # Convert date-strings to date objs:
         s_date = tf.parse(start_date).strftime('%Y-%m-%d')
         e_date = tf.parse(end_date).strftime('%Y-%m-%d')
 
@@ -367,30 +350,30 @@ class StiltStation():
 
         if response.status_code != 500:
 
-            #Get response in json-format and read it in to a numpy array:
+            # Get response in json-format and read it in to a numpy array:
             output=np.asarray(response.json())
 
-            #Convert numpy array with STILT results to a pandas dataframe
+            # Convert numpy array with STILT results to a pandas dataframe
             cols = columns[1:-1].replace('"','').replace(' ','')
             cols = list(cols.split(','))
             df = pd.DataFrame(output[:,:], columns=cols)
 
-            #Replace 'null'-values with numpy NaN-values:
+            # Replace 'null'-values with numpy NaN-values:
             df = df.replace('null',np.NaN)
 
-            #Set dataframe data type to float:
+            # Set dataframe data type to float:
             df = df.astype(float)
 
-            #Convert the data type of the 'date'-column to Datetime Object:
+            # Convert the data type of the 'date'-column to Datetime Object:
             df['date'] = pd.to_datetime(df['isodate'], unit='s')
 
-            #Set 'date'-column as index:
+            # Set 'date'-column as index:
             df.set_index(['date'],inplace=True)
 
 
         # track data usage
         self.__portalUse('timeseries')
-        #Return dataframe:
+        # Return dataframe:
         return df
 
     def get_dobj_list(self):
@@ -425,24 +408,26 @@ class StiltStation():
         
         
     def __columns(self, cols):
-        #Function that checks the selection of columns that are to be
-        #returned with the STILT timeseries model output:
+        # Function that checks the selection of columns that are to be
+        # returned with the STILT timeseries model output:
         if cols:
             # Convert user-specified columns to lower case.
             cols = cols.lower()
 
         # check for a valid entry. If not...return default
-        valid = ["default", "co2", "co", "rn", "wind", "latlon", "all"]
+        valid = ["default", "co2", "ch4", "co", "rn", "wind", "latlon", "all"]
         if cols not in valid:
             cols = 'default'
 
-        #Check columns-input:
+        # Check columns-input:
         if cols=='default':
-            columns = ('["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement",'+
+            columns = ('["isodate","co2.stilt","co2.bio","co2.fuel",'+
+                       '"co2.cement","co2.non_fuel",'+
                        '"co2.background"]')
 
         elif cols=='co2':
-            columns = ('["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement",'+
+            columns = ('["isodate","co2.stilt","co2.bio","co2.fuel",'+
+                       '"co2.cement","co2.non_fuel",'+
                        '"co2.bio.gee","co2.bio.resp",' +
                        '"co2.fuel.coal","co2.fuel.oil","co2.fuel.gas",'+
                        '"co2.fuel.bio","co2.fuel.waste",'+
@@ -451,12 +436,22 @@ class StiltStation():
                        '"co2.background"]')
 
         elif cols=='co':
-            columns = ('["isodate", "co.stilt","co.fuel","co.cement",'+
-                       '"co.fuel.coal","co.fuel.oil", "co.fuel.gas",'+
+            columns = ('["isodate", "co.stilt","co.fuel",'+
+                       '"co.cement","co.non_fuel",'+
+                       '"co.fuel.coal","co.fuel.oil","co.fuel.gas",'+
                        '"co.fuel.bio","co.fuel.waste",'+
                        '"co.energy","co.transport","co.industry",'+
                        '"co.residential","co.other_categories",'+
                        '"co.background"]')
+
+        elif cols=='ch4':
+            columns = ('["isodate", "ch4.stilt",'+
+                       '"ch4.anthropogenic","ch4.natural",'+
+                       '"ch4.agriculture","ch4.waste",'+
+                       '"ch4.energy","ch4.other_categories",'+
+                       '"ch4.wetlands","ch4.soil_uptake",'+
+                       '"ch4.wildfire","ch4.other_natural",'+                       
+                       '"ch4.background"]')
 
         elif cols=='rn':
             columns = ('["isodate", "rn", "rn.era", "rn.noah"]')
@@ -468,14 +463,22 @@ class StiltStation():
             columns = ('["isodate", "latstart", "lonstart"]')
 
         elif cols=='all':
-            columns = ('["isodate","co2.stilt","co2.bio","co2.fuel","co2.cement",'+
+            columns = ('["isodate","co2.stilt","co2.bio","co2.fuel",'+
+                       '"co2.cement","co2.non_fuel",'+
                        '"co2.bio.gee", "co2.bio.resp",' +
                        '"co2.fuel.coal","co2.fuel.oil","co2.fuel.gas",'+
                        '"co2.fuel.bio","co2.fuel.waste",'+
                        '"co2.energy","co2.transport", "co2.industry",'+
                        '"co2.residential","co2.other_categories",'+
                        '"co2.background",'+
-                       '"co.stilt","co.fuel","co.cement",'+
+                       '"co.stilt","co.fuel","co.cement","co.non_fuel",'+
+                       '"isodate", "ch4.stilt",'+
+                       '"ch4.anthropogenic","ch4.natural",'+
+                       '"ch4.agriculture","ch4.waste",'+
+                       '"ch4.energy","ch4.other_categories",'+
+                       '"ch4.wetlands","ch4.soil_uptake",'+
+                       '"ch4.wildfire","ch4.other_natural",'+                       
+                       '"ch4.background",'+
                        '"co.fuel.coal","co.fuel.oil","co.fuel.gas",'+
                        '"co.fuel.bio","co.fuel.waste",'+
                        '"co.energy","co.transport","co.industry",'+
@@ -485,7 +488,7 @@ class StiltStation():
                        '"wind.dir","wind.u","wind.v",'+
                        '"latstart","lonstart"]')
 
-        #Return variable:
+        # Return variable:
         return columns
 
     def __portalUse(self, dtype):
@@ -577,8 +580,8 @@ class StiltStation():
                 'co2.1a3a+1c1.oil_lightini',
                 'co2.1a3d+1c2.oil_heavyini',
                 'co2.2a.cementini',
-                'co2.2befg+3.cementini',
-                'co2.2c.cementini',
+                'co2.2befg+3.othersini',
+                'co2.2c.othersini',
                 'co2.7a.coal_hardini',
                 'co2.1a1a.bio_gasini',
                 'co2.1a1a.bio_liquidini',
@@ -642,244 +645,92 @@ class StiltStation():
                 'co.1a4.solid_wasteini',
                 'co.1b2ac.oil_lightini',
                 'co.2a.cementini',
-                'co.2befg+3.cementini',
-                'co.2c.cementini',
+                'co.2befg+3.othersini',
+                'co.2c.othersini',
                 'co.4f.bio_solidini',
                 'co.7a.coal_hardini',
                 'coini',
+                'ch4.1a3a+1c1.oil_lightini',
+                'ch4.1a3d+1c2.oil_heavyini',
+                'ch4.4a.othersini',
+                'ch4.4b.othersini',
+                'ch4.4c.othersini',
+                'ch4.6b.othersini',
+                'ch4.7a.coal_hardini',
+                'ch4.1a1a.coal_brownini',
+                'ch4.1a1a.coal_hardini',
+                'ch4.1a1a.coal_peatini',
+                'ch4.1a1a.bio_gasini',
+                'ch4.1a1a.gas_derini',
+                'ch4.1a1a.gas_natini',
+                'ch4.1a1a.bio_liquidini',
+                'ch4.1a1a.oil_heavyini',
+                'ch4.1a1a.oil_lightini',
+                'ch4.1a1a.bio_solidini',
+                'ch4.1a1a.solid_wasteini',
+                'ch4.1a1bcr.coal_brownini',
+                'ch4.1a1bcr.coal_hardini',
+                'ch4.1a1bcr.coal_peatini',
+                'ch4.1a1bcr.bio_gasini',
+                'ch4.1a1bcr.gas_derini',
+                'ch4.1a1bcr.gas_natini',
+                'ch4.1a1bcr.oil_heavyini',
+                'ch4.1a1bcr.oil_lightini',
+                'ch4.1a1bcr.bio_solidini',
+                'ch4.1a1bcr.solid_wasteini',
+                'ch4.1a2+6cd.coal_brownini',
+                'ch4.1a2+6cd.coal_hardini',
+                'ch4.1a2+6cd.coal_peatini',
+                'ch4.1a2+6cd.bio_gasini',
+                'ch4.1a2+6cd.gas_derini',
+                'ch4.1a2+6cd.gas_natini',
+                'ch4.1a2+6cd.bio_liquidini',
+                'ch4.1a2+6cd.oil_heavyini',
+                'ch4.1a2+6cd.oil_lightini',
+                'ch4.1a2+6cd.bio_solidini',
+                'ch4.1a2+6cd.solid_wasteini',
+                'ch4.1a3b.gas_natini',
+                'ch4.1a3b.oil_heavyini',
+                'ch4.1a3b.oil_lightini',
+                'ch4.1a3ce.oil_heavyini',
+                'ch4.1a4.bio_gasini',
+                'ch4.1a4.bio_liquidini',
+                'ch4.1a4.bio_solidini',
+                'ch4.1a4.coal_brownini',
+                'ch4.1a4.coal_hardini',
+                'ch4.1a4.coal_peatini',
+                'ch4.1a4.solid_wasteini',
+                'ch4.1a4.gas_derini',
+                'ch4.1a4.gas_natini',
+                'ch4.1a4.oil_heavyini',
+                'ch4.1a4.oil_lightini',
+                'ch4.1b1.coal_brownini',
+                'ch4.1b1.coal_hardini',
+                'ch4.1b1.coal_peatini',
+                'ch4.1b2ac.oil_heavyini',
+                'ch4.1b2ac.oil_lightini',
+                'ch4.1b2ac.gas_natini',
+                'ch4.1b2b.gas_natini',
+                'ch4.2befg+3.othersini',
+                'ch4.2c.othersini',
+                'ch4.4f.bio_solidini',
+                'ch4.6a.othersini',
+                'ch4ini',
                 'rnini',
                 'rn_noahini',
                 'rn_eraini',
+                'rn_era5mini',
+                'rn_noah2mini',
+                'ch4wetini',
+                'ch4soilini',
+                'ch4uptakeini',
+                'ch4peatini',
+                'ch4geoini',
+                'ch4fireini',
+                'ch4oceanini',
+                'ch4lakesini',
                 'coinio',
-                'sdco2.1a4.coal_brownini',
-                'sdco2.1a4.coal_hardini',
-                'sdco2.1a4.coal_peatini',
-                'sdco2.1a4.gas_derini',
-                'sdco2.1a4.gas_natini',
-                'sdco2.1a4.oil_heavyini',
-                'sdco2.1a4.oil_lightini',
-                'sdco2.1a4.solid_wasteini',
-                'sdco2.1a1a.coal_brownini',
-                'sdco2.1a1a.coal_hardini',
-                'sdco2.1a1a.coal_peatini',
-                'sdco2.1a1a.gas_derini',
-                'sdco2.1a1a.gas_natini',
-                'sdco2.1a1a.oil_heavyini',
-                'sdco2.1a1a.oil_lightini',
-                'sdco2.1a1a.solid_wasteini',
-                'sdco2.1a1bcr.coal_brownini',
-                'sdco2.1a1bcr.coal_hardini',
-                'sdco2.1a1bcr.coal_peatini',
-                'sdco2.1a1bcr.gas_derini',
-                'sdco2.1a1bcr.gas_natini',
-                'sdco2.1a1bcr.oil_heavyini',
-                'sdco2.1a1bcr.oil_lightini',
-                'sdco2.1a1bcr.solid_wasteini',
-                'sdco2.1a2+6cd.coal_brownini',
-                'sdco2.1a2+6cd.coal_hardini',
-                'sdco2.1a2+6cd.coal_peatini',
-                'sdco2.1a2+6cd.gas_derini',
-                'sdco2.1a2+6cd.gas_natini',
-                'sdco2.1a2+6cd.oil_heavyini',
-                'sdco2.1a2+6cd.oil_lightini',
-                'sdco2.1a2+6cd.solid_wasteini',
-                'sdco2.1a3b.oil_heavyini',
-                'sdco2.1a3b.oil_lightini',
-                'sdco2.1b2abc.oil_heavyini',
-                'sdco2.1b2abc.oil_lght+hvy+gas_vafini',
-                'sdco2.1b2abc.oil_lightini',
-                'sdco2.1a3ce.oil_heavyini',
-                'sdco2.1a3a+1c1.oil_lightini',
-                'sdco2.1a3d+1c2.oil_heavyini',
-                'sdco2.2a.cementini',
-                'sdco2.2befg+3.cementini',
-                'sdco2.2c.cementini',
-                'sdco2.7a.coal_hardini',
-                'sdco2.1a1a.bio_gasini',
-                'sdco2.1a1a.bio_liquidini',
-                'sdco2.1a1a.bio_solidini',
-                'sdco2.1a1bcr.bio_gasini',
-                'sdco2.1a1bcr.bio_solidini',
-                'sdco2.1a2+6cd.bio_gasini',
-                'sdco2.1a2+6cd.bio_liquidini',
-                'sdco2.1a2+6cd.bio_solidini',
-                'sdco2.1a4.bio_gasini',
-                'sdco2.1a4.bio_liquidini',
-                'sdco2.1a4.bio_solidini',
-                'sdco2.4f.bio_solidini',
-                'sdco2ini',
-                'sdco.1a1a.coal_brownini',
-                'sdco.1a1a.coal_hardini',
-                'sdco.1a1a.coal_peatini',
-                'sdco.1a1a.bio_gasini',
-                'sdco.1a1a.gas_derini',
-                'sdco.1a1a.gas_natini',
-                'sdco.1a1a.bio_liquidini',
-                'sdco.1a1a.oil_heavyini',
-                'sdco.1a1a.oil_lightini',
-                'sdco.1a1a.bio_solidini',
-                'sdco.1a1a.solid_wasteini',
-                'sdco.1a1bcr.coal_brownini',
-                'sdco.1a1bcr.coal_hardini',
-                'sdco.1a1bcr.coal_peatini',
-                'sdco.1a1bcr.bio_gasini',
-                'sdco.1a1bcr.gas_derini',
-                'sdco.1a1bcr.gas_natini',
-                'sdco.1a1bcr.oil_heavyini',
-                'sdco.1a1bcr.oil_lightini',
-                'sdco.1a1bcr.solid_wasteini',
-                'sdco.1a2+6cd.coal_brownini',
-                'sdco.1a2+6cd.coal_hardini',
-                'sdco.1a2+6cd.coal_peatini',
-                'sdco.1a2+6cd.bio_gasini',
-                'sdco.1a2+6cd.gas_derini',
-                'sdco.1a2+6cd.gas_natini',
-                'sdco.1a2+6cd.bio_liquidini',
-                'sdco.1a2+6cd.oil_heavyini',
-                'sdco.1a2+6cd.oil_lightini',
-                'sdco.1a2+6cd.bio_solidini',
-                'sdco.1a2+6cd.solid_wasteini',
-                'sdco.1a3a+1c1.oil_lightini',
-                'sdco.1a3b.oil_heavyini',
-                'sdco.1a3b.oil_lightini',
-                'sdco.1a3ce.oil_heavyini',
-                'sdco.1a3d+1c2.oil_heavyini',
-                'sdco.1a4.bio_gasini',
-                'sdco.1a4.bio_liquidini',
-                'sdco.1a4.bio_solidini',
-                'sdco.1a4.coal_brownini',
-                'sdco.1a4.coal_hardini',
-                'sdco.1a4.coal_peatini',
-                'sdco.1a4.gas_derini',
-                'sdco.1a4.gas_natini',
-                'sdco.1a4.oil_heavyini',
-                'sdco.1a4.oil_lightini',
-                'sdco.1a4.solid_wasteini',
-                'sdco.1b2ac.oil_lightini',
-                'sdco.2a.cementini',
-                'sdco.2befg+3.cementini',
-                'sdco.2c.cementini',
-                'sdco.4f.bio_solidini',
-                'sdco.7a.coal_hardini',
-                'sdcoini',
-                'sdrnini',
-                'sdrn_noahini',
-                'sdrn_eraini',
                 'sdcoinio',
-                'co2.1a4.coal_brownffm',
-                'co2.1a4.coal_hardffm',
-                'co2.1a4.coal_peatffm',
-                'co2.1a4.gas_derffm',
-                'co2.1a4.gas_natffm',
-                'co2.1a4.oil_heavyffm',
-                'co2.1a4.oil_lightffm',
-                'co2.1a4.solid_wasteffm',
-                'co2.1a1a.coal_brownffm',
-                'co2.1a1a.coal_hardffm',
-                'co2.1a1a.coal_peatffm',
-                'co2.1a1a.gas_derffm',
-                'co2.1a1a.gas_natffm',
-                'co2.1a1a.oil_heavyffm',
-                'co2.1a1a.oil_lightffm',
-                'co2.1a1a.solid_wasteffm',
-                'co2.1a1bcr.coal_brownffm',
-                'co2.1a1bcr.coal_hardffm',
-                'co2.1a1bcr.coal_peatffm',
-                'co2.1a1bcr.gas_derffm',
-                'co2.1a1bcr.gas_natffm',
-                'co2.1a1bcr.oil_heavyffm',
-                'co2.1a1bcr.oil_lightffm',
-                'co2.1a1bcr.solid_wasteffm',
-                'co2.1a2+6cd.coal_brownffm',
-                'co2.1a2+6cd.coal_hardffm',
-                'co2.1a2+6cd.coal_peatffm',
-                'co2.1a2+6cd.gas_derffm',
-                'co2.1a2+6cd.gas_natffm',
-                'co2.1a2+6cd.oil_heavyffm',
-                'co2.1a2+6cd.oil_lightffm',
-                'co2.1a2+6cd.solid_wasteffm',
-                'co2.1a3b.oil_heavyffm',
-                'co2.1a3b.oil_lightffm',
-                'co2.1b2abc.oil_heavyffm',
-                'co2.1b2abc.oil_lght+hvy+gas_vafffm',
-                'co2.1b2abc.oil_lightffm',
-                'co2.1a3ce.oil_heavyffm',
-                'co2.1a3a+1c1.oil_lightffm',
-                'co2.1a3d+1c2.oil_heavyffm',
-                'co2.2a.cementffm',
-                'co2.2befg+3.cementffm',
-                'co2.2c.cementffm',
-                'co2.7a.coal_hardffm',
-                'co2.1a1a.bio_gasffm',
-                'co2.1a1a.bio_liquidffm',
-                'co2.1a1a.bio_solidffm',
-                'co2.1a1bcr.bio_gasffm',
-                'co2.1a1bcr.bio_solidffm',
-                'co2.1a2+6cd.bio_gasffm',
-                'co2.1a2+6cd.bio_liquidffm',
-                'co2.1a2+6cd.bio_solidffm',
-                'co2.1a4.bio_gasffm',
-                'co2.1a4.bio_liquidffm',
-                'co2.1a4.bio_solidffm',
-                'co2.4f.bio_solidffm',
-                'co2ffm',
-                'co.1a1a.coal_brownffm',
-                'co.1a1a.coal_hardffm',
-                'co.1a1a.coal_peatffm',
-                'co.1a1a.bio_gasffm',
-                'co.1a1a.gas_derffm',
-                'co.1a1a.gas_natffm',
-                'co.1a1a.bio_liquidffm',
-                'co.1a1a.oil_heavyffm',
-                'co.1a1a.oil_lightffm',
-                'co.1a1a.bio_solidffm',
-                'co.1a1a.solid_wasteffm',
-                'co.1a1bcr.coal_brownffm',
-                'co.1a1bcr.coal_hardffm',
-                'co.1a1bcr.coal_peatffm',
-                'co.1a1bcr.bio_gasffm',
-                'co.1a1bcr.gas_derffm',
-                'co.1a1bcr.gas_natffm',
-                'co.1a1bcr.oil_heavyffm',
-                'co.1a1bcr.oil_lightffm',
-                'co.1a1bcr.solid_wasteffm',
-                'co.1a2+6cd.coal_brownffm',
-                'co.1a2+6cd.coal_hardffm',
-                'co.1a2+6cd.coal_peatffm',
-                'co.1a2+6cd.bio_gasffm',
-                'co.1a2+6cd.gas_derffm',
-                'co.1a2+6cd.gas_natffm',
-                'co.1a2+6cd.bio_liquidffm',
-                'co.1a2+6cd.oil_heavyffm',
-                'co.1a2+6cd.oil_lightffm',
-                'co.1a2+6cd.bio_solidffm',
-                'co.1a2+6cd.solid_wasteffm',
-                'co.1a3a+1c1.oil_lightffm',
-                'co.1a3b.oil_heavyffm',
-                'co.1a3b.oil_lightffm',
-                'co.1a3ce.oil_heavyffm',
-                'co.1a3d+1c2.oil_heavyffm',
-                'co.1a4.bio_gasffm',
-                'co.1a4.bio_liquidffm',
-                'co.1a4.bio_solidffm',
-                'co.1a4.coal_brownffm',
-                'co.1a4.coal_hardffm',
-                'co.1a4.coal_peatffm',
-                'co.1a4.gas_derffm',
-                'co.1a4.gas_natffm',
-                'co.1a4.oil_heavyffm',
-                'co.1a4.oil_lightffm',
-                'co.1a4.solid_wasteffm',
-                'co.1b2ac.oil_lightffm',
-                'co.2a.cementffm',
-                'co.2befg+3.cementffm',
-                'co.2c.cementffm',
-                'co.4f.bio_solidffm',
-                'co.7a.coal_hardffm',
-                'coffm',
-                'rnffm',
-                'rn_noahffm',
-                'rn_eraffm',
                 'inflevergreen',
                 'geeevergreen',
                 'respevergreen',
@@ -945,8 +796,8 @@ class StiltStation():
                 'co2.1a3a+1c1.oil_light',
                 'co2.1a3d+1c2.oil_heavy',
                 'co2.2a.cement',
-                'co2.2befg+3.cement',
-                'co2.2c.cement',
+                'co2.2befg+3.others',
+                'co2.2c.others',
                 'co2.7a.coal_hard',
                 'co2.1a1a.bio_gas',
                 'co2.1a1a.bio_liquid',
@@ -1010,14 +861,90 @@ class StiltStation():
                 'co.1a4.solid_waste',
                 'co.1b2ac.oil_light',
                 'co.2a.cement',
-                'co.2befg+3.cement',
-                'co.2c.cement',
+                'co.2befg+3.others',
+                'co.2c.others',
                 'co.4f.bio_solid',
                 'co.7a.coal_hard',
                 'co',
+                'ch4.1a3a+1c1.oil_light',
+                'ch4.1a3d+1c2.oil_heavy',
+                'ch4.4a.others',
+                'ch4.4b.others',
+                'ch4.4c.others',
+                'ch4.6b.others',
+                'ch4.7a.coal_hard',
+                'ch4.1a1a.coal_brown',
+                'ch4.1a1a.coal_hard',
+                'ch4.1a1a.coal_peat',
+                'ch4.1a1a.bio_gas',
+                'ch4.1a1a.gas_der',
+                'ch4.1a1a.gas_nat',
+                'ch4.1a1a.bio_liquid',
+                'ch4.1a1a.oil_heavy',
+                'ch4.1a1a.oil_light',
+                'ch4.1a1a.bio_solid',
+                'ch4.1a1a.solid_waste',
+                'ch4.1a1bcr.coal_brown',
+                'ch4.1a1bcr.coal_hard',
+                'ch4.1a1bcr.coal_peat',
+                'ch4.1a1bcr.bio_gas',
+                'ch4.1a1bcr.gas_der',
+                'ch4.1a1bcr.gas_nat',
+                'ch4.1a1bcr.oil_heavy',
+                'ch4.1a1bcr.oil_light',
+                'ch4.1a1bcr.bio_solid',
+                'ch4.1a1bcr.solid_waste',
+                'ch4.1a2+6cd.coal_brown',
+                'ch4.1a2+6cd.coal_hard',
+                'ch4.1a2+6cd.coal_peat',
+                'ch4.1a2+6cd.bio_gas',
+                'ch4.1a2+6cd.gas_der',
+                'ch4.1a2+6cd.gas_nat',
+                'ch4.1a2+6cd.bio_liquid',
+                'ch4.1a2+6cd.oil_heavy',
+                'ch4.1a2+6cd.oil_light',
+                'ch4.1a2+6cd.bio_solid',
+                'ch4.1a2+6cd.solid_waste',
+                'ch4.1a3b.gas_nat',
+                'ch4.1a3b.oil_heavy',
+                'ch4.1a3b.oil_light',
+                'ch4.1a3ce.oil_heavy',
+                'ch4.1a4.bio_gas',
+                'ch4.1a4.bio_liquid',
+                'ch4.1a4.bio_solid',
+                'ch4.1a4.coal_brown',
+                'ch4.1a4.coal_hard',
+                'ch4.1a4.coal_peat',
+                'ch4.1a4.solid_waste',
+                'ch4.1a4.gas_der',
+                'ch4.1a4.gas_nat',
+                'ch4.1a4.oil_heavy',
+                'ch4.1a4.oil_light',
+                'ch4.1b1.coal_brown',
+                'ch4.1b1.coal_hard',
+                'ch4.1b1.coal_peat',
+                'ch4.1b2ac.oil_heavy',
+                'ch4.1b2ac.oil_light',
+                'ch4.1b2ac.gas_nat',
+                'ch4.1b2b.gas_nat',
+                'ch4.2befg+3.others',
+                'ch4.2c.others',
+                'ch4.4f.bio_solid',
+                'ch4.6a.others',
+                'ch4',
                 'rn',
                 'rn_noah',
                 'rn_era',
+                'rn_era5m',
+                'rn_noah2m',
+                'ch4wet',
+                'ch4soil',
+                'ch4uptake',
+                'ch4peat',
+                'ch4geo',
+                'ch4fire',
+                'ch4ocean',
+                'ch4lakes',
                 'sdco2.1a4.coal_brown',
                 'sdco2.1a4.coal_hard',
                 'sdco2.1a4.coal_peat',
@@ -1059,8 +986,8 @@ class StiltStation():
                 'sdco2.1a3a+1c1.oil_light',
                 'sdco2.1a3d+1c2.oil_heavy',
                 'sdco2.2a.cement',
-                'sdco2.2befg+3.cement',
-                'sdco2.2c.cement',
+                'sdco2.2befg+3.others',
+                'sdco2.2c.others',
                 'sdco2.7a.coal_hard',
                 'sdco2.1a1a.bio_gas',
                 'sdco2.1a1a.bio_liquid',
@@ -1124,14 +1051,90 @@ class StiltStation():
                 'sdco.1a4.solid_waste',
                 'sdco.1b2ac.oil_light',
                 'sdco.2a.cement',
-                'sdco.2befg+3.cement',
-                'sdco.2c.cement',
+                'sdco.2befg+3.others',
+                'sdco.2c.others',
                 'sdco.4f.bio_solid',
                 'sdco.7a.coal_hard',
                 'sdco',
+                'sdch4.1a3a+1c1.oil_light',
+                'sdch4.1a3d+1c2.oil_heavy',
+                'sdch4.4a.others',
+                'sdch4.4b.others',
+                'sdch4.4c.others',
+                'sdch4.6b.others',
+                'sdch4.7a.coal_hard',
+                'sdch4.1a1a.coal_brown',
+                'sdch4.1a1a.coal_hard',
+                'sdch4.1a1a.coal_peat',
+                'sdch4.1a1a.bio_gas',
+                'sdch4.1a1a.gas_der',
+                'sdch4.1a1a.gas_nat',
+                'sdch4.1a1a.bio_liquid',
+                'sdch4.1a1a.oil_heavy',
+                'sdch4.1a1a.oil_light',
+                'sdch4.1a1a.bio_solid',
+                'sdch4.1a1a.solid_waste',
+                'sdch4.1a1bcr.coal_brown',
+                'sdch4.1a1bcr.coal_hard',
+                'sdch4.1a1bcr.coal_peat',
+                'sdch4.1a1bcr.bio_gas',
+                'sdch4.1a1bcr.gas_der',
+                'sdch4.1a1bcr.gas_nat',
+                'sdch4.1a1bcr.oil_heavy',
+                'sdch4.1a1bcr.oil_light',
+                'sdch4.1a1bcr.bio_solid',
+                'sdch4.1a1bcr.solid_waste',
+                'sdch4.1a2+6cd.coal_brown',
+                'sdch4.1a2+6cd.coal_hard',
+                'sdch4.1a2+6cd.coal_peat',
+                'sdch4.1a2+6cd.bio_gas',
+                'sdch4.1a2+6cd.gas_der',
+                'sdch4.1a2+6cd.gas_nat',
+                'sdch4.1a2+6cd.bio_liquid',
+                'sdch4.1a2+6cd.oil_heavy',
+                'sdch4.1a2+6cd.oil_light',
+                'sdch4.1a2+6cd.bio_solid',
+                'sdch4.1a2+6cd.solid_waste',
+                'sdch4.1a3b.gas_nat',
+                'sdch4.1a3b.oil_heavy',
+                'sdch4.1a3b.oil_light',
+                'sdch4.1a3ce.oil_heavy',
+                'sdch4.1a4.bio_gas',
+                'sdch4.1a4.bio_liquid',
+                'sdch4.1a4.bio_solid',
+                'sdch4.1a4.coal_brown',
+                'sdch4.1a4.coal_hard',
+                'sdch4.1a4.coal_peat',
+                'sdch4.1a4.solid_waste',
+                'sdch4.1a4.gas_der',
+                'sdch4.1a4.gas_nat',
+                'sdch4.1a4.oil_heavy',
+                'sdch4.1a4.oil_light',
+                'sdch4.1b1.coal_brown',
+                'sdch4.1b1.coal_hard',
+                'sdch4.1b1.coal_peat',
+                'sdch4.1b2ac.oil_heavy',
+                'sdch4.1b2ac.oil_light',
+                'sdch4.1b2ac.gas_nat',
+                'sdch4.1b2b.gas_nat',
+                'sdch4.2befg+3.others',
+                'sdch4.2c.others',
+                'sdch4.4f.bio_solid',
+                'sdch4.6a.others',
+                'sdch4',
                 'sdrn',
                 'sdrn_noah',
                 'sdrn_era',
+                'sdrn_era5m',
+                'sdrn_noah2m',
+                'sdch4wet',
+                'sdch4soil',
+                'sdch4uptake',
+                'sdch4peat',
+                'sdch4geo',
+                'sdch4fire',
+                'sdch4ocean',
+                'sdch4lakes',
                 'ubar',
                 'vbar',
                 'wbar',
