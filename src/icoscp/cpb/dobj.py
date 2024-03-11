@@ -22,6 +22,7 @@ import struct
 import pandas as pd
 
 from icoscp import __version__ as release_version
+from icoscp import auth
 from icoscp.cpb import dtype
 from icoscp.cpb import metadata
 import icoscp.const as CPC
@@ -36,8 +37,7 @@ class Dobj():
         the method .getColumns() will return the actual data
     """
 
-    def __init__(self, digitalObject=None,
-                 external_auth: PasswordAuth | TokenAuth = None):
+    def __init__(self, digitalObject=None):
 
         self._dobj = None           # contains the pid
         self._colSelected = None    # 'none' -> ALL columns are returned
@@ -59,7 +59,6 @@ class Dobj():
         # this needs to be the last call within init. If dobj is provided
         # meta data is retrieved and .valid is True
         self.dobj = digitalObject
-        self._external_auth = external_auth
 
 
     #-----------
@@ -355,7 +354,7 @@ class Dobj():
             response, content = None, None
             request_url, request_headers = None, None
             request_url = CPC.SECURED_DATA
-            request_headers = {'cookie': wrap_auth(self._external_auth)}
+            request_headers = {'cookie': auth.cookie_value}
             # Request secure data.
             response = requests.post(url=request_url,
                                      json=self._json,

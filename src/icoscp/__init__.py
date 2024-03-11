@@ -1,3 +1,5 @@
+from icoscp.cpauth.authentication import AuthProvider
+
 """
     The ICOS CarbonPortal package provides access to data hosted at the
     Carbon Portal. ( https://data.icos-cp.eu/ )    
@@ -19,3 +21,5 @@ __maintainer__ = "ICOS Carbon Portal, elaborated products team"
 __email__ = ['info@icos-cp.eu']
 __status__ = "stable"
 __date__ = "2023-07-25"
+
+auth = AuthProvider()

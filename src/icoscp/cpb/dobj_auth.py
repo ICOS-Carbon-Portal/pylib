@@ -29,7 +29,7 @@ def wrap_auth(external_auth: PasswordAuth | TokenAuth = None) -> str:
             if 'Invalid selection' in str(e):
                 raise Exception('Invalid selection. Please, try again.')
             else:
-                raise Exception('Incorrect credentials. Please, try again.')
+                raise Exception('Incorrect credentials. Please, try again.') from None
         else:
             return cookie_value
     else:
