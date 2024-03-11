@@ -1,16 +1,15 @@
-import pytest
-from icoscp.stilt import stiltstation
-# from stiltstation import __get_stations
 import json
 import geopandas as gpd
 from geopandas import GeoDataFrame
+from pprint import pprint
+import pytest
 
+from icoscp.stilt import stiltstation  # noqa: E402
+# from stiltstation import __get_stations
 
 STILTPATH = "tests/stiltweb/stations/"
 STILTINFO = "tests/stiltweb/station_info.csv"
 COUNTRY_SHAPE = "tests/10m_admin_0_countries.shp"
-stiltstation.country.WORLD = gpd.read_file(COUNTRY_SHAPE)
-# WORLD = gpd.read_file(COUNTRY_SHAPE)
 
 
 with open(file='tests/ZSF.json', mode='r') as json_handle:
@@ -20,7 +19,10 @@ with open(file='tests/ZSF_no_geoinfo.json', mode='r') as json_handle:
     ZSF_no_geoinfo = json.load(json_handle)
 with open(file='tests/HHHH.json', mode='r') as json_handle:
     HHHH = json.load(json_handle)
-
+with open(file='tests/MED-1.json', mode='r') as json_handle:
+    MED_1 = json.load(json_handle)
+with open(file='tests/MED-1_no_geoinfo.json', mode='r') as json_handle:
+    MED_1_no_geoinfo = json.load(json_handle)
 
 @pytest.mark.parametrize('ids, progress, stilt_path, stilt_info, expected', [
     # (None, False, STILTPATH, STILTINFO,
@@ -76,22 +78,28 @@ with open(file='tests/HHHH.json', mode='r') as json_handle:
     #         'icos': False, 'years': []
     #     },
     # }),
-    (['ZSF'], False, STILTPATH, STILTINFO, {'ZSF': ZSF}),
-    (['HHHH'], False, STILTPATH, STILTINFO, {'HHHH': HHHH})
+    # (['ZSF'], False, STILTPATH, STILTINFO, {'ZSF': ZSF}),
+    # (['HHHH'], False, STILTPATH, STILTINFO, {'HHHH': HHHH})
     # (['XXX123'], False, STILTPATH, STILTINFO, {})
 ])
-# def test_get_stations(ids, progress, stilt_path, stilt_info, expected):
-#     ''' test different formats of pid. We accept PID, HANDLE/PID, URI '''
-#     from pprint import pprint
-#     res = stiltstation.__get_stations(ids, progress, stilt_path, stilt_info)
-#     pprint(res)
-#     pprint(expected)
-#     assert res == expected
+def test_get_stations(ids, progress, stilt_path, stilt_info, expected):
+    ''' test different formats of pid. We accept PID, HANDLE/PID, URI '''
+    from pprint import pprint
+    res = stiltstation.__get_stations(ids, progress, stilt_path, stilt_info)
+    pprint(res)
+    pprint(expected)
+    assert res == expected
 
 
-@pytest.mark.parametrize('stn_info', [
-    (ZSF_no_geoinfo, ZSF_geoinfo)
+@pytest.mark.parametrize('stn_info, expected', [
+    (ZSF_no_geoinfo, ZSF_geoinfo),
+    (HHHH, False),
+    (MED_1_no_geoinfo, MED_1)
 ])
+
 def test_get_geo_info(stn_info, expected):
     res = stiltstation.get_geo_info(stn_info)
+    pprint(res)
+    print("-----------------------------------------------------")
+    pprint(expected)
     assert res == expected

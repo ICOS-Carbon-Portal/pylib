@@ -19,22 +19,27 @@ import icoscp
 import geopandas as gpd
 from shapely.geometry import Point
 import icoscp.const as CPC
+from icoscp.countries import MODE
 
 
-try:
-    WORLD = gpd.read_file(CPC.COUNTRY_SHAPE)
-except DriverError as e:
-    WORLD = None
-    off_server_countries_warning = (
-        "Please be aware, that the reverse geocoding functionality of the "
-        "\"countries\" module is not available locally (outside of the Virtual "
-        "Environment at the ICOS Carbon Portal). You must use one of our "
-        "Jupyter Services. Visit "
-        "https://www.icos-cp.eu/data-services/tools/jupyter-notebook for "
-        "further information."
-    )
-    warnings.warn(off_server_countries_warning, category=Warning)
-    sys.stderr.flush()
+if MODE == 'production':
+    try:
+        WORLD = gpd.read_file(CPC.COUNTRY_SHAPE)
+    except DriverError as e:
+        WORLD = None
+        off_server_countries_warning = (
+            "Please be aware, that the reverse geocoding functionality of the "
+            "\"countries\" module is not available locally (outside of the Virtual "
+            "Environment at the ICOS Carbon Portal). You must use one of our "
+            "Jupyter Services. Visit "
+            "https://www.icos-cp.eu/data-services/tools/jupyter-notebook for "
+            "further information."
+        )
+        warnings.warn(off_server_countries_warning, category=Warning)
+        sys.stderr.flush()
+else:
+    WORLD = gpd.read_file('tests/10m_admin_0_countries.shp')
+
 
 def get(**kwargs):
     """
@@ -165,9 +170,9 @@ def _c_reverse(lat: float, lon: float) -> str:
     to on-server use.
     """
     country = False
-    WORLD = gpd.read_file('tests/10m_admin_0_countries.shp')
-    print('*****', WORLD)
-    if WORLD.empty:
+    print("......................................")
+    print(MODE)
+    if not WORLD.empty:
         for index, row in WORLD.iterrows():
             if row.geometry.contains(Point(lon, lat)):
                 country = row.SOV_A3.lower()
