@@ -11,34 +11,10 @@
 
 import importlib.resources as pkgres
 import json
-import sys
-import warnings
-from geopandas import GeoDataFrame
-from fiona.errors import DriverError
 import icoscp
-import geopandas as gpd
 from shapely.geometry import Point
-import icoscp.const as CPC
-from icoscp.countries import MODE
-
-
-if MODE == 'production':
-    try:
-        WORLD = gpd.read_file(CPC.COUNTRY_SHAPE)
-    except DriverError as e:
-        WORLD = None
-        off_server_countries_warning = (
-            "Please be aware, that the reverse geocoding functionality of the "
-            "\"countries\" module is not available locally (outside of the Virtual "
-            "Environment at the ICOS Carbon Portal). You must use one of our "
-            "Jupyter Services. Visit "
-            "https://www.icos-cp.eu/data-services/tools/jupyter-notebook for "
-            "further information."
-        )
-        warnings.warn(off_server_countries_warning, category=Warning)
-        sys.stderr.flush()
-else:
-    WORLD = gpd.read_file('tests/10m_admin_0_countries.shp')
+from icoscp import MODE
+from icoscp.const import WORLD
 
 
 def get(**kwargs):

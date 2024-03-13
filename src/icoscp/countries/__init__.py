@@ -45,9 +45,3 @@
     BOOL (False) if no result
 
 """
-import os
-
-MODE = os.getenv('MODE', 'production')
-
-print("******************************************************************")
-print(MODE)

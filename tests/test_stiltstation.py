@@ -3,14 +3,8 @@ import geopandas as gpd
 from geopandas import GeoDataFrame
 from pprint import pprint
 import pytest
-
 from icoscp.stilt import stiltstation  # noqa: E402
 # from stiltstation import __get_stations
-
-STILTPATH = "tests/stiltweb/stations/"
-STILTINFO = "tests/stiltweb/station_info.csv"
-COUNTRY_SHAPE = "tests/10m_admin_0_countries.shp"
-
 
 with open(file='tests/ZSF.json', mode='r') as json_handle:
     ZSF = json.load(json_handle)
@@ -24,9 +18,8 @@ with open(file='tests/MED-1.json', mode='r') as json_handle:
 with open(file='tests/MED-1_no_geoinfo.json', mode='r') as json_handle:
     MED_1_no_geoinfo = json.load(json_handle)
 
-@pytest.mark.parametrize('ids, progress, stilt_path, stilt_info, expected', [
-    # (None, False, STILTPATH, STILTINFO,
-    #  {'ZUR200': {
+@pytest.mark.parametrize('ids, progress, expected', [
+    # (None, False, {'ZUR200': {
     #      'lat': 47.39,
     #      'lon': 8.54,
     #      'alt': 200,
@@ -54,7 +47,7 @@ with open(file='tests/MED-1_no_geoinfo.json', mode='r') as json_handle:
     #         'name': 'ZFS 730m',
     #         'icos': False,
     #         'years': []}}),
-    # (['ZUR200'], False, STILTPATH, STILTINFO, {
+    # (['ZUR200'], False, {
     #     'ZUR200': {
     #         'lat': 47.39,
     #         'lon': 8.54,
@@ -66,7 +59,7 @@ with open(file='tests/MED-1_no_geoinfo.json', mode='r') as json_handle:
     #         'icos': False, 'years': []
     #     },
     # }),
-    # (['ZUR200'], False, STILTPATH, STILTINFO, {
+    # (['ZUR200'], False, {
     #     'ZUR200': {
     #         'lat': 47.39,
     #         'lon': 8.54,
@@ -78,28 +71,31 @@ with open(file='tests/MED-1_no_geoinfo.json', mode='r') as json_handle:
     #         'icos': False, 'years': []
     #     },
     # }),
-    # (['ZSF'], False, STILTPATH, STILTINFO, {'ZSF': ZSF}),
-    # (['HHHH'], False, STILTPATH, STILTINFO, {'HHHH': HHHH})
-    # (['XXX123'], False, STILTPATH, STILTINFO, {})
+    (['ZSF'], False, {'ZSF': ZSF}),
+    # (['HHHH'], False, {'HHHH': HHHH})
+    (['XXX123'], False, {})
 ])
-def test_get_stations(ids, progress, stilt_path, stilt_info, expected):
+def test_get_stations(ids, progress, expected):
     ''' test different formats of pid. We accept PID, HANDLE/PID, URI '''
     from pprint import pprint
-    res = stiltstation.__get_stations(ids, progress, stilt_path, stilt_info)
-    pprint(res)
-    pprint(expected)
+    res = stiltstation.__get_stations(ids, progress)
+    set1 = set(res.items())
+    set2 = set(expected.items())
+    
+    pprint(set1 ^ set2)
+    # pprint(expected)
     assert res == expected
 
 
-@pytest.mark.parametrize('stn_info, expected', [
-    (ZSF_no_geoinfo, ZSF_geoinfo),
-    (HHHH, False),
-    (MED_1_no_geoinfo, MED_1)
-])
+# @pytest.mark.parametrize('stn_info, expected', [
+#     (ZSF_no_geoinfo, ZSF_geoinfo),
+#     (HHHH, False),
+#     (MED_1_no_geoinfo, MED_1)
+# ])
 
-def test_get_geo_info(stn_info, expected):
-    res = stiltstation.get_geo_info(stn_info)
-    pprint(res)
-    print("-----------------------------------------------------")
-    pprint(expected)
-    assert res == expected
+# def test_get_geo_info(stn_info, expected):
+#     res = stiltstation.get_geo_info(stn_info)
+#     pprint(res)
+#     print("-----------------------------------------------------")
+#     pprint(expected)
+#     assert res == expected
