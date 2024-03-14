@@ -362,40 +362,41 @@ def __get_object(stations):
 
 def get_stn_info(loc: str,
                  station_id,
-                 stiltinfo_row: pd.Series,
+                 stiltinfo_row: pd.DataFrame,
                  icos_stations: Any) -> dict:
     stn_info = {}
-
-    lon, lat, alt = loc.split('x')
+    lat, lon, alt = loc.split('x')
     stn_info = {
-        'lat': -float(lat[:-1] if lat[-1] == 'S' else lat[:-1]),
-        'lon': -float(lon[:-1] if lon[-1] == 'W' else lon[:-1]),
+        'lat': -float(lat[:-1]) if lat[-1] == 'S' else float(lat[:-1]),
+        'lon': -float(lon[:-1]) if lon[-1] == 'W' else float(lon[:-1]),
         'alt': int(alt),
         'locIdent': loc,
         'id': station_id,
     }
     station_name = station_id
-
-    # icos_id = None
-    if isinstance(stiltinfo_row, pd.Series):
+    stn_info['icos'] = False
+    if not stiltinfo_row.empty:
         station_name = stiltinfo_row['STILT name'].item()
         country_code = stiltinfo_row['Country'].item()
-
+        icos_id = stiltinfo_row['ICOS id'].item()
         if not pd.isna(country_code):
-            stn_info['country'] = country_code
-
-    icos_id = stiltinfo_row['ICOS id'].item()
-    stn_info['name'] = __stationName(station_id, station_name, alt)
-    # if not isinstance(str, type(icos_id)) and math.isnan(icos_id):
-    if pd.isna(icos_id):
-        stn_info['icos'] = False
-    else:
+                stn_info['country'] = country_code
         stn_info['icos'] = \
             icos_station.get(icos_id, icos_stations).info()
 
-        if isinstance(stn_info['icos'], dict) and isinstance(stiltinfo_row, pd.Series):
+        if isinstance(stn_info['icos'], dict) and not stiltinfo_row.empty:
             stn_info['icos']['SamplingHeight'] = \
                 stiltinfo_row['ICOS height'].item()
+    stn_info['name'] = __stationName(station_id, station_name, stn_info['alt'])
+    # if pd.isna(icos_id):
+    #
+    # else:
+    #     stn_info['icos'] = \
+    #         icos_station.get(icos_id, icos_stations).info()
+    #
+    #     if isinstance(stn_info['icos'], dict) and not stiltinfo_row.empty:
+    #         stn_info['icos']['SamplingHeight'] = \
+    #             stiltinfo_row['ICOS height'].item()
 
 
     years = sorted(
@@ -451,7 +452,7 @@ def __get_stations(ids: list | None = None,
         loc = all_stations[station_id].readlink().name
         # check if station id is in the manual curated list at
         # CPC.STILTINFO
-        stiltinfo_row = pd.Series()
+        stiltinfo_row = pd.DataFrame()
         if station_id in list(df['STILT id'].values):
             stiltinfo_row = df.loc[df['STILT id'] == station_id]
 

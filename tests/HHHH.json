@@ -1,24 +1,10 @@
-{
-	"lat": 54.15,
-	"lon": -10.07,
-	"alt": 100,
-	"locIdent": "54.15Nx010.07Wx00100",
-	"id": "HHHH",
-	"name": "HHHH 100m",
-	"icos": false,
-	"years": [
-		"2006"
-	],
-	"2006": {
-		"months": [
-			"01",
-			"03",
-			"04",
-			"05",
-			"06",
-			"07",
-			"08"
-		],
-		"nmonths": 7
-	}
-}
+{"2006": {"months": ["01", "03", "04", "05", "06", "07", "08"], "nmonths": 7},
+ "alt": 100,
+ "geoinfo": false,
+ "icos": false,
+ "id": "HHHH",
+ "lat": 54.15,
+ "locIdent": "54.15Nx010.07Wx00100",
+ "lon": -10.07,
+ "name": "HHHH 100m",
+ "years": ["2006"]}
