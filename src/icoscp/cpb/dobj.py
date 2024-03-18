@@ -27,8 +27,6 @@ from icoscp.cpb import dtype
 from icoscp.cpb import metadata
 import icoscp.const as CPC
 from json.decoder import JSONDecodeError
-from icoscp.cpb.dobj_auth import wrap_auth
-from icoscp_core.auth import PasswordAuth, TokenAuth
 
 
 class Dobj():
