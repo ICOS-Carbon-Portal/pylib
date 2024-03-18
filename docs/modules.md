@@ -2,7 +2,7 @@
 
 The following modules are available in the library to find and access data hosted at the Carbon Portal. After a successful installation into your python environment you should be able to load the modules with:
 
-- `from icoscp.cpb.dobj import Dobj`
+- `from icoscp.dobj import Dobj`
 - `from icoscp.station import station`
 - `from icoscp.collection import collection`
 - `from icoscp.stilt import stiltstation`
@@ -15,7 +15,7 @@ This is the basic module to load a **d**igital **obj**ect (data set) into memory
 
 Load the module with:
 
-	from icoscp.cpb.dobj import Dobj
+	from icoscp.dobj import Dobj
 
 classmethod **Dobj(digitalObject='')**<br>
 You can initialise a Dobj with a PID. The following statements yield the same result.
@@ -856,10 +856,9 @@ sparql query is not executable because of syntax errors, for example, a TUPLE is
 
 ## Authentication
 To ensure users' **licence** acceptance, when **accessing data objects**
-through the icoscp python library, the `cpauth` module is introduced. Users
-MUST have 
-[ICOS Carbon Portal login credentials](https://cpauth.icos-cp.eu/login/) to 
-access ICOS data. 
+through the icoscp Python library, authentication is required. Users
+MUST either have ICOS Carbon Portal login credentials or
+log in to Carbon Portal using another mechanism [https://cpauth.icos-cp.eu/login/](https://cpauth.icos-cp.eu/login/) to obtain the token to access ICOS data.
 
 ### Overview
 In order to fetch data, users make their requests to data objects and must
@@ -970,12 +969,11 @@ argument to the `Dobj()` class instantiation.**
         information will not be stored. In this case the authentication class
         must be passed on as an argument to the `Dobj()` class:
   
-            from icoscp.cpauth.authentication import Authentication            
-            from icoscp.cpb.dobj import Dobj
-            
-            
-            cp_auth = Authentication(write_configuration=False)
-            dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj', cp_auth=cp_auth)
+            from icoscp import auth
+            from icoscp.dobj import Dobj
+
+            auth.init_by_token("cpauthToken=...")
+            dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj')
             # Check if data access was successful.
             print(dobj.data.head())
 
@@ -997,7 +995,7 @@ credentials.
         can be removed.
 
             from icoscp.cpauth.authentication import Authentication            
-            from icoscp.cpb.dobj import Dobj
+            from icoscp.dobj import Dobj
             
                           
             # Instantiate the Authentication class, using username and password.
@@ -1013,7 +1011,7 @@ credentials.
     - **Login information is not saved**
 
             from icoscp.cpauth.authentication import Authentication            
-            from icoscp.cpb.dobj import Dobj
+            from icoscp.dobj import Dobj
             
                         
             cp_auth = Authentication(
@@ -1028,7 +1026,7 @@ credentials.
         or
 
             from icoscp.cpauth.authentication import Authentication            
-            from icoscp.cpb.dobj import Dobj
+            from icoscp.dobj import Dobj
             
                         
             cp_auth = Authentication(
@@ -1057,7 +1055,7 @@ sign-in is required.
         can be removed.
 
             from icoscp.cpauth.authentication import Authentication
-            from icoscp.cpb.dobj import Dobj
+            from icoscp.dobj import Dobj
             
             
             token = 'cpauthToken=Wzb+ananas/in+pajamasRA='
@@ -1075,7 +1073,7 @@ sign-in is required.
     - **Login information is not saved**
 
             from icoscp.cpauth.authentication import Authentication
-            from icoscp.cpb.dobj import Dobj
+            from icoscp.dobj import Dobj
             
             
             token = 'cpauthToken=Wfluffy-bunny-slippersA='
@@ -1099,7 +1097,7 @@ to the instantiation of the `Authentication()` class.
 	Here is the code:
 
 		from icoscp.cpauth.authentication import Authentication
-		from icoscp.cpb.dobj import Dobj
+		from icoscp.dobj import Dobj
 		
 		conf_file_path = '/home/sam/my-folder/icos_carbon_portal.json'
 		cp_auth = Authentication(configuration_file=conf_file_path)

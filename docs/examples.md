@@ -20,7 +20,7 @@ which is an ICOS Atmosphere Level 2 data set from Norunda, release 2019-1. Go to
 
 ### Data Object
 
-	from icoscp.cpb.dobj import Dobj
+	from icoscp.dobj import Dobj
 	dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
 	
 Information (meta data) is automatically stored in a dictionary (the `json`-file from the landing page) with the object, accessible with `Dobj.meta`. More about the content of meta and other attributes are in the [modules section](modules.md#dobjinfo). Common used properties are as well available directly. Following are a few examples:
@@ -40,7 +40,7 @@ or get the citation string for this object:
 
 Extracting the data as pandas data frame:
 
-	from icoscp.cpb.dobj import Dobj
+	from icoscp.dobj import Dobj
 
 	uri = 'https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc'
 	dobj = Dobj(uri)
@@ -72,7 +72,7 @@ id |  Flag |  NbPoints | Stdev  |           TIMESTAMP |          ch4
 This first example shows how to extract a data file and create a plot. It is the easiest way to load the data into a Pandas DataFrame in your Python environment. The DataFrame contains the following columNames:
 Flag, NbPoints, Stdev, TIMESTAMP, ch4. Let's load the data and create a plot for measured methane concentrations over time.
 
-	from icoscp.cpb.dobj import Dobj
+	from icoscp.dobj import Dobj
 
 	pid = 'https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc'
 	dobj = Dobj(pid)
@@ -86,7 +86,7 @@ Flag, NbPoints, Stdev, TIMESTAMP, ch4. Let's load the data and create a plot for
 To get a useful plot, at the very least we should have a title and the unit of measurement:
 
 	import matplotlib.pyplot as plt
-	from icoscp.cpb.dobj import Dobj
+	from icoscp.dobj import Dobj
 	
 	pid = 'https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc'
 	dobj = Dobj(pid)

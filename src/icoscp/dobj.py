@@ -4,7 +4,8 @@ from typing import Optional, Any, TypedDict, TypeAlias, Literal
 import warnings
 
 # Related third party imports.
-from icoscp_core.icos import meta, data
+from icoscp_core.icos import meta, bootstrap
+from icoscp import auth
 from icoscp_core.metacore import DataObject, URI, StationTimeSeriesMeta, \
     Station, Position
 from icoscp_core.queries.dataobjlist import DataObjectLite
@@ -212,12 +213,14 @@ class Dobj:
 
     def get(self, columns: list[str] | None = None) -> pd.DataFrame:
         """
-        TODO: mplamplampla
+        Get data for the selected columns, or all columns
 
         :return: A pandas dataframe generated using a standardized
          plain CSV serialization of a tabular data object.
         """
-        df = pd.DataFrame(data.get_columns_as_arrays(dobj=self.metadata,
+
+        data_client = bootstrap.fromAuthProvider(auth)
+        df = pd.DataFrame(data_client.get_columns_as_arrays(dobj=self.metadata,
                                                      columns=columns))
         df = df.reindex(sorted(df.columns), axis=1)  # type: ignore
         return df
