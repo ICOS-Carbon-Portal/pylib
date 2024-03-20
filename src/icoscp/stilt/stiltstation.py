@@ -360,19 +360,24 @@ def _search(kwargs, stations):
 def __get_object(stations):
     return [StiltStation(stations[st]) for st in stations.keys()]
 
-def get_stn_info(loc: str,
-                 station_id,
-                 stiltinfo_row: pd.DataFrame,
-                 icos_stations: Any) -> dict:
-    stn_info = {}
+
+def parse_loc(loc: str) -> dict[str, Any]:
     lat, lon, alt = loc.split('x')
-    stn_info = {
+    return {
         'lat': -float(lat[:-1]) if lat[-1] == 'S' else float(lat[:-1]),
         'lon': -float(lon[:-1]) if lon[-1] == 'W' else float(lon[:-1]),
         'alt': int(alt),
         'locIdent': loc,
-        'id': station_id,
     }
+
+def get_stn_info(loc: str,
+                 station_id: str,
+                 stiltinfo_row: pd.DataFrame,
+                 icos_stations: Any) -> dict:
+    stn_info = parse_loc(loc)
+
+    stn_info['id'] = station_id
+
     station_name = station_id
     stn_info['icos'] = False
     if not stiltinfo_row.empty:
@@ -388,16 +393,6 @@ def get_stn_info(loc: str,
             stn_info['icos']['SamplingHeight'] = \
                 stiltinfo_row['ICOS height'].item()
     stn_info['name'] = __stationName(station_id, station_name, stn_info['alt'])
-    # if pd.isna(icos_id):
-    #
-    # else:
-    #     stn_info['icos'] = \
-    #         icos_station.get(icos_id, icos_stations).info()
-    #
-    #     if isinstance(stn_info['icos'], dict) and not stiltinfo_row.empty:
-    #         stn_info['icos']['SamplingHeight'] = \
-    #             stiltinfo_row['ICOS height'].item()
-
 
     years = sorted(
         p.name for p in Path(f'{STILTPATH}{station_id}/').iterdir()
@@ -463,17 +458,13 @@ def __get_stations(ids: list | None = None,
 
 
 def get_geo_info(stn_info: dict[Any, Any]) -> Any:
-    # if station is in the manual curated list, see above where where the
-    # stationname is set..... the dict contains now a key country
     geo_info = {}
+
     if 'country' in stn_info:
         geo_info = country.get(code=stn_info['country'])
-    # Else.. use lat lon for a reverse lookup.. ICOS coordiantes have preference
-    elif stn_info['icos']:
-        # get country from ICOS coordinates
+    elif stn_info['icos']: # icos key can be either dictionary or False
         geo_info = country.get(latlon=[stn_info['icos']['lat'], stn_info['icos']['lon']])
     else:
-        # get country from STILT coordiantes
         geo_info = country.get(latlon=[stn_info['lat'], stn_info['lon']])
     return geo_info
 

@@ -1,12 +1,9 @@
 from typing import Any
 import json
-import geopandas as gpd
-from geopandas import GeoDataFrame
-from pprint import pprint
 import pytest
 from icoscp.stilt import stiltstation  # noqa: E402
+from pprint import pprint
 # from stiltstation import __get_stations
-
 
 def read_json(path: str) -> dict[Any, Any]:
     """Read dictionary from json file."""
@@ -14,54 +11,67 @@ def read_json(path: str) -> dict[Any, Any]:
         json_data = json.load(json_handle)
     return json_data
 
-def pop_keys(input_dict: dict) -> None:
-    """"""
-    [input_dict['icos'].pop(key) for key in ['email', 'firstName', 'lastName']]
+def replace_values(input_dict: dict) -> None:
+    """
+    The email, firstName and lastName keys returned from getIdList()
+    are random, therefore they are excluded from testing
+    """
+    everything_equals = type('omnieq', (), {"__eq__": lambda x, y: True})()
+
+    if 'icos' in input_dict:
+        input_dict['icos']['email'] = everything_equals
+        input_dict['icos']['firstName'] = everything_equals
+        input_dict['icos']['lastName'] = everything_equals
+
+def exclude_geo_info(d: dict) -> dict:
+    return {k: d[k] for k in set(list(d.keys())) - set('geoinfo')}
 
 ZSF = read_json('tests/ZSF.json')
-pop_keys(ZSF)
-ZSF_geoinfo = ZSF['geoinfo']
-ZSF_no_geoinfo = read_json('tests/ZSF_no_geoinfo.json')
 HHHH = read_json('tests/HHHH.json')
 MED_1 = read_json('tests/MED-1.json')
-MED_1_no_geoinfo = read_json('tests/MED-1_no_geoinfo.json')
 
+replace_values(ZSF['ZSF'])
+
+test_data = {
+    'ZSF': {
+        'full_json': ZSF,
+        'geo_info': ZSF['ZSF']['geoinfo'],
+        'no_geo_info': exclude_geo_info(ZSF)
+    },
+    'HHHH': {
+        'full_json': HHHH,
+        'geo_info': HHHH['HHHH']['geoinfo'],
+        'no_geo_info': exclude_geo_info(HHHH)
+    },
+    'MED-1': {
+        'full_json': MED_1,
+        'geo_info': MED_1['MED-1']['geoinfo'],
+        'no_geo_info': exclude_geo_info(MED_1)
+    },
+}
 
 @pytest.mark.parametrize('ids, progress, expected', [
-    (['ZSF'], False, ZSF),
-    (['HHHH'], False, {'HHHH': HHHH}),
+    (['ZSF'], False, test_data['ZSF']['full_json']),
+    (['HHHH'], False, test_data['HHHH']['full_json']),
     (['XXX123'], False, {})
 ])
 def test_get_stations(ids, progress, expected):
-    """Test """
     res = stiltstation.__get_stations(ids, progress)
-    if 'icos' in res:
-        pop_keys(res)
-    from pprint import pprint
-    pprint(res)
-    print('**************')
-    pprint(expected)
-
     assert res == expected
 
 @pytest.mark.parametrize('ids, progress, expected', [
     (None, False, 4),
 ])
 def test_get_all_stations(ids, progress, expected):
-    """"""
-    x = stiltstation.__get_stations(ids, progress)
-    res = len(x)
+    """Test if all existing mock stations are returned"""
+    res = len(stiltstation.__get_stations(ids, progress))
     assert res == expected
 
-# @pytest.mark.parametrize('stn_info, expected', [
-#     (ZSF_no_geoinfo, ZSF_geoinfo),
-#     (HHHH, False),
-#     (MED_1_no_geoinfo, MED_1)
-# ])
-
-# def test_get_geo_info(stn_info, expected):
-#     res = stiltstation.get_geo_info(stn_info)
-#     pprint(res)
-#     print("-----------------------------------------------------")
-#     pprint(expected)
-#     assert res == expected
+@pytest.mark.parametrize('stn_info, expected', [
+    (test_data['ZSF']['no_geo_info']['ZSF'], test_data['ZSF']['geo_info']),
+    (HHHH['HHHH'], False),
+    (test_data['MED-1']['no_geo_info']['MED-1'], test_data['MED-1']['geo_info'])
+])
+def test_get_geo_info(stn_info, expected):
+    res = stiltstation.get_geo_info(stn_info)
+    assert res == expected

@@ -489,6 +489,8 @@ def station_query(filter: dict = None, return_filter: bool = False) -> str or (s
         }}
         order by ?stationTheme ?id
         """
+    
+    print(query)
 
     if not return_filter:
         return query
