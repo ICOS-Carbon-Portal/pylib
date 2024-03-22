@@ -6,9 +6,10 @@
 - Add more mock data (years) (20240314)
 - Maybe: read json-files automatically (20240314)
 - email, firstName, lastName are random so maybe remove them from testing. (20240320)
-- Fix __get_stations tests
+- Fix __get_stations tests (20240320)
+- Fix comments in __get_stations (20240322)
+- Group all static files related to test_stiltstation.py (20240322)
+- Test __station_name (20240322)
+
 
 ### TODO
-- Split up __get_stations even more
-- Fix comments in __get_stations
-- Document test_stiltstaion.py file

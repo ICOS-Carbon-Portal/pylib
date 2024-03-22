@@ -50,12 +50,11 @@ DOC_FAQ_WARNINGS = 'https://icos-carbon-portal.github.io/pylib/faq/#how-do-i-sup
 # Metadata-schema concepts from Carbon Portal's ontologies.
 CP_META = 'http://meta.icos-cp.eu/ontologies/cpmeta/'
 
-
 if MODE == 'production':
-    # provide STILT station info from backend
+    # Provide STILT station info from backend.
     STILTINFO = 'https://stilt.icos-cp.eu/viewer/stationinfo'
     # Stilt specific
-    #local path to stiltstations if running on jupyter server
+    # local path to stiltstations if running on jupyter server
     STILTPATH = '/data/stiltweb/stations/'
 
     try:
@@ -72,7 +71,10 @@ if MODE == 'production':
         )
         warnings.warn(off_server_countries_warning, category=Warning)
         sys.stderr.flush()
+# The STILT module can only be tested locally with the following
+# mock data: STILTINFO, STILTPATH, WORLD.
 else:
-    STILTINFO = 'tests/stiltweb/station_info.csv'
-    STILTPATH = 'tests/stiltweb/stations/'
-    WORLD = gpd.read_file('tests/10m_admin_0_countries.shp')
+    STILTINFO = 'tests/stiltstation-mock-data/stiltweb/station_info.csv'
+    STILTPATH = 'tests/stiltstation-mock-data/stiltweb/stations/'
+    WORLD = gpd.read_file(
+        'tests/stiltstation-mock-data/shapefiles/10m_admin_0_countries.shp')

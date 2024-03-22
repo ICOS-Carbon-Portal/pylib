@@ -137,7 +137,6 @@ def _c_name(name, countries):
 
 
 def _c_reverse(lat: float, lon: float) -> str:
-            #    world: GeoDataFrame = WORLD) -> str:
     """
     Reverse geocoder using geopandas and shapely.
 
@@ -145,9 +144,8 @@ def _c_reverse(lat: float, lon: float) -> str:
     the ICOS Carbon Portal; currently, this functionality is limited
     to on-server use.
     """
+
     country = False
-    print("......................................")
-    print(MODE)
     if not WORLD.empty:
         for index, row in WORLD.iterrows():
             if row.geometry.contains(Point(lon, lat)):
