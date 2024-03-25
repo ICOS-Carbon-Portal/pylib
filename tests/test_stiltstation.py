@@ -13,8 +13,8 @@ def read_json(path: str) -> dict[Any, Any]:
 
 def replace_values(input_dict: dict) -> None:
     """
-    The email, firstName and lastName keys returned from getIdList()
-    are random, therefore they are excluded from testing
+    The email, firstName, and lastName keys returned from getIdList()
+    are random, therefore they are excluded from testing.
     """
     everything_equals = type('omnieq', (), {"__eq__": lambda x, y: True})()
 
@@ -69,7 +69,7 @@ def test_get_stations(ids: list | None, progress: bool,
 ])
 def test_get_all_stations(ids: list | None, progress: bool,
                           expected: dict[Any, Any]):
-    """Test if all existing mock stations are returned"""
+    """Test if all existing mock stations are returned."""
     res = len(stiltstation.__get_stations(ids, progress))
     assert res == expected
 

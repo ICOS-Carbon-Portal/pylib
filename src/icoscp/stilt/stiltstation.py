@@ -361,6 +361,47 @@ def __get_object(stations):
     return [StiltStation(stations[st]) for st in stations.keys()]
 
 
+def __get_stations(ids: list | None = None,
+                   progress: bool = True,
+                   ) -> dict[Any, Any]:
+    """
+    Get all stilt stations available on the server and return a
+    dictionary with metadata. Keys for the dictionary are stilt station
+    id's.
+    """
+
+    all_stations = {}
+    # Use directory listing from STILTPATH. STILT jobs that are not
+    # finished yet do not have a directory.
+    for p in Path(STILTPATH).iterdir():
+        # A symbolic link might exist but not have a target.
+        if p.is_symlink() and p.exists():
+            all_stations[p.name] = p
+
+    all_station_ids = list(all_stations.keys())
+    # If no station ids are provided then all stations are returned.
+    requested_stations = list(
+        set([i.upper() for i in ids]).intersection(all_station_ids)
+    ) if ids else all_station_ids
+
+    df = pd.read_csv(STILTINFO)
+    icos_stations = icos_station.getIdList(project='ICOS', theme=['AS'])
+
+    stations = {}
+    for station_id in tqdm(requested_stations, disable=not progress):
+        # This is what a loc looks like -> 47.42Nx010.98Ex00730
+        loc = all_stations[station_id].readlink().name
+        stiltinfo_row = pd.DataFrame()
+        # Extract matching row from STILTINFO.
+        if station_id in list(df['STILT id'].values):
+            stiltinfo_row = df.loc[df['STILT id'] == station_id]
+
+        stn_info = get_stn_info(loc, station_id, stiltinfo_row, icos_stations)
+        stn_info['geoinfo'] = get_geo_info(stn_info)
+        stations[station_id] = stn_info
+
+    return stations
+
 def parse_loc(loc: str) -> dict[str, Any]:
     # This is what a loc looks like -> 47.42Nx010.98Ex00730
     lat, lon, alt = loc.split('x')
@@ -376,7 +417,7 @@ def get_stn_info(loc: str,
                  station_id: str,
                  stiltinfo_row: pd.DataFrame,
                  icos_stations: Any) -> dict:
-    """Return stiltstation metadata"""
+    """Return stilt-station metadata."""
 
     stn_info = parse_loc(loc)
     stn_info['id'] = station_id
@@ -419,52 +460,9 @@ def get_stn_info(loc: str,
     return stn_info
 
 
-def __get_stations(ids: list | None = None,
-                   progress: bool = True,
-                   ) -> dict[Any, Any]:
-    """
-    Get all stilt stations available on the server and return a
-    dictionary with metadata. Keys for the dictionary are stilt station
-    id's.
-    """
-
-    all_stations = {}
-    # Use directory listing from STILTPATH. STILT jobs that are not
-    # finished yet do not have a directory.
-    for p in Path(STILTPATH).iterdir():
-        # A symbolic link might exist but not have a target.
-        if p.is_symlink() and p.exists():
-            all_stations[p.name] = p
-
-    all_station_ids = list(all_stations.keys())
-    # If no station ids are provided then all stations are returned.
-    requested_stations = list(
-        set([i.upper() for i in ids]).intersection(all_station_ids)
-    ) if ids else all_station_ids
-
-    df = pd.read_csv(STILTINFO)
-    icos_stations = icos_station.getIdList(project='ICOS', theme=['AS'])
-
-    stations = {}
-    for station_id in tqdm(requested_stations, disable=not progress):
-        # This is what a loc looks like -> 47.42Nx010.98Ex00730
-        loc = all_stations[station_id].readlink().name
-        stiltinfo_row = pd.DataFrame()
-        # Extract matching row from STILTINFO.
-        if station_id in list(df['STILT id'].values):
-            stiltinfo_row = df.loc[df['STILT id'] == station_id]
-
-        stn_info = get_stn_info(loc, station_id, stiltinfo_row, icos_stations)
-        stn_info['geoinfo'] = get_geo_info(stn_info)
-        stations[station_id] = stn_info
-
-    return stations
-
-
 def get_geo_info(stn_info: dict[Any, Any]) -> Any:
-    """Fetch geo-information for a station"""
+    """Fetch geo-information for a station."""
 
-    geo_info = {}
     if 'country' in stn_info:
         geo_info = country.get(code=stn_info['country'])
     elif stn_info['icos']:  # icos key can be either dictionary or False
@@ -477,7 +475,7 @@ def get_geo_info(stn_info: dict[Any, Any]) -> Any:
 
 
 def __station_name(station_id: str, name: str, alt: int) -> str:
-    """Create name from station id and altitude"""
+    """Create name from station id and altitude."""
 
     station_name = station_id if name == 'nan' else name
     if not (name[-1] == 'm' and name[-2].isdigit()):

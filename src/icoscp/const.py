@@ -40,7 +40,7 @@ STILTTS = 'https://stilt.icos-cp.eu/viewer/stiltresult'
 STILTRAW = 'https://stilt.icos-cp.eu/viewer/stiltrawresult'
 
 # World's country shape file from natural earth.
-COUNTRY_SHAPE = "/data/project/cartopy/shapefiles/natural_earth/cultural/10m_admin_0_countries.shp"
+COUNTRY_SHAPE = '/data/project/cartopy/shapefiles/natural_earth/cultural/10m_admin_0_countries.shp'
 
 # Documentation
 DOC_PYLIB = 'https://icos-carbon-portal.github.io/pylib/'
@@ -53,8 +53,8 @@ CP_META = 'http://meta.icos-cp.eu/ontologies/cpmeta/'
 if MODE == 'production':
     # Provide STILT station info from backend.
     STILTINFO = 'https://stilt.icos-cp.eu/viewer/stationinfo'
-    # Stilt specific
-    # local path to stiltstations if running on jupyter server
+    # Stilt specific local path to stilt-stations if running on jupyter
+    # server.
     STILTPATH = '/data/stiltweb/stations/'
 
     try:
@@ -63,9 +63,9 @@ if MODE == 'production':
         WORLD = None
         off_server_countries_warning = (
             'Please be aware, that the reverse geocoding functionality of the '
-            '"countries" module is not available locally (outside of the Virtual '
-            'Environment at the ICOS Carbon Portal). You must use one of our '
-            'Jupyter Services. Visit '
+            '"countries" module is not available locally (outside of the '
+            'Virtual Environment at the ICOS Carbon Portal). You must use one '
+            'of our Jupyter Services. Visit '
             'https://www.icos-cp.eu/data-services/tools/jupyter-notebook for '
             'further information.'
         )

@@ -1,15 +1,35 @@
-### DONE
-- Env variable in __init__.py (20240312)
-- Reversed WORLD.empty in countries module (20240312)
-- Move all test variables to env (20240313)
-- Add mock data (years) (20240313)
-- Add more mock data (years) (20240314)
-- Maybe: read json-files automatically (20240314)
-- email, firstName, lastName are random so maybe remove them from testing. (20240320)
-- Fix __get_stations tests (20240320)
-- Fix comments in __get_stations (20240322)
-- Group all static files related to test_stiltstation.py (20240322)
-- Test __station_name (20240322)
-
-
+### In a nutshell
+- Slim down, refactor/modernize, and test `__get_stations()`.
+- Introduce and test `get_stn_info()`.
+- Introduce `parse_loc()`.
+- Introduce and test `get_geo_info()`.
+- Refactor and test existing `__station_name()`.
+---
+### <u>Details</u>
+#### 20240312
+- Introduce environmental variable to switch between production & test
+  mode in `icoscp/__init__.py`.
+- Reversed buggy `WORLD.empty` in countries module.
+#### 20240313
+- In `icoscp/const.py`, move all testing-related constants within the
+  production-test switch.
+- Replicate and add mock data for stilt-stations in
+  `tests/stiltstation-mock-data/stiltweb/`.
+#### 20240314
+- Replicate and add more mock data for stilt-stations in
+  `tests/stiltstation-mock-data/stiltweb/`.
+- Read json-files in `tests/stiltstation-mock-data/station-metadata/`
+  using a more coherent way.
+#### 20240320
+- In the static station metadata, email, firstName, and lastName are
+  randomized (due to the `getIdList()` call within), hence they are
+  excluded from testing.
+#### 20240322
+- Fix comments in `__get_stations()`.
+- Group all static files related to `test_stiltstation.py` under
+  `tests/stiltstation-mock-data/`.
+---
 ### TODO
+- Document how to replicate and add more mock data.
+  (script on Zois's JupyterHub).
+- Maybe test parse_loc().
