@@ -32,4 +32,4 @@
 ### TODO
 - Document how to replicate and add more mock data.
   (script on Zois's JupyterHub).
-- Maybe test parse_loc().
+- Maybe test `parse_loc()`.
