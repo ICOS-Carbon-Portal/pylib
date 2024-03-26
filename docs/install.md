@@ -1,8 +1,15 @@
 # Installation
-This library is in active development and may change at any time. We do
-our best to keep the function calls and parameters consistent, but
-without a guarantee. You can follow the development on
-[Github repository](https://github.com/ICOS-Carbon-Portal/pylib). Create
+This is a legacy library that is under active support and maintenance
+for the foreseeable future.  
+  
+For new projects, developers are advised to
+**consider [icoscp_core](https://pypi.org/project/icoscp_core/)**,
+unless it is explicitly known that some specific icoscp feature is
+required.
+  
+We do our best to keep the function calls and parameters
+consistent, but without a guarantee. You can follow the development on 
+[GitHub repository](https://github.com/ICOS-Carbon-Portal/pylib). Create
 an issue to leave comments, suggestions or if you find something not
 working as expected. The library has not been tested on many different
 operating systems and environments, hence we appreciate you telling us
@@ -52,7 +59,7 @@ these changes. For security reasons the API token is valid for 100'000
 seconds (27 hours) and must be refreshed regularly; thus the
 authentication process can be automated to simplify the user experience.
 
-### Set up your authentication
+### Configure your authentication
 Authentication can be initialized in a number of ways.
 
 #### Credentials and token cache file (default)
@@ -60,31 +67,27 @@ This approach should only be used on machines the developer trusts.
 
 A username/password account for the [ICOS](https://cpauth.icos-cp.eu/)
 authentication service is required for this. Obfuscated (not readable by
-humans) password is stored in a file on the local machine in a default
-user-specific folder. To initialize this file, run the following code
+humans) password is stored in a file on the local machine in a **default
+user-specific folder**. To initialize this file, run the following code
 interactively (only needs to be once for every machine):
 
 ```Python
-from icoscp_core.icos import auth
-
+from icoscp import auth
 auth.init_config_file()
 ```
 
 After the initialization step is done, access to the metadata and data
-services is achieved by a simple import:
-```Python
-from icoscp_core.icos import meta, data
-```
+services is achieved using the [Dobj module](modules.md#dobj).
 
 As an alternative, the developer may choose to use a specific file to
-store the credentials and token cache. In this scenario, `data` service
-needs to be initialized as follows:
+store the credentials and token cache. In this scenario, data and
+metadata access is achieved as follows:
 
 ```Python
 from icoscp_core.icos import bootstrap
 auth, meta, data = bootstrap.fromPasswordFile("<desired path to the file>")
 
-# the next line needs to be run interactively (only once per file)
+# The next line needs to be run interactively (only once per file).
 auth.init_config_file()
 ```
 
@@ -101,9 +104,10 @@ university sign-in, OAuth sign in). After this the bootstrapping can be
 done as follows:
 
 ```Python
-from icoscp_core.icos import bootstrap
+from icoscp import auth
+
 cookie_token = 'cpauthToken=WzE2OTY2NzQ5OD...'
-meta, data = bootstrap.fromCookieToken(cookie_token)
+auth.init_by_token(cookie_token)
 ```
 
 #### Explicit credentials (advanced option)
@@ -114,8 +118,9 @@ as an advanced option. **(Please do not put your password as clear text
 in your Python code!)** This can be achieved as follows:
 
 ```Python
-from icoscp_core.icos import bootstrap
-meta, data = bootstrap.fromCredentials(username_variable, password_containing_variable)
+from icoscp import auth
+
+auth.init_by_credentials(username='rbon@portoca.lis', password='pa$$w0rd')
 ```
 
 ---
@@ -132,7 +137,7 @@ or
 ### Cutting Edge
 Install directly from our GitHub master branch. Please be aware that
 this is not reflecting the official release of the library, but includes
-the latest development. Hence you should think of this as an alpha or
+the latest development. Hence, you should think of this as an alpha or
 beta version of the new release:  
 `pip install git+https://github.com/ICOS-Carbon-Portal/pylib.git`
 

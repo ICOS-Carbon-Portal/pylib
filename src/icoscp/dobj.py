@@ -69,7 +69,7 @@ class Dobj:
         """Same as Dobj.meta"""
         warnings.warn(
             message=(
-                "In the next release, the property 'Dobj.info' will be"
+                "In the next release, the property 'Dobj.info' will be "
                 "deprecated. Please, use 'Dobj.meta' instead."),
             category=FutureWarning)
         return self.meta
@@ -213,7 +213,7 @@ class Dobj:
 
     def get(self, columns: list[str] | None = None) -> pd.DataFrame:
         """
-        Get data for the selected columns, or all columns
+        Get data for the selected columns, or all columns.
 
         :return: A pandas dataframe generated using a standardized
          plain CSV serialization of a tabular data object.
