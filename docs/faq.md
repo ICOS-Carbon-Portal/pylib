@@ -7,7 +7,7 @@ information associated with the data object. This information is a 'subset' from
 `do.meta['specificInfo']['acquisition']['station']` or, yielding the same information, through the convenience property:
 `do.station`.
 	
-    from icoscp.cpb.dobj import Dobj
+    from icoscp.dobj import Dobj
 
 	dobj = Dobj('j7-Lxlln8_ysi4DEV8qine_v')
 	
@@ -83,15 +83,10 @@ accessed directly. In other words, you can NOT expect that you can 'load' all fi
 Sometimes after loading a dataset, .next might return a PID. Hence, you are not looking at the newest version of the 
 data. The following code snippet will loop through the pid, returning the newest version:
 	
-	from icoscp.cpb.dobj import Dobj
+	from icoscp.dobj import Dobj
 	dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
 	
-	while dobj.valid:
-		if dobj.next:
-			dobj = Dobj(dobj.next)
-		else:
-			break
-	# Now dobj is the newest version.
+	latest = dobj.metadata.latestVersion
 
 ## How do I suppress warnings?
 Internally the `icoscp` python library uses the `warnings` module to provide

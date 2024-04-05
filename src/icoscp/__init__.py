@@ -1,3 +1,6 @@
+import os
+from icoscp.cpauth.authentication import AuthProvider
+
 """
     The ICOS CarbonPortal package provides access to data hosted at the
     Carbon Portal. ( https://data.icos-cp.eu/ )    
@@ -13,13 +16,13 @@
     (as long as you have an internet connection)    
 """
 __credits__ = "ICOS Carbon Portal"
-__license__ = ['Software: GPL-3.0', 'ICSO Data accessed with this library CC BY 4.0']
+__license__ = ['Software: GPL-3.0', 'ICOS Data accessed with this library CC BY 4.0']
 __version__ = "0.1.21a0"
 __maintainer__ = "ICOS Carbon Portal, elaborated products team"
 __email__ = ['info@icos-cp.eu']
 __status__ = "stable"
 __date__ = "2023-07-25"
 
-import os
 
+auth = AuthProvider()
 MODE = os.getenv('MODE', 'production')

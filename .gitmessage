@@ -1,0 +1,22 @@
+# The first line, which is the commit title has a maximum of 50
+# characters including the new line character. The commit title is the
+# branch name itself with spaces instead of dashes plus the commit
+# version.
+# The second line is a blank line.
+# The rest lines (maximum 72 characters including the new line
+# character) are features, fixes, and other types that should be
+# included in the commit. These lines start with a dash followed by a
+# space and a sentence. If the sentence needs to be extended to more
+# lines, these next lines should be indented by two spaces.
+# ---
+# Example for a branch named: 100-patch-release-0.1.16
+# - Pound signs and the space after them in the beginning of these
+#   lines are not included in line length.
+# - Pound signs at the end must be replaced with the new line
+#   character.
+
+# 404 patch release zois to the wild v_0.1 ------->#
+#
+# - Unchain the shackles.
+# - Remove shoes and shocks. Pants are not necessary either but -------->#
+#   remove them at your own discretion.

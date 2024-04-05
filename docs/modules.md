@@ -1,7 +1,9 @@
 # Content
+The following modules are available in the library to find and access
+data hosted at the Carbon Portal. After a successful installation into
+your python environment you should be able to load the modules with:
 
-The following modules are available in the library to find and access data hosted at the Carbon Portal. After a successful installation into your python environment you should be able to load the modules with:
-
+- `from icoscp.dobj import Dobj` (recommended)
 - `from icoscp.cpb.dobj import Dobj`
 - `from icoscp.station import station`
 - `from icoscp.collection import collection`
@@ -10,99 +12,186 @@ The following modules are available in the library to find and access data hoste
 - `from icoscp.sparql import sparqls`
 
 ## Dobj
+This is the basic module to load a **d**igital **obj**ect (data set)
+into memory. You need to know a valid persistent identifier (PID/URL) to
+access the data. Either you can browse the [data portal](
+https://data.icos-cp.eu) to find PIDs or you can use the 'station'
+package to find PIDs programmatically (see section [station](#station)
+).  
+  
+In essence each data object is linked to a unique and persistent
+identifier in the form of a URL. Hence, each data object has an online
+landing page. If you select any data object on 
+[https://data.icos-cp.eu](https://data.icos-cp.eu) and then navigate to
+the PID link (which looks like `11676/pli1C0sX-HE2KpQQIvuYhX01`) you end
+up on the 'landing' page of the document. If you look at the address bar
+of your browser, you will see a URL similar to 
+[https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01](
+https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01). To access the
+data you need to know this URL or the last part of the URL
+(`pli1C0sX-HE2KpQQIvuYhX01`).
 
-This is the basic module to load a **d**igital **obj**ect (data set) into memory. You need to know a valid persistent identifier (PID/URL) to access the data. Either you can browse the [data portal](https://data.icos-cp.eu) to find PID's or you can use the 'station' package to find PID's programmatically (see section [station](#station)). In essence each data object is linked to a unique and persistent identifier in the form of a URL. Hence, each data object has an on-line landing page. If you select any data object on [https://data.icos-cp.eu](https://data.icos-cp.eu) and then navigate to the PID link (which looks like `11676/j7-Lxlln8_ysi4DEV8qine_v` ) you end up on the 'landing' page of the document. If you look at the address bar of your browser, you will see a URL similar to [https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v](https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v). To access the data you need to know this URL or the last part of the URL (`j7-Lxlln8_ysi4DEV8qine_v`).
+Load the module and initialise the Dobj class with a PID.  
+The following statements yield the same result:
 
-Load the module with:
+```python
+from icoscp.dobj import Dobj
 
-	from icoscp.cpb.dobj import Dobj
+my_dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+my_dobj = Dobj('11676/pli1C0sX-HE2KpQQIvuYhX01')
+my_dobj = Dobj('pli1C0sX-HE2KpQQIvuYhX01')
+```
 
-classmethod **Dobj(digitalObject='')**<br>
-You can initialise a Dobj with a PID. The following statements yield the same result.
+### Properties
 
-	myDobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
-	myDobj = Dobj('11676/j7-Lxlln8_ysi4DEV8qine_v')
-	myDobj = Dobj('j7-Lxlln8_ysi4DEV8qine_v')
+#### Dobj.meta
+Return a dictionary based on the metadata available from the landing
+page of the ICOS Carbon Portal website. Every data object has a rich
+set of metadata available. You can download an example from the data 
+portal:
+[https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01/meta.json](
+https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01/meta.json).
+This will then be parsed into a python dictionary representing the
+metadata from ICOS. Some of the important key properties, like
+'previous', 'next', 'citation', etc., are extracted for easy access and
+made available as properties. Please check this documentation.
+  
+Example:
+```python
+from icoscp.dobj import Dobj
+from pprint import pprint
 
-or create an 'empty' instance and the set the identifier later:
+my_dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+pprint(my_dobj.meta)
+```
 
-	myDobj = Dobj()
-	myDobj.dobj = "j7-Lxlln8_ysi4DEV8qine_v"
+#### Dobj.info
+Same as [Dobj.meta](#dobjmeta). This method will be deprecated in the 
+next release.
 
-<h2>Attributes:</h2>
-### **Dobj.info**
-** Please refer to the property `.meta`**. The property `.info` returns now the same as `.meta` which was introduced with version 0.1.15.
+#### Dobj.citation
+Return a plain citation string. See also class method
+[Dobj.get_citation()](#dobjget_citationformat).
+  
+Example:
+```python
+from icoscp.dobj import Dobj
 
-For provenance reasons only the following documentation is kept, but is only valid for installations 0.1.10 to 0.1.14:
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+citation = dobj.citation
+```
 
-	All Dobj related metadata is available in the following properties.
-	This will return a list of three Pandas DataFrames which contain metadata.
-	
-	info[0] -> information about the dobj like, url, specification,
-			number of rows, related file name.
-	info[1] -> information about the data like colName,
-			value type, unit, kind
-	info[2] -> information about the station, where the data was obtained.
-			Name, id, lat, lon etc..
-	
-	- Return LIST[Pandas DataFrame]
+#### Dobj.licence
+Return a dictionary with these keys: 'baseLicence', 'name', 'url', 
+'webpage', containing information about the dataset's associated
+license.
 
-### **Dobj.meta**
-This property was introduced with version 0.1.15 and is replacing **.info**.<br>
-.meta returns a dictionary based on the meta data available from the landing page of the ICOS Caronb Portal website. Every data object has a rich set of meta data available. You can download an example from data portal:[https://meta.icos-cp.eu/objects/M8STRfcQfU4Yj7Uy0snHvlve/meta.json](       https://meta.icos-cp.eu/objects/M8STRfcQfU4Yj7Uy0snHvlve/meta.json). This will then be parsed into a python dictionary representing the metadata from ICOS.
-Some of the important key properties, like 'previous', 'next', 'citation', etc., are extracted for easy access and made available as properties. Please check this documentation.
+Example:
+```python
+from icoscp.dobj import Dobj
 
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+licence = dobj.licence
+```
 
-### **Dobj.citation**
-Citation string, a simple plain text citation string.
+#### Dobj.previous
+Return a landing page in the form of a string, featuring the previous
+version of this data object if it exists.  
+Return `None` if a previous version does not exist.
 
-- Return STR
+Example:
+```python
+from icoscp.dobj import Dobj
 
-### **Dobj.get_citation(format)**
-Returns the citation string in different formats. By default a plain formatted string is returned, the same as with with the property `Dobj.citation`. Possible formats are:
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+previous_version = dobj.previous
+```
+
+#### Dobj.next
+Return a landing page in the form of a string, featuring the next
+version of this data object if it exists.  
+Return `None` if a next version does not exist.
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+next_version = dobj.next
+```
+
+#### Dobj.colNames
+Return a list of available column names for a station-specific time
+series data object or `None` if no column names are available. This
+information is part of the [Dobj.meta](#dobjmeta) property, which holds
+all the available metadata.  
+Raise a `MetaTypeError` exception for spatiotemporal data objects.
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+column_names = dobj.colNames
+```
+
+#### Dobj.variables
+Return a Pandas DataFrame providing access to all available variables,
+including the name, unit, type, and the landing page for the format used
+(int, float, chr, ...).  
+Raise a `MetaValueError` exception if no variable information is
+available.
+
+The following example and its output shows the variables of an
+atmospheric methane concentration data object:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/zjNZLdVDcVUNwonvJIN5GQ3b')
+variables = dobj.variables
+print(variables)
+```
+
+Output:
+
+| index | name      | unit       | type                                    | format                                                   |
+|-------|-----------|------------|-----------------------------------------|----------------------------------------------------------| 
+| 0     | TIMESTAMP | None       | time instant, UTC                       | http://meta.icos-cp.eu/ontologies/cpmeta/iso8601dateTime |
+| 1     | Flag      | None       | quality flag                            | http://meta.icos-cp.eu/ontologies/cpmeta/bmpChar         |
+| 2     | NbPoints  | None       | number of points                        | http://meta.icos-cp.eu/ontologies/cpmeta/int32           |
+| 3     | ch4       | nmol mol-1 | CH4 mixing ratio (dry mole fraction)    | http://meta.icos-cp.eu/ontologies/cpmeta/float32         |
+| 4     | Stdev     | nmol mol-1 | standard deviation of gas mole fraction | http://meta.icos-cp.eu/ontologies/cpmeta/float32         |
+
+### Methods
+
+#### Dobj.get_citation(format)
+Return the citation string in different formats. By default, a plain 
+formatted string is returned, the same as with the property
+[Dobj.citation](#dobjcitation).  
+Possible formats are:
 
 - **plain** : (default) a simple string
 - **bibtex** : [wikipedia](https://en.wikipedia.org/wiki/BibTeX)
 - **ris** : [wikipedia]( https://en.wikipedia.org/wiki/RIS_(file_format))
 
-Example: Dobj.get_citation('ris')
+Example:
+```python
+from icoscp.dobj import Dobj
 
-### **Dobj.licence**
-Licence associated with the dataset.
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+ris_citation = dobj.get_citation('ris')
+```
 
-- Return DICT
+---
+### Known differences between Dobjs
 
-	dict_keys(['baseLicence', 'name', 'url', 'webpage'])
+or create an 'empty' instance and the set the identifier later:
 
-### **Dobj.previous**
-If an older version of this data object is available, this returns the **pid** for this object.
+	my_dobj = Dobj()
+	my_dobj.dobj = "j7-Lxlln8_ysi4DEV8qine_v"
 
-- Return STR
+---
 
-### **Dobj.next**
-If a newer version of the data object is available, this returns the **pid** for this object.
-
-- Return STR
-
-### **Dobj.colNames**
-Available column names. This information is part of the `Dobj.meta`, which holds all the 
-available metadata.
-
-- Return LIST
-
-### **Dobj.variables**
-This provides access to all available variables, including the unit, a short description (type) and the 'landing page' for the format used (int, float, chr, ...). The following example shows the variables for a data object of an atmospheric methane concentration:
-
-index | name | unit | type | format
- --- | --- | --- | --- | --- 
-0 | TIMESTAMP | None | time instant, UTC | http://meta.icos-cp.eu/ontologies/cpmeta/iso8601dateTime
-1 | Flag      | None | quality flag | http://meta.icos-cp.eu/ontologies/cpmeta/bmpChar
-2 | NbPoints | None | number of points | http://meta.icos-cp.eu/ontologies/cpmeta/int32
-3 | ch4 | nmol mol-1 | CH4 mixing ratio (dry mole fraction) | http://meta.icos-cp.eu/ontologies/cpmeta/float32
-4 | Stdev | nmol mol-1 | standard deviation of gas mole fraction |http://meta.icos-cp.eu/ontologies/cpmeta/float32
-
-
-- Return Pandas DataFrame
 
 ### **Dobj.data**
 Retrieve the actual data for the PID. All available variables will be returned.
@@ -186,6 +275,8 @@ no longer just a pointer to data.
 
 - Return TUPLE (int32, STR), where int32 represents the size and STR the unit. Example output 
   looks like: (4.353, 'MB')
+
+## Dobj  (legacy)
 
 <hr><hr>
 
@@ -851,386 +942,6 @@ sparql query is not executable because of syntax errors, for example, a TUPLE is
 (False, 'Bad Request')
 
 - Return TUPLE | FMT
-
-<hr>  
-
-## Authentication
-To ensure users' **licence** acceptance, when **accessing data objects**
-through the icoscp python library, the `cpauth` module is introduced. Users
-MUST have 
-[ICOS Carbon Portal login credentials](https://cpauth.icos-cp.eu/login/) to 
-access ICOS data. 
-
-### Overview
-In order to fetch data, users make their requests to data objects and must
-provide an API token to do so. The `cpauth` module helps to retrieve the ICOS
-API token using a variety of ways. Authentication is required only for 
-off-server data access (users who are not using our ICOS Jupyter services).
-Users with direct access to the data files, namely, **users of our 
-[ICOS Jupyter services](
-https://www.icos-cp.eu/data-services/tools/jupyter-notebook), are excluded
-from authentication**. Metadata access remains unaffected from these changes.
-For security reasons the API token is valid for 100'000 seconds (27 hours) and
-must be refreshed regularly; thus the authentication process can be automated
-to simplify the user experience.
-
-To use the `cpauth` module, users need to provide one of the following
-validation options:
-
-1. **Username and password** as input when instantiating the authentication
-   object. These are the same credentials used for validating oneself at the
-   ICOS Carbon Portal authentication service hosted on 
-   [https://cpauth.icos-cp.eu/](https://cpauth.icos-cp.eu/).
-2. An **API Token** as input when instantiating the authentication object. The
-   user specific API Token can be found at the bottom of the home page 
-   [here](https://cpauth.icos-cp.eu/home/). Password sign-in is required.
-3. A **credentials file** containing any of the above validation options.
-
-### Quickstart
-- ##### Running the authentication for the first time.
-
-    To initialize the authentication configuration a user can run:
-
-      -   
-			from icoscp.cpauth.authentication import Authentication
-	        Authentication()
-
-      or
-
-      - 
-      
-            from icoscp.cpauth.authentication import init_auth
-            init_auth()
-            
-    Both of the above snippets will **prompt the user for username and 
-    password** and will do the necessary preparations for the `cpauth` module.
-    After running either of the above, the snippet is no longer needed and
-    should be removed from the user's code.
-  
-    Under the hood `init_auth()` and `Authentication()` will:
-
-    1. Create a hidden credentials file in a system specific location. The
-       standard location of the credentials file directory varies depending
-       on the operating system.
-  		
-         - For Linux: `/home/[user]/icoscp/`
-         - For Windows: `C:\\Users\\[user]\\icoscp\\`
-         - For macOS: `/Users/[user]/icoscp/`
-    
-    2. Store user's username, password (in an encoded base64 format), and API
-       token. The API token will be retrieved automatically given that 
-       username and password are valid.
-
-    Also, users can re-initialize the credentials file using either one of the
-    calls below (with their respective import statements).
-
-       - `init_auth()` will re-initialize the credentials file in a forceful 
-          way (no confirmation is needed.)
-       - `Authentication(initialize=True)` will re-initialize the credentials
-         file in a diligent way.
-
-### Authentication methods
-- **Note to users:**  
-By default, the `cpauth` module is set to store valid credentials to the ICOS
-carbon portal configuration file. Internally this is handled by performing a
-validation against https://cpauth.icos-cp.eu/password/login using the provided
-credentials and setting `write_configuration=True` during the instantiation of
-the authentication class.  
-**Users can change this default behaviour to prioritize for security and 
-privacy, especially in cases where storing login information is not feasible
-or poses a risk. This can be achieved by explicitly setting 
-`write_configuration=False` in any of the authentication ways described below.
-In these cases, users must also provide the authentication itself as an
-argument to the `Dobj()` class instantiation.**  
-<br>
-  
-  - ##### Default authentication
-
-      - **Login information is saved**
-  
-          The most efficient and easy way to use the `cpauth` module in an 
-          automated manner is by adding these two lines of code to your 
-          script:
-
-              from icoscp.cpauth.authentication import Authentication
-              Authentication()
-
-          If there is no authentication configuration, the above
-          code will initialize the configuration, by prompting for username
-          and password. If the credentials are valid the call to 
-          `Authentication()` will store those credentials and reuse them in
-          subsequent calls to data access. In this case, these two lines of
-          code can be removed from users' scripts. 
-
-      <hr>
-
-    - **Login information is not saved**
-
-        If the `write_configuration` argument is set to `False` login 
-        information will not be stored. In this case the authentication class
-        must be passed on as an argument to the `Dobj()` class:
-  
-            from icoscp.cpauth.authentication import Authentication            
-            from icoscp.cpb.dobj import Dobj
-            
-            
-            cp_auth = Authentication(write_configuration=False)
-            dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj', cp_auth=cp_auth)
-            # Check if data access was successful.
-            print(dobj.data.head())
-
-        Subsequent calls to the code above will always require input of 
-        username and password.  
-<br>
-  
-- ##### Authentication using username and password
-Authentication is also possible by using username and password as string
-arguments to the `Authentication()` class. If only the username is provided,
-the module prompts the user for the password, and by default, does not store
-credentials.
-
-    - **Login information is saved**
-  
-        By default, if the credentials are valid, they will be stored in the
-        configuration file. Thus, for subsequent calls, re-authentication is
-        performed automatically and the authentication part in the code below
-        can be removed.
-
-            from icoscp.cpauth.authentication import Authentication            
-            from icoscp.cpb.dobj import Dobj
-            
-                          
-            # Instantiate the Authentication class, using username and password.
-            Authentication(username='rbon@portoca.lis', password='pa$$w0rd')
-            digital_object = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj')
-            # Fetch the specified data. 
-            obtained_data = digital_object.data
-            # Print a part of the specified data.
-            print(obtained_data.head())
-
-    <hr>
-
-    - **Login information is not saved**
-
-            from icoscp.cpauth.authentication import Authentication            
-            from icoscp.cpb.dobj import Dobj
-            
-                        
-            cp_auth = Authentication(
-                username='rbon@portoca.lis', 
-                password='pa$$w0rd',
-                write_configuration=False
-            )
-            dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj', cp_auth=cp_auth)
-            # Check if data access was successful.
-            print(dobj.data.head())
-
-        or
-
-            from icoscp.cpauth.authentication import Authentication            
-            from icoscp.cpb.dobj import Dobj
-            
-                        
-            cp_auth = Authentication(
-                username='rbon@portoca.lis'
-            )
-            dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj', cp_auth=cp_auth)
-            # Check if data access was successful.
-            print(dobj.data.head())
-
-        If only the username is provided, the module prompts for 
-        the password. Subsequent calls to the code above will always
-        require input of password.  
-<br>
-  
-- ##### Authenticate using an API token
-Authentication is also possible using an API token as a string argument to the
-`Authentication()` class. The user specific API Token can be found at the
-bottom of the home page [here](https://cpauth.icos-cp.eu/home/). Password
-sign-in is required.
-
-    - **Login information is saved**
-  
-        If the token is valid, by default, it will be stored in the 
-        configuration file. Thus, for subsequent calls, re-authentication is
-        performed automatically and the authentication part in the code below
-        can be removed.
-
-            from icoscp.cpauth.authentication import Authentication
-            from icoscp.cpb.dobj import Dobj
-            
-            
-            token = 'cpauthToken=Wzb+ananas/in+pajamasRA='
-            Authentication(token=token)
-            dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj')
-            # Check if data access was successful.
-            print(dobj.data.head())
-      
-        **Remember, the token lasts for 100'000 seconds.** After the validity
-        of the token has expired (27 hours), users need to provide a refreshed 
-        token. 
-
-    <hr>
-
-    - **Login information is not saved**
-
-            from icoscp.cpauth.authentication import Authentication
-            from icoscp.cpb.dobj import Dobj
-            
-            
-            token = 'cpauthToken=Wfluffy-bunny-slippersA='
-            cp_auth = Authentication(token=token, write_configuration=False)
-            dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj', cp_auth=cp_auth)
-            # Check if data access was successful.
-            print(dobj.data.head())
-      
-        **Remember, the token lasts for 100'000 seconds.** After the validity
-        of the token has expired, users need to provide a refreshed token.  
-<br>
-  
-- ##### Authenticate using a configuration file on a custom path
-Authentication is also possible using a configuration file on a custom path.
-Users can create their own file and use the path to the file as an argument
-to the instantiation of the `Authentication()` class.
-
-	For the purpose of this example, let us assume that the credentials file
- 	is located at a path specified by the user, such as: 
-	`'/home/sam/my-folder/icos_carbon_portal.json'`.   
-	Here is the code:
-
-		from icoscp.cpauth.authentication import Authentication
-		from icoscp.cpb.dobj import Dobj
-		
-		conf_file_path = '/home/sam/my-folder/icos_carbon_portal.json'
-		cp_auth = Authentication(configuration_file=conf_file_path)
-		dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj', cp_auth=cp_auth)
-		# Check if data access was successful.
-		print(dobj.data.head())
-
-	Below you can find an example of the necessary components and format for a
-    credentials file that can be used with the code above to complete the 
-	authentication process. 
-
-      - Case of username and password
-
-			{
-			  "username": "rbon@portoca.lis",
-			  "password": "pa$$w0rd"
-			}
-		
-		In this case username and password will be used to try and fetch a
-        valid token. At the end of the authentication process, if the 
-		credentials are correct, the password will be converted in base64
-		format and an API token will be generated and stored in a "token"
-		field in the file. For subsequent calls the token is used first to
-		authenticate a user.
-
-      - Case of username, password, and API token
-
-			{
-			  "username": "rbon@portoca.lis",
-			  "password": "pa$$w0rd",
-			  "token": "cpauthToken=WzE2Nzc1MTIt+works/on!my0machine!U4NzSpc2k="
-			}
-		
-		In this case the token will be checked first for its validity. If it
-		is a valid token, it will be used to fetch the requested data. If the
-		token is invalid or has expired, the provided username and password
-		will be utilized to retrieve a valid token. For subsequent calls the
-		token is used first to authenticate a user.
-
-      - Case of API token only
-
-			{
-			  "token": "cpauthToken=WzNzcIkode+there4I/m!caffeinatedU4NzSpck="
-			}
-
-		In the case that only an API token exists in the credentials file, 
-		users need to make sure that it is a valid one. **Remember, the token
-		lasts for 100'000 seconds.** After the validity of the token has
-		expired, users need to provide a refreshed token. The user specific 
-		API Token can be found at the bottom of the home page 
-		[here](https://cpauth.icos-cp.eu/home/). Password sign-in is required.
-
-### Authentication parameters
-The authentication class is a tool that provides access to data objects at the
-ICOS Carbon Portal, by providing a valid username and password, or by using an
-API token, which can be supplied in a number of different ways.
-
-```python
-class cpauth.Authentication
-(
-	username: str = None, 
-	password: str = None,
-	token: str = None, 
-	read_configuration: bool = True,
-	write_configuration: bool = True, 
-	configuration_file: str = None,
-	initialize: bool = False
-)
-```
-
-- **username: str, optional, default=None** -> The username required for
-authentication.
-- **password: str, optional, default=None** -> The password required for
-authentication.
-- **token: str, optional, default=None** -> The authentication token allows
-data access without the need for a username and password. The token can be
-manually retrieved from https://cpauth.icos-cp.eu after signing in with a
-password. Please note that the token has a limited lifespan (100'000 seconds)
-and must be refreshed periodically to maintain data access.
-- **read_configuration: bool, optional, default=True** -> This attribute
-controls whether the configuration is read from a file. The default setting is
-to read from a system-specific location.
-- **write_configuration: bool, optional, default=True** -> This attribute
-controls whether valid configuration will be stored to a system-specific
-location.
-- **configuration_file: str, optional, default=None** -> This attribute
-specifies the path to the configuration file. By default, the configuration
-file is located in a directory called icoscp in the user's home directory.
-<br>
-  
-### Convenience functions
-The following functions provide information and improve the user experience
-with the cpauth module.
-
-- ##### authentication.init()
-
-        from icoscp.cpauth.authentication import init_auth
-        init_auth()
-
-    This function is designed to run the authentication for the first time or
-    to complete the authentication process easily in a terminal-like
-    environment. The function prompts for username and password (password
-    masking is utilized) and instantiates the `Authentication()` class given
-    these credentials.  
-<br>
-  
-- ##### print(Authentication())
-Users can utilize the standard python `print()` function with the
-`Authentication()` class as an argument, to get some extra information
-regarding their log-in information and their configuration.
-
-        from icoscp.cpauth.authentication import Authentication
-        print(Authentication())
-
-	Here is an example output of the snippet above:
-     
-        Username: rbon@portoca.lis
-        Token will expire in: 1 day, 2:39:44.773148
-        Login source: Password
-        Path to configuration file: '/home/[user]/icoscp/'
-    If the `Authentication()` class was instantiated using the default 
-    `configuration_file` parameter, the standard location of the credentials
-    file directory varies depending on the operating system.
-
-    - For Linux: `/home/[user]/icoscp/` 
-    - For Windows: `C:\\Users\\[user]\\icoscp\\` 
-    - For macOS: `/Users/[user]/icoscp/`  
-
-### Suppressing warning messages
-To suppress `future warnings` or `user warnings` messages, please, refer to 
-[this](../faq/#how-do-i-suppress-warnings) section of the documentation.
 
 <hr>  
 

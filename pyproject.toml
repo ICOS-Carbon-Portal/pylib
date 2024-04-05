@@ -41,6 +41,7 @@ dependencies = [
     "fiona",
     "folium",
     "geopandas",
+    "icoscp_core",
     "pandas",
     "requests",
     "tqdm",
