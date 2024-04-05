@@ -11,30 +11,11 @@
 
 import importlib.resources as pkgres
 import json
-import sys
-import warnings
-
-from fiona.errors import DriverError
 import icoscp
-import geopandas as gpd
 from shapely.geometry import Point
-import icoscp.const as CPC
+from icoscp import MODE
+from icoscp.const import WORLD
 
-
-try:
-    WORLD = gpd.read_file(CPC.COUNTRY_SHAPE)
-except DriverError as e:
-    WORLD = None
-    off_server_countries_warning = (
-        "Please be aware, that the reverse geocoding functionality of the "
-        "\"countries\" module is not available locally (outside of the Virtual "
-        "Environment at the ICOS Carbon Portal). You must use one of our "
-        "Jupyter Services. Visit "
-        "https://www.icos-cp.eu/data-services/tools/jupyter-notebook for "
-        "further information."
-    )
-    warnings.warn(off_server_countries_warning, category=Warning)
-    sys.stderr.flush()
 
 def get(**kwargs):
     """
@@ -155,7 +136,7 @@ def _c_name(name, countries):
     return country
 
 
-def _c_reverse(lat: float, lon: float):
+def _c_reverse(lat: float, lon: float) -> str:
     """
     Reverse geocoder using geopandas and shapely.
 
@@ -163,8 +144,9 @@ def _c_reverse(lat: float, lon: float):
     the ICOS Carbon Portal; currently, this functionality is limited
     to on-server use.
     """
+
     country = False
-    if WORLD.empty:
+    if not WORLD.empty:
         for index, row in WORLD.iterrows():
             if row.geometry.contains(Point(lon, lat)):
                 country = row.SOV_A3.lower()

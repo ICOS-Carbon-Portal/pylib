@@ -9,35 +9,35 @@
 
 """
 
-__credits__     = "ICOS Carbon Portal"
-__license__     = "GPL-3.0"
-__version__     = "0.1.1"
-__maintainer__  = "ICOS Carbon Portal, elaborated products team"
-__email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
-__status__      = "rc1"
-__date__        = "2021-11-04"
+__credits__ = "ICOS Carbon Portal"
+__license__ = "GPL-3.0"
+__version__ = "0.1.1"
+__maintainer__ = "ICOS Carbon Portal, elaborated products team"
+__email__ = ["info@icos-cp.eu", "claudio.donofrio@nateko.lu.se"]
+__status__ = "rc1"
+__date__ = "2021-11-04"
 
-import os
+import re
 import json
 import pandas as pd
 from tqdm.notebook import tqdm
-from icoscp.station import station as cpstation
+from icoscp.station import station as icos_station
 from icoscp.stilt.stiltobj import StiltStation
 from icoscp.stilt import fmap
-import icoscp.const as CPC
+from icoscp.const import STILTINFO, STILTPATH
 from icoscp.countries import country
-
+from pathlib import Path
+from typing import Any
 from icoscp.stilt import timefuncs as tf
 
 
 # --- START KEYWORD FUNCTIONS ---
 def _id(kwargs, stations):
-
-    ids = kwargs['id']
-    if isinstance(ids,str):
-        ids=[ids]
-    if not isinstance(ids,list):
-        ids=list(ids)
+    ids = kwargs["id"]
+    if isinstance(ids, str):
+        ids = [ids]
+    if not isinstance(ids, list):
+        ids = list(ids)
 
     # to make the search not case sensitive we need to convert all
     # id's to CAPITAL LETTERS. The stilt on demand calculator
@@ -48,14 +48,15 @@ def _id(kwargs, stations):
     # check stilt id
     flt = list(set(ids).intersection(stations))
 
-    #check icos id
+    # check icos id
     for k in stations:
         if stations[k]['icos']:
             if stations[k]['icos']['stationId'] in ids:
                 flt.append(k)
 
-    stations =  {k: stations[k] for k in flt}
+    stations = {k: stations[k] for k in flt}
     return stations
+
 
 def _outfmt(kwargs, stations):
     '''
@@ -70,26 +71,26 @@ def _outfmt(kwargs, stations):
                     station.get([list of ids])
             - map (folium)
     '''
-    
+
     if not stations:
         # no search result, return empty
-        stations={'empty':'no stiltstations found'}
+        stations = {'empty': 'no stiltstations found'}
         return stations
 
-    if 'outfmt' in kwargs:        
+    if 'outfmt' in kwargs:
         fmt = kwargs['outfmt'].lower()
     else:
         fmt = 'dict'
-    
+
     # make sure we have a valid keyword, else set default dict
     valid = ['dict', 'list', 'pandas', 'map', 'avail']
     if not fmt in valid:
-            fmt = 'dict'
-    
-    if fmt == 'dict':        
-        #default
+        fmt = 'dict'
+
+    if fmt == 'dict':
+        # default
         return stations
-    
+
     if fmt == 'pandas':
         df = pd.DataFrame().from_dict(stations)
         return df.transpose()
@@ -104,6 +105,7 @@ def _outfmt(kwargs, stations):
     if fmt == 'avail':
         return _avail(stations)
 
+
 def _country(kwargs, stations):
     """
     Find all stations belonging to a country based on information from
@@ -113,10 +115,10 @@ def _country(kwargs, stations):
 
     """
     countries = kwargs['country']
-    if isinstance(countries,str):
-        countries=[countries]
-    if not isinstance(countries,list):
-        countries=list(countries)
+    if isinstance(countries, str):
+        countries = [countries]
+    if not isinstance(countries, list):
+        countries = list(countries)
 
     idx = []
     for k in stations:
@@ -128,10 +130,12 @@ def _country(kwargs, stations):
             # the search keys are a combination of keys from the online
             # search at restcountries.eu and the static country file
             if len(c) < 4:
-                searchKeys = {'alpha2Code', 'alpha3Code', 'cca2', 'cca3','ccn3', 'cioc'}
+                searchKeys = {'alpha2Code', 'alpha3Code', 'cca2', 'cca3',
+                              'ccn3', 'cioc'}
             else:
-                searchKeys = {'name', 'nativeName', 'altSpellings', 'demonym', 'demonyms'}
-            
+                searchKeys = {'name', 'nativeName', 'altSpellings', 'demonym',
+                              'demonyms'}
+
             g = stations[k]['geoinfo']
 
             # make sure we have only valid search keys...add two sets
@@ -141,7 +145,7 @@ def _country(kwargs, stations):
                     break
 
     flt = list(set(idx).intersection(stations))
-    stations =  {k: stations[k] for k in flt}
+    stations = {k: stations[k] for k in flt}
     return stations
 
 
@@ -152,7 +156,7 @@ def _bbox(kwargs, stations):
                    BottomRight South East(lat,lon)]
 
     """
-    bbox=kwargs['bbox']
+    bbox = kwargs['bbox']
     lat1 = float(bbox[1][0])
     lat2 = float(bbox[0][0])
     lon1 = float(bbox[0][1])
@@ -164,8 +168,9 @@ def _bbox(kwargs, stations):
             if lon1 <= float(stations[k]['lon']) <= lon2:
                 flt.append(k)
 
-    stations =  {k: stations[k] for k in flt}
+    stations = {k: stations[k] for k in flt}
     return stations
+
 
 def _pinpoint(kwargs, stations):
     # the user MUST provide lat, lon, but only optional
@@ -175,13 +180,14 @@ def _pinpoint(kwargs, stations):
         kwargs['pinpoint'].append(200)
     lat = kwargs['pinpoint'][0]
     lon = kwargs['pinpoint'][1]
-    deg = kwargs['pinpoint'][2]*0.01
-    lat1 = lat+deg
-    lat2 = lat-deg
-    lon1 = lon-deg
-    lon2 = lon+deg
-    box = {'bbox':[(lat1, lon1),(lat2, lon2)]}
+    deg = kwargs['pinpoint'][2] * 0.01
+    lat1 = lat + deg
+    lat2 = lat - deg
+    lon1 = lon - deg
+    lon2 = lon + deg
+    box = {'bbox': [(lat1, lon1), (lat2, lon2)]}
     return _bbox(box, stations)
+
 
 def _dates(kwargs, stations):
     """
@@ -192,7 +198,7 @@ def _dates(kwargs, stations):
     """
 
     # return empyt if dates is not a list
-    if not isinstance(kwargs['dates'],list):
+    if not isinstance(kwargs['dates'], list):
         print('Dates must be a list')
         return {}
 
@@ -211,8 +217,9 @@ def _dates(kwargs, stations):
             if tf.check_daterange(d, d, stations[st]):
                 flt.append(st)
 
-    stations =  {k: stations[k] for k in flt}
+    stations = {k: stations[k] for k in flt}
     return stations
+
 
 def __daterange(kwargs, stations):
     """
@@ -223,7 +230,7 @@ def __daterange(kwargs, stations):
     """
 
     sdate = tf.parse(kwargs['daterange'][0])
-    edate =  tf.parse(kwargs['daterange'][1])
+    edate = tf.parse(kwargs['daterange'][1])
 
     # return an empyt dict, if date is not a date object
     if not sdate or not edate:
@@ -237,17 +244,16 @@ def __daterange(kwargs, stations):
     for st in stations:
         if tf.check_daterange(sdate, edate, stations[st]):
             flt.append(st)
-    stations =  {k: stations[k] for k in flt}
+    stations = {k: stations[k] for k in flt}
     return stations
-
 
 
 def _sdate(kwargs, stations):
     """
     Find all stations with valid data for >= sdate (year and month only)
     """
-    #Convert date-string to date obj:
-    sdate =  tf.parse(kwargs['sdate'])
+    # Convert date-string to date obj:
+    sdate = tf.parse(kwargs['sdate'])
 
     # return and empyt dict, if sdate is not a date object
     if not sdate:
@@ -257,9 +263,9 @@ def _sdate(kwargs, stations):
     flt = []
     for st in stations:
         if tf.check_smonth(sdate, stations[st]):
-           flt.append(st)
+            flt.append(st)
 
-    stations =  {k: stations[k] for k in flt}
+    stations = {k: stations[k] for k in flt}
     return stations
 
 
@@ -267,7 +273,7 @@ def _edate(kwargs, stations):
     """
     Find all stations with valid data for <= edate (year and month only)
     """
-    edate =  tf.parse(kwargs['edate'])
+    edate = tf.parse(kwargs['edate'])
 
     # return an empyt dict, if sdate is not a date object
     if not edate:
@@ -277,17 +283,16 @@ def _edate(kwargs, stations):
     flt = []
     for st in stations:
         if tf.check_emonth(edate, stations[st]):
-           flt.append(st)
+            flt.append(st)
 
-    stations =  {k: stations[k] for k in flt}
+    stations = {k: stations[k] for k in flt}
     return stations
 
 
 def _project(kwargs, stations):
-
     proj = kwargs['project']
-    
-    # We use lowercase. 
+
+    # We use lowercase.
     proj = proj.lower()
 
     flt = []
@@ -296,49 +301,48 @@ def _project(kwargs, stations):
             if stations[k]['icos']:
                 flt.append(k)
 
-    stations =  {k: stations[k] for k in flt}
+    stations = {k: stations[k] for k in flt}
     return stations
 
 
 def _avail(stations):
-    
     years_set = set()
     availability = {}
 
     for stn in stations:
-        avail_per_stn ={}
-        if stations[stn]['icos']: 
+        avail_per_stn = {}
+        if stations[stn]['icos']:
             avail_per_stn['ICOS id'] = stations[stn]['icos']['stationId']
             avail_per_stn['ICOS alt'] = stations[stn]['icos']['SamplingHeight']
-        else: 
+        else:
             avail_per_stn['ICOS id'] = ''
-        if stations[stn]['alt'] != None: 
+        if stations[stn]['alt'] != None:
             avail_per_stn['Alt'] = stations[stn]['alt']
-        else: 
+        else:
             avail_per_stn['Alt'] = 0
         if stations[stn]['years'] != None:
             years_set = years_set.union(stations[stn]['years'])
             for y in stations[stn]['years']:
                 avail_per_stn[int(y)] = int(stations[stn][y]['nmonths'])
         availability[stn] = avail_per_stn
-    
-    year_list = list(range(min ({int(x) for x in years_set}),
-                              max ({int(x) for x in years_set}) + 1 ))
+
+    year_list = list(range(min({int(x) for x in years_set}),
+                           max({int(x) for x in years_set}) + 1))
     columns_list = ['Alt'] + year_list + ['ICOS id'] + ['ICOS alt']
-      
-    df = pd.DataFrame(data = list(availability[x] for x in availability.keys()), 
-                      index = list(availability.keys()), 
-                      columns = columns_list)
+
+    df = pd.DataFrame(data=list(availability[x] for x in availability.keys()),
+                      index=list(availability.keys()),
+                      columns=columns_list)
     # Fill in the gaps.
     df[year_list] = df[year_list].fillna(0)
     df[['Alt'] + year_list] = df[['Alt'] + year_list].applymap(int)
-    
+
     # convert alt to string, so that we can remove nan values
     df['ICOS alt'] = df['ICOS alt'].astype(str)
-    df['ICOS alt'] = df['ICOS alt'].str.replace('nan','')
-    
+    df['ICOS alt'] = df['ICOS alt'].str.replace('nan', '')
+
     # sort by StiltStation id
-    df.sort_index(inplace=True)    
+    df.sort_index(inplace=True)
     return df
 
 
@@ -353,6 +357,7 @@ def _search(kwargs, stations):
     flt = list(set(idx).intersection(stations))
     return {k: stations[k] for k in flt}
 
+
 # --- END KEYWORD FUNCTIONS ---
 
 
@@ -360,153 +365,125 @@ def __get_object(stations):
     return [StiltStation(stations[st]) for st in stations.keys()]
 
 
-def __get_stations(ids=None, progress=True):
-    """ get all stilt stations available on the server
-        return dictionary with metadata, keys are stilt station id's
+def __get_stations(ids: list | None = None,
+                   progress: bool = True,
+                   ) -> dict[Any, Any]:
+    """
+    Get all stilt stations available on the server and return a
+    dictionary with metadata. Keys for the dictionary are stilt station
+    id's.
     """
 
-    # invert the progress parameter, tqdm interpretation is
-    # DEFAULT disable = False -> progressbar is visible
-    progress = not progress
-    
-    # Use directory listing from stilt-web data. Ignore stations that
-    # may be in the queue but are not finished yet.
-    allStations = [s for s in os.listdir(CPC.STILTPATH) if os.path.exists(CPC.STILTPATH + s)]
-    
-    # if ids are provided, select only valid ids from allstations
-    if ids:
-        # make sure they are all upper case
-        ids = [i.upper() for i in ids]
-        #select only valid id from allstations
-        allStations = list(set(ids).intersection(allStations))
+    all_stations = {}
+    # Use directory listing from STILTPATH. STILT jobs that are not
+    # finished yet do not have a directory.
+    for p in Path(STILTPATH).iterdir():
+        # A symbolic link might exist but not have a target.
+        if p.is_symlink() and p.exists():
+            all_stations[p.name] = p
 
-        
-    # add information on station name (and new STILT station id)
-    # from stations.csv file used in stiltweb.
-    # this is available from the backend through a url
-    df = pd.read_csv(CPC.STILTINFO)
-    df['Country'] = df['Country'].astype(str)
+    all_station_ids = list(all_stations.keys())
+    # If no station ids are provided then all stations are returned.
+    requested_stations = list(
+        set([i.upper() for i in ids]).intersection(all_station_ids)
+    ) if ids else all_station_ids
 
-    # add ICOS flag to the station
-    icos_stations_df = cpstation.getIdList(project='ICOS', theme='AS')    
+    df = pd.read_csv(STILTINFO)
+    icos_stations = icos_station.getIdList(project='ICOS', theme=['AS'])
 
-    # dictionary to return
     stations = {}
+    for station_id in tqdm(requested_stations, disable=not progress):
+        # This is what a loc looks like -> 47.42Nx010.98Ex00730
+        loc = all_stations[station_id].readlink().name
+        stiltinfo_row = pd.DataFrame()
+        # Extract matching row from STILTINFO.
+        if station_id in list(df['STILT id'].values):
+            stiltinfo_row = df.loc[df['STILT id'] == station_id]
 
+        stn_info = get_stn_info(loc, station_id, stiltinfo_row, icos_stations)
+        stn_info['geoinfo'] = get_geo_info(stn_info)
+        stations[station_id] = stn_info
 
-    # fill dictionary with ICOS station id, latitude, longitude and altitude
-    # implement progress True/False
-    for ist in tqdm(sorted(allStations), disable=progress):
-        
-        stations[ist] = {}
-        # get filename of link (original stiltweb directory structure) and
-        # extract location information
-
-        loc_ident = os.readlink(CPC.STILTPATH+ist)
-        clon = loc_ident[-13:-6]
-        lon = float(clon[:-1])
-        if clon[-1:] == 'W':
-            lon = -lon
-        clat = loc_ident[-20:-14]
-        lat = float(clat[:-1])
-        if clat[-1:] == 'S':
-            lat = -lat
-        alt = int(loc_ident[-5:])
-
-        stations[ist]['lat']=lat
-        stations[ist]['lon']=lon
-        stations[ist]['alt']=alt
-        stations[ist]['locIdent']=os.path.split(loc_ident)[-1]
-
-        # set the name and id
-        stations[ist]['id'] = ist
-        
-        # check if station id is in the manual curated list at
-        # CPC.STILTINFO
-        id = [a.lower() for a in df['STILT id'].values]        
-        
-        if ist.lower() in id:
-            stationName = str(df.loc[df['STILT id'] ==
-                                     ist]['STILT name'].item())
-            # get the index for this station, to extract corresponding 
-            # ICOS sampling height from CPC.STILTINFO
-            idx = df.index[df['STILT id'] == ist].tolist()            
-            # set country code
-            
-            c_code = df.iloc[idx[0]]['Country']            
-            if not c_code =='nan':
-                 stations[ist]['country'] = c_code
-            
-        else:
-            country_code = ''
-            stationName = ''
-        
-        stations[ist]['name'] = __stationName(stations[ist]['id'],
-                                              stationName,
-                                              stations[ist]['alt'])
-
-        
-        # set a flag and metadata if it is an ICOS station
-        
-        #   convert the ICOS id to strings
-        df['ICOS id'] = df['ICOS id'].astype(str)
-        stn = df.iloc[idx]['ICOS id'].tolist()[0]
-        
-        if 'nan' not in stn:
-            stations[ist]['icos'] = cpstation.get(stn, icos_stations_df).info()
-            
-            # add corresponding ICOS Sampling Height
-            sh = df.iloc[idx]['ICOS height'].tolist()
-            sh = float(sh[0])
-            stations[ist]['icos']['SamplingHeight'] = sh            
-            
-        else:
-            stations[ist]['icos'] = False
-
-        # set years and month of available data
-        years = [y for y in os.listdir(CPC.STILTPATH + '/' + ist) if
-                 os.path.exists(CPC.STILTPATH + '/' + ist + '/' + y)]
-        
-        # for atmo access zip files may exist  for download. we need to exclude them
-        years = [y for y in years if not y.endswith('.zip')]
-        
-        stations[ist]['years'] = years
-        for yy in sorted(stations[ist]['years']):
-            stations[ist][yy] = {}
-            months = [m for m in os.listdir(CPC.STILTPATH + '/' + ist + '/' + yy) if
-                      os.path.exists(CPC.STILTPATH + '/' + ist + '/' + yy + '/' + m)]
-            # remove cache txt entry
-            sub = 'cache'
-            months = sorted([m for m in months if not sub.lower() in m.lower()])
-            stations[ist][yy]['months'] = months
-            stations[ist][yy]['nmonths'] = len(stations[ist][yy]['months'])
-            
-        # add geoinfo
-        # if station is in the manual curated list, see above where where the
-        # stationname is set..... the dict contains now a key country
-        
-        if 'country' in stations[ist]:
-            stations[ist]['geoinfo'] = country.get(code=stations[ist]['country'])
-        
-        # else.. use lat lon for a reverse lookup.. ICOS coordiantes have preference
-        elif stations[ist]['icos']:            
-            # get country from ICOS coordinates
-            stations[ist]['geoinfo'] = country.get(latlon=[stations[ist]['icos']['lat'],stations[ist]['icos']['lon']])
-            
-        else:
-            # get country from STILT coordiantes
-            stations[ist]['geoinfo'] = country.get(latlon=[stations[ist]['lat'],stations[ist]['lon']])
-            
-        
     return stations
 
 
-def __stationName(idx, name, alt):
-    if name=='nan' or not name:
-        name = idx
-    if not (name[-1]=='m' and name[-2].isdigit()):
-        name = name + ' ' + str(alt) + 'm'
-    return name
+def parse_loc(loc: str) -> dict[str, Any]:
+    # This is what a loc looks like -> 47.42Nx010.98Ex00730
+    lat, lon, alt = loc.split('x')
+    return {
+        'lat': -float(lat[:-1]) if lat[-1] == 'S' else float(lat[:-1]),
+        'lon': -float(lon[:-1]) if lon[-1] == 'W' else float(lon[:-1]),
+        'alt': int(alt),
+        'locIdent': loc,
+    }
+
+
+def get_stn_info(loc: str,
+                 station_id: str,
+                 stiltinfo_row: pd.DataFrame,
+                 icos_stations: Any) -> dict:
+    """Return stilt-station metadata."""
+
+    stn_info = parse_loc(loc)
+    stn_info['id'] = station_id
+    station_name = station_id
+    stn_info['icos'] = False
+
+    if not stiltinfo_row.empty:
+        if pd.isna(station_name := stiltinfo_row['STILT name'].item()):
+            station_name = 'nan'
+        if not pd.isna(country_code := stiltinfo_row['Country'].item()):
+            stn_info['country'] = country_code
+        if not pd.isna(icos_id := stiltinfo_row['ICOS id'].item()):
+            stn_info['icos'] = icos_station.get(icos_id, icos_stations).info()
+
+        if isinstance(stn_info['icos'], dict) and not stiltinfo_row.empty:
+            stn_info['icos']['SamplingHeight'] = \
+                stiltinfo_row['ICOS height'].item()
+
+    stn_info['name'] = __station_name(station_id,
+                                      station_name,
+                                      stn_info['alt'])
+    years = sorted(
+        p.name for p in Path(f'{STILTPATH}{station_id}/').iterdir()
+        if p.is_dir() and re.match(r'\d{4}', p.name)
+    )
+
+    stn_info['years'] = years
+    for year in years:
+        months = sorted(
+            p.name for p in Path(f'{STILTPATH}{station_id}/{year}').iterdir()
+            if p.is_dir() and re.match(r'\d{2}', p.name)
+        )
+        stn_info[year] = {
+            'months': months,
+            'nmonths': len(months)
+        }
+
+    return stn_info
+
+
+def get_geo_info(stn_info: dict[Any, Any]) -> Any:
+    """Fetch geo-information for a station."""
+
+    if 'country' in stn_info:
+        geo_info = country.get(code=stn_info['country'])
+    elif stn_info['icos']:  # icos key can be either dictionary or False
+        geo_info = country.get(latlon=[stn_info['icos']['lat'],
+                                       stn_info['icos']['lon']])
+    else:
+        geo_info = country.get(latlon=[stn_info['lat'], stn_info['lon']])
+
+    return geo_info
+
+
+def __station_name(station_id: str, name: str, alt: int) -> str:
+    """Create name from station id and altitude."""
+
+    station_name = station_id if name == 'nan' else name
+    if not (name[-1] == 'm' and name[-2].isdigit()):
+        station_name = f'{station_name} {str(alt)}m'
+    return station_name
 
 
 def find(**kwargs):
@@ -590,24 +567,24 @@ def find(**kwargs):
     project STR 'icos'.
         This will only return stilt stations that are ICOS stations.
     Example: station.find(project='icos')
-        
-    progress BOOL 
+
+    progress BOOL
         By default progress is set to True, which returns a progressbar
-        while searching the catalogue of STILT stations.    
-    
+        while searching the catalogue of STILT stations.
+
     outfmt STR ['dict'| 'pandas' | 'list' | 'map'| 'avail']:
         the result is returned as
-        
+
             dict:       dictionary with full metadata for each station
                         Stiltstation ID is the 'key' for the dict entries
-            pandas:     dataframe with some key information    
+            pandas:     dataframe with some key information
             list:       list of stilt station objects
             map:        folium map, can be displayed directly in notebooks
                         or save to a static (leaflet) .html webpage
-            avail:      This choice will return availability of time series 
-                        data for all stilt stations. 
+            avail:      This choice will return availability of time series
+                        data for all stilt stations.
                         Output format is a pandas dataframe.
-    
+
     Returns
     -------
     List of Stiltstation in the form of outfmt=format, see above.
@@ -618,7 +595,7 @@ def find(**kwargs):
     # convert all keywords to lower case
     if kwargs:
         kwargs = {k.lower(): v for k, v in kwargs.items()}
-    
+
     if 'stations' in kwargs:
         stations = kwargs['stations']
     else:
@@ -627,14 +604,13 @@ def find(**kwargs):
         progress = True
         if 'progress' in kwargs.keys():
             progress = kwargs['progress']
-    
+
         stations = __get_stations(progress=progress)
 
     # with no keyword arguments, return all stations
     # in default format (see _outfmt())
     if not kwargs:
         return _outfmt(kwargs, stations)
-
 
     # check if sdate AND edate is provided. If yes,
     # create a date_range entry and remove sdate and edate:
@@ -643,7 +619,6 @@ def find(**kwargs):
         del kwargs['sdate']
         del kwargs['edate']
 
-
     # valid key words. Make sure all are lower capital and that
     # the function has been defined above and that outfmt is the very
     # last call:
@@ -651,18 +626,19 @@ def find(**kwargs):
            'country': _country,
            'bbox': _bbox,
            'pinpoint': _pinpoint,
-           'sdate':_sdate,
-           'edate':_edate,
-           'dates':_dates,
-           'daterange':__daterange,
-           'search':_search,
-           'project':_project}
+           'sdate': _sdate,
+           'edate': _edate,
+           'dates': _dates,
+           'daterange': __daterange,
+           'search': _search,
+           'project': _project}
 
     for k in kwargs.keys():
         if k in fun.keys():
             stations = fun[k](kwargs, stations)
 
     return _outfmt(kwargs, stations)
+
 
 def get(id=None, progress=False):
     """
@@ -699,7 +675,7 @@ def get(id=None, progress=False):
             example when you get a long list of id's. By default the
             progressbar is not visible. This parameter is only applicable
             while providing id's, but NOT for dictionaries.
-            
+
     Returns
     -------
     LIST[stiltstation]
@@ -708,8 +684,7 @@ def get(id=None, progress=False):
 
     stationslist = []
 
-
-    if isinstance(id,str):
+    if isinstance(id, str):
         # assuming str is a station id
         st = __get_stations([id], progress)
         if not st:
@@ -717,16 +692,16 @@ def get(id=None, progress=False):
         for s in st:
             stationslist.append(StiltStation(st[s]))
 
-    if isinstance(id,dict):
+    if isinstance(id, dict):
         # assuming dict is coming from .find....call
         for s in id:
             stationslist.append(StiltStation(id[s]))
 
     if isinstance(id, list):
-        if isinstance(id[0],dict):
+        if isinstance(id[0], dict):
             # assuming dict is coming from .find....call
             for s in id:
-               stationslist.append(StiltStation(id[s]))
+                stationslist.append(StiltStation(id[s]))
 
         if isinstance(id[0], str):
             # assuming we have a list of valid station id's
@@ -735,7 +710,6 @@ def get(id=None, progress=False):
                 return None
             for s in st:
                 stationslist.append(StiltStation(st[s]))
-                
 
     if len(stationslist) == 1:
         return stationslist[0]

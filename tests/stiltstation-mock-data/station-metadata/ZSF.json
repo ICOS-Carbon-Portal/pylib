@@ -1,0 +1,493 @@
+{
+        "ZSF": {
+                "2006": {
+                        "months": [
+                                "01",
+                                "03",
+                                "04",
+                                "05",
+                                "06",
+                                "07",
+                                "08",
+                                "09",
+                                "10",
+                                "11",
+                                "12"
+                        ],
+                        "nmonths": 11
+                },
+                "2007": {
+                        "months": [
+                                "01",
+                                "02",
+                                "03",
+                                "04",
+                                "05",
+                                "06",
+                                "07",
+                                "08",
+                                "09",
+                                "10",
+                                "11",
+                                "12"
+                        ],
+                        "nmonths": 12
+                },
+                "2008": {
+                        "months": [
+                                "01",
+                                "02",
+                                "03",
+                                "04",
+                                "05",
+                                "06",
+                                "07",
+                                "08",
+                                "09",
+                                "10",
+                                "11",
+                                "12"
+                        ],
+                        "nmonths": 12
+                },
+                "2009": {
+                        "months": [
+                                "01",
+                                "02",
+                                "03",
+                                "04",
+                                "05",
+                                "06",
+                                "07",
+                                "08",
+                                "09",
+                                "10",
+                                "11",
+                                "12"
+                        ],
+                        "nmonths": 12
+                },
+                "2010": {
+                        "months": [
+                                "01",
+                                "02",
+                                "03",
+                                "04",
+                                "05",
+                                "06",
+                                "07",
+                                "08",
+                                "09",
+                                "10",
+                                "11",
+                                "12"
+                        ],
+                        "nmonths": 12
+                },
+                "2011": {
+                        "months": [
+                                "01",
+                                "02",
+                                "03",
+                                "04",
+                                "05",
+                                "06",
+                                "07",
+                                "08",
+                                "09",
+                                "10",
+                                "11",
+                                "12"
+                        ],
+                        "nmonths": 12
+                },
+                "2012": {
+                        "months": [
+                                "01",
+                                "02",
+                                "03",
+                                "04",
+                                "05",
+                                "06",
+                                "07",
+                                "08",
+                                "09",
+                                "10",
+                                "11",
+                                "12"
+                        ],
+                        "nmonths": 12
+                },
+                "2013": {
+                        "months": [
+                                "01",
+                                "02",
+                                "03",
+                                "04",
+                                "05",
+                                "06",
+                                "07",
+                                "08",
+                                "09",
+                                "10",
+                                "11",
+                                "12"
+                        ],
+                        "nmonths": 12
+                },
+                "2014": {
+                        "months": [
+                                "01",
+                                "02",
+                                "03",
+                                "04",
+                                "05",
+                                "06",
+                                "07",
+                                "08",
+                                "09",
+                                "10",
+                                "11",
+                                "12"
+                        ],
+                        "nmonths": 12
+                },
+                "2015": {
+                        "months": [
+                                "01",
+                                "02",
+                                "03",
+                                "04",
+                                "05",
+                                "06",
+                                "07",
+                                "08",
+                                "09",
+                                "10",
+                                "11",
+                                "12"
+                        ],
+                        "nmonths": 12
+                },
+                "2016": {
+                        "months": [
+                                "01",
+                                "02",
+                                "03",
+                                "04",
+                                "05",
+                                "06",
+                                "07",
+                                "08",
+                                "09",
+                                "10",
+                                "11",
+                                "12"
+                        ],
+                        "nmonths": 12
+                },
+                "2017": {
+                        "months": [
+                                "01",
+                                "02",
+                                "03",
+                                "04",
+                                "05",
+                                "06",
+                                "07",
+                                "08",
+                                "09",
+                                "10",
+                                "11",
+                                "12"
+                        ],
+                        "nmonths": 12
+                },
+                "2018": {
+                        "months": [
+                                "01",
+                                "02",
+                                "03",
+                                "04",
+                                "05",
+                                "06",
+                                "07",
+                                "08",
+                                "09",
+                                "10",
+                                "11",
+                                "12"
+                        ],
+                        "nmonths": 12
+                },
+                "2019": {
+                        "months": [
+                                "01",
+                                "02",
+                                "03",
+                                "04",
+                                "05",
+                                "06",
+                                "07",
+                                "08",
+                                "09",
+                                "10",
+                                "11",
+                                "12"
+                        ],
+                        "nmonths": 12
+                },
+                "2020": {
+                        "months": [
+                                "01",
+                                "02",
+                                "03",
+                                "04",
+                                "05",
+                                "06",
+                                "07",
+                                "08",
+                                "09",
+                                "10",
+                                "11",
+                                "12"
+                        ],
+                        "nmonths": 12
+                },
+                "2021": {
+                        "months": [
+                                "01",
+                                "02",
+                                "03",
+                                "04",
+                                "05",
+                                "06",
+                                "07",
+                                "08",
+                                "09",
+                                "10",
+                                "11",
+                                "12"
+                        ],
+                        "nmonths": 12
+                },
+                "2022": {
+                        "months": [
+                                "01",
+                                "02",
+                                "03",
+                                "04",
+                                "05",
+                                "06",
+                                "07",
+                                "08",
+                                "09",
+                                "10",
+                                "11",
+                                "12"
+                        ],
+                        "nmonths": 12
+                },
+                "alt": 730,
+                "country": "DE",
+                "geoinfo": {
+                        "altSpellings": [
+                                "DE",
+                                "Federal Republic of Germany",
+                                "Bundesrepublik Deutschland"
+                        ],
+                        "area": 357114,
+                        "borders": [
+                                "AUT",
+                                "BEL",
+                                "CZE",
+                                "DNK",
+                                "FRA",
+                                "LUX",
+                                "NLD",
+                                "POL",
+                                "CHE"
+                        ],
+                        "capital": [
+                                "Berlin"
+                        ],
+                        "cca2": "DE",
+                        "cca3": "DEU",
+                        "ccn3": "276",
+                        "cioc": "GER",
+                        "currencies": {
+                                "EUR": {
+                                        "name": "Euro",
+                                        "symbol": "€"
+                                }
+                        },
+                        "demonyms": {
+                                "eng": {
+                                        "f": "German",
+                                        "m": "German"
+                                },
+                                "fra": {
+                                        "f": "Allemande",
+                                        "m": "Allemand"
+                                }
+                        },
+                        "flag": "🇩🇪",
+                        "idd": {
+                                "root": "+4",
+                                "suffixes": [
+                                        "9"
+                                ]
+                        },
+                        "independent": true,
+                        "landlocked": false,
+                        "languages": {
+                                "deu": "German"
+                        },
+                        "latlng": [
+                                51,
+                                9
+                        ],
+                        "name": {
+                                "common": "Germany",
+                                "native": {
+                                        "deu": {
+                                                "common": "Deutschland",
+                                                "official": "Bundesrepublik Deutschland"
+                                        }
+                                },
+                                "official": "Federal Republic of Germany"
+                        },
+                        "region": "Europe",
+                        "status": "officially-assigned",
+                        "subregion": "Western Europe",
+                        "tld": [
+                                ".de"
+                        ],
+                        "translations": {
+                                "ces": {
+                                        "common": "Německo",
+                                        "official": "Spolková republika Německo"
+                                },
+                                "deu": {
+                                        "common": "Deutschland",
+                                        "official": "Bundesrepublik Deutschland"
+                                },
+                                "est": {
+                                        "common": "Saksamaa",
+                                        "official": "Saksamaa Liitvabariik"
+                                },
+                                "fin": {
+                                        "common": "Saksa",
+                                        "official": "Saksan liittotasavalta"
+                                },
+                                "fra": {
+                                        "common": "Allemagne",
+                                        "official": "République fédérale d'Allemagne"
+                                },
+                                "hrv": {
+                                        "common": "Njemačka",
+                                        "official": "Njemačka Federativna Republika"
+                                },
+                                "hun": {
+                                        "common": "Németország",
+                                        "official": "Német Szövetségi Köztársaság"
+                                },
+                                "ita": {
+                                        "common": "Germania",
+                                        "official": "Repubblica federale di Germania"
+                                },
+                                "jpn": {
+                                        "common": "ドイツ",
+                                        "official": "ドイツ連邦共和国"
+                                },
+                                "kor": {
+                                        "common": "독일",
+                                        "official": "독일 연방 공화국"
+                                },
+                                "nld": {
+                                        "common": "Duitsland",
+                                        "official": "Bondsrepubliek Duitsland"
+                                },
+                                "per": {
+                                        "common": "آلمان",
+                                        "official": "جمهوری فدرال آلمان"
+                                },
+                                "pol": {
+                                        "common": "Niemcy",
+                                        "official": "Republika Federalna Niemiec"
+                                },
+                                "por": {
+                                        "common": "Alemanha",
+                                        "official": "República Federal da Alemanha"
+                                },
+                                "rus": {
+                                        "common": "Германия",
+                                        "official": "Федеративная Республика Германия"
+                                },
+                                "slk": {
+                                        "common": "Nemecko",
+                                        "official": "Nemecká spolková republika"
+                                },
+                                "spa": {
+                                        "common": "Alemania",
+                                        "official": "República Federal de Alemania"
+                                },
+                                "swe": {
+                                        "common": "Tyskland",
+                                        "official": "Förbundsrepubliken Tyskland"
+                                },
+                                "urd": {
+                                        "common": "جرمنی",
+                                        "official": "وفاقی جمہوریہ جرمنی"
+                                },
+                                "zho": {
+                                        "common": "德国",
+                                        "official": "德意志联邦共和国"
+                                }
+                        },
+                        "unMember": true
+                },
+                "icos": {
+                        "SamplingHeight": 3.0,
+                        "country": "DE",
+                        "eas": 2666.0,
+                        "icosclass": "2",
+                        "lat": 47.4165,
+                        "lon": 10.9796,
+                        "name": "Zugspitze",
+                        "project": [
+                                "ICOS"
+                        ],
+                        "siteType": "mountain",
+                        "stationId": "ZSF",
+                        "theme": "AS",
+                        "uri": [
+                                "http://meta.icos-cp.eu/resources/stations/AS_ZSF"
+                        ]
+                },
+                "id": "ZSF",
+                "lat": 47.42,
+                "locIdent": "47.42Nx010.98Ex00730",
+                "lon": 10.98,
+                "name": "Zugspitze 730m",
+                "years": [
+                        "2006",
+                        "2007",
+                        "2008",
+                        "2009",
+                        "2010",
+                        "2011",
+                        "2012",
+                        "2013",
+                        "2014",
+                        "2015",
+                        "2016",
+                        "2017",
+                        "2018",
+                        "2019",
+                        "2020",
+                        "2021",
+                        "2022"
+                ]
+        }
+}

@@ -19,3 +19,7 @@ __maintainer__ = "ICOS Carbon Portal, elaborated products team"
 __email__ = ['info@icos-cp.eu']
 __status__ = "stable"
 __date__ = "2023-07-25"
+
+import os
+
+MODE = os.getenv('MODE', 'production')
