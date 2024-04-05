@@ -45,6 +45,9 @@ dependencies = [
     "pandas",
     "requests",
     "tqdm",
+    "ipython",
+    "xarray",
+    "iprogress"
 ]
 
 
