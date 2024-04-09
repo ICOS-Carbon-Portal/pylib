@@ -1,13 +1,13 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """    
-    Define global (to icoscp) constants
-    mainly path variables and Url's used throughout the package
-    Usage:
-    >>> import icoscp.const as CPC
-    >>> CPC.CP_META
+Define global (to icoscp) constants
+mainly path variables and Url's used throughout the package
+
+Usage:
+>>> import icoscp.const as CPC
+>>> CPC.CP_META
+'http://meta.icos-cp.eu/ontologies/cpmeta/'
 """
+
 import icoscp.const as CPC
 from icoscp import MODE
 from fiona.errors import DriverError
