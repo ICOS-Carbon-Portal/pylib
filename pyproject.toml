@@ -36,7 +36,7 @@ classifiers = [
     "Topic :: Utilities",
 ]
 
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dependencies = [
     "fiona",
     "folium",
@@ -115,7 +115,7 @@ dependencies = [
 ]
 
 [[tool.hatch.envs.test.matrix]]
-python = ["3.7", "3.8", "3.9", "3.10", "3.11"]
+python = ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
 [tool.hatch.envs.test.scripts]
 all = "coverage run -m pytest {args:tests}"
