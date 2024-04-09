@@ -123,6 +123,10 @@ useful information to the users.
         import warnings
         warnings.simplefilter("ignore", UserWarning)
 
+## Where is the documentation for the cpauth module?
+The documentation for the authentication module can be found in the 
+installation section [here](install.md#authentication). 
+
 ## Good to Know
 
 - Stations are associated with the stationID. This means that at the moment a combined station, certified for Ecosystem 

@@ -44,7 +44,75 @@ my_dobj = Dobj('pli1C0sX-HE2KpQQIvuYhX01')
 
 ### Properties
 
-#### Dobj.meta
+#### Dobj.citation
+Return a plain citation string. See also class method
+[Dobj.get_citation()](#dobjget_citationformat).
+  
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+citation = dobj.citation
+```
+
+#### Dobj.colNames
+Return a list of available column names for a station-specific time
+series data object or `None` if no column names are available. This
+information is part of the [Dobj.meta](#dobjmeta) property, which holds
+all the available metadata.  
+Raise a `MetaTypeError` exception for spatiotemporal data objects.
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+column_names = dobj.colNames
+```
+
+#### Dobj.data ⭐
+Retrieve the actual data for the PID in Pandas DataFrame format. Authentication
+is required. Upon authentication, all available variables will be returned. Below,
+you'll find two examples illustrating this process, one with preset
+authentication and one without.
+
+Example 1 *(preset authentication)*:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+my_data = dobj.data
+```
+
+Example 2 *(unset authentication)*:
+```python
+from icoscp.dobj import Dobj
+from icoscp import auth
+
+auth.init_config_file()
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+my_data = dobj.data
+```
+
+#### Dobj.info
+Same as [Dobj.meta](#dobjmeta). This method will be deprecated in the 
+next release.
+
+#### Dobj.licence
+Return a dictionary with these keys: 'baseLicence', 'name', 'url', 
+'webpage', containing information about the dataset's associated
+license.
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+licence = dobj.licence
+```
+
+#### Dobj.meta ⭐
 Return a dictionary based on the metadata available from the landing
 page of the ICOS Carbon Portal website. Every data object has a rich
 set of metadata available. You can download an example from the data 
@@ -65,48 +133,6 @@ my_dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
 pprint(my_dobj.meta)
 ```
 
-#### Dobj.info
-Same as [Dobj.meta](#dobjmeta). This method will be deprecated in the 
-next release.
-
-#### Dobj.citation
-Return a plain citation string. See also class method
-[Dobj.get_citation()](#dobjget_citationformat).
-  
-Example:
-```python
-from icoscp.dobj import Dobj
-
-dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
-citation = dobj.citation
-```
-
-#### Dobj.licence
-Return a dictionary with these keys: 'baseLicence', 'name', 'url', 
-'webpage', containing information about the dataset's associated
-license.
-
-Example:
-```python
-from icoscp.dobj import Dobj
-
-dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
-licence = dobj.licence
-```
-
-#### Dobj.previous
-Return a landing page in the form of a string, featuring the previous
-version of this data object if it exists.  
-Return `None` if a previous version does not exist.
-
-Example:
-```python
-from icoscp.dobj import Dobj
-
-dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
-previous_version = dobj.previous
-```
-
 #### Dobj.next
 Return a landing page in the form of a string, featuring the next
 version of this data object if it exists.  
@@ -120,19 +146,17 @@ dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
 next_version = dobj.next
 ```
 
-#### Dobj.colNames
-Return a list of available column names for a station-specific time
-series data object or `None` if no column names are available. This
-information is part of the [Dobj.meta](#dobjmeta) property, which holds
-all the available metadata.  
-Raise a `MetaTypeError` exception for spatiotemporal data objects.
+#### Dobj.previous
+Return a landing page in the form of a string, featuring the previous
+version of this data object if it exists.  
+Return `None` if a previous version does not exist.
 
 Example:
 ```python
 from icoscp.dobj import Dobj
 
 dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
-column_names = dobj.colNames
+previous_version = dobj.previous
 ```
 
 #### Dobj.variables
@@ -164,10 +188,27 @@ Output:
 
 ### Methods
 
+#### Dobj.get(variables)
+Retrieve the actual data for the PID. The same as `.data` but you have the
+option to retrieve only selected columns (or variables). Only valid and unique
+entries will be returned. You can see valid entries with
+[.variables['name']](#dobjvariables) or [.colNames](#dobjcolnames). If columns
+are not provided, or if none of the provided variables are valid, or if you
+work with local data, the default DataFrame (with all columns) will be
+returned, which is the same as `.data`. 
+
+Retrieve the actual data for the PID in Pandas DataFrame format. Authentication
+is required. Upon authentication, all available variables will be returned. Below,
+you'll find two examples illustrating this process, one with preset
+authentication and one without.
+
+- Parameter variables: LIST[STR]
+- Return Pandas DataFrame
+
 #### Dobj.get_citation(format)
 Return the citation string in different formats. By default, a plain 
-formatted string is returned, the same as with the property
-[Dobj.citation](#dobjcitation).  
+formatted string is returned, similar to the [Dobj.citation](#dobjcitation)
+property.  
 Possible formats are:
 
 - **plain** : (default) a simple string
@@ -193,18 +234,7 @@ or create an 'empty' instance and the set the identifier later:
 ---
 
 
-### **Dobj.data**
-Retrieve the actual data for the PID. All available variables will be returned.
 
-- Return Pandas DataFrame
-
-### **Dobj.get(variables)**
-Retrieve the actual data for the PID. The same as `.data` but you have the option to retrieve only selected columns (or variables). Only valid and unique entries will be returned. You can see valid entries with [.variables['name']](#dobjvariables) or [.colNames](#dobjcolnames). If columns are not provided, or if none of the provided variables are valid, or if you work with local data, the default DataFrame (with all columns) will be returned, which is the same as `.data`. 
-
-- Parameter variables: LIST[STR]
-- Return Pandas DataFrame
-
-	
 ### **Dobj.getColumns(variables)**
 This is exactly the same as `.get()`. See details above. We keep this for backward compatibility,  please do not use. This function will be deprecated over time.
 
