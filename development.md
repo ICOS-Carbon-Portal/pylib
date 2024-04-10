@@ -5,7 +5,6 @@ modern python project manager.
 
 Hatch helps with, building, testing and releasing this package.
 
-
 ## Installing hatch
 
 Unless you have other preferences, use [pipx](https://hatch.pypa.io/latest/) to
@@ -26,6 +25,14 @@ Then use pipx to install hatch:
 Hatch is configured entirely through [pyproject.toml](pyproject.toml).
 
 
+### Installing dependencies
+
+In order to run `hatch run test` on a freshly installed, reasonably modern,
+debian-derivate linux distribution, you'll need the following
+
+
+
+apt install libgdal-dev python3-dev
 
 ### Run tests
 
@@ -130,8 +137,6 @@ published version..
 `hatch build`
 5. Publish to testpypi
 `hatch publish -r test`
-
-
 
 ## Advanced usage
 
