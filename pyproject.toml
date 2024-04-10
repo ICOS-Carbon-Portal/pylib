@@ -125,7 +125,7 @@ all = "coverage run -m pytest {args}"
 [tool.pytest.ini_options]
 testpaths = ["tests", "src"]
 addopts = "--doctest-modules"
-
+doctest_optionflags = ["ELLIPSIS"]
 
 [tool.coverage.run]
 disable_warnings = ['no-data-collected']
