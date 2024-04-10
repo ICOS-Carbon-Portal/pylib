@@ -71,10 +71,11 @@ dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
 column_names = dobj.colNames
 ```
 
-#### Dobj.data ⭐
-Retrieve the actual data for the PID in Pandas DataFrame format. Authentication
-is required. Upon authentication, all available variables will be returned. Below,
-you'll find two examples illustrating this process, one with preset
+#### Dobj.data
+Retrieve the actual data for the PID in Pandas DataFrame format.
+**Authentication is required**. Upon authentication, all available variables
+will be returned.  
+Below, you will find two examples illustrating this process, one with preset
 authentication and one without.
 
 Example 1 *(preset authentication)*:
@@ -90,9 +91,32 @@ Example 2 *(unset authentication)*:
 from icoscp.dobj import Dobj
 from icoscp import auth
 
+# Authentication-related code needs to be run only once.
 auth.init_config_file()
 dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
 my_data = dobj.data
+```
+
+#### Dobj.dobj
+Retrieve the PID for the Dobj. Same as [Dobj.id](#dobjid).
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+pid = dobj.dobj
+```
+
+#### Dobj.id
+Retrieve the PID for the Dobj. Same as [Dobj.dobj](#dobjdobj).
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+pid = dobj.id
 ```
 
 #### Dobj.info
@@ -112,7 +136,7 @@ dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
 licence = dobj.licence
 ```
 
-#### Dobj.meta ⭐
+#### Dobj.meta
 Return a dictionary based on the metadata available from the landing
 page of the ICOS Carbon Portal website. Every data object has a rich
 set of metadata available. You can download an example from the data 
@@ -188,24 +212,49 @@ Output:
 
 ### Methods
 
-#### Dobj.get(variables)
-Retrieve the actual data for the PID. The same as `.data` but you have the
-option to retrieve only selected columns (or variables). Only valid and unique
-entries will be returned. You can see valid entries with
-[.variables['name']](#dobjvariables) or [.colNames](#dobjcolnames). If columns
+#### Dobj.get(columns)
+Retrieve the actual data for the PID in Pandas DataFrame format.
+**Authentication is required**. The functionality is the same as
+[Dobj.data](#dobjdata), but you have the option to retrieve only selected
+columns (or variables) using a list of variables as an input argument. Only
+valid and unique entries will be returned. You can see valid entries with
+[Dobj.colNames](#dobjcolnames) or [Dobj.variables](#dobjvariables). If columns
 are not provided, or if none of the provided variables are valid, or if you
 work with local data, the default DataFrame (with all columns) will be
-returned, which is the same as `.data`. 
-
-Retrieve the actual data for the PID in Pandas DataFrame format. Authentication
-is required. Upon authentication, all available variables will be returned. Below,
-you'll find two examples illustrating this process, one with preset
+returned.  
+Below, you will find two examples illustrating this process, one with preset
 authentication and one without.
 
-- Parameter variables: LIST[STR]
-- Return Pandas DataFrame
+Example 1 *(preset authentication)*:
+```python
+from icoscp.dobj import Dobj
 
-#### Dobj.get_citation(format)
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+my_cols = dobj.colNames
+# or
+# my_cols = dobj.variables['name'].to_list()
+my_data = dobj.get(columns=my_cols)
+```
+
+Example 2 *(unset authentication)*:
+```python
+from icoscp.dobj import Dobj
+from icoscp import auth
+
+# Authentication-related code needs to be run only once.
+auth.init_config_file()
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+my_cols = dobj.colNames
+# or
+# my_cols = dobj.variables['name'].to_list()
+my_data = dobj.get(columns=my_cols)
+```
+
+#### Dobj.getColumns(columns)
+Same as [Dobj.get(columns)](#dobjgetcolumns). This method will be deprecated in
+the next release.
+
+#### Dobj.get_citation(format: str)
 Return the citation string in different formats. By default, a plain 
 formatted string is returned, similar to the [Dobj.citation](#dobjcitation)
 property.  
@@ -233,24 +282,6 @@ or create an 'empty' instance and the set the identifier later:
 
 ---
 
-
-
-### **Dobj.getColumns(variables)**
-This is exactly the same as `.get()`. See details above. We keep this for backward compatibility,  please do not use. This function will be deprecated over time.
-
-** Examples to retrieve data**:
-
-	# Create a dobj:
-
-	do = Dobj('https://meta.icos-cp.eu/objects/9GVNGXhqvmn7UUsxSWp-zLyR')
-
-	# Access all data, or specific columns:
-
-	data = do.data									# all data is returned<br>
-	data = do.get(['timestamp','ch4'])				# only timestamp and ch4 is returned<br>
-	data = do.get(['timestamp','ch4','notValid'])	# only timestamp and ch4 is returned<br>
-	data = do.get() 								# all data is returned<br>
-
 ### **Dobj.dateTimeConvert = True**
 Set or retrieve. Default **True**. The binary data representation provides a UTC Timestamp as 
 Unixtimestamp with start point of 1970-01-01 00:00:00. By default, this is converted to a DateTimeObject
@@ -259,15 +290,7 @@ Unixtimestamp with start point of 1970-01-01 00:00:00. By default, this is conve
 
 - Return BOOL
 
-### **Dobj.dobj = PID**
-See Dobj.id
 
-### **Dobj.id = PID** 
-Set or retrieve the PID for the Dobj, default is empty (""). If a PID is set, an automatic 
-check is performed to find the metadata for the object. If this is successful, the 'valid' 
-property is set to **True**
-
-- Return STR
 	
 ### **Dobj.valid**
 True if PID is set and found at the ICOS Carbon Portal
