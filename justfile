@@ -23,7 +23,7 @@ clean:
 collect *args:
     hatch run pytest --collect-only {{args}}
 
-# run tests using hatch
+# run tests using hatch (try "-k name" to filter tests)
 test *args:
     hatch run test {{args}}
 
