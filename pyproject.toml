@@ -81,8 +81,8 @@ dependencies = [
 ]
 
 [tool.hatch.envs.default.scripts]
-test = "pytest {args:tests}"
-cov = "coverage run -m pytest {args:tests}"
+test = "pytest {args}"
+cov = "coverage run -m pytest {args}"
 covhtml = [
   "coverage combine",
   "coverage html",
@@ -118,12 +118,14 @@ dependencies = [
 python = ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
 [tool.hatch.envs.test.scripts]
-all = "coverage run -m pytest {args:tests}"
+all = "coverage run -m pytest {args}"
 
 
-# Tool configuration.
-[tool.pytest.ini_option]
-testpaths = ["tests"]
+# # Tool configuration.
+[tool.pytest.ini_options]
+testpaths = ["tests", "src"]
+addopts = "--doctest-modules"
+
 
 [tool.coverage.run]
 disable_warnings = ['no-data-collected']
