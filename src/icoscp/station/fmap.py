@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""    
-    this file is intended to provide a folium map object
-    for a station selection. Please do not use directly, 
-    but import station and change the output format.
-    
-    from icoscp.station import station
-    station.getIdList(.......outfmt='map')
+"""Provide folium map object for station selection.
+
+Please do not use directly, but import station and change the output format.
+
+from icoscp.station import station
+station.getIdList(.......outfmt='map')
 """
 
 __author__ = ["Zois Zogopoulos"]
