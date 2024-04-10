@@ -82,9 +82,9 @@ dependencies = [
 
 [tool.hatch.envs.default.scripts]
 test = "pytest {args}"
-cov = "coverage run -m pytest {args}"
 covhtml = [
-  "coverage combine",
+  "coverage run -m pytest {args}",
+  "coverage  combine",
   "coverage html",
   "python3 -m webbrowser htmlcov/index.html",
 ]
