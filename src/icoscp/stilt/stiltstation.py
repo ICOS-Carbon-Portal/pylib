@@ -407,8 +407,13 @@ def __get_stations(ids: list | None = None,
     return stations
 
 
-def parse_loc(loc: str) -> dict[str, Any]:
-    # This is what a loc looks like -> 47.42Nx010.98Ex00730
+def parse_location(loc: str) -> dict[str, Any]:
+    """Pares a stilt location name such as 47.42Nx010.98Ex00730
+
+    >>> parse_location("47.42Nx010.98Ex00730")
+    {}
+    """
+    # This is what a loc looks like -> 
     lat, lon, alt = loc.split('x')
     return {
         'lat': -float(lat[:-1]) if lat[-1] == 'S' else float(lat[:-1]),
@@ -424,7 +429,7 @@ def get_stn_info(loc: str,
                  icos_stations: Any) -> dict:
     """Return stilt-station metadata."""
 
-    stn_info = parse_loc(loc)
+    stn_info = parse_location(loc)
     stn_info['id'] = station_id
     station_name = station_id
     stn_info['icos'] = False

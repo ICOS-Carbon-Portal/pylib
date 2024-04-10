@@ -322,26 +322,28 @@ def station_query(filter: dict = None, return_filter: bool = False) -> str or (s
 
     Example
     -------
-    >>># The default call, will return all known stations
-    >>>station_query()
+    # The default call, will return all known stations
+    >>> station_query()
+    '...prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>...'
 
-    >>># For ICOS stations use:
-    >>>station_query({'project': 'ICOS'})
+    # For ICOS stations use:
+    >>> station_query({'project': 'ICOS'})
+    '...'
 
-    >>># To fetch all atmospheric and ecosystem stations of ICOS, use
-    >>>station_query({ 'theme': ['AS','ES'], 'project': 'ICOS'})
+    # To fetch all atmospheric and ecosystem stations of ICOS, use
+    # station_query({ 'theme': ['AS','ES'], 'project': 'ICOS'})
 
-    >>># To fetch the atmospheric ICOS stations: 'BIR', 'HTM' and 'KIT', use
-    >>>station_query({ 'station': ['BIR', 'HTM', 'KIT'], 'project': 'ICOS'})
+    # To fetch the atmospheric ICOS stations: 'BIR', 'HTM' and 'KIT', use
+    # station_query({ 'station': ['BIR', 'HTM', 'KIT'], 'project': 'ICOS'})
 
-    >>># To fetch all atmospheric ICOS stations in Norway and Sweden, use
-    >>>station_query({ 'theme': 'AS', 'country': ['NO','SE'], 'project': 'ICOS'})
+    # To fetch all atmospheric ICOS stations in Norway and Sweden, use
+    # station_query({ 'theme': 'AS', 'country': ['NO','SE'], 'project': 'ICOS'})
 
-    >>># To fetch all ICOS and non-ICOS stations in Germany use
-    >>>station_query({ 'country': ['DE'], 'project': 'all'})
+    # To fetch all ICOS and non-ICOS stations in Germany use
+    # station_query({ 'country': ['DE'], 'project': 'all'})
 
-    >>># To reuse a filter we can use the return_filter option
-    >>>station_query(some_filter, return_filter = True)
+    # To reuse a filter we can use the return_filter option
+    # station_query(some_filter, return_filter = True)
     """
 
     # Depending on the filter we will change the

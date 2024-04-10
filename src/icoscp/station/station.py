@@ -536,8 +536,7 @@ def get(stationId: str = None,
     Example
     -------
     # Get the station object for the ICOS station Norunda
-    >>>st_nor = get('NOR')
-    >>>print(st_nor)
+    >>> st_nor = get('NOR')
     {
         "stationId": "NOR",
         "name": "Norunda",
@@ -695,21 +694,21 @@ def _get_id_list(filter: dict = {'project': 'ICOS', 'theme': ['AS', 'ES', 'OS']}
 
         Examples
         --------
-        >>> # Get a folium map of all ICOS stations
-        >>>station_map = _get_id_list(outfmt='map')
+        # Get a folium map of all ICOS stations
+        >>> station_map = _get_id_list(outfmt='map')
 
-        >>> # Load a dataframe with the atmospheric ICOS stations:
-        >>> # 'BIR', 'HTM' and 'KIT':
-        >>>my_df = _get_id_list(filter={'station': ['BIR', 'HTM', 'KIT']})
+        # Load a dataframe with the atmospheric ICOS stations:
+        # 'BIR', 'HTM' and 'KIT':
+        >>> my_df = _get_id_list(filter={'station': ['BIR', 'HTM', 'KIT']})
 
-        >>> # To fetch all ecosystem ICOS stations in Germany, use
-        >>>de_df = _get_id_list(filter={'theme': 'ES', 'country': 'DE'})
+        # To fetch all ecosystem ICOS stations in Germany, use
+        >>> de_df = _get_id_list(filter={'theme': 'ES', 'country': 'DE'})
 
-        >>> # Get a dataframe of all atmospheric and ocean ICOS stations
-        >>>as_os_df = _get_id_list(filter={'theme': ['AS', 'OS']})
+        # Get a dataframe of all atmospheric and ocean ICOS stations
+        >>> as_os_df = _get_id_list(filter={'theme': ['AS', 'OS']})
         
-        >>> # Get a dataframe of all ICOS and non-ICOS stations
-        >>>all_stations_df = _get_id_list({'project': 'ALL'})
+        # Get a dataframe of all ICOS and non-ICOS stations
+        >>> all_stations_df = _get_id_list({'project': 'ALL'})
     """
 
     if isinstance(filter, dict) and 'project' not in filter.keys():
@@ -870,17 +869,17 @@ def _station_list(theme: str or list = ['AS', 'ES', 'OS'],
             `icoscp.sparql.sparqls`.
 
     Example:
-    >>> # Get the list of all ICOS station objects
-    >>>_station_list()
+    Get the list of all ICOS station objects
+    >>> _station_list()
 
-    >>> # Get the list of ICOS atmospheric stations objects
-    >>>_station_list('AS')
+    Get the list of ICOS atmospheric stations objects
+    >>> _station_list('AS')
 
-    >>> # Get a list for ICOS atmosphere and ocean stations
-    >>>_station_list(['AS','OS'])
+    Get a list for ICOS atmosphere and ocean stations
+    >>> _station_list(['AS','OS'])
 
-    >>> # get list of stations with ids (ids are case sensitive..)
-    >>>_station_list(ids=['HTM', 'LMP', 'SAC'])
+    Get list of stations with ids (ids are case sensitive..)
+    >>> _station_list(ids=['HTM', 'LMP', 'SAC'])
     """
 
     # list of returned station objects
