@@ -410,7 +410,7 @@ def parse_location(loc: str) -> dict[str, Any]:
     """Pares a stilt location name such as 47.42Nx010.98Ex00730
 
     >>> parse_location("47.42Nx010.98Ex00730")
-    {}
+    {'lat': 47.42, 'lon': 10.98, 'alt': 730, 'locIdent': '47.42Nx010.98Ex00730'}
     """
     # This is what a loc looks like -> 
     lat, lon, alt = loc.split('x')

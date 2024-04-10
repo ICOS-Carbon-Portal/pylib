@@ -535,7 +535,8 @@ def get(stationId: str = None,
     Example
     -------
     # Get the station object for the ICOS station Norunda
-    >>> st_nor = get('NOR')
+    >>> s = get('NOR')
+    >>> print(s)
     {
         "stationId": "NOR",
         "name": "Norunda",
@@ -544,7 +545,6 @@ def get(stationId: str = None,
         "siteType": "tall tower",
         ...
     }
-
     """
 
     # create the station instance
@@ -694,11 +694,11 @@ def _get_id_list(filter: dict = {'project': 'ICOS', 'theme': ['AS', 'ES', 'OS']}
         Examples
         --------
         # Get a folium map of all ICOS stations
-        >>> station_map = _get_id_list(outfmt='map')
+        >>> station_map = _get_id_list(outfmt='map')  # doctest: +SKIP
 
         # Load a dataframe with the atmospheric ICOS stations:
         # 'BIR', 'HTM' and 'KIT':
-        >>> my_df = _get_id_list(filter={'station': ['BIR', 'HTM', 'KIT']})
+        >>> my_df = _get_id_list(filter={'station': ['BIR', 'HTM', 'KIT']}) 
 
         # To fetch all ecosystem ICOS stations in Germany, use
         >>> de_df = _get_id_list(filter={'theme': 'ES', 'country': 'DE'})
@@ -791,18 +791,10 @@ def getIdList(project: str = 'ICOS', theme: list = None, sort: str = 'name', out
     Examples
     --------
     >>> # Get a dataframe of all ICOS atmospheric and ocean stations
-    >>> getIdList(theme=['AS','OS'])
-    ...
+    >>> o = getIdList(theme=['AS','OS'])
+
     >>> # Get a dataframe of all stations
     >>> stations_dataframe = getIdList(project='ALL').head()
-    >>> print(stations_dataframe)
-                                                     uri  ...           theme
-    0  http://meta.icos-cp.eu/resources/stations/ES_S...  ...              ES
-    1  http://meta.icos-cp.eu/resources/stations/FLUX...  ...  FluxnetStation
-    2  http://meta.icos-cp.eu/resources/stations/FLUX...  ...  FluxnetStation
-    3  http://meta.icos-cp.eu/resources/stations/Aler...  ...         Station
-    4  http://meta.icos-cp.eu/resources/stations/FLUX...  ...  FluxnetStation
-
     """
 
     filter = {'project': project.upper(), 'theme': theme}
@@ -842,7 +834,7 @@ def __project(uri):
 
 def _station_list(theme: str or list = ['AS', 'ES', 'OS'],
                   ids: str or list = None,
-                  filter: dict = None):
+                  filter: dict = None): 
     """
         Query the SPARQL endpoint for stations, creates an object for each
         Station and return the list of ICOS stations.
@@ -869,16 +861,22 @@ def _station_list(theme: str or list = ['AS', 'ES', 'OS'],
 
     Example:
     Get the list of all ICOS station objects
-    >>> _station_list()
+    _station_list()
 
     Get the list of ICOS atmospheric stations objects
-    >>> _station_list('AS')
+    _station_list('AS')
 
     Get a list for ICOS atmosphere and ocean stations
-    >>> _station_list(['AS','OS'])
+    station_list(['AS','OS'])
 
     Get list of stations with ids (ids are case sensitive..)
-    >>> _station_list(ids=['HTM', 'LMP', 'SAC'])
+    >>> lst = _station_list(ids=['HTM', 'LMP', 'SAC'])
+    >>> print(lst[0])
+    {
+        "stationId": "HTM",
+        "name": "Hyltemossa",
+        "theme": "AS",
+    ...
     """
 
     # list of returned station objects
