@@ -112,6 +112,7 @@ dependencies = [
   "coverage[toml]",
   "pytest",
   "pytest-cov",
+  "pytest-doctestplus",
 ]
 
 [[tool.hatch.envs.test.matrix]]
