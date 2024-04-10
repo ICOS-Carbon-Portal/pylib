@@ -70,8 +70,8 @@ path = "src/icoscp/__init__.py"
 include = ["src/"]
 
 
-# The default hatch environment, used to run testing and coverage, and to build
-# documentation.
+# The default hatch environment, used to run testing and coverage, and to
+# build documentation.
 [tool.hatch.envs.default]
 dependencies = [
   "coverage[toml]",
@@ -102,8 +102,8 @@ dependencies = [
   "ruff>=0.0.263",
 ]
 [tool.hatch.envs.lint.scripts]
-style = [
-  "ruff {args:.}",
+lint = [
+  "ruff check {args: src tests}",
 ]
 
 # The third hatch environment does multi-version python testing.
@@ -121,8 +121,7 @@ python = ["3.8", "3.9", "3.10", "3.11", "3.12"]
 [tool.hatch.envs.test.scripts]
 all = "coverage run -m pytest {args}"
 
-
-# # Tool configuration.
+# Tool configuration.
 [tool.pytest.ini_options]
 testpaths = ["tests", "src"]
 addopts = "--doctest-modules"
@@ -139,6 +138,46 @@ omit = ["tests"]
 target-version = "py39"
 # FIXE: Change once the code has been reformatted.
 line-length = 120
-ignore = [
-  "E101",
+
+lint.select = [
+  "A",   # flake8-builtins
+  "ARG", # flake8-unused-arguments
+  "B",   # flake8-bugbear
+  "C",
+  "DTZ", # flake8-datetimez
+# "E",   # pycodestyle
+  "EM",  # flake8-errmsg
+  "F",   # pyflakes
+  "FBT", # flake8-boolean-trap
+  "I",   # isort
+  "ICN", # flake8-import-conventions
+  "ISC", # flake8-implicit-str-concat
+#  "N",   # pep8-naming
+  "PLC",
+  "PLE",
+  "PLR",
+  "PLW",
+#  "Q",   # flake8-quotes
+  "RUF", # Ruff-specific rules
+  "S",   # flake8-bandit
+  "TID", # flake8-tidy-imports
+  "UP",  # pyupgrade
+# "W",   # pycodestyle
+  "YTT", # flake8-2020
+]
+lint.ignore = [
+#   # Allow non-abstract empty methods in abstract base classes
+#   "B027",
+#   # Allow boolean positional values in function calls, like `dict.get(... True)`
+#   "FBT003",
+#   # Ignore checks for possible passwords
+#   "S105", "S106", "S107",
+#   # Ignore complexity
+#   "C901", "PLR0911", "PLR0912", "PLR0913", "PLR0915",
+#   # tabs and spaces
+#   # "E101",
+#   # subprocess with shell=1
+#   "S602",
+#   # Use of assert
+#   "S101",
 ]

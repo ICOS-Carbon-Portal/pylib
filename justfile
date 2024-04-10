@@ -30,3 +30,8 @@ test *args:
 # generate and show html of coverage
 covhtml:
     hatch run covhtml
+
+
+# RUFF
+lint:
+    hatch run lint:lint
