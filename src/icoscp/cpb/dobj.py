@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
     Created on Fri Aug  9 10:40:27 2019
     Use an ICOS digital object id (persistent identification url)

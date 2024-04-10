@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on Wed Sep 30 09:38:18 2020
 based on : return the real size of object

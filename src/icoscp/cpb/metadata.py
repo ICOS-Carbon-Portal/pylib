@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on Tue May 24 11:56:23 2022
 @author: Claudio

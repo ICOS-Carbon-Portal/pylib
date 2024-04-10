@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 """
     Extract all STILT stations from the ICOS Carbon Portal Server

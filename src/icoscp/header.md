@@ -8,7 +8,6 @@
 
 ----------- beginning of file, no empty lines ------------
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 """
     Informative description abouth module
