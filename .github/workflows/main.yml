@@ -1,16 +1,27 @@
 name: GitHub Test Matrix
 run-name: ${{ github.actor }} is testing pylib with all supported versions of python 🚀
-on: [push]
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+  
 jobs:
   Test-Matrix:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        # python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
         # python-version: ["3.8"]
         os: [ubuntu-latest, windows-latest]
     steps:
-        - run: hatch run test:all
+      - uses: actions/checkout@v3
+      - run: sudo apt-get install hatch
+      - run: hatch run test:all
       # - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       # - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       # - name: Check out repository code
