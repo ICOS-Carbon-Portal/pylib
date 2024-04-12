@@ -62,6 +62,11 @@ class Dobj:
 
     @property
     def valid(self) -> bool:
+        warnings.warn(
+            message=(
+                "In the next release, the property 'Dobj.valid' will be "
+                "deprecated."),
+            category=FutureWarning)
         return True
 
     @property
@@ -152,8 +157,8 @@ class Dobj:
     def elevation(self) -> float | None:
         warnings.warn(
             message=(
-                "In the next release, the property 'Dobj.elevation' will be"
-                " deprecated. Please, use 'Dobj.alt' instead."),
+                "In the next release, the property 'Dobj.elevation' will be "
+                "deprecated. Please, use 'Dobj.alt' instead."),
             category=FutureWarning)
         return self.alt
 
@@ -229,7 +234,7 @@ class Dobj:
         """Same as Dobj.get()"""
         warnings.warn(
             message=(
-                "In the next release, the method 'Dobj.getColumns()' will be"
+                "In the next release, the method 'Dobj.getColumns()' will be "
                 "deprecated. Please, use 'Dobj.get()' instead."),
             category=FutureWarning)
         return self.get(columns=columns)
