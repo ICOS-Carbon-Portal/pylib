@@ -329,12 +329,10 @@ class Dobj():
             otherwise try to download from the cp server
         """
 
-        #assemble local file path
+        # Assemble local file path.
         folder = self.meta['specification']['format']['uri'].split('/')[-1]
         fileName = ''.join([self.dobj.split('/')[-1],'.cpb'])
-        # Don't set the local path for data files when debugging the
-        # authentication module.
-        local_file = str()
+        local_file = os.path.abspath(f'{CPC.LOCALDATA}{folder}/{fileName}')
         # Local access on server.
         if os.path.isfile(local_file):
             self._islocal = True
