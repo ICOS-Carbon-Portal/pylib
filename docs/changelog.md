@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.21a0
+## 0.2.0a0
 - #### cpauth module
     - Remove legacy authentication.
     - Authenticate via [icoscp_core](https://pypi.org/project/icoscp_core/).
@@ -8,6 +8,10 @@
     - Improve code for retrieving stilt-station metadata.
 - #### documentation
     - Move the `cpauth` module to the [installation](install.md) section.
+    - Add [upgrade guide](install.md#upgrade-guide) to the installation section.
+    - Add substantial amount of content to the [About page](index.md).
+    - Add [new examples](examples.md), move the old ones to a [separate section](legacy_examples.md) as legacy.
+    - Remove most of the old FAQ, add a few new ones.
 
 ## 0.1.20
  - #### country module
