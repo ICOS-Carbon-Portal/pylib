@@ -23,9 +23,14 @@ environment with:
 ## Upgrade guide
 This concerns users of **icoscp** of versions prior to `0.2.0`.
 
-For standalone library users (i.e. outside of a Carbon Portal Jupyter environment), the installation procedure must be followed by the [authentication setup](#authentication) (unless you have used **icoscp_core** previously, and configured authentication with it using the default method).
+For standalone library users (i.e. outside of a Carbon Portal Jupyter
+environment), the installation procedure must be followed by the
+[authentication setup](#authentication) (unless you have used **icoscp_core**
+previously, and configured authentication with it using the default method).
 
-After that all the working code that depended on older versions should work, and no code changes are necessary, but it is highly recommended to replace the import
+After that all the working code that depended on older versions should work,
+and no code changes are necessary, but it is highly recommended to replace the
+following import
 ```python
 from icoscp.cpb.dobj import Dobj
 ```
@@ -34,12 +39,26 @@ with
 from icoscp.dobj import Dobj
 ```
 
-(i.e. drop `.cpb` from this import's path) everywhere in your scripts and notebooks. The new `Dobj` class has a legacy status (see the [library history](index.md#the-history-and-the-new-role-of-the-library)), like the old one, but contains an improved implementation of the same API. The advantages are:
-- support for metadata access of all data objects (not only the ones whose *data* is accessible with the library)
-- better performance when fetching the data
-- new `metadata` property that contains `DataObject` dataclass from `icoscp_core.metaclient` module, which is a type-annotated nested structure that was (mostly) automatically produced to faithfully reflect the JSON metadata available for the data object from the metadata server.
+(i.e. drop `.cpb` from this import's path) everywhere in your scripts and
+notebooks. The new `Dobj` class has a legacy status (see the
+[library history](index.md#the-history-and-the-new-role-of-the-library)), like
+the old one, but contains an improved implementation of the same API.  
 
-An effort was made to ensure identical functionality of the new `Dobj` class when compared with the old one, but there are some subtle differences described [elsewhere in the documentation](modules.md#known-differences-between-dobjs).
+<div style="margin-bottom: 1em">
+The advantages are:
+</div>
+
+- support for metadata access of all data objects (not only the ones whose
+  *data* is accessible with the library)
+- better performance when fetching the data
+- new `metadata` property that contains `DataObject` dataclass from
+  `icoscp_core.metaclient` module, which is a type-annotated nested structure
+  that was (mostly) automatically produced to faithfully reflect the JSON
+  metadata available for the data object from the metadata server.
+
+An effort was made to ensure identical functionality of the new `Dobj` class
+when compared with the old one, but there are some subtle differences described
+[elsewhere in the documentation](modules.md#known-differences-between-dobjs).
 
 ## Authentication
 To ensure users' **licence** acceptance, when **accessing data objects**
@@ -49,7 +68,8 @@ log in to Carbon Portal using another mechanism
 [https://cpauth.icos-cp.eu/login/](https://cpauth.icos-cp.eu/login/)
 to obtain the token to access ICOS data.
 
-Users also need to read and accept the ICOS Data Licence in their [user profile](https://cpauth.icos-cp.eu/).
+Users also need to read and accept the ICOS Data Licence in their
+[user profile](https://cpauth.icos-cp.eu/).
 
 In order to fetch data, users make their requests to data objects and
 must provide an API token to do so. The `cpauth` module helps to
@@ -80,7 +100,9 @@ from icoscp_core import auth
 auth.init_config_file()
 ```
 
-After the initialization step is done in this way, access to the data can be achieved using both the new `icoscp_core` machinery and the legacy [Dobj classes](modules.md#dobj).
+After the initialization step is done in this way, access to the data can be
+achieved using both the new `icoscp_core` machinery and the legacy
+[Dobj classes](modules.md#dobj).
 
 As an alternative, the developer may choose to use a specific file to
 store the credentials and token cache. In this scenario, data and
@@ -114,7 +136,6 @@ auth.init_by_token(cookie_token)
 ```
 
 #### Explicit credentials (advanced option)
-
 The user may choose to use their own mechanism of providing the
 credentials to initialize the authentication. This should be considered
 as an advanced option. **(Please do not put your password as clear text
@@ -132,25 +153,26 @@ auth.init_by_credentials(username='rbon@portoca.lis', password='pa$$w0rd')
 If you would like to install the latest version (branch from GitHub),
 you can download / fork the repo navigate to the library folder and
 start the installation with:
-
-`pip install .`  
-or  
-`python setup.py install`
+```shell
+pip install .
+```
 
 ### Cutting Edge
 Install directly from our GitHub master branch. Please be aware that
 this is not reflecting the official release of the library, but includes
 the latest development. Hence, you should think of this as an alpha or
-beta version of the new release:  
-`pip install git+https://github.com/ICOS-Carbon-Portal/pylib.git`
+beta version of the new release:
+```shell
+pip install git+https://github.com/ICOS-Carbon-Portal/pylib.git
+```
 
 ## Dependencies
 The following modules are required by the library:
 
-    - fiona
-    - folium
-    - geopandas
-    - icoscp_core
-    - pandas
-    - requests
-    - tqdm
+- fiona
+- folium
+- geopandas
+- icoscp_core
+- pandas
+- requests
+- tqdm
