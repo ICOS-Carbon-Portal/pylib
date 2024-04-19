@@ -392,18 +392,37 @@ ris_citation = dobj.get_citation('ris')
 ---
 ### Known differences between Dobjs
 
-or create an 'empty' instance and the set the identifier later:
+#### Dobj initialization
+Using `from icoscp.cpb.dobj import Dobj`, you can initialize the Dobj class in
+one of the following ways:
+```python
+from icoscp.cpb.dobj import Dobj
 
-	my_dobj = Dobj()
-	my_dobj.dobj = "j7-Lxlln8_ysi4DEV8qine_v"
+my_dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+my_dobj = Dobj('11676/pli1C0sX-HE2KpQQIvuYhX01')
+my_dobj = Dobj('pli1C0sX-HE2KpQQIvuYhX01')
+```
+or create an 'empty' Dobj instance and set the identifier later:
+```python
+from icoscp.cpb.dobj import Dobj
 
----
+dobj = Dobj()
+dobj.dobj = 'https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01'
+```
 
+Using `from icoscp.dobj import Dobj`, instantiating an 'empty' Dobj class, and
+setting the identifier later will result in a `TypeError`. This functionality
+was removed to preserve the `Dobj` class state and prevent unexpected behavior.
+
+
+#### Dobj datetime conversion
 ### **Dobj.dateTimeConvert = True**
-Set or retrieve. Default **True**. The binary data representation provides a UTC Timestamp as 
-Unixtimestamp with start point of 1970-01-01 00:00:00. By default, this is converted to a DateTimeObject
-(**pandas._libs.tslibs.timestamps.Timestamp**). If you prefer to have the raw Unixtimestamp 
-(**numpy.float64**), set Dobj.dateTimeConvert = False prior to load the data with **.get()** or **.data** or **.getColumns()**.
+The binary data representation provides a UTC Timestamp as Unix-timestamp with
+start point of 1970-01-01 00:00:00. By default, when using
+`from icoscp.cpb.dobj import Dobj` this is converted to a DateTimeObject of
+type `pandas._libs.tslibs.timestamps.Timestamp`. If you prefer to have the raw
+Unix-timestamp (**numpy.float64**), set
+`Dobj.dateTimeConvert = False` prior to load the data with **.get()** or **.data** or **.getColumns()**.
 
 - Return BOOL
 

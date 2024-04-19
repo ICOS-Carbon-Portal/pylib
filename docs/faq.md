@@ -30,14 +30,14 @@ useful information to the users.
         starting from the next version, user authentication might be required.
         warnings.warn(warning, category=FutureWarning)
 
-    To suppress such a message, users need to add the code below in their 
+    To suppress such a message, users need to add the code below in their
     scripts:
 
         import warnings
         warnings.simplefilter("ignore", FutureWarning)
 
-  - `user warning` messages are used to notify the user that there is something 
-    potentially incorrect or risky in the program, but that the program is 
+  - `user warning` messages are used to notify the user that there is something
+    potentially incorrect or risky in the program, but that the program is
     still able to run. Here is an example of a `user warning` message:
  
         /pylib/icoscp/cpauth/exceptions.py:39: UserWarning:
@@ -47,13 +47,14 @@ useful information to the users.
         mandatory for data access.
         warnings.warn(warning, category=UserWarning)
 
-    To suppress such a message, users need to add the code below in their 
+    To suppress such a message, users need to add the code below in their
     scripts:
 
         import warnings
         warnings.simplefilter("ignore", UserWarning)
 
 ### Where is the documentation for the cpauth module?
-The documentation for the authentication module can be found in the 
-installation section [here](install.md#authentication). 
+The documentation for the authentication module can be found in the
+installation section [here](install.md#authentication).
+
 
