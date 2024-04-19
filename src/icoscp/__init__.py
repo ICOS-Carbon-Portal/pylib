@@ -24,5 +24,5 @@ __status__ = "stable"
 __date__ = "2023-07-25"
 
 
-auth = AuthProvider()
+cpauth = AuthProvider()
 MODE = os.getenv('MODE', 'production')

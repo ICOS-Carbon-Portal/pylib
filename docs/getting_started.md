@@ -1,6 +1,6 @@
-# Examples
-The examples can be tried on a public Jupyter Hub running Python3 notebooks,
-where the library is preinstalled.
+# Getting started
+The examples in this section can be tried on a public Jupyter Hub running
+Python3 notebooks, where the library is preinstalled.
 
 [https://exploredata.icos-cp.eu/](https://exploredata.icos-cp.eu/)
 
