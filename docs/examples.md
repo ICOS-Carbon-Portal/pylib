@@ -1,6 +1,6 @@
 # Examples
-
-The examples can be tried on a public Jupyter Hub running Python3 notebooks, where the library is preinstalled.
+The examples can be tried on a public Jupyter Hub running Python3 notebooks,
+where the library is preinstalled.
 
 [https://exploredata.icos-cp.eu/](https://exploredata.icos-cp.eu/)
 
@@ -8,14 +8,17 @@ user: name@organisation <br>
 password: get in touch to get the password
 
 
-If run on a standalone machine rather than an ICOS Carbon Portal Jupyter Hub instance, the data access examples assume that the authentication has been configured as explained in the [installation section](install.md#authentication).
+If run on a standalone machine rather than an ICOS Carbon Portal Jupyter Hub
+instance, the data access examples assume that the authentication has been
+configured as explained in the [installation section](
+install.md#authentication).
 
 ## Discover data types
-
-Data type is the main "dimension" used to classify the ICOS data objects. It's an "umbrella" term aggregating a number of other metadata properties.
+Data type is the main "dimension" used to classify the ICOS data objects. It's
+an "umbrella" term aggregating a number of other metadata properties.
 
 ```python
-from icoscp_core import meta
+from icoscp_core.icos import meta
 # fetches the list of known data types, including metadata associated with them
 data_types = meta.list_datatypes()
 
@@ -41,7 +44,6 @@ htm_station_meta = meta.get_station_meta(htm_uri)
 ```
 
 ## List data objects
-
 ```python
 from icoscp_core.icos import meta
 # discovered/chosen data type uri for ICOS ATC CO2 Release
@@ -52,16 +54,21 @@ latest_htm_co2_release = meta.list_data_objects(datatype=co2_release_dt, station
 ```
 
 ## Batch data access
-For lists of uniform data objects of the same data type (or, more generally and exactly, sharing variable metadata), like  `latest_co2_release` from the previous example, the most efficient way of fetching the data is as follows:
+For lists of uniform data objects of the same data type (or, more generally and
+exactly, sharing variable metadata), like  `latest_co2_release` from the
+previous example, the most efficient way of fetching the data is as follows:
 
 ```python
 from icoscp_core.icos import data
 co2_release_data = data.batch_get_columns_as_arrays(latest_co2_release, ['TIMESTAMP', 'co2'])
 ```
 
-The result of this call is an iterator ("lazy" sequence) that gets evaluated when used (iterated).
-Each element of the iterator is a pair, where the first value is an element from `latest_co2_release`, and the second value is a dictionary mapping variable names to numpy arrays with their values.
-This output can be used as is for many purposes, but it is desirable to convert it to pandas DataFrames, it can be done like so (preserving the "lazyness"):
+The result of this call is an iterator ("lazy" sequence) that gets evaluated
+when used (iterated). Each element of the iterator is a pair, where the first
+value is an element from `latest_co2_release`, and the second value is a
+dictionary mapping variable names to numpy arrays with their values. This
+output can be used as is for many purposes, but it is desirable to convert it
+to pandas DataFrames, it can be done like so (preserving the "lazyness"):
 
 ```python
 import pandas as pd
@@ -69,33 +76,42 @@ co2_release_data_pd = ( (dobj, pd.DataFrame(arrs)) for dobj, arrs in co2_release
 ```
 
 ## Accessing documentation
+As this library depends on `icoscp_core`, all the functionality of the latter
+can be used, not only the examples from above. It is introduced on the
+[PyPi project page](https://pypi.org/project/icoscp_core/), and the source code
+is [available from GitHub](https://github.com/ICOS-Carbon-Portal/data/tree/master/src/main/python/icoscp_core).
 
-As this library depends on `icoscp_core`, all the functionality of the latter can be used, not only the examples from above. It is introduced on the [PyPi project page](https://pypi.org/project/icoscp_core/), and the source code is [available from GitHub](https://github.com/ICOS-Carbon-Portal/data/tree/master/src/main/python/icoscp_core).
-
-To discover all the rich possibilities of filtering, sorting and paging the lists of the data objects, it is helpful to read the Python docstring of `list_data_objects` method:
+To discover all the rich possibilities of filtering, sorting and paging the
+lists of the data objects, it is helpful to read the Python docstring of
+`list_data_objects` method:
 
 ```python
 from icoscp_core.icos import meta
 help(meta.list_data_objects)
 ```
 
-The method signature is not easily readable due to expansion of type annotations, but the docstring explains the method parameters in detail.
+The method signature is not easily readable due to expansion of type
+annotations, but the docstring explains the method parameters in detail.
 
-The output from `list_data_objects` is a list of `DataObjectLite` instances. Documentation of this class can be accessed as follows:
+The output from `list_data_objects` is a list of `DataObjectLite` instances.
+Documentation of this class can be accessed as follows:
 
 ```python
 from icoscp_core.metaclient import DataObjectLite
 help(DataObjectLite)
 ```
 
-Similarly, the output from `list_datatypes` is a list of `DobjSpecLite` instances, whose docstring is accessible like so:
+Similarly, the output from `list_datatypes` is a list of `DobjSpecLite`
+instances, whose docstring is accessible like so:
 
 ```python
 from icoscp_core.metaclient import DobjSpecLite
 help(DobjSpecLite)
 ```
 
-Natually, one can also request Python help on the whole `meta` constant (which is in fact an instance of class `MetaClient`), and on `data` constant (which is an instance of `DataClient`), and on all the methods therein:
+Naturally, one can also request Python help on the whole `meta` constant (which
+is in fact an instance of class `MetaClient`), and on `data` constant (which is
+an instance of `DataClient`), and on all the methods therein:
 
 ```python
 from icoscp_core.icos import meta, data
@@ -108,7 +124,17 @@ help(data.batch_get_columns_as_arrays)
 help(data.get_columns_as_arrays)
 ```
 
-Finally, `MetaClient`'s methods fetching detailed metadata (e.g. `get_dobj_meta`, `get_collection_meta`, `get_station_meta`) return classes who are (or whose constituents are) defined inside module `icoscp_core.metacore`. This module is not available in the source code on GitHub because it is autogenerated and autoimported, but can be very instructive to examine and use as a reference. Due to type annotations, it effectively contains metadata specification for all the entities available from the metadata repository. Standalone library users can find it inside their Python installation folder (can be `venv` or `.venv` if using a virtual Python environment) at location `lib/icoscp_core/metacore.py`. Jupyter users can inspect the classes in this module by calling `help` on it:
+Finally, `MetaClient`'s methods fetching detailed metadata (e.g.
+`get_dobj_meta`, `get_collection_meta`, `get_station_meta`) return classes who
+are (or whose constituents are) defined inside module `icoscp_core.metacore`.
+This module is not available in the source code on GitHub because it is
+autogenerated and auto-imported, but can be very instructive to examine and use
+as a reference. Due to type annotations, it effectively contains metadata
+specification for all the entities available from the metadata repository.
+Standalone library users can find it inside their Python installation folder
+(can be `venv` or `.venv` if using a virtual Python environment) at location
+`lib/icoscp_core/metacore.py`. Jupyter users can inspect the classes in this
+module by calling `help` on it:
 
 ```python
 from icoscp_core import metacore

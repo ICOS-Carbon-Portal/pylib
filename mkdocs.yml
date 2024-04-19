@@ -4,6 +4,7 @@ nav:
     - Installation: install.md
     - Modules: modules.md
     - Examples: examples.md
+    - Legacy examples: legacy_examples.md
     - FAQ: faq.md
     - Changelog: changelog.md
    
