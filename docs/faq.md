@@ -56,5 +56,3 @@ useful information to the users.
 ### Where is the documentation for the cpauth module?
 The documentation for the authentication module can be found in the
 installation section [here](install.md#authentication).
-
-

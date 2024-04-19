@@ -1,5 +1,5 @@
-# Content
-The following modules are available in the library to find and access
+# Legacy modules
+The following legacy modules are available in the library to find and access
 data hosted at the Carbon Portal. After a successful installation into
 your python environment you should be able to load the modules with:
 
@@ -86,26 +86,11 @@ column_names = dobj.colNames
 
 #### Dobj.data
 Retrieve the actual data for the PID in Pandas DataFrame format.
-**Authentication is required**. Upon authentication, all available variables
-will be returned.  
-Below, you will find two examples illustrating this process, one with preset
-authentication and one without.
 
-Example 1 *(preset authentication)*:
+Example:
 ```python
 from icoscp.dobj import Dobj
 
-dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
-data = dobj.data
-```
-
-Example 2 *(unset authentication)*:
-```python
-from icoscp.dobj import Dobj
-from icoscp import auth
-
-# Authentication-related code needs to be run only once.
-auth.init_config_file()
 dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
 data = dobj.data
 ```
@@ -304,18 +289,15 @@ Output:
 
 #### Dobj.get(columns)
 Retrieve the actual data for the PID in Pandas DataFrame format.
-**Authentication is required**. The functionality is the same as
-[Dobj.data](#dobjdata), but you have the option to retrieve only selected
+You have the option to retrieve only selected
 columns (or variables) using a list of variables as an input argument. Only
 valid and unique entries will be returned. You can see valid entries with
 [Dobj.colNames](#dobjcolnames) or [Dobj.variables](#dobjvariables). If columns
 are not provided, or if none of the provided variables are valid, or if you
 work with local data, the default DataFrame (with all columns) will be
-returned.  
-Below, you will find two examples illustrating this process, one with preset
-authentication and one without.
+returned.
 
-Example 1 *(preset authentication)*:
+Example:
 ```python
 from icoscp.dobj import Dobj
 
@@ -326,26 +308,11 @@ col_names = dobj.colNames
 data = dobj.get(columns=col_names)
 ```
 
-Example 2 *(unset authentication)*:
-```python
-from icoscp.dobj import Dobj
-from icoscp import auth
-
-# Authentication-related code needs to be run only once.
-auth.init_config_file()
-dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
-col_names = dobj.colNames
-# or
-# col_names = dobj.variables['name'].to_list()
-data = dobj.get(columns=col_names)
-```
-*See also [Dobj.data](#dobjdata)*
 
 #### Dobj.getColumns(columns)
 Retrieve the actual data for the PID in Pandas DataFrame format.  
-This method will be deprecated in the next release.
 
-Example 1 *(preset authentication)*:
+Example:
 ```python
 from icoscp.dobj import Dobj
 
@@ -356,19 +323,6 @@ col_names = dobj.colNames
 data = dobj.getColumns(columns=col_names)
 ```
 
-Example 2 *(unset authentication)*:
-```python
-from icoscp.dobj import Dobj
-from icoscp import auth
-
-# Authentication-related code needs to be run only once.
-auth.init_config_file()
-dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
-col_names = dobj.colNames
-# or
-# col_names = dobj.variables['name'].to_list()
-data = dobj.getColumns(columns=col_names)
-```
 *See also [Dobj.get(columns)](#dobjgetcolumns) and [Dobj.data](#dobjdata)*
 
 #### Dobj.get_citation(format)
