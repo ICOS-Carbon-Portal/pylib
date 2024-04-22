@@ -1,6 +1,6 @@
 # (potentially) Frequently Asked Questions
 
-Please see [examples](examples.md) for possible answers to questions not
+Please see [Getting started](getting_started.md) for possible answers to questions not
 covered here.
 
 ### `icoscp_core` is very different from the old `icoscp`, do I have to rewrite everything?
@@ -16,6 +16,20 @@ dobj = meta.get_dobj_meta('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJej
 
 latest_version_uri = dobj.latestVersion
 ```
+
+Please note that `latest_version_uri` can be either a URI, or a list of URIs,
+because in ICOS metadata it is possible for a number of objects to
+collectively deprecate a single one.
+
+### How to obtain ICOS station class of a station?
+```python
+from icoscp_core.icos import station_class_lookup
+station_uri = 'http://meta.icos-cp.eu/resources/stations/AS_HTM'
+station_class = station_class_lookup().get(station_uri)
+```
+
+`station_class_lookup` method caches its output, so it is fast to call it
+repeatedly.
 
 ### How do I suppress warnings?
 Internally the `icoscp` python library uses the `warnings` module to provide
