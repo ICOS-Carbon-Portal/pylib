@@ -5,7 +5,7 @@ import warnings
 
 # Related third party imports.
 from icoscp_core.icos import meta, bootstrap
-from icoscp import auth
+from icoscp import cpauth
 from icoscp_core.metacore import DataObject, URI, StationTimeSeriesMeta, \
     Station, Position
 from icoscp_core.queries.dataobjlist import DataObjectLite
@@ -224,7 +224,7 @@ class Dobj:
          plain CSV serialization of a tabular data object.
         """
 
-        data_client = bootstrap.fromAuthProvider(auth)
+        data_client = bootstrap.fromAuthProvider(cpauth)
         df = pd.DataFrame(data_client.get_columns_as_arrays(dobj=self.metadata,
                                                      columns=columns))
         df = df.reindex(sorted(df.columns), axis=1)  # type: ignore
