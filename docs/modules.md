@@ -344,9 +344,16 @@ ris_citation = dobj.get_citation('ris')
 *See also [Dobj.citation](#dobjcitation)*
 
 ---
-### Known differences between Dobjs
 
-#### Dobj initialization
+## Original legacy Dobj
+The actual original legacy (prior to version `0.2.0`) `Dobj` class resides in
+module `icoscp.cpb.dobj`. Most code is recommended to migrate to the new
+implementation of this class residing in module `icoscp.dobj`, but the old
+class is preserved to avoid breaking any dependent code by library update,
+and additionally, there are some known differences between the versions,
+documented below.
+
+### Dobj initialization
 Using `from icoscp.cpb.dobj import Dobj`, you can initialize the Dobj class in
 one of the following ways:
 ```python
@@ -369,8 +376,11 @@ setting the identifier later will result in a `TypeError`. This functionality
 was removed to preserve the `Dobj` class state and prevent unexpected behavior.
 
 
-#### Dobj datetime conversion
-### **Dobj.dateTimeConvert = True**
+### Dobj datetime conversion control
+(Not available in the new implementation, as all datetime conversions are
+handled by `pandas` library in a uniform way)
+
+**Dobj.dateTimeConvert = True**
 The binary data representation provides a UTC Timestamp as Unix-timestamp with
 start point of 1970-01-01 00:00:00. By default, when using
 `from icoscp.cpb.dobj import Dobj` this is converted to a DateTimeObject of
@@ -381,13 +391,16 @@ Unix-timestamp (**numpy.float64**), set
 - Return BOOL
 
 ### **Dobj.size()**
+(Not available in the new implementation. To get data object size in bytes
+from the new `Dobj` class, call `Dobj.metadata.size` or `Dobj.meta['size']`)
+
 The real size of the dobj in [bytes, KB, MB, TB]. Since this object may contain the data, it is 
 no longer just a pointer to data.
 
 - Return TUPLE (int32, STR), where int32 represents the size and STR the unit. Example output 
   looks like: (4.353, 'MB')
 
-<hr><hr>
+---
 
 ## Station
 The station module provides a search facility to explore ICOS stations and find associated data 

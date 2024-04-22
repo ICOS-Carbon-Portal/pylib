@@ -1,7 +1,7 @@
 # Welcome to the ICOS Carbon Portal Python Library 
 
 ## ICOS
-The Integrated Carbon Observation System, ICOS, is a European-wide greenhouse
+The Integrated Carbon Observation System (ICOS) is a European-wide greenhouse
 gas research infrastructure. ICOS produces standardised data on greenhouse gas
 concentrations in the atmosphere, as well as on carbon fluxes between the
 atmosphere, the earth and oceans. This information is being used by scientists
@@ -12,16 +12,17 @@ located in 16 countries in Europe. For more information please visit
 
 
 ## icoscp Python library
-This library provides easy access to data hosted at the ICOS Carbon Portal
-([https://data.icos-cp.eu/](https://data.icos-cp.eu/)). By using this library
-you can load data files directly into memory. The purpose of this library is to
-free you from downloading and maintaining a local copy of data files and if you
-choose to use our Jupyter Hub services, you don't even need computational
-power.
+This library provides full metadata and partial data access to the data
+objects hosted at the ICOS Carbon Portal
+([https://data.icos-cp.eu/](https://data.icos-cp.eu/)). A benefit of this
+library is to relieve the data users from downloading the files and
+parsing their content. It is provisioned to Carbon Portal's
+[Jupyter Hub](https://jupyter.icos-cp.eu/) services, making it possible to
+use supported types of ICOS data without installing any software.
 
-If you prefer the conventional "download the data" approach, to store and use
-the data locally, we recommend using [data portal](https://data.icos-cp.eu/)
-web application to find, preview and download the data.
+To download full original data of all types, the users are referred to
+[data portal](https://data.icos-cp.eu/)
+web application to find, preview and download the data objects.
 
 ## The history and the new role of the library
 This library has a history of being developed somewhat empirically, resulting
@@ -44,7 +45,7 @@ unless it is explicitly known that some specific **icoscp** feature is
 required.
 
 However, it should be recognized that **icoscp_core**, though making possible
-to achieve with little code things that were previously impossible or lengthy
+with little code to achieve results that were previously impossible or lengthy
 with **icoscp**, is a somewhat lower-level library. Notably, **icoscp_core**
 does not depend on **pandas** library, which means the developers who want to
 work with pandas DataFrames, may need to take one extra step (albeit short and
