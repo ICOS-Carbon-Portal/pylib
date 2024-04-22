@@ -21,7 +21,7 @@ import struct
 import pandas as pd
 
 from icoscp import __version__ as release_version
-from icoscp import auth
+from icoscp import cpauth
 from icoscp.cpb import dtype
 from icoscp.cpb import metadata
 import icoscp.const as CPC
@@ -349,7 +349,7 @@ class Dobj():
             response, content = None, None
             request_url, request_headers = None, None
             request_url = CPC.SECURED_DATA
-            request_headers = {'cookie': auth.cookie_value}
+            request_headers = {'cookie': cpauth.cookie_value}
             # Request secure data.
             response = requests.post(url=request_url,
                                      json=self._json,
