@@ -7,11 +7,12 @@
 - #### stilt module
     - Improve code for retrieving stilt-station metadata.
 - #### documentation
-    - Move the `cpauth` module to the [installation](install.md) section.
-    - Add [upgrade guide](install.md#upgrade-guide) to the installation
+    - Move the `cpauth` module to the [Getting started](getting_started.md)
+      section.
+    - Add [Upgrade guide](install.md#upgrade-guide) to the installation
       section.
     - Add substantial amount of content to the [About page](index.md).
-    - Add [getting-started examples](getting_started.md), move the old
+    - Add [Getting started examples](getting_started.md) and move the old
       examples to a [separate section](legacy_examples.md) as legacy.
     - Remove most of the old FAQ, add a few new ones.
 

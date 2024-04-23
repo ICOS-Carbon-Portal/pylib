@@ -45,7 +45,7 @@ useful information to the users.
         warnings.warn(warning, category=FutureWarning)
 
     To suppress such a message, users need to add the code below in their
-    scripts:
+    scripts before calling the warning-inducing module:
 
         import warnings
         warnings.simplefilter("ignore", FutureWarning)
@@ -62,7 +62,7 @@ useful information to the users.
         warnings.warn(warning, category=UserWarning)
 
     To suppress such a message, users need to add the code below in their
-    scripts:
+    scripts before calling the warning-inducing module:
 
         import warnings
         warnings.simplefilter("ignore", UserWarning)
