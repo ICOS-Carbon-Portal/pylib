@@ -15,7 +15,7 @@ your python environment you should be able to load the modules with:
 This is the basic module to load a **d**igital **obj**ect (data set)
 into memory. You need to know a valid persistent identifier (PID/URL) to
 access the data. Either you can browse the [data portal](
-https://data.icos-cp.eu) to find PIDs or you can use the 'station'
+https://data.icos-cp.eu) to find PIDs or you can use the "station"
 package to find PIDs programmatically (see section [station](#station)
 ).  
   
@@ -192,14 +192,12 @@ longitude = dobj.lon
 #### Dobj.meta
 Return a dictionary based on the metadata available from the landing
 page of the ICOS Carbon Portal website. Every data object has a rich
-set of metadata available. You can download an example from the data 
-portal:
-[https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01/meta.json](
-https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01/meta.json).
-This will then be parsed into a python dictionary representing the
+set of metadata available. You can download an [example](
+https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01/meta.json) from the
+data portal. This will then be parsed into a python dictionary representing the
 metadata from ICOS. Some of the important key properties, like
-'previous', 'next', 'citation', etc., are extracted for easy access and
-made available as properties. Please check this documentation.
+'previous', 'next', 'citation', e.t.c., are extracted for easy access and
+made available as properties.
   
 Example:
 ```python
@@ -236,18 +234,23 @@ dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
 previous_version = dobj.previous
 ```
 
-[//]: # (Todo: This one)
 #### Dobj.station
 Return a dictionary containing metadata associated with the station
-corresponding to the Dobj. Please be aware that prior to version 0.1.15 this has returned a string with
-station id, which is now available as station['id']. An example code snippet on
-how to extract all 'keys' from a nested dictionary is available in the
-[FAQ](faq.md#q1)
+corresponding to the Dobj. Please be aware that prior to version 0.1.15 this
+has returned a string with station id, which is now available as station['id'].
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+station_meta = dobj.station
+```
 
 #### Dobj.valid
 Return the validity of a Dobj as a boolean. This is kept for backwards
-compatibility reasons. From icoscp 1.0.0 and onwards, the Dobj class cannot be
-instantiated with an invalid PID, thus this will always return True.  
+compatibility reasons. From icoscp 0.2.0 and onwards, the Dobj class cannot be
+instantiated with an invalid PID, thus this will always return `True`.  
 This property will be deprecated in the next release.
 
 Example:
@@ -261,7 +264,7 @@ validity = dobj.valid
 #### Dobj.variables
 Return a Pandas DataFrame providing access to all available variables,
 including the name, unit, type, and the landing page for the format used
-(int, float, chr, ...).  
+(int, float, char, ...).  
 Raise a `MetaValueError` exception if no variable information is
 available.
 

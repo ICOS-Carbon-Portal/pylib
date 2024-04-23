@@ -4,9 +4,9 @@ Python3 notebooks, where the library is preinstalled.
 
 [https://exploredata.icos-cp.eu/](https://exploredata.icos-cp.eu/)
 
-user: name@organisation <br>
-password: get in touch to get the password
-
+Please, click [here](
+https://www.icos-cp.eu/data-services/tools/jupyter-notebook/exploredata-password)
+to request access to the Explore-Data service.
 
 If run on a standalone machine rather than an ICOS Carbon Portal Jupyter Hub
 instance, the data access examples assume that the authentication has been
