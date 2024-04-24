@@ -51,7 +51,7 @@ import json
 import pandas as pd
 from tqdm import tqdm
 
-fromk icoscp.sparql import sparqls
+from icoscp.sparql import sparqls
 from icoscp.sparql.runsparql import RunSparql
 from icoscp.station import fmap
 
