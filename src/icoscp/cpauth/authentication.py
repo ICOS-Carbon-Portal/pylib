@@ -1,7 +1,6 @@
-from icoscp_core.auth import AuthTokenProvider, AuthToken
-from icoscp_core.auth import TokenAuth, PasswordAuth
-from icoscp_core.icos import auth, ICOS_CONFIG
-from icoscp_core import icos
+from icoscp_core.auth import (AuthToken, AuthTokenProvider, PasswordAuth,
+                              TokenAuth)
+from icoscp_core.icos import ICOS_CONFIG, auth
 
 
 class AuthProvider(AuthTokenProvider):
@@ -10,7 +9,7 @@ class AuthProvider(AuthTokenProvider):
     def __init__(self):
         self._auth = auth
 
-    def init_config_file(self, path: str = None) -> None:
+    def init_config_file(self) -> None:
         auth.init_config_file()
 
     def init_by_token(self, cookie_token: str) -> None:
@@ -22,7 +21,7 @@ class AuthProvider(AuthTokenProvider):
     def get_token(self) -> AuthToken:
         try:
             return self._auth.get_token()
-        except Exception as e:
+        except Exception:
             msg = ("Authentication error. Please configure authentication "
                    "according to https://icos-carbon-portal.github.io/pylib/"
                    "install/#configure-your-authentication")

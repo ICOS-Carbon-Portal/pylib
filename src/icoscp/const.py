@@ -8,12 +8,13 @@ Usage:
 'http://meta.icos-cp.eu/ontologies/cpmeta/'
 """
 
-import icoscp.const as CPC
-from icoscp import MODE
-from fiona.errors import DriverError
-import geopandas as gpd
 import sys
 import warnings
+
+import geopandas as gpd
+from fiona.errors import DriverError
+
+from icoscp import MODE
 
 # -------------------------------------------------------------
 # Dobj
@@ -58,7 +59,7 @@ if MODE == 'production':
     STILTPATH = '/data/stiltweb/stations/'
 
     try:
-        WORLD = gpd.read_file(CPC.COUNTRY_SHAPE)
+        WORLD = gpd.read_file(COUNTRY_SHAPE)
     except DriverError:
         WORLD = None
         off_server_countries_warning = (

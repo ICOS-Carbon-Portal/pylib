@@ -10,9 +10,10 @@
 
 import importlib.resources as pkgres
 import json
-import icoscp
+
 from shapely.geometry import Point
-from icoscp import MODE
+
+import icoscp
 from icoscp.const import WORLD
 
 
@@ -146,7 +147,7 @@ def _c_reverse(lat: float, lon: float) -> str:
 
     country = False
     if not WORLD.empty:
-        for index, row in WORLD.iterrows():
+        for _, row in WORLD.iterrows():
             if row.geometry.contains(Point(lon, lat)):
                 country = row.SOV_A3.lower()
     return country

@@ -1,4 +1,5 @@
 import os
+
 from icoscp.cpauth.authentication import AuthProvider
 
 """
