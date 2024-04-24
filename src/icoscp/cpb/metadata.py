@@ -3,6 +3,7 @@ Created on Tue May 24 11:56:23 2022
 @author: Claudio
 """
 from warnings import warn
+
 import pandas as pd
 import requests as re
 
@@ -96,7 +97,7 @@ def variables(meta):
     
     # because unit is not guaranteed, we need to loop
     unit = [None] * len(var)    
-    for index, val in enumerate(unit):
+    for index, _ in enumerate(unit):
         if 'unit' in var[index]['valueType'].keys():
             unit[index] = var[index]['valueType']['unit']
     

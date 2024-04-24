@@ -19,10 +19,11 @@ __lastchange__  = ["Zois Zogopoulos"]
 
 
 
-import requests
 import pandas as pd
+import requests
 
-class RunSparql():
+
+class RunSparql:
     """
         Class to send a sparql query to the icos endpoint and get
         formated output back.

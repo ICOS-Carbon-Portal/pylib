@@ -6,6 +6,7 @@ based on : return the real size of object
 
 import sys
 
+
 def get(obj):
     size = _get_size(obj)     
     power = 2**10

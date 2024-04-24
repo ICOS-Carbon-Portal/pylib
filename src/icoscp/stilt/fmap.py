@@ -17,7 +17,7 @@ import folium
 from folium.plugins import MarkerCluster
 
 
-def get(stations, fmt='map', cluster=True):
+def get(stations, cluster=True):
     '''
     Provide a map based on the folium module.
 

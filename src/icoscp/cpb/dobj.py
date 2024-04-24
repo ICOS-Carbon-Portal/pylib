@@ -15,20 +15,19 @@ __status__      = 'stable'
 __date__        = '2023-02-27'
 
 import os
-from warnings import warn
-import requests
 import struct
-import pandas as pd
+from warnings import warn
 
+import pandas as pd
+import requests
+
+import icoscp.const as CPC
 from icoscp import __version__ as release_version
 from icoscp import auth
-from icoscp.cpb import dtype
-from icoscp.cpb import metadata
-import icoscp.const as CPC
-from json.decoder import JSONDecodeError
+from icoscp.cpb import dtype, metadata
 
 
-class Dobj():
+class Dobj:
     """ Use an ICOS digital object id to query the sparql endpoint
         for infos, and create the 'payload' to retrieve the binary data
         the method .getColumns() will return the actual data
@@ -162,7 +161,7 @@ class Dobj():
         return None
     #-----------
     @property
-    def meta(self, fmt='json'):
+    def meta(self):
         if self._dobjValid:
             return self._meta
         return None
@@ -320,9 +319,7 @@ class Dobj():
             }
 
         self._dobjValid = True
-        return
 
-# -------------------------------------------------
     def __getColumns(self):
         """
             check if a local path is set and valid
@@ -454,7 +451,7 @@ class Dobj():
         return df
 
     # -------------------------------------------------
-    def __portalUse(self, service: str = None) -> None:
+    def __portalUse(self, service: str) -> None:
         """Private function to track data usage."""
         counter = {
             'BinaryFileDownload':
@@ -473,9 +470,7 @@ class Dobj():
         }
         server = 'https://cpauth.icos-cp.eu/logs/portaluse'
         requests.post(server, json=counter)
-        return
 
-    # -------------------------------------------------
     def __setColumns(self, columns=None):
         '''
         this function sets the columnNumbers to extract data

@@ -17,14 +17,13 @@ __email__ = ['info@icos-cp.eu', 'zois.zogopoulos@nateko.lu.se']
 __status__ = "rc1"
 __date__ = "2021-09-20"
 
-# Standard library imports.
 import json
 import os
-# Related third party imports.
-from folium.plugins import MarkerCluster
+
 import folium
 import pandas as pd
 import requests
+from folium.plugins import MarkerCluster
 
 
 def get(queried_stations, project, icon):
@@ -224,8 +223,8 @@ def edit_queried_stations(queried_stations, edited_response):
 
     """
 
-    stations = list()
-    folium_station = pd.DataFrame()
+    stations = []
+    folium_stations = pd.DataFrame()
     # Transpose the requested stations dataframe and iterate each
     # station.
     queried_stations = queried_stations.transpose()

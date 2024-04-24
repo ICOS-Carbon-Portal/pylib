@@ -19,6 +19,7 @@ __status__      = "rc1"
 __date__        = "2019-08-09"
 
 from warnings import warn
+
 # --------------------------------------------------------------------
 # create internal helper functions to be used for ALL sparql queries
 # --------------------------------------------------------------------
@@ -595,7 +596,7 @@ def getStations(station='', theme=''):
     query : str, valid sparql query to run against the Carbon Portal SPARQL endpoint.
     """
 
-    filter = dict()
+    filter = {}
 
     if station:
         filter['station'] = station

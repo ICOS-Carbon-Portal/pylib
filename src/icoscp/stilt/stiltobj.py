@@ -15,20 +15,22 @@ __date__        = "2023-01-18"
 __lastchange__  = ["Zois Zogopoulos"]
 #################################################################################
 
-# Import modules
+import json
 import os
+
 import numpy as np
 import pandas as pd
 import requests
-import json
 import xarray as xr
+
 import icoscp.const as CPC
-from icoscp.stilt import timefuncs as tf
-from icoscp.sparql import sparqls, runsparql
 from icoscp import __version__ as release_version
+from icoscp.sparql import runsparql, sparqls
+from icoscp.stilt import timefuncs as tf
+
 ##############################################################################
 
-class StiltStation():
+class StiltStation:
 
     """
     Attributes: id:              STILT station ID (e.g. 'HTM150')

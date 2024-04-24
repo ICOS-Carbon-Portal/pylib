@@ -16,18 +16,20 @@ __email__ = ["info@icos-cp.eu", "claudio.donofrio@nateko.lu.se"]
 __status__ = "rc1"
 __date__ = "2021-11-04"
 
-import re
 import json
-import pandas as pd
-from tqdm.notebook import tqdm
-from icoscp.station import station as icos_station
-from icoscp.stilt.stiltobj import StiltStation
-from icoscp.stilt import fmap
-from icoscp.const import STILTINFO, STILTPATH
-from icoscp.countries import country
+import re
 from pathlib import Path
 from typing import Any
+
+import pandas as pd
+from tqdm.notebook import tqdm
+
+from icoscp.const import STILTINFO, STILTPATH
+from icoscp.countries import country
+from icoscp.station import station as icos_station
+from icoscp.stilt import fmap
 from icoscp.stilt import timefuncs as tf
+from icoscp.stilt.stiltobj import StiltStation
 
 
 # --- START KEYWORD FUNCTIONS ---
@@ -486,7 +488,7 @@ def __station_name(station_id: str, name: str, alt: int) -> str:
 
     station_name = station_id if name == 'nan' else name
     if not (name[-1] == 'm' and name[-2].isdigit()):
-        station_name = f'{station_name} {str(alt)}m'
+        station_name = f'{station_name} {alt}m'
     return station_name
 
 

@@ -12,13 +12,11 @@ __maintainer__  = "ICOS Carbon Portal, elaborated products team"
 __email__       = ['info@icos-cp.eu', 'karolina.pantazatou@nateko.lu.se']
 __date__        = "2022-11-23"
 __lastchange__  = ["Claudio DOnofrio"]
-###############################################################################
 
-#Import modules:
-from datetime import date
-import pandas as pd
 import re
-###############################################################################
+from datetime import date
+
+import pandas as pd
 
 
 #Function that returns a tuple with the start-date and
@@ -106,7 +104,7 @@ def parse(date):
         if isinstance(date, str):
             date = pd.to_datetime(date).date()
             out = True
-        if isinstance(date, float) or isinstance(date, int):
+        if isinstance(date, (float | int)):
             date = pd.to_datetime(date, unit='s').date()
             out = True
         

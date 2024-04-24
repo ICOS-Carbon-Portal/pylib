@@ -5,6 +5,7 @@ to timeseries and spatial footprints.
 """
 
 import os
+
 import icoscp.const as CPC
 
 if not os.path.exists(CPC.STILTPATH):

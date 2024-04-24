@@ -16,10 +16,12 @@ __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "rc1"
 __date__        = "2019-08-13"
 
-import requests
 import json
 
-class Logfile():
+import requests
+
+
+class Logfile:
     
     def __init__(self):
         self.server = 'https://restheart.icos-cp.eu/db/portaluse/'        

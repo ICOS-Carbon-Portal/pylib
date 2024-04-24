@@ -6,7 +6,6 @@ class UriValueError(ValueError):
     def __init__(self,
                  message: str = 'Invalid data object uri value') -> None:
         super().__init__(message)
-        return
 
 
 class FormatValueError(ValueError):
@@ -17,14 +16,12 @@ class FormatValueError(ValueError):
             f"'bibtex', or 'ris'."
         )
         super().__init__(message)
-        return
 
 
 class MetaValueError(ValueError):
     def __init__(self) -> None:
         message = "Column metadata is not available for this object."
         super().__init__(message)
-        return
 
 
 class MetaTypeError(TypeError):
@@ -35,4 +32,3 @@ class MetaTypeError(TypeError):
             f"'{caller}' call."
         )
         super().__init__(message)
-        return
