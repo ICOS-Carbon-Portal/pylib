@@ -1,7 +1,5 @@
 from icoscp_core.auth import AuthTokenProvider, AuthToken
-from icoscp_core.auth import TokenAuth, PasswordAuth
-from icoscp_core.icos import auth, ICOS_CONFIG
-from icoscp_core import icos
+from icoscp_core.icos import auth
 
 
 class AuthProvider(AuthTokenProvider):
@@ -10,14 +8,8 @@ class AuthProvider(AuthTokenProvider):
     def __init__(self):
         self._auth = auth
 
-    def init_config_file(self, path: str = None) -> None:
-        auth.init_config_file()
-
-    def init_by_token(self, cookie_token: str) -> None:
-        self._auth = TokenAuth(cookie_token)
-
-    def init_by_credentials(self, username: str, password: str):
-        self._auth = PasswordAuth(username, password, ICOS_CONFIG)
+    def init_by(self, provider: AuthTokenProvider):
+        self._auth = provider
 
     def get_token(self) -> AuthToken:
         try:

@@ -1,5 +1,5 @@
-# Content
-The following modules are available in the library to find and access
+# Legacy modules
+The following legacy modules are available in the library to find and access
 data hosted at the Carbon Portal. After a successful installation into
 your python environment you should be able to load the modules with:
 
@@ -15,7 +15,7 @@ your python environment you should be able to load the modules with:
 This is the basic module to load a **d**igital **obj**ect (data set)
 into memory. You need to know a valid persistent identifier (PID/URL) to
 access the data. Either you can browse the [data portal](
-https://data.icos-cp.eu) to find PIDs or you can use the 'station'
+https://data.icos-cp.eu) to find PIDs or you can use the "station"
 package to find PIDs programmatically (see section [station](#station)
 ).  
   
@@ -37,41 +37,28 @@ The following statements yield the same result:
 ```python
 from icoscp.dobj import Dobj
 
-my_dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
-my_dobj = Dobj('11676/pli1C0sX-HE2KpQQIvuYhX01')
-my_dobj = Dobj('pli1C0sX-HE2KpQQIvuYhX01')
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+dobj = Dobj('11676/pli1C0sX-HE2KpQQIvuYhX01')
+dobj = Dobj('pli1C0sX-HE2KpQQIvuYhX01')
 ```
 
 ### Properties
 
-#### Dobj.meta
-Return a dictionary based on the metadata available from the landing
-page of the ICOS Carbon Portal website. Every data object has a rich
-set of metadata available. You can download an example from the data 
-portal:
-[https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01/meta.json](
-https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01/meta.json).
-This will then be parsed into a python dictionary representing the
-metadata from ICOS. Some of the important key properties, like
-'previous', 'next', 'citation', etc., are extracted for easy access and
-made available as properties. Please check this documentation.
-  
+#### Dobj.alt
+Retrieve the float value representing the altitude above sea level of the
+station associated with the Dobj. Be aware, this is not the sampling height for
+the data. If the station does not have a specified altitude, return `None`.
+
 Example:
 ```python
 from icoscp.dobj import Dobj
-from pprint import pprint
 
-my_dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
-pprint(my_dobj.meta)
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+altitude = dobj.alt
 ```
 
-#### Dobj.info
-Same as [Dobj.meta](#dobjmeta). This method will be deprecated in the 
-next release.
-
 #### Dobj.citation
-Return a plain citation string. See also class method
-[Dobj.get_citation()](#dobjget_citationformat).
+Return the citation string linked to the Dobj in plain string format.
   
 Example:
 ```python
@@ -80,45 +67,7 @@ from icoscp.dobj import Dobj
 dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
 citation = dobj.citation
 ```
-
-#### Dobj.licence
-Return a dictionary with these keys: 'baseLicence', 'name', 'url', 
-'webpage', containing information about the dataset's associated
-license.
-
-Example:
-```python
-from icoscp.dobj import Dobj
-
-dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
-licence = dobj.licence
-```
-
-#### Dobj.previous
-Return a landing page in the form of a string, featuring the previous
-version of this data object if it exists.  
-Return `None` if a previous version does not exist.
-
-Example:
-```python
-from icoscp.dobj import Dobj
-
-dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
-previous_version = dobj.previous
-```
-
-#### Dobj.next
-Return a landing page in the form of a string, featuring the next
-version of this data object if it exists.  
-Return `None` if a next version does not exist.
-
-Example:
-```python
-from icoscp.dobj import Dobj
-
-dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
-next_version = dobj.next
-```
+*See also class method [Dobj.get_citation()](#dobjget_citationformat)*
 
 #### Dobj.colNames
 Return a list of available column names for a station-specific time
@@ -135,10 +84,187 @@ dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
 column_names = dobj.colNames
 ```
 
+#### Dobj.data
+Retrieve the actual data for the PID in Pandas DataFrame format.
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+data = dobj.data
+```
+
+#### Dobj.dobj
+Retrieve the PID for the Dobj.
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+pid = dobj.dobj
+```
+*See also [Dobj.id](#dobjid)*
+
+#### Dobj.elevation
+Retrieve the float value representing the elevation above sea level of the
+station associated with the Dobj. Be aware, this is not the sampling height for
+the data. If the station does not have a specified elevation, return `None`.  
+This property will be deprecated in the next release.
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+elevation = dobj.elevation
+```
+*See also [Dobj.alt](#dobjalt)*
+
+#### Dobj.id
+Retrieve the PID for the Dobj.
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+pid = dobj.id
+```
+*See also [Dobj.dobj](#dobjdobj)*
+
+
+#### Dobj.info
+Return a dictionary based on the metadata available from the landing
+page of the ICOS Carbon Portal website.  
+This property will be deprecated in the next release.
+
+Example:
+```python
+from icoscp.dobj import Dobj
+from pprint import pprint
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+pprint(dobj.info)
+```
+*See also [Dobj.meta](#dobjmeta)*
+
+#### Dobj.lat
+Retrieve the float value representing the latitude of the station associated
+with the Dobj. If the station does not have a specified latitude, return
+`None`.
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+latitude = dobj.lat
+```
+
+#### Dobj.licence
+Return a dictionary with these keys: 'baseLicence', 'name', 'url', 
+'webpage', containing information about the dataset's associated
+license.
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+latitude = dobj.lat
+```
+
+#### Dobj.lon
+Retrieve the float value representing the longitude of the station associated
+with the Dobj. If the station does not have a specified longitude, return
+`None`.
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+longitude = dobj.lon
+```
+
+#### Dobj.meta
+Return a dictionary based on the metadata available from the landing
+page of the ICOS Carbon Portal website. Every data object has a rich
+set of metadata available. You can download an [example](
+https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01/meta.json) from the
+data portal. This will then be parsed into a python dictionary representing the
+metadata from ICOS. Some of the important key properties, like
+'previous', 'next', 'citation', e.t.c., are extracted for easy access and
+made available as properties.
+  
+Example:
+```python
+from icoscp.dobj import Dobj
+from pprint import pprint
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+pprint(dobj.meta)
+```
+
+#### Dobj.next
+Return a landing page in the form of a string, featuring the next
+version of this data object if it exists.  
+Return `None` if a next version does not exist.
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+next_version = dobj.next
+```
+
+#### Dobj.previous
+Return a landing page in the form of a string, featuring the previous
+version of this data object if it exists.  
+Return `None` if a previous version does not exist.
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+previous_version = dobj.previous
+```
+
+#### Dobj.station
+Return a dictionary containing metadata associated with the station
+corresponding to the Dobj. Please be aware that prior to version 0.1.15 this
+has returned a string with station id, which is now available as station['id'].
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+station_meta = dobj.station
+```
+
+#### Dobj.valid
+Return the validity of a Dobj as a boolean. This is kept for backwards
+compatibility reasons. From icoscp 0.2.0 and onwards, the Dobj class cannot be
+instantiated with an invalid PID, thus this will always return `True`.  
+This property will be deprecated in the next release.
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+validity = dobj.valid
+```
+
 #### Dobj.variables
 Return a Pandas DataFrame providing access to all available variables,
 including the name, unit, type, and the landing page for the format used
-(int, float, chr, ...).  
+(int, float, char, ...).  
 Raise a `MetaValueError` exception if no variable information is
 available.
 
@@ -164,10 +290,47 @@ Output:
 
 ### Methods
 
+#### Dobj.get(columns)
+Retrieve the actual data for the PID in Pandas DataFrame format.
+You have the option to retrieve only selected
+columns (or variables) using a list of variables as an input argument. Only
+valid and unique entries will be returned. You can see valid entries with
+[Dobj.colNames](#dobjcolnames) or [Dobj.variables](#dobjvariables). If columns
+are not provided, or if none of the provided variables are valid, or if you
+work with local data, the default DataFrame (with all columns) will be
+returned.
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+col_names = dobj.colNames
+# or
+# col_names = dobj.variables['name'].to_list()
+data = dobj.get(columns=col_names)
+```
+
+
+#### Dobj.getColumns(columns)
+Retrieve the actual data for the PID in Pandas DataFrame format.  
+
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+col_names = dobj.colNames
+# or
+# col_names = dobj.variables['name'].to_list()
+data = dobj.getColumns(columns=col_names)
+```
+
+*See also [Dobj.get(columns)](#dobjgetcolumns) and [Dobj.data](#dobjdata)*
+
 #### Dobj.get_citation(format)
 Return the citation string in different formats. By default, a plain 
-formatted string is returned, the same as with the property
-[Dobj.citation](#dobjcitation).  
+formatted string is returned.  
 Possible formats are:
 
 - **plain** : (default) a simple string
@@ -181,104 +344,66 @@ from icoscp.dobj import Dobj
 dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
 ris_citation = dobj.get_citation('ris')
 ```
-
----
-### Known differences between Dobjs
-
-or create an 'empty' instance and the set the identifier later:
-
-	my_dobj = Dobj()
-	my_dobj.dobj = "j7-Lxlln8_ysi4DEV8qine_v"
+*See also [Dobj.citation](#dobjcitation)*
 
 ---
 
+## Original legacy Dobj
+The actual original legacy (prior to version `0.2.0`) `Dobj` class resides in
+module `icoscp.cpb.dobj`. Most code is recommended to migrate to the new
+implementation of this class residing in module `icoscp.dobj`, but the old
+class is preserved to avoid breaking any dependent code by library update,
+and additionally, there are some known differences between the versions,
+documented below.
 
-### **Dobj.data**
-Retrieve the actual data for the PID. All available variables will be returned.
+### Dobj initialization
+Using `from icoscp.cpb.dobj import Dobj`, you can initialize the Dobj class in
+one of the following ways:
+```python
+from icoscp.cpb.dobj import Dobj
 
-- Return Pandas DataFrame
+my_dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+my_dobj = Dobj('11676/pli1C0sX-HE2KpQQIvuYhX01')
+my_dobj = Dobj('pli1C0sX-HE2KpQQIvuYhX01')
+```
+or create an 'empty' Dobj instance and set the identifier later:
+```python
+from icoscp.cpb.dobj import Dobj
 
-### **Dobj.get(variables)**
-Retrieve the actual data for the PID. The same as `.data` but you have the option to retrieve only selected columns (or variables). Only valid and unique entries will be returned. You can see valid entries with [.variables['name']](#dobjvariables) or [.colNames](#dobjcolnames). If columns are not provided, or if none of the provided variables are valid, or if you work with local data, the default DataFrame (with all columns) will be returned, which is the same as `.data`. 
+dobj = Dobj()
+dobj.dobj = 'https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01'
+```
 
-- Parameter variables: LIST[STR]
-- Return Pandas DataFrame
+Using `from icoscp.dobj import Dobj`, instantiating an 'empty' Dobj class, and
+setting the identifier later will result in a `TypeError`. This functionality
+was removed to preserve the `Dobj` class state and prevent unexpected behavior.
 
-	
-### **Dobj.getColumns(variables)**
-This is exactly the same as `.get()`. See details above. We keep this for backward compatibility,  please do not use. This function will be deprecated over time.
 
-** Examples to retrieve data**:
+### Dobj datetime conversion control
+(Not available in the new implementation, as all datetime conversions are
+handled by `pandas` library in a uniform way)
 
-	# Create a dobj:
-
-	do = Dobj('https://meta.icos-cp.eu/objects/9GVNGXhqvmn7UUsxSWp-zLyR')
-
-	# Access all data, or specific columns:
-
-	data = do.data									# all data is returned<br>
-	data = do.get(['timestamp','ch4'])				# only timestamp and ch4 is returned<br>
-	data = do.get(['timestamp','ch4','notValid'])	# only timestamp and ch4 is returned<br>
-	data = do.get() 								# all data is returned<br>
-
-### **Dobj.dateTimeConvert = True**
-Set or retrieve. Default **True**. The binary data representation provides a UTC Timestamp as 
-Unixtimestamp with start point of 1970-01-01 00:00:00. By default, this is converted to a DateTimeObject
-(**pandas._libs.tslibs.timestamps.Timestamp**). If you prefer to have the raw Unixtimestamp 
-(**numpy.float64**), set Dobj.dateTimeConvert = False prior to load the data with **.get()** or **.data** or **.getColumns()**.
-
-- Return BOOL
-
-### **Dobj.dobj = PID**
-See Dobj.id
-
-### **Dobj.id = PID** 
-Set or retrieve the PID for the Dobj, default is empty (""). If a PID is set, an automatic 
-check is performed to find the metadata for the object. If this is successful, the 'valid' 
-property is set to **True**
-
-- Return STR
-	
-### **Dobj.valid**
-True if PID is set and found at the ICOS Carbon Portal
+**Dobj.dateTimeConvert = True**
+The binary data representation provides a UTC Timestamp as Unix-timestamp with
+start point of 1970-01-01 00:00:00. By default, when using
+`from icoscp.cpb.dobj import Dobj` this is converted to a DateTimeObject of
+type `pandas._libs.tslibs.timestamps.Timestamp`. If you prefer to have the raw
+Unix-timestamp (**numpy.float64**), set
+`Dobj.dateTimeConvert = False` prior to load the data with **.get()** or **.data** or **.getColumns()**.
 
 - Return BOOL
-
-### **Dobj.lat**
-Latitude for station
-
-- Return FLOAT
-	
-### **Dobj.lon**
-Longitude for station
-
-- Return FLOAT
-	
-### **Dobj.elevation**
-Elevation above sea level for station. Be aware, this is NOT the sampling height for the data
-points.
-
-- Return FLOAT
-
-### **Dobj.alt**
-This is exactly the same as .elevation
-	
-### **Dobj.station**
-This returns information about the station, where the data was collected/measured, to provide information about the provenance of the data. Further information about sammplingHeight, instruments, documentation, etc. can be found in `dobj.meta['specificInfo']['acquisition']`.
-Please be aware that prior to version 0.1.15 this has returned a string with station id, which is now available as station['id']. An example code snippet on how to extract all 'keys' from a nested dictionary is available in the [FAQ](faq.md#q1)
-
-- Return DICT
 
 ### **Dobj.size()**
+(Not available in the new implementation. To get data object size in bytes
+from the new `Dobj` class, call `Dobj.metadata.size` or `Dobj.meta['size']`)
+
 The real size of the dobj in [bytes, KB, MB, TB]. Since this object may contain the data, it is 
 no longer just a pointer to data.
 
 - Return TUPLE (int32, STR), where int32 represents the size and STR the unit. Example output 
   looks like: (4.353, 'MB')
 
-## Dobj  (legacy)
-
-<hr><hr>
+---
 
 ## Station
 The station module provides a search facility to explore ICOS stations and find associated data 
