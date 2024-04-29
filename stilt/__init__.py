@@ -7,6 +7,8 @@ to timeseries and spatial footprints.
 import os
 import icoscp.const as CPC
 
+
+__version__ = "0.1.0a0"
 if not os.path.exists(CPC.STILTPATH):
     print("""
 Please be aware, that the STILT module is not supported to run

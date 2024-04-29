@@ -56,7 +56,7 @@ DataPortal = "https://data.icos-cp.eu/portal/"
 SparqlEndpoint = "https://meta.icos-cp.eu/sparqlclient/?type=CSV"
 
 [tool.hatch.version]
-path = "src/icoscp/__init__.py"
+path = "icoscp/__init__.py"
 
 
 # FIXME: Right now countries.json is included in the wheel.
@@ -66,8 +66,8 @@ path = "src/icoscp/__init__.py"
 # include_package_data=True,
 # data_files=[("icoscp/.", ["icoscp/countries.json"])],
 
-[tool.hatch.build.targets.sdist]
-include = ["src/"]
+[tool.hatch.build.targets.wheel]
+packages = ["."]
 
 
 # The default hatch environment, used to run testing and coverage, and to
@@ -131,7 +131,7 @@ doctest_optionflags = ["ELLIPSIS"]
 disable_warnings = ['no-data-collected']
 branch = true
 parallel = true
-source = ["src/icoscp"]
+source = ["icoscp"]
 omit = ["tests"]
 
 [tool.ruff]
