@@ -15,6 +15,7 @@ __date__        = "2021-04-16"
 
 import folium
 from folium.plugins import MarkerCluster
+from typing import Any
 
 
 def get(stations, fmt='map', cluster=True):
@@ -80,7 +81,7 @@ def get(stations, fmt='map', cluster=True):
     folium.LayerControl().add_to(myMap)    
     return myMap
 
-def _pretty_html(station):
+def _pretty_html(station: dict[str, Any]):
     # create a html table for the popup 
     header = """<!DOCTYPE html>
                 <html>
@@ -88,7 +89,7 @@ def _pretty_html(station):
                 <body><div class="w3-container">
                     <table width="200" class="w3-striped">
                 """
-    body = '<tr><td colspan="2">Stilt Station info: </td></tr>'
+    body: str = '<tr><td colspan="2">Stilt Station info: </td></tr>'
     body += '<tr><td>Stilt id: </td><td>' + station['id'] + '</td></tr>'
     if station['icos']:
         body += '<tr><td>ICOS id: </td><td><a href= "'
@@ -102,5 +103,5 @@ def _pretty_html(station):
         https://stilt.icos-cp.eu/viewer/</a></td></tr>'    
     footer = "</table></div></body></html>"
     html = header + body + footer
-        
+
     return html

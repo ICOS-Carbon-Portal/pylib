@@ -4,29 +4,17 @@
     Description:      Class that creates objects to set and get the attributes
                       of a station for which STILT model output is available for.
 """
-
-__credits__     = "ICOS Carbon Portal"
-__license__     = "GPL-3.0"
-__version__     = "0.1.4"
-__maintainer__  = "ICOS Carbon Portal, elaborated products team"
-__email__       = ['info@icos-cp.eu']
-__status__      = "release"
-__date__        = "2023-01-18"
-__lastchange__  = ["Zois Zogopoulos"]
-#################################################################################
-
-# Import modules
 import os
 import numpy as np
 import pandas as pd
 import requests
 import json
 import xarray as xr
-import icoscp.const as CPC
-from icoscp.stilt import timefuncs as tf
+import icoscp_stilt.const as CPC
+from typing import Any
+from icoscp_stilt import timefuncs as tf
 from icoscp.sparql import sparqls, runsparql
-from icoscp import __version__ as release_version
-##############################################################################
+from icoscp_stilt import __version__ as release_version
 
 class StiltStation():
 
@@ -47,7 +35,7 @@ class StiltStation():
     # Import modules:
 
     # Function that initializes the attributes of an object:
-    def __init__(self, st_dict):
+    def __init__(self, st_dict: dict[str, Any]):
 
         # Object attributes:
         self._path_fp = CPC.STILTFP     # Path to location where STILT footprints are stored
@@ -220,7 +208,7 @@ class StiltStation():
         Returns the footprints as xarray (http://xarray.pydata.org/en/stable/).
         with latitude, longitude, time, ppm per (micromol m-2 s-1).
         For more information about the STILT model at ICSO Carbon Portal
-        please visit https://icos-carbon-portal.github.io/pylib/modules/#stilt
+        please visit https://icos-carbon-portal.github.io/pylib/icoscp_stilt/
 
         Parameters
         ----------

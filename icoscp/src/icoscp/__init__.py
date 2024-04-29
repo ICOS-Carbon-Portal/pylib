@@ -25,4 +25,3 @@ __date__ = "2023-07-25"
 
 
 cpauth = AuthProvider()
-MODE = os.getenv('MODE', 'production')

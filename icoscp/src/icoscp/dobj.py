@@ -12,7 +12,7 @@ from icoscp_core.queries.dataobjlist import DataObjectLite
 import pandas as pd
 
 # Local application/library specific imports.
-import icoscp.constants as c
+import icoscp.const as c
 from icoscp.exceptions import UriValueError, FormatValueError, MetaTypeError, \
     MetaValueError
 

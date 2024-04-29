@@ -1,0 +1,171 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[project]
+name = "icoscp"
+dynamic = ["version"]
+description = "Access to ICOS data objects hosted at https://data.icos-cp.eu"
+readme = "README.md"
+
+authors = [
+    {name = "Claudio D'Onofrio", email = "claudio.donofrio@nateko.lu.se"},
+    {name = "Zois Zogopoulos", email = "zois.zogopoulos@nateko.lu.se"},
+    {name = "Anders Dahlner", email = "anders.dahlner@nateko.lu.se"},
+    {name = "ICOS Carbon Portal", email = "info@icos-cp.eu"},
+]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Natural Language :: English",
+    "Topic :: Scientific/Engineering :: Atmospheric Science",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Utilities",
+]
+
+requires-python = ">=3.10"
+dependencies = [
+    "folium",
+    "icoscp_core",
+    "pandas",
+    "requests",
+    "tqdm"
+]
+
+
+[project.urls]
+Homepage = "https://www.icos-cp.eu/"
+Source = "https://github.com/ICOS-Carbon-Portal/pylib/icoscp"
+Documentation = "https://icos-carbon-portal.github.io/pylib/icoscp/"
+DataPortal = "https://data.icos-cp.eu/portal/"
+SparqlEndpoint = "https://meta.icos-cp.eu/sparqlclient/?type=CSV"
+
+[tool.hatch.version]
+path = "icoscp/__init__.py"
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
+
+# The default hatch environment, used to run testing and coverage, and to
+# build documentation.
+[tool.hatch.envs.default]
+dependencies = [
+  "coverage[toml]",
+  "pytest",
+  "pytest-cov",
+  "mkdocs"
+]
+
+[tool.hatch.envs.default.scripts]
+test = "pytest {args}"
+covhtml = [
+  "coverage run -m pytest {args}",
+  "coverage  combine",
+  "coverage html",
+  "python3 -m webbrowser htmlcov/index.html",
+]
+clean = [
+  "rm -f .coverage*",
+  "rm -rf htmlcov/",
+  "rm -rf dist"
+]
+
+
+# The second hatch environment is used for linting.
+[tool.hatch.envs.lint]
+detached = true
+dependencies = [
+  "ruff>=0.0.263",
+]
+[tool.hatch.envs.lint.scripts]
+lint = [
+  "ruff check {args: src tests}",
+]
+
+# The third hatch environment does multi-version python testing.
+[tool.hatch.envs.test]
+dependencies = [
+  "coverage[toml]",
+  "pytest",
+  "pytest-cov",
+  "pytest-doctestplus",
+]
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.10", "3.11", "3.12"]
+
+[tool.hatch.envs.test.scripts]
+all = "coverage run -m pytest {args}"
+
+# Tool configuration.
+[tool.pytest.ini_options]
+testpaths = ["tests", "src"]
+addopts = "--doctest-modules"
+doctest_optionflags = ["ELLIPSIS"]
+
+[tool.coverage.run]
+disable_warnings = ['no-data-collected']
+branch = true
+parallel = true
+source = ["icoscp"]
+omit = ["tests"]
+
+[tool.ruff]
+target-version = "py39"
+# FIXE: Change once the code has been reformatted.
+line-length = 120
+
+lint.select = [
+  "A",   # flake8-builtins
+  "ARG", # flake8-unused-arguments
+  "B",   # flake8-bugbear
+  "C",
+  "DTZ", # flake8-datetimez
+# "E",   # pycodestyle
+  "EM",  # flake8-errmsg
+  "F",   # pyflakes
+  "FBT", # flake8-boolean-trap
+  "I",   # isort
+  "ICN", # flake8-import-conventions
+  "ISC", # flake8-implicit-str-concat
+#  "N",   # pep8-naming
+  "PLC",
+  "PLE",
+  "PLR",
+  "PLW",
+#  "Q",   # flake8-quotes
+  "RUF", # Ruff-specific rules
+  "S",   # flake8-bandit
+  "TID", # flake8-tidy-imports
+  "UP",  # pyupgrade
+# "W",   # pycodestyle
+  "YTT", # flake8-2020
+]
+lint.ignore = [
+#   # Allow non-abstract empty methods in abstract base classes
+#   "B027",
+#   # Allow boolean positional values in function calls, like `dict.get(... True)`
+#   "FBT003",
+#   # Ignore checks for possible passwords
+#   "S105", "S106", "S107",
+#   # Ignore complexity
+#   "C901", "PLR0911", "PLR0912", "PLR0913", "PLR0915",
+#   # tabs and spaces
+#   # "E101",
+#   # subprocess with shell=1
+#   "S602",
+#   # Use of assert
+#   "S101",
+]

@@ -1,4 +1,6 @@
-site_name: ICOS Carbon Portal pylib
+site_url: 'https://icos-carbon-portal.github.io/pylib/icoscp/'
+
+site_name: ICOS Carbon Portal icoscp Library
 nav:
     - About: index.md
     - Installation: install.md

@@ -20,14 +20,14 @@ import re
 import json
 import pandas as pd
 from tqdm.notebook import tqdm
-from icoscp.station import station as icos_station
-from icoscp.stilt.stiltobj import StiltStation
-from icoscp.stilt import fmap
-from icoscp.const import STILTINFO, STILTPATH
-from icoscp.countries import country
+from icoscp_core.icos import meta, ATMO_STATION
+from icoscp_core.queries.stationlist import StationLite
+from icoscp_stilt.stiltobj import StiltStation
+from icoscp_stilt import fmap
+from icoscp_stilt.const import STILTINFO, STILTPATH
 from pathlib import Path
 from typing import Any
-from icoscp.stilt import timefuncs as tf
+import icoscp_stilt.timefuncs as tf
 
 
 # --- START KEYWORD FUNCTIONS ---
@@ -388,7 +388,7 @@ def __get_stations(ids: list | None = None,
     ) if ids else all_station_ids
 
     df = pd.read_csv(STILTINFO)
-    icos_stations = icos_station.getIdList(project='ICOS', theme=['AS'])
+    icos_stations = meta.list_stations(ATMO_STATION)
 
     stations = {}
     for station_id in tqdm(requested_stations, disable=not progress):
@@ -425,7 +425,7 @@ def parse_location(loc: str) -> dict[str, Any]:
 def get_stn_info(loc: str,
                  station_id: str,
                  stiltinfo_row: pd.DataFrame,
-                 icos_stations: Any) -> dict:
+                 icos_stations: list[StationLite]) -> dict[str, Any]:
     """Return stilt-station metadata."""
 
     stn_info = parse_location(loc)
@@ -439,7 +439,16 @@ def get_stn_info(loc: str,
         if not pd.isna(country_code := stiltinfo_row['Country'].item()):
             stn_info['country'] = country_code
         if not pd.isna(icos_id := stiltinfo_row['ICOS id'].item()):
-            stn_info['icos'] = icos_station.get(icos_id, icos_stations).info()
+            icos_st: StationLite | None = next(filter(lambda x: x.id == station_id, icos_stations), None)
+            if icos_st is not None:
+                stn_info['icos'] = {
+                    'country': icos_st.country_code,
+                    'eas': icos_st.elevation,
+                    'lat': icos_st.lat,
+                    'lon': icos_st.lon,
+                    'stationId': icos_st.id,
+                    'name': icos_st.name
+                }
 
         if isinstance(stn_info['icos'], dict) and not stiltinfo_row.empty:
             stn_info['icos']['SamplingHeight'] = \

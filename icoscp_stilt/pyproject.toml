@@ -4,15 +4,15 @@ build-backend = "hatchling.build"
 
 
 [project]
-name = "icoscp"
+name = "icoscp_stilt"
 dynamic = ["version"]
-description = "Access to ICOS data objects hosted at https://data.icos-cp.eu"
+description = "Access to ICOS STILT calculation results available from https://stiltweb.icos-cp.eu/viewer"
 readme = "README.md"
 
 authors = [
     {name = "Claudio D'Onofrio", email = "claudio.donofrio@nateko.lu.se"},
     {name = "Zois Zogopoulos", email = "zois.zogopoulos@nateko.lu.se"},
-    {name = "Anders Dahlner", email = "anders.dahlner@nateko.lu.se"},
+    {name = "Klara Broman", email = "klara.broman@nateko.lu.se"},
     {name = "ICOS Carbon Portal", email = "info@icos-cp.eu"},
 ]
 
@@ -35,36 +35,23 @@ classifiers = [
 
 requires-python = ">=3.10"
 dependencies = [
-    "fiona",
-    "folium",
-    "geopandas",
+    "requests",
     "icoscp_core",
     "pandas",
-    "requests",
+    "xarray"
+    "folium",
     "tqdm",
-    "ipython",
-    "xarray",
-    "iprogress"
 ]
 
 
 [project.urls]
 Homepage = "https://www.icos-cp.eu/"
-Source = "https://github.com/ICOS-Carbon-Portal/pylib"
-Documentation = "https://icos-carbon-portal.github.io/pylib/"
-DataPortal = "https://data.icos-cp.eu/portal/"
-SparqlEndpoint = "https://meta.icos-cp.eu/sparqlclient/?type=CSV"
+Source = "https://github.com/ICOS-Carbon-Portal/pylib/icoscp_stilt"
+Documentation = "https://icos-carbon-portal.github.io/pylib/icoscp_stilt/"
+STILT_Viewer = "https://stilt.icos-cp.eu/viewer/"
 
 [tool.hatch.version]
-path = "icoscp/__init__.py"
-
-
-# FIXME: Right now countries.json is included in the wheel.
-# However, the preferred way would be to use "shared-data", see
-# https://github.com/pypa/hatch/issues/773 for more details.
-# Below are the old instructions for packaging countries.json
-# include_package_data=True,
-# data_files=[("icoscp/.", ["icoscp/countries.json"])],
+path = "icoscp_stilt/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["."]
@@ -131,7 +118,7 @@ doctest_optionflags = ["ELLIPSIS"]
 disable_warnings = ['no-data-collected']
 branch = true
 parallel = true
-source = ["icoscp"]
+source = ["icoscp_stilt"]
 omit = ["tests"]
 
 [tool.ruff]
