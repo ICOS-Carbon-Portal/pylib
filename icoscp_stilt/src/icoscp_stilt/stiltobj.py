@@ -10,11 +10,11 @@ import pandas as pd
 import requests
 import json
 import xarray as xr
-import icoscp_stilt.const as CPC
+from . import const as CPC
 from typing import Any
-from icoscp_stilt import timefuncs as tf
+from . import timefuncs as tf
 from icoscp.sparql import sparqls, runsparql
-from icoscp_stilt import __version__ as release_version
+from . import __version__ as release_version
 
 class StiltStation():
 

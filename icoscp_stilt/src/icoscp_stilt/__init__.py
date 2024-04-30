@@ -1,5 +1,5 @@
 import os
-from icoscp_stilt.const import STILTPATH
+from .const import STILTPATH
 
 
 __version__ = "0.1.0a0"

@@ -22,12 +22,12 @@ import pandas as pd
 from tqdm.notebook import tqdm
 from icoscp_core.icos import meta, ATMO_STATION
 from icoscp_core.queries.stationlist import StationLite
-from icoscp_stilt.stiltobj import StiltStation
-from icoscp_stilt import fmap
-from icoscp_stilt.const import STILTINFO, STILTPATH
+from .stiltobj import StiltStation
+from . import fmap
+from .const import STILTINFO, STILTPATH
 from pathlib import Path
 from typing import Any
-import icoscp_stilt.timefuncs as tf
+from . import timefuncs as tf
 
 
 # --- START KEYWORD FUNCTIONS ---

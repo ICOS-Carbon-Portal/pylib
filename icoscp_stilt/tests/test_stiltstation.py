@@ -1,7 +1,7 @@
 from typing import Any
 import json
 import pytest
-from icoscp.stilt import stiltstation
+from src.icoscp_stilt import stiltstation
 
 
 def read_json(path: str) -> dict[Any, Any]:

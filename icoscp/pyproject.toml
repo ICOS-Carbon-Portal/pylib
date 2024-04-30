@@ -51,7 +51,7 @@ DataPortal = "https://data.icos-cp.eu/portal/"
 SparqlEndpoint = "https://meta.icos-cp.eu/sparqlclient/?type=CSV"
 
 [tool.hatch.version]
-path = "icoscp/__init__.py"
+path = "src/icoscp/__init__.py"
 
 
 [tool.hatch.build.targets.wheel]
@@ -119,7 +119,7 @@ doctest_optionflags = ["ELLIPSIS"]
 disable_warnings = ['no-data-collected']
 branch = true
 parallel = true
-source = ["icoscp"]
+source = ["src/icoscp"]
 omit = ["tests"]
 
 [tool.ruff]

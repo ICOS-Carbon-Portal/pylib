@@ -36,11 +36,12 @@ classifiers = [
 requires-python = ">=3.10"
 dependencies = [
     "requests",
+    "icoscp",
     "icoscp_core",
     "pandas",
-    "xarray"
+    "xarray",
     "folium",
-    "tqdm",
+    "tqdm"
 ]
 
 
@@ -51,11 +52,10 @@ Documentation = "https://icos-carbon-portal.github.io/pylib/icoscp_stilt/"
 STILT_Viewer = "https://stilt.icos-cp.eu/viewer/"
 
 [tool.hatch.version]
-path = "icoscp_stilt/__init__.py"
+path = "src/icoscp_stilt/__init__.py"
 
 [tool.hatch.build.targets.wheel]
-packages = ["."]
-
+packages = ["src"]
 
 # The default hatch environment, used to run testing and coverage, and to
 # build documentation.
@@ -80,7 +80,6 @@ clean = [
   "rm -rf htmlcov/",
   "rm -rf dist"
 ]
-
 
 # The second hatch environment is used for linting.
 [tool.hatch.envs.lint]
@@ -118,7 +117,7 @@ doctest_optionflags = ["ELLIPSIS"]
 disable_warnings = ['no-data-collected']
 branch = true
 parallel = true
-source = ["icoscp_stilt"]
+source = ["src/icoscp_stilt"]
 omit = ["tests"]
 
 [tool.ruff]
