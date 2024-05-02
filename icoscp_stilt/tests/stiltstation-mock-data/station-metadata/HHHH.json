@@ -13,7 +13,12 @@
 			"nmonths": 7
 		},
 		"alt": 100,
-		"geoinfo": false,
+		"country": "IE",
+		"geoinfo": {
+			"name": {
+					"common": "Ireland"
+			}
+		},
 		"icos": false,
 		"id": "HHHH",
 		"lat": 54.15,

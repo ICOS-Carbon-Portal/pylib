@@ -24,7 +24,7 @@ from icoscp_core.icos import meta, ATMO_STATION
 from icoscp_core.queries.stationlist import StationLite
 from .stiltobj import StiltStation
 from . import fmap
-from .const import STILTINFO, STILTPATH
+from .const import STILTINFO, STILTPATH, COUNTRIES
 from pathlib import Path
 from typing import Any
 from . import timefuncs as tf
@@ -103,49 +103,6 @@ def _outfmt(kwargs, stations):
 
     if fmt == 'avail':
         return _avail(stations)
-
-
-def _country(kwargs, stations):
-    """
-    Find all stations belonging to a country based on information from
-    alpha2Code', 'alpha3Code', 'name', 'nativeName', 'altSpellings', 'demonym'
-    Be aware, that STILT stations can have arbitrary lat/lon which
-    are in international waters and hence not associated with a country
-
-    """
-    countries = kwargs['country']
-    if isinstance(countries, str):
-        countries = [countries]
-    if not isinstance(countries, list):
-        countries = list(countries)
-
-    idx = []
-    for k in stations:
-        if stations[k]['geoinfo'] is False:
-            # if there is no geoinfo, skip
-            continue
-
-        for c in countries:
-            # the search keys are a combination of keys from the online
-            # search at restcountries.eu and the static country file
-            if len(c) < 4:
-                searchKeys = {'alpha2Code', 'alpha3Code', 'cca2', 'cca3',
-                              'ccn3', 'cioc'}
-            else:
-                searchKeys = {'name', 'nativeName', 'altSpellings', 'demonym',
-                              'demonyms'}
-
-            g = stations[k]['geoinfo']
-
-            # make sure we have only valid search keys...add two sets
-            for sk in searchKeys & g.keys():
-                if c.lower() in str(g[sk]).lower():
-                    idx.append(k)
-                    break
-
-    flt = list(set(idx).intersection(stations))
-    stations = {k: stations[k] for k in flt}
-    return stations
 
 
 def _bbox(kwargs, stations):
@@ -476,18 +433,16 @@ def get_stn_info(loc: str,
     return stn_info
 
 
-def get_geo_info(stn_info: dict[Any, Any]) -> Any:
+def get_geo_info(stn_info: dict[str, Any]) -> dict[str, Any]:
     """Fetch geo-information for a station."""
 
-    if 'country' in stn_info:
-        geo_info = country.get(code=stn_info['country'])
-    elif stn_info['icos']:  # icos key can be either dictionary or False
-        geo_info = country.get(latlon=[stn_info['icos']['lat'],
-                                       stn_info['icos']['lon']])
+    cc: str | None = stn_info.get('country')
+    if not cc:
+        raise ValueError(f"No 'country' value in station info {stn_info}")
+    elif not cc in COUNTRIES:
+        raise ValueError(f"Bad/unrecognized country code: {cc}")
     else:
-        geo_info = country.get(latlon=[stn_info['lat'], stn_info['lon']])
-
-    return geo_info
+        return {'name': {'common': COUNTRIES[cc]}}
 
 
 def __station_name(station_id: str, name: str, alt: int) -> str:
@@ -527,11 +482,6 @@ def find(**kwargs):
                  refined = station.find(stations=myStations, country='Finland')
 
     # Spatial search keywords:
-
-    country STR, list of STR:
-        Provide country code either fullname, 2 or 3 digit
-        where country is e.g "SE", "SWE" or "Sweden"
-        Example:    station.find(country='Sweden')
 
     bbox LIST of Tuples:
         spatial filter by bounding box where
@@ -636,7 +586,6 @@ def find(**kwargs):
     # the function has been defined above and that outfmt is the very
     # last call:
     fun = {'id': _id,
-           'country': _country,
            'bbox': _bbox,
            'pinpoint': _pinpoint,
            'sdate': _sdate,

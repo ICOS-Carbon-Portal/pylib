@@ -11,19 +11,6 @@ def read_json(path: str) -> dict[Any, Any]:
     return json_data
 
 
-def replace_values(input_dict: dict) -> None:
-    """
-    The email, firstName, and lastName keys returned from getIdList()
-    are random, therefore they are excluded from testing.
-    """
-    everything_equals = type('omnieq', (), {"__eq__": lambda x, y: True})()
-
-    if 'icos' in input_dict:
-        input_dict['icos']['email'] = everything_equals
-        input_dict['icos']['firstName'] = everything_equals
-        input_dict['icos']['lastName'] = everything_equals
-
-
 def exclude_geo_info(d: dict) -> dict:
     return {k: d[k] for k in set(list(d.keys())) - set('geoinfo')}
 
@@ -31,8 +18,6 @@ def exclude_geo_info(d: dict) -> dict:
 ZSF = read_json('tests/stiltstation-mock-data/station-metadata/ZSF.json')
 HHHH = read_json('tests/stiltstation-mock-data/station-metadata/HHHH.json')
 MED_1 = read_json('tests/stiltstation-mock-data/station-metadata/MED-1.json')
-
-replace_values(ZSF['ZSF'])
 
 test_data = {
     'ZSF': {
@@ -76,7 +61,7 @@ def test_get_all_stations(ids: list | None, progress: bool,
 
 @pytest.mark.parametrize('stn_info, expected', [
     (test_data['ZSF']['no_geo_info']['ZSF'], test_data['ZSF']['geo_info']),
-    (HHHH['HHHH'], False),
+    (test_data['HHHH']['no_geo_info']['HHHH'], test_data['HHHH']['geo_info']),
     (test_data['MED-1']['no_geo_info']['MED-1'], test_data['MED-1']['geo_info'])
 ])
 def test_get_geo_info(stn_info: dict[Any, Any],

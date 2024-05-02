@@ -291,179 +291,18 @@
                 "alt": 730,
                 "country": "DE",
                 "geoinfo": {
-                        "altSpellings": [
-                                "DE",
-                                "Federal Republic of Germany",
-                                "Bundesrepublik Deutschland"
-                        ],
-                        "area": 357114,
-                        "borders": [
-                                "AUT",
-                                "BEL",
-                                "CZE",
-                                "DNK",
-                                "FRA",
-                                "LUX",
-                                "NLD",
-                                "POL",
-                                "CHE"
-                        ],
-                        "capital": [
-                                "Berlin"
-                        ],
-                        "cca2": "DE",
-                        "cca3": "DEU",
-                        "ccn3": "276",
-                        "cioc": "GER",
-                        "currencies": {
-                                "EUR": {
-                                        "name": "Euro",
-                                        "symbol": "€"
-                                }
-                        },
-                        "demonyms": {
-                                "eng": {
-                                        "f": "German",
-                                        "m": "German"
-                                },
-                                "fra": {
-                                        "f": "Allemande",
-                                        "m": "Allemand"
-                                }
-                        },
-                        "flag": "🇩🇪",
-                        "idd": {
-                                "root": "+4",
-                                "suffixes": [
-                                        "9"
-                                ]
-                        },
-                        "independent": true,
-                        "landlocked": false,
-                        "languages": {
-                                "deu": "German"
-                        },
-                        "latlng": [
-                                51,
-                                9
-                        ],
-                        "name": {
-                                "common": "Germany",
-                                "native": {
-                                        "deu": {
-                                                "common": "Deutschland",
-                                                "official": "Bundesrepublik Deutschland"
-                                        }
-                                },
-                                "official": "Federal Republic of Germany"
-                        },
-                        "region": "Europe",
-                        "status": "officially-assigned",
-                        "subregion": "Western Europe",
-                        "tld": [
-                                ".de"
-                        ],
-                        "translations": {
-                                "ces": {
-                                        "common": "Německo",
-                                        "official": "Spolková republika Německo"
-                                },
-                                "deu": {
-                                        "common": "Deutschland",
-                                        "official": "Bundesrepublik Deutschland"
-                                },
-                                "est": {
-                                        "common": "Saksamaa",
-                                        "official": "Saksamaa Liitvabariik"
-                                },
-                                "fin": {
-                                        "common": "Saksa",
-                                        "official": "Saksan liittotasavalta"
-                                },
-                                "fra": {
-                                        "common": "Allemagne",
-                                        "official": "République fédérale d'Allemagne"
-                                },
-                                "hrv": {
-                                        "common": "Njemačka",
-                                        "official": "Njemačka Federativna Republika"
-                                },
-                                "hun": {
-                                        "common": "Németország",
-                                        "official": "Német Szövetségi Köztársaság"
-                                },
-                                "ita": {
-                                        "common": "Germania",
-                                        "official": "Repubblica federale di Germania"
-                                },
-                                "jpn": {
-                                        "common": "ドイツ",
-                                        "official": "ドイツ連邦共和国"
-                                },
-                                "kor": {
-                                        "common": "독일",
-                                        "official": "독일 연방 공화국"
-                                },
-                                "nld": {
-                                        "common": "Duitsland",
-                                        "official": "Bondsrepubliek Duitsland"
-                                },
-                                "per": {
-                                        "common": "آلمان",
-                                        "official": "جمهوری فدرال آلمان"
-                                },
-                                "pol": {
-                                        "common": "Niemcy",
-                                        "official": "Republika Federalna Niemiec"
-                                },
-                                "por": {
-                                        "common": "Alemanha",
-                                        "official": "República Federal da Alemanha"
-                                },
-                                "rus": {
-                                        "common": "Германия",
-                                        "official": "Федеративная Республика Германия"
-                                },
-                                "slk": {
-                                        "common": "Nemecko",
-                                        "official": "Nemecká spolková republika"
-                                },
-                                "spa": {
-                                        "common": "Alemania",
-                                        "official": "República Federal de Alemania"
-                                },
-                                "swe": {
-                                        "common": "Tyskland",
-                                        "official": "Förbundsrepubliken Tyskland"
-                                },
-                                "urd": {
-                                        "common": "جرمنی",
-                                        "official": "وفاقی جمہوریہ جرمنی"
-                                },
-                                "zho": {
-                                        "common": "德国",
-                                        "official": "德意志联邦共和国"
-                                }
-                        },
-                        "unMember": true
+                        "name":{
+                                "common": "Germany"
+                        }
                 },
                 "icos": {
                         "SamplingHeight": 3.0,
                         "country": "DE",
                         "eas": 2666.0,
-                        "icosclass": "2",
                         "lat": 47.4165,
                         "lon": 10.9796,
                         "name": "Zugspitze",
-                        "project": [
-                                "ICOS"
-                        ],
-                        "siteType": "mountain",
-                        "stationId": "ZSF",
-                        "theme": "AS",
-                        "uri": [
-                                "http://meta.icos-cp.eu/resources/stations/AS_ZSF"
-                        ]
+                        "stationId": "ZSF"
                 },
                 "id": "ZSF",
                 "lat": 47.42,

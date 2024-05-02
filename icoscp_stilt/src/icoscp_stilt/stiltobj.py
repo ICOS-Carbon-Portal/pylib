@@ -13,7 +13,8 @@ import xarray as xr
 from . import const as CPC
 from typing import Any
 from . import timefuncs as tf
-from icoscp.sparql import sparqls, runsparql
+from icoscp_core.queries.dataobjlist import SamplingHeightFilter
+from icoscp_core.icos import meta
 from . import __version__ as release_version
 
 class StiltStation():
@@ -49,7 +50,7 @@ class StiltStation():
         self.alt = None
         self.locIdent = None
         self.name = None
-        self.icos = None
+        self.icos: dict[str, Any] | None = None
         self.years = None
         self.geoinfo = None
         self.dobjs_list = None               # Store a list of associated dobjs
@@ -59,7 +60,7 @@ class StiltStation():
 
     #------------------------------------------------------------------------
 
-    def _set(self, st_dict):
+    def _set(self, st_dict: dict[str, Any]):
         #
         if all(item in st_dict.keys() for item in ['id', 'lat', 'lon', 'alt', 'locIdent', 'name', 'icos', 'years', 'geoinfo']):
             self.id = st_dict['id']
@@ -374,26 +375,32 @@ class StiltStation():
         -------
         DICT
             A dictionary with the following keys:
-            [dobj,hasNextVersion,spec,fileName,size,submTime,timeStart,timeEnd]
+            [dobj,spec,fileName,size,submTime,timeStart,timeEnd]
 
         """
-        
+
         if not self.valid:
             return
-        
+
         if not self.dobjs_valid and self.icos:
             # add corresponding data object with observations
-            query = sparqls.dobj_for_samplingheight(\
-                            self.icos['stationId'], \
-                            self.icos['SamplingHeight'])
-            df = runsparql.RunSparql(query, 'pandas').run()
-            
-            self.dobjs_list = df.to_dict('records')
-            self.dobjs_valid = True        
-        
+            self.dobjs_list = [{
+                'dobj': dobj.uri,
+                'spec': dobj.datatype_uri,
+                'fileName': dobj.filename,
+                'size': dobj.size_bytes,
+                'submTime': dobj.submission_time,
+                'timeStart': dobj.time_start,
+                'timeEnd': dobj.time_end
+            } for dobj in meta.list_data_objects(
+                datatype=[CPC.OBSPACK_SPEC_CO2, CPC.OBSPACK_SPEC_CH4],
+                station=CPC.ICOS_STATION_PREFIX + self.icos['stationId'],
+                filters=[SamplingHeightFilter("=", float(self.icos['SamplingHeight']))]
+            )]
+            self.dobjs_valid = True
         return self.dobjs_list
-        
-        
+
+
     def __columns(self, cols):
         # Function that checks the selection of columns that are to be
         # returned with the STILT timeseries model output:

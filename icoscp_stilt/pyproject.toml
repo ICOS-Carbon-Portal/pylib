@@ -36,7 +36,6 @@ classifiers = [
 requires-python = ">=3.10"
 dependencies = [
     "requests",
-    "icoscp",
     "icoscp_core",
     "pandas",
     "xarray",
