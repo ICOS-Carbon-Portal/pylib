@@ -1,21 +1,17 @@
 # icoscp_stilt
 
+Python API for access to STILT calculation results from a service hosted by
+ICOS Carbon Portal (browser access requires ATMO ACCESS login): [https://stilt.icos-cp.eu/viewer/](https://stilt.icos-cp.eu/viewer/)
+
 ## Installation
-The latest release is available on [https://pypi.org/project/icoscp/](
-https://pypi.org/project/icoscp/). You can simply run:
+The latest release is available on [https://pypi.org/project/icoscp_stilt/](
+https://pypi.org/project/icoscp_stilt/). You can simply run:
 
 ```shell
 pip install icoscp_stilt
 ```
 
-If you need the cutting edge version you may install the library directly from
-GitHub with:
-
-```shell
-pip install git+https://github.com/ICOS-Carbon-Portal/pylib.git
-```
-
-We would encourage you to use a virtual environment for python to test this
+We would encourage you to use a virtual environment for Python to test this
 library.  
 For example with [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
 you can create a new environment with:
@@ -26,7 +22,7 @@ activate icos
 pip install icoscp_stilt
 ```
 
-or with python
+or with Python
 
 ```shell
 python3 -m venv icos

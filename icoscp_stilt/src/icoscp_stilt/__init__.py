@@ -1,16 +1,7 @@
-import os
-from .const import STILTPATH
+"""icoscp_stilt
 
+Python API for access to STILT calculation results from a service hosted by
+ICOS Carbon Portal.
+"""
 
-__version__ = "0.1.0a0"
-
-
-if not os.path.exists(STILTPATH):
-    print("""
-Please be aware, that the STILT module is not supported to run
-locally (outside of the Virtual Environment at the ICOS Carbon
-Portal). You must use one of our Jupyter Services.
-Visit https://www.icos-cp.eu/data-services/tools/jupyter-notebook
-for further information. Or you may use our online STILT viewer
-application https://stilt.icos-cp.eu/viewer/.
-          """)
+__version__ = "0.1.0"

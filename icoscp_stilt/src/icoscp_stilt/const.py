@@ -5,13 +5,14 @@ _in_production: bool = (os.getenv('MODE', 'production') == 'production')
 # Path to location where STILT footprints are stored
 STILTFP = '/data/stiltweb/slots/'
 
+STILT_VIEWER = 'https://stilt.icos-cp.eu/viewer/'
 # online results
-STILTTS = 'https://stilt.icos-cp.eu/viewer/stiltresult'
+STILTTS = STILT_VIEWER + 'stiltresult'
 
 # stiltresults all columns, raw
-STILTRAW = 'https://stilt.icos-cp.eu/viewer/stiltrawresult'
+STILTRAW = STILT_VIEWER + 'stiltrawresult'
 
-STILTINFO = 'https://stilt.icos-cp.eu/viewer/stationinfo' if _in_production \
+STILTINFO = (STILT_VIEWER + 'stationinfo') if _in_production \
     else 'tests/stiltstation-mock-data/stiltweb/station_info.csv'
 
 STILTPATH = '/data/stiltweb/stations/' if _in_production \

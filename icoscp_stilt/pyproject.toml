@@ -6,13 +6,15 @@ build-backend = "hatchling.build"
 [project]
 name = "icoscp_stilt"
 dynamic = ["version"]
-description = "Access to ICOS STILT calculation results available from https://stiltweb.icos-cp.eu/viewer"
+description = "Access to ICOS STILT calculation results available from https://stilt.icos-cp.eu/viewer/"
+license = {file = "LICENSE"}
 readme = "README.md"
 
 authors = [
     {name = "Claudio D'Onofrio", email = "claudio.donofrio@nateko.lu.se"},
     {name = "Zois Zogopoulos", email = "zois.zogopoulos@nateko.lu.se"},
     {name = "Klara Broman", email = "klara.broman@nateko.lu.se"},
+    {name = "Oleg Mirzov", email = "oleg.mirzov@nateko.lu.se"},
     {name = "ICOS Carbon Portal", email = "info@icos-cp.eu"},
 ]
 
