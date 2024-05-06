@@ -1,9 +1,10 @@
 import os
 import requests
+from pandas import DataFrame
 from datetime import datetime
 from dataclasses import dataclass
 from dacite import from_dict
-from .const import STILT_VIEWER, STILTINFO, STILTPATH
+from .const import *
 from typing import Any
 
 @dataclass(frozen=True)
@@ -24,6 +25,26 @@ def list_stations() -> list[StiltStation]:
     js: list[dict[str, Any]] = http_resp.json()
     return [from_dict(StiltStation, ss) for ss in js]
 
+def fetch_result_ts(
+    station_id: str,
+    from_date: str,
+    to_date: str,
+    columns: list[str] | None = None,
+    raw: bool = False
+) -> DataFrame:
+    http_resp = requests.post(
+        url=STILTRAW if raw else STILTTS,
+        data={
+            'stationId': station_id,
+            'fromDate': from_date,
+            'toDate': to_date,
+            'columns': columns
+        },
+        headers={'Content-Type': 'application/json'}
+    )
+    http_resp.raise_for_status()
+    return DataFrame.from_records(http_resp.json()) # type: ignore broken pandas
+
 def list_footprints(station_id: str, from_date: str, to_date: str) -> list[datetime]:
     params = {'stationId': station_id, 'fromDate': from_date, 'toDate': to_date}
     http_resp = requests.get(STILT_VIEWER + "listfootprints", params=params)
@@ -32,14 +53,9 @@ def list_footprints(station_id: str, from_date: str, to_date: str) -> list[datet
     return [datetime.fromisoformat(ts) for ts in js]
 
 
-def merge_footprints():
+def load_footprint(dt: datetime):
     if not os.path.exists(STILTPATH):
-        raise RuntimeError("""
-Please be aware, that the STILT module is not supported to run
-locally (outside of the Virtual Environment at the ICOS Carbon
-Portal). You must use one of our Jupyter Services.
-Visit https://www.icos-cp.eu/data-services/tools/jupyter-notebook
-for further information. Or you may use our online STILT viewer
-application https://stilt.icos-cp.eu/viewer/.
-""")
+        m = "This functionality is only available on a Jupyter Hub from Carbon Portal"
+        raise RuntimeError(m)
     return None
+
