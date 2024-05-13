@@ -245,9 +245,6 @@ class StiltStation():
         if not hours:
             return False
 
-        # Define & initialize footprint variable:
-        fp = xr.DataArray()
-
         # Create a pandas dataframe containing one column of datetime objects with 3-hour intervals:
         date_range = pd.date_range(start_date, end_date, freq='3H')
 
@@ -393,7 +390,7 @@ class StiltStation():
                 'timeStart': dobj.time_start,
                 'timeEnd': dobj.time_end
             } for dobj in meta.list_data_objects(
-                datatype=[CPC.OBSPACK_SPEC_CO2, CPC.OBSPACK_SPEC_CH4],
+                datatype=[CPC.OBS_SPEC_CO2, CPC.OBS_SPEC_CH4],
                 station=CPC.ICOS_STATION_PREFIX + self.icos['stationId'],
                 filters=[SamplingHeightFilter("=", float(self.icos['SamplingHeight']))]
             )]

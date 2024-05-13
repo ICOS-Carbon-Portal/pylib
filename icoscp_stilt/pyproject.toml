@@ -41,6 +41,7 @@ dependencies = [
     "icoscp_core",
     "pandas",
     "xarray",
+    "netCDF4",
     "folium",
     "tqdm"
 ]

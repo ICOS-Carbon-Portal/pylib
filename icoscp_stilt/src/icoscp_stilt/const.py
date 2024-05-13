@@ -18,8 +18,8 @@ STILTINFO = (STILT_VIEWER + 'stationinfo') if _in_production \
 STILTPATH = '/data/stiltweb/stations/' if _in_production \
     else 'tests/stiltstation-mock-data/stiltweb/stations/'
 
-OBSPACK_SPEC_CO2 = 'http://meta.icos-cp.eu/resources/cpmeta/ObspackTimeSerieResult'
-OBSPACK_SPEC_CH4 = 'http://meta.icos-cp.eu/resources/cpmeta/ObspackCH4TimeSeriesResult'
+OBS_SPEC_CO2 = 'http://meta.icos-cp.eu/resources/cpmeta/ObspackTimeSerieResult'
+OBS_SPEC_CH4 = 'http://meta.icos-cp.eu/resources/cpmeta/ObspackCH4TimeSeriesResult'
 ICOS_STATION_PREFIX = 'http://meta.icos-cp.eu/resources/stations/AS_'
 
 COUNTRIES = {
