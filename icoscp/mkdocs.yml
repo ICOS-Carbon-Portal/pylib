@@ -9,10 +9,6 @@ nav:
     - Changelog: changelog.md
     - Legacy modules: modules.md
     - Legacy examples: legacy_examples.md
-   
-#markdown_extensions:
-#    - attr_list
-  
+
 theme:
     name: readthedocs
-#    collapse_navigation: False

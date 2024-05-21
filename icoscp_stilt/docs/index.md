@@ -1,17 +1,15 @@
 # ICOS Carbon Portal library icoscp_stilt
-
-
 ICOS Carbon Portal offers online services to [calculate your own STILT
-footprints](https://stilt.icos-cp.eu/worker/) and [visualize the results]
-(https://stilt.icos-cp.eu/viewer/). Find out more on our website
+footprints](https://stilt.icos-cp.eu/worker/) and [visualize the results](
+https://stilt.icos-cp.eu/viewer/). Find out more on our website
 [https://www.icos-cp.eu/data-services/tools/stilt-footprint](
 https://www.icos-cp.eu/data-services/tools/stilt-footprint).
 
 This library offers access to information about the STILT "stations",
 calculated footprints and time series results. Please note that the
 calculated **footprints** are only accessible if the code is executed on
-[Carbon Portal's Jupyter notebooks]
-(https://icos-carbon-portal.github.io/jupyter/).
+[Carbon Portal's Jupyter notebooks](
+https://icos-carbon-portal.github.io/jupyter/).
 
 ## Background and history
 This library contains functionality split out of library `icoscp` prior to
@@ -34,7 +32,6 @@ from icoscp_stilt import stiltstation
 ```
 
 ## Getting started
-
 The library is published to PyPI.
 
 As stated above, the [legacy functionality](modules.md#legacy-modules) is
