@@ -57,7 +57,7 @@ STILT_Viewer = "https://stilt.icos-cp.eu/viewer/"
 path = "src/icoscp_stilt/__init__.py"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src"]
+packages = ["src/icoscp_stilt"]
 
 # The default hatch environment, used to run testing and coverage, and to
 # build documentation.

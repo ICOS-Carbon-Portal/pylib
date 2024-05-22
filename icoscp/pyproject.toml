@@ -56,7 +56,7 @@ path = "src/icoscp/__init__.py"
 
 
 [tool.hatch.build.targets.wheel]
-packages = ["."]
+packages = ["src/icoscp"]
 
 
 # The default hatch environment, used to run testing and coverage, and to

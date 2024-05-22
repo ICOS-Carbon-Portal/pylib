@@ -6,10 +6,10 @@ from datetime import datetime
 from pathlib import Path
 from dataclasses import dataclass
 from dacite import from_dict
-from typing import Any, TypeAlias
-from icoscp_core.icos import meta
+from typing import Any, TypeAlias, Tuple
+from icoscp_core.icos import meta, data
+from icoscp_core.cpb import ArraysDict
 from icoscp_core.queries.dataobjlist import DataObjectLite
-from icoscp_core.queries.dataobjlist import SamplingHeightFilter
 from .const import *
 
 URL: TypeAlias = str
@@ -57,11 +57,17 @@ def fetch_result_ts(
         df['isodate'] = pd.to_datetime(df['isodate'], unit='s')# type: ignore
     return df
 
-def find_co2_observations(station: StiltStation) -> DataObjectLite | None:
-    return _get_observation_dobj(OBS_SPEC_CO2, station)
+def available_year_months(station: StiltStation) -> dict[int, list[str]]:
+    return {year: available_months(station.id, year) for year in station.years}
 
-def find_ch4_observations(station: StiltStation) -> DataObjectLite | None:
-    return _get_observation_dobj(OBS_SPEC_CH4, station)
+def available_months(station_id: str, year: int) -> list[str]:
+    year_path = _year_path(station_id, year)
+    return sorted([
+        sub.name
+        for sub in year_path.iterdir()
+        if sub.is_dir() and sub.name.isdigit() and 1 <= int(sub.name) <= 12
+    ]) if os.path.exists(year_path) else []
+
 
 def list_footprints(station_id: str, from_date: str, to_date: str) -> list[datetime]:
     params = {'stationId': station_id, 'fromDate': from_date, 'toDate': to_date}
@@ -72,24 +78,58 @@ def list_footprints(station_id: str, from_date: str, to_date: str) -> list[datet
 
 
 def load_footprint(station_id: str, dt: datetime) -> xr.DataArray:
-    if not os.path.exists(STILTPATH):
-        m = "This functionality is only available on a Jupyter Hub from Carbon Portal"
-        raise RuntimeError(m)
     m_str = str(dt.month).zfill(2)
     slot_str = f'{dt.year}x{m_str}x{str(dt.day).zfill(2)}x{str(dt.hour).zfill(2)}'
-    fp_path = Path(STILTPATH) / station_id / str(dt.year) / m_str / slot_str / 'foot'
+    fp_path = _year_path(station_id, dt.year) / m_str / slot_str / 'foot'
     if not os.path.exists(fp_path):
         raise FileNotFoundError(f"No footprint found for time {dt} for station {station_id}")
     return xr.open_dataarray(fp_path) # type: ignore
 
+def fetch_observations_pandas(
+    spec: URL,
+    stations: list[StiltStation],
+    columns: list[str] | None = None
+) -> dict[str, pd.DataFrame]:
+    return {
+        id: pd.DataFrame(arrs)
+        for id, arrs in fetch_observations(spec, stations, columns).items()
+    }
 
-def _get_observation_dobj(spec: URL, station: StiltStation) -> DataObjectLite | None:
-    if station.icosId is None: return None
+def fetch_observations(
+    spec: URL,
+    stations: list[StiltStation],
+    columns: list[str] | None = None
+) -> dict[str, ArraysDict]:
 
-    sampl_height: float = station.icosHeight or float(station.alt)
-    dobjs = meta.list_data_objects(
-        datatype=spec,
-        station=ICOS_STATION_PREFIX + station.icosId,
-        filters=[SamplingHeightFilter("=", sampl_height)]
-    )
-    return dobjs[0] if dobjs else None
+    icos2ss: dict[Tuple[URL, float], StiltStation] = {
+        (ICOS_STATION_PREFIX + s.icosId, s.icosHeight or float(s.alt)): s
+        for s in stations
+        if s.icosId is not None
+    }
+
+    def lookup_ss(dobj: DataObjectLite) -> list[StiltStation]:
+        icos_uri = dobj.station_uri
+        samp_height = dobj.sampling_height
+        if icos_uri is None or samp_height is None: return []
+        ss = icos2ss.get((icos_uri, samp_height))
+        if ss is None: return []
+        return [ss]
+
+    icos_stations: list[URL] = list({uri for (uri, _) in icos2ss.keys()})
+
+    dobjs_to_fetch: list[DataObjectLite] = [
+        dobj for dobj in meta.list_data_objects(spec, icos_stations)
+        if lookup_ss(dobj)
+    ]
+    return {
+        ss.id: arrs
+        for dobj, arrs in data.batch_get_columns_as_arrays(dobjs_to_fetch, columns)
+        for ss in lookup_ss(dobj)
+    }
+
+
+def _year_path(station_id: str, year: int) -> Path:
+    if not os.path.exists(STILTPATH):
+        m = "This functionality is only available on a Jupyter Hub from Carbon Portal"
+        raise RuntimeError(m)
+    return Path(STILTPATH) / station_id / str(year)
