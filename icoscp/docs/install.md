@@ -29,7 +29,8 @@ followed by the [authentication setup](getting_started.md#authentication)
 (unless you have used **icoscp_core** previously, and configured
 authentication with it using the default method).
 
-After that all the working code that depended on older versions should work,
+After that all the working code that depended on older versions should work
+(with the exception of STILT-related code, [see below](#stilt-related-code-update)),
 and no code changes are necessary, but it is highly recommended to replace the
 following import
 ```python
@@ -61,6 +62,18 @@ An effort was made to ensure identical functionality of the new `Dobj` class
 when compared with the old one, but there are some differences described
 [elsewhere in the documentation](modules.md#original-legacy-dobj).
 
+### STILT-related code update
+Starting from version `0.2.0`, `stilt` module has been moved out into a
+dedicated library `icoscp_stilt`. STILT functionality has normally been
+only used on Carbon Portal Jupyter, and the new library is going to be
+provisioned there. The legacy STILT functionality is preserved in the
+new library with only minor changes. However, the import statements
+containing `icoscp.stilt` need to be changed by replacing `icoscp.stilt`
+with `icoscp_stilt` (dot replaced with underscore). After this change
+all the working legacy STILT notebooks should work. However, the
+developers are encouraged to consult [`icoscp_stilt` library
+documentation](https://icos-carbon-portal.github.io/pylib/icoscp_stilt/)
+to discover new functionality that has been added to it.
 ---
 
 ## Manual installation
