@@ -6,6 +6,9 @@
     - Authenticate via [icoscp_core](https://pypi.org/project/icoscp_core/).
 - #### stilt module
     - The module is moved out to a new library `icoscp_stilt`
+  #### dependencies
+    - Dependencies `fiona` and `geopandas` are gone due to `stilt`
+      module removal
 - #### documentation
     - Move the `cpauth` module to the [Getting started](getting_started.md)
       section.

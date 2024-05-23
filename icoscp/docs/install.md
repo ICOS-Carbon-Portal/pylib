@@ -96,9 +96,7 @@ pip install git+https://github.com/ICOS-Carbon-Portal/pylib.git
 ## Dependencies
 The following modules are required by the library:
 
-- fiona
 - folium
-- geopandas
 - icoscp_core
 - pandas
 - requests
