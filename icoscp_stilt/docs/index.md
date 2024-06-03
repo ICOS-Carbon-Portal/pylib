@@ -103,3 +103,12 @@ de_co2_numpy = stilt.fetch_observations(CP_OBSPACK_CO2_SPEC, de_stations, ['valu
 # performance may be worse, especially on Jupyter
 de_co2_pandas = stilt.fetch_observations_pandas(CP_OBSPACK_CO2_SPEC, de_stations, ['value', 'time'])
 ```
+
+## Getting help
+
+All the methods in the new `stilt` module have a Python documentation
+accessible by standard means, for example:
+
+```
+help(stilt.fetch_observations)
+```
