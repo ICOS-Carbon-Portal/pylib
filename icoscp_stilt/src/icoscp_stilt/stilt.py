@@ -1,16 +1,19 @@
 import os
-import requests
-import pandas as pd
-import xarray as xr
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from dataclasses import dataclass
+from typing import Any, TypeAlias
+
+import pandas as pd
+import requests
+import xarray as xr
 from dacite import from_dict
-from typing import Any, TypeAlias, Tuple
-from icoscp_core.icos import meta, data
 from icoscp_core.cpb import ArraysDict
+from icoscp_core.icos import data, meta
 from icoscp_core.queries.dataobjlist import DataObjectLite
-from .const import *
+
+from .const import (ICOS_STATION_PREFIX, STILT_VIEWER, STILTINFO, STILTPATH,
+                    STILTRAW, STILTTS)
 
 URL: TypeAlias = str
 
@@ -51,7 +54,8 @@ def list_stations() -> list[StiltStation]:
     :return:
         A list of `StiltStation` instances
     """
-    http_resp = requests.get(STILTINFO, headers={"Accept": "application/json"})
+    http_resp = requests.get(STILTINFO, headers={"Accept": "application/json"},
+                             timeout=10)
     http_resp.raise_for_status()
     js: list[dict[str, Any]] = http_resp.json()
     return [from_dict(StiltStation, ss) for ss in js]
@@ -61,6 +65,7 @@ def fetch_result_ts(
     from_date: str,
     to_date: str,
     columns: list[str] | None = None,
+    *,
     raw: bool = False
 ) -> pd.DataFrame:
     """
@@ -90,7 +95,8 @@ def fetch_result_ts(
             'fromDate': from_date,
             'toDate': to_date,
             'columns': columns
-        }
+        },
+        timeout=10
     )
     http_resp.raise_for_status()
     df = pd.DataFrame.from_records( # type: ignore broken pandas
@@ -147,7 +153,9 @@ def list_footprints(station_id: str, from_date: str, to_date: str) -> list[datet
         representing the time slots
     """
     params = {'stationId': station_id, 'fromDate': from_date, 'toDate': to_date}
-    http_resp = requests.get(STILT_VIEWER + "listfootprints", params=params)
+    http_resp = requests.get(STILT_VIEWER + "listfootprints",
+                             params=params,
+                             timeout=10)
     http_resp.raise_for_status()
     js: list[str] = http_resp.json()
     return [datetime.fromisoformat(ts) for ts in js]
@@ -168,7 +176,8 @@ def load_footprint(station_id: str, dt: datetime) -> xr.DataArray:
     slot_str = f'{dt.year}x{m_str}x{str(dt.day).zfill(2)}x{str(dt.hour).zfill(2)}'
     fp_path = _year_path(station_id, dt.year) / m_str / slot_str / 'foot'
     if not os.path.exists(fp_path):
-        raise FileNotFoundError(f"No footprint found for time {dt} for station {station_id}")
+        msg = f"No footprint found for time {dt} for station {station_id}"
+        raise FileNotFoundError(msg)
     return xr.open_dataarray(fp_path) # type: ignore
 
 def fetch_observations_pandas(
@@ -192,8 +201,8 @@ def fetch_observations_pandas(
     keys and pandas DataFrames with observational datasets as values
     """
     return {
-        id: pd.DataFrame(arrs)
-        for id, arrs in fetch_observations(spec, stations, columns).items()
+        st_id: pd.DataFrame(arrs)
+        for st_id, arrs in fetch_observations(spec, stations, columns).items()
     }
 
 def fetch_observations(
@@ -222,7 +231,7 @@ def fetch_observations(
     keys and as values, dictionaries of column names vs numpy arrays
     """
 
-    icos2ss: dict[Tuple[URL, float], StiltStation] = {
+    icos2ss: dict[tuple[URL, float], StiltStation] = {
         (ICOS_STATION_PREFIX + s.icosId, s.icosHeight or float(s.alt)): s
         for s in stations
         if s.icosId is not None
