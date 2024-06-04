@@ -36,7 +36,9 @@ The library is published to PyPI.
 
 As stated above, the [legacy functionality](modules.md#legacy-modules) is
 still available, but for new code the developers are encouraged to consider
-the new model `icoscp_stilt.stilt` as the first choice.
+the new module `icoscp_stilt.stilt` as the first choice.
+
+The following code demonstrates the new functionality.
 
 ```Python
 from icoscp_stilt import stilt
