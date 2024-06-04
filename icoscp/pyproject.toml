@@ -7,7 +7,6 @@ build-backend = "hatchling.build"
 name = "icoscp"
 dynamic = ["version"]
 description = "Access to ICOS data objects hosted at https://data.icos-cp.eu"
-license = {file = "LICENSE"}
 readme = "README.md"
 
 authors = [

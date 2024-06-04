@@ -7,7 +7,6 @@ build-backend = "hatchling.build"
 name = "icoscp_stilt"
 dynamic = ["version"]
 description = "Access to ICOS STILT calculation results available from https://stilt.icos-cp.eu/viewer/"
-license = {file = "LICENSE"}
 readme = "README.md"
 
 authors = [
@@ -58,6 +57,11 @@ path = "src/icoscp_stilt/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/icoscp_stilt"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/icoscp_stilt"
+]
 
 # The default hatch environment, used to run testing and coverage, and to
 # build documentation.
