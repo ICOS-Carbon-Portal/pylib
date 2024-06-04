@@ -125,7 +125,7 @@ omit = ["tests"]
 [tool.ruff]
 target-version = "py39"
 # FIXE: Change once the code has been reformatted.
-line-length = 120
+line-length = 79
 
 lint.select = [
   "A",   # flake8-builtins

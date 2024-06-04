@@ -12,8 +12,14 @@ from icoscp_core.cpb import ArraysDict
 from icoscp_core.icos import data, meta
 from icoscp_core.queries.dataobjlist import DataObjectLite
 
-from .const import (ICOS_STATION_PREFIX, STILT_VIEWER, STILTINFO, STILTPATH,
-                    STILTRAW, STILTTS)
+from .const import (
+    ICOS_STATION_PREFIX,
+    STILT_VIEWER,
+    STILTINFO,
+    STILTPATH,
+    STILTRAW,
+    STILTTS,
+)
 
 URL: TypeAlias = str
 
@@ -104,7 +110,7 @@ def fetch_result_ts(
         columns=columns
     )
     if 'isodate' in df.columns:
-        df['isodate'] = pd.to_datetime(df['isodate'], unit='s')# type: ignore
+        df['isodate'] = pd.to_datetime(df['isodate'], unit='s') # type: ignore
     return df
 
 def available_year_months(station: StiltStation) -> dict[int, list[str]]:
