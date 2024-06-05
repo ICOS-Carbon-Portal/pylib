@@ -63,6 +63,11 @@ include = [
     "src/icoscp_stilt"
 ]
 
+[tool.hatch.publish.index.repos]
+main = "https://upload.pypi.org/legacy/"
+test = "https://test.pypi.org/legacy/"
+
+
 # The default hatch environment, used to run testing and coverage, and to
 # build documentation.
 [tool.hatch.envs.default]
