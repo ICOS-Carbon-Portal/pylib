@@ -13,6 +13,8 @@ authors = [
     {name = "Claudio D'Onofrio", email = "claudio.donofrio@nateko.lu.se"},
     {name = "Zois Zogopoulos", email = "zois.zogopoulos@nateko.lu.se"},
     {name = "Anders Dahlner", email = "anders.dahlner@nateko.lu.se"},
+    {name = "Klara Broman", email = "klara.broman@nateko.lu.se"},
+    {name = "Oleg Mirzov", email = "oleg.mirzov@nateko.lu.se"},
     {name = "ICOS Carbon Portal", email = "info@icos-cp.eu"},
 ]
 
@@ -53,10 +55,17 @@ SparqlEndpoint = "https://meta.icos-cp.eu/sparqlclient/?type=CSV"
 [tool.hatch.version]
 path = "src/icoscp/__init__.py"
 
-
 [tool.hatch.build.targets.wheel]
 packages = ["src/icoscp"]
 
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/icoscp"
+]
+
+[tool.hatch.publish.index.repos]
+main = "https://upload.pypi.org/legacy/"
+test = "https://test.pypi.org/legacy/"
 
 # The default hatch environment, used to run testing and coverage, and to
 # build documentation.
@@ -125,7 +134,7 @@ omit = ["tests"]
 [tool.ruff]
 target-version = "py39"
 # FIXE: Change once the code has been reformatted.
-line-length = 120
+line-length = 79
 
 lint.select = [
   "A",   # flake8-builtins
