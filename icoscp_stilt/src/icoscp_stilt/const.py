@@ -2,6 +2,8 @@ import os
 
 _in_production: bool = (os.getenv('MODE', 'production') == 'production')
 
+HTTP_TIMEOUT_SEC = 10
+
 # Path to location where STILT footprints are stored
 STILTFP = '/data/stiltweb/slots/'
 
@@ -68,5 +70,6 @@ COUNTRIES = {
     "TR": "Turkey",
     "UA": "Ukraine",
     "GB": "United Kingdom",
-    "VA": "Vatican City"
+    "VA": "Vatican City",
+    "XZ": "international waters"
 }

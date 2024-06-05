@@ -13,6 +13,7 @@ from icoscp_core.icos import data, meta
 from icoscp_core.queries.dataobjlist import DataObjectLite
 
 from .const import (
+    HTTP_TIMEOUT_SEC,
     ICOS_STATION_PREFIX,
     STILT_VIEWER,
     STILTINFO,
@@ -61,7 +62,7 @@ def list_stations() -> list[StiltStation]:
         A list of `StiltStation` instances
     """
     http_resp = requests.get(STILTINFO, headers={"Accept": "application/json"},
-                             timeout=10)
+                             timeout=HTTP_TIMEOUT_SEC)
     http_resp.raise_for_status()
     js: list[dict[str, Any]] = http_resp.json()
     return [from_dict(StiltStation, ss) for ss in js]
@@ -102,7 +103,7 @@ def fetch_result_ts(
             'toDate': to_date,
             'columns': columns
         },
-        timeout=10
+        timeout=HTTP_TIMEOUT_SEC
     )
     http_resp.raise_for_status()
     df = pd.DataFrame.from_records( # type: ignore broken pandas
@@ -161,7 +162,7 @@ def list_footprints(station_id: str, from_date: str, to_date: str) -> list[datet
     params = {'stationId': station_id, 'fromDate': from_date, 'toDate': to_date}
     http_resp = requests.get(STILT_VIEWER + "listfootprints",
                              params=params,
-                             timeout=10)
+                             timeout=HTTP_TIMEOUT_SEC)
     http_resp.raise_for_status()
     js: list[str] = http_resp.json()
     return [datetime.fromisoformat(ts) for ts in js]
