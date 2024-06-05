@@ -404,6 +404,7 @@ def get_stn_info(loc: str,
                     'lat': icos_st.lat,
                     'lon': icos_st.lon,
                     'stationId': icos_st.id,
+                    'uri': [icos_st.uri],
                     'name': icos_st.name
                 }
 
