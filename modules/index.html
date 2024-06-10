@@ -3,18 +3,18 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://icos-carbon-portal.github.io/pylib/icoscp/modules/" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Modules - ICOS Carbon Portal pylib</title>
+    <title>Legacy modules - ICOS Carbon Portal icoscp Library</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Modules";
+        var mkdocs_page_name = "Legacy modules";
         var mkdocs_page_input_path = "modules.md";
-        var mkdocs_page_url = null;
+        var mkdocs_page_url = "/pylib/icoscp/modules/";
       </script>
     
     <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
-          <a href=".." class="icon icon-home"> ICOS Carbon Portal pylib
+          <a href=".." class="icon icon-home"> ICOS Carbon Portal icoscp Library
         </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
       <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
@@ -47,52 +47,78 @@
                 <li class="toctree-l1"><a class="reference internal" href="../install/">Installation</a>
                 </li>
               </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../getting_started/">Getting started</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../faq/">FAQ</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../changelog/">Changelog</a>
+                </li>
+              </ul>
               <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href="./">Modules</a>
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Legacy modules</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#dobj">Dobj</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjinfo">Dobj.info</a>
+    <li class="toctree-l3"><a class="reference internal" href="#properties">Properties</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjalt">Dobj.alt</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjmeta">Dobj.meta</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjcitation">Dobj.citation</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjcitation">Dobj.citation</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjcolnames">Dobj.colNames</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjget_citationformat">Dobj.get_citation(format)</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjdata">Dobj.data</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjlicence">Dobj.licence</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjdobj">Dobj.dobj</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjprevious">Dobj.previous</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjelevation">Dobj.elevation</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjnext">Dobj.next</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjid">Dobj.id</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjcolnames">Dobj.colNames</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjinfo">Dobj.info</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjvariables">Dobj.variables</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjlat">Dobj.lat</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjdata">Dobj.data</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjlicence">Dobj.licence</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjgetvariables">Dobj.get(variables)</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjlon">Dobj.lon</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjgetcolumnsvariables">Dobj.getColumns(variables)</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjmeta">Dobj.meta</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjdatetimeconvert-true">Dobj.dateTimeConvert = True</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjnext">Dobj.next</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjdobj-pid">Dobj.dobj = PID</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjprevious">Dobj.previous</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjid-pid">Dobj.id = PID</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjstation">Dobj.station</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjvalid">Dobj.valid</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjvalid">Dobj.valid</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjlat">Dobj.lat</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjvariables">Dobj.variables</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjlon">Dobj.lon</a>
+        </ul>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjelevation">Dobj.elevation</a>
+    <li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjgetcolumns">Dobj.get(columns)</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjalt">Dobj.alt</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjgetcolumnscolumns">Dobj.getColumns(columns)</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dobjstation">Dobj.station</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjget_citationformat">Dobj.get_citation(format)</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#original-legacy-dobj">Original legacy Dobj</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#dobj-initialization">Dobj initialization</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dobj-datetime-conversion-control">Dobj datetime conversion control</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#dobjsize">Dobj.size()</a>
     </li>
@@ -172,80 +198,6 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#stilt">STILT</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#stiltstation">stiltstation</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#findkwargs">.find(**kwargs)</a>
-        <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#idstr-strstr">id='STR' | ['STR','STR',...]</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#searchstr">search='STR'</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#stationsdict">stations=DICT</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#countrystr-strstr">country='STR' | ['STR','STR',...]</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#projecticos">project='icos'</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#bboxlatlonlatlon">bbox=[(lat,lon),(lat,lon)]</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#pinpointlatlondistancekm">pinpoint=[lat,lon,distanceKM]</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#sdatestart-date">sdate='start date'</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#edateend-date">edate='end date'</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#dates">dates=[]</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#progress-bool">progress = BOOL</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#outfmt-str">outfmt = 'STR'</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#getid-progressfalse">.get(id='', progress=False)</a>
-        <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#id-str-liststr">id = STR | LIST[STR]</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#id-dict-listdict">id = DICT | LIST[DICT]</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#progress-bool_1">progress = BOOL</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#stilt-object">STILT Object</a>
-        <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#id">.id</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#locident">.locIdent</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#alt">.alt</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#lat">.lat</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#lon">.lon</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#name">.name</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#icos">.icos</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#years">.years</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#info">.info</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#geoinfo">.geoinfo</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#get_tsstart_date-end_date-hoursnone-columns">.get_ts(start_date, end_date, hours=None, columns=''):</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#get_fpstart_date-end_date-hoursnone">.get_fp(start_date, end_date, hours=None):</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#get_dobj_list">.get_dobj_list():</a>
-    </li>
-        </ul>
-    </li>
-        </ul>
-    </li>
     <li class="toctree-l2"><a class="reference internal" href="#sparql">Sparql</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#runsparqldata">RunSparql.data</a>
@@ -255,42 +207,6 @@
     <li class="toctree-l3"><a class="reference internal" href="#runsparqlformat-fmt">RunSparql.format = 'fmt'</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#runsparqlrun">RunSparql.run()</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#authentication">Authentication</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#quickstart">Quickstart</a>
-        <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#running-the-authentication-for-the-first-time">Running the authentication for the first time.</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#authentication-methods">Authentication methods</a>
-        <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#default-authentication">Default authentication</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#authentication-using-username-and-password">Authentication using username and password</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#authenticate-using-an-api-token">Authenticate using an API token</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#authenticate-using-a-configuration-file-on-a-custom-path">Authenticate using a configuration file on a custom path</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#authentication-parameters">Authentication parameters</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#convenience-functions_2">Convenience functions</a>
-        <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#authenticationinit">authentication.init()</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#printauthentication">print(Authentication())</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#suppressing-warning-messages">Suppressing warning messages</a>
     </li>
         </ul>
     </li>
@@ -310,15 +226,7 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../examples/">Examples</a>
-                </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../faq/">FAQ</a>
-                </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../changelog/">Changelog</a>
+                <li class="toctree-l1"><a class="reference internal" href="../legacy_examples/">Legacy examples</a>
                 </li>
               </ul>
       </div>
@@ -328,14 +236,14 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
       <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="..">ICOS Carbon Portal pylib</a>
+          <a href="..">ICOS Carbon Portal icoscp Library</a>
         
       </nav>
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-      <li class="breadcrumb-item active">Modules</li>
+      <li class="breadcrumb-item active">Legacy modules</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
@@ -344,9 +252,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="content">Content</h1>
-<p>The following modules are available in the library to find and access data hosted at the Carbon Portal. After a successful installation into your python environment you should be able to load the modules with:</p>
+                <h1 id="legacy-modules">Legacy modules</h1>
+<p>The following legacy modules are available in the library to find and access
+data hosted at the Carbon Portal. After a successful installation into
+your python environment you should be able to load the modules with:</p>
 <ul>
+<li><code>from icoscp.dobj import Dobj</code> (recommended)</li>
 <li><code>from icoscp.cpb.dobj import Dobj</code></li>
 <li><code>from icoscp.station import station</code></li>
 <li><code>from icoscp.collection import collection</code></li>
@@ -355,79 +266,212 @@
 <li><code>from icoscp.sparql import sparqls</code></li>
 </ul>
 <h2 id="dobj">Dobj</h2>
-<p>This is the basic module to load a <strong>d</strong>igital <strong>obj</strong>ect (data set) into memory. You need to know a valid persistent identifier (PID/URL) to access the data. Either you can browse the <a href="https://data.icos-cp.eu">data portal</a> to find PID's or you can use the 'station' package to find PID's programmatically (see section <a href="#station">station</a>). In essence each data object is linked to a unique and persistent identifier in the form of a URL. Hence, each data object has an on-line landing page. If you select any data object on <a href="https://data.icos-cp.eu">https://data.icos-cp.eu</a> and then navigate to the PID link (which looks like <code>11676/j7-Lxlln8_ysi4DEV8qine_v</code> ) you end up on the 'landing' page of the document. If you look at the address bar of your browser, you will see a URL similar to <a href="https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v">https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v</a>. To access the data you need to know this URL or the last part of the URL (<code>j7-Lxlln8_ysi4DEV8qine_v</code>).</p>
-<p>Load the module with:</p>
-<pre><code>from icoscp.cpb.dobj import Dobj
-</code></pre>
-<p>classmethod <strong>Dobj(digitalObject='')</strong><br>
-You can initialise a Dobj with a PID. The following statements yield the same result.</p>
-<pre><code>myDobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
-myDobj = Dobj('11676/j7-Lxlln8_ysi4DEV8qine_v')
-myDobj = Dobj('j7-Lxlln8_ysi4DEV8qine_v')
-</code></pre>
-<p>or create an 'empty' instance and the set the identifier later:</p>
-<pre><code>myDobj = Dobj()
-myDobj.dobj = "j7-Lxlln8_ysi4DEV8qine_v"
-</code></pre>
-<h2>Attributes:</h2>
-<h3 id="dobjinfo"><strong>Dobj.info</strong></h3>
-<p><strong> Please refer to the property <code>.meta</code></strong>. The property <code>.info</code> returns now the same as <code>.meta</code> which was introduced with version 0.1.15.</p>
-<p>For provenance reasons only the following documentation is kept, but is only valid for installations 0.1.10 to 0.1.14:</p>
-<pre><code>All Dobj related metadata is available in the following properties.
-This will return a list of three Pandas DataFrames which contain metadata.
+<p>This is the basic module to load a <strong>d</strong>igital <strong>obj</strong>ect (data set)
+into memory. You need to know a valid persistent identifier (PID/URL) to
+access the data. Either you can browse the <a href="https://data.icos-cp.eu">data portal</a> to find PIDs or you can use the "station"
+package to find PIDs programmatically (see section <a href="#station">station</a>
+).  </p>
+<p>In essence each data object is linked to a unique and persistent
+identifier in the form of a URL. Hence, each data object has an online
+landing page. If you select any data object on 
+<a href="https://data.icos-cp.eu">https://data.icos-cp.eu</a> and then navigate to
+the PID link (which looks like <code>11676/pli1C0sX-HE2KpQQIvuYhX01</code>) you end
+up on the 'landing' page of the document. If you look at the address bar
+of your browser, you will see a URL similar to 
+<a href="https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01">https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01</a>. To access the
+data you need to know this URL or the last part of the URL
+(<code>pli1C0sX-HE2KpQQIvuYhX01</code>).</p>
+<p>Load the module and initialise the Dobj class with a PID.<br />
+The following statements yield the same result:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
 
-info[0] -&gt; information about the dobj like, url, specification,
-        number of rows, related file name.
-info[1] -&gt; information about the data like colName,
-        value type, unit, kind
-info[2] -&gt; information about the station, where the data was obtained.
-        Name, id, lat, lon etc..
-
-- Return LIST[Pandas DataFrame]
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+dobj = Dobj('11676/pli1C0sX-HE2KpQQIvuYhX01')
+dobj = Dobj('pli1C0sX-HE2KpQQIvuYhX01')
 </code></pre>
-<h3 id="dobjmeta"><strong>Dobj.meta</strong></h3>
-<p>This property was introduced with version 0.1.15 and is replacing <strong>.info</strong>.<br>
-.meta returns a dictionary based on the meta data available from the landing page of the ICOS Caronb Portal website. Every data object has a rich set of meta data available. You can download an example from data portal:<a href="https://meta.icos-cp.eu/objects/M8STRfcQfU4Yj7Uy0snHvlve/meta.json">https://meta.icos-cp.eu/objects/M8STRfcQfU4Yj7Uy0snHvlve/meta.json</a>. This will then be parsed into a python dictionary representing the metadata from ICOS.
-Some of the important key properties, like 'previous', 'next', 'citation', etc., are extracted for easy access and made available as properties. Please check this documentation.</p>
-<h3 id="dobjcitation"><strong>Dobj.citation</strong></h3>
-<p>Citation string, a simple plain text citation string.</p>
-<ul>
-<li>Return STR</li>
-</ul>
-<h3 id="dobjget_citationformat"><strong>Dobj.get_citation(format)</strong></h3>
-<p>Returns the citation string in different formats. By default a plain formatted string is returned, the same as with with the property <code>Dobj.citation</code>. Possible formats are:</p>
-<ul>
-<li><strong>plain</strong> : (default) a simple string</li>
-<li><strong>bibtex</strong> : <a href="https://en.wikipedia.org/wiki/BibTeX">wikipedia</a></li>
-<li><strong>ris</strong> : <a href="https://en.wikipedia.org/wiki/RIS_(file_format)">wikipedia</a></li>
-</ul>
-<p>Example: Dobj.get_citation('ris')</p>
-<h3 id="dobjlicence"><strong>Dobj.licence</strong></h3>
-<p>Licence associated with the dataset.</p>
-<ul>
-<li>
-<p>Return DICT</p>
-<p>dict_keys(['baseLicence', 'name', 'url', 'webpage'])</p>
-</li>
-</ul>
-<h3 id="dobjprevious"><strong>Dobj.previous</strong></h3>
-<p>If an older version of this data object is available, this returns the <strong>pid</strong> for this object.</p>
-<ul>
-<li>Return STR</li>
-</ul>
-<h3 id="dobjnext"><strong>Dobj.next</strong></h3>
-<p>If a newer version of the data object is available, this returns the <strong>pid</strong> for this object.</p>
-<ul>
-<li>Return STR</li>
-</ul>
-<h3 id="dobjcolnames"><strong>Dobj.colNames</strong></h3>
-<p>Available column names. This information is part of the <code>Dobj.meta</code>, which holds all the 
-available metadata.</p>
-<ul>
-<li>Return LIST</li>
-</ul>
-<h3 id="dobjvariables"><strong>Dobj.variables</strong></h3>
-<p>This provides access to all available variables, including the unit, a short description (type) and the 'landing page' for the format used (int, float, chr, ...). The following example shows the variables for a data object of an atmospheric methane concentration:</p>
+<h3 id="properties">Properties</h3>
+<h4 id="dobjalt">Dobj.alt</h4>
+<p>Retrieve the float value representing the altitude above sea level of the
+station associated with the Dobj. Be aware, this is not the sampling height for
+the data. If the station does not have a specified altitude, return <code>None</code>.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+altitude = dobj.alt
+</code></pre>
+<h4 id="dobjcitation">Dobj.citation</h4>
+<p>Return the citation string linked to the Dobj in plain string format.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+citation = dobj.citation
+</code></pre>
+<p><em>See also class method <a href="#dobjget_citationformat">Dobj.get_citation()</a></em></p>
+<h4 id="dobjcolnames">Dobj.colNames</h4>
+<p>Return a list of available column names for a station-specific time
+series data object or <code>None</code> if no column names are available. This
+information is part of the <a href="#dobjmeta">Dobj.meta</a> property, which holds
+all the available metadata.<br />
+Raise a <code>MetaTypeError</code> exception for spatiotemporal data objects.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+column_names = dobj.colNames
+</code></pre>
+<h4 id="dobjdata">Dobj.data</h4>
+<p>Retrieve the actual data for the PID in Pandas DataFrame format.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+data = dobj.data
+</code></pre>
+<h4 id="dobjdobj">Dobj.dobj</h4>
+<p>Retrieve the PID for the Dobj.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+pid = dobj.dobj
+</code></pre>
+<p><em>See also <a href="#dobjid">Dobj.id</a></em></p>
+<h4 id="dobjelevation">Dobj.elevation</h4>
+<p>Retrieve the float value representing the elevation above sea level of the
+station associated with the Dobj. Be aware, this is not the sampling height for
+the data. If the station does not have a specified elevation, return <code>None</code>.<br />
+This property will be deprecated in the next release.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+elevation = dobj.elevation
+</code></pre>
+<p><em>See also <a href="#dobjalt">Dobj.alt</a></em></p>
+<h4 id="dobjid">Dobj.id</h4>
+<p>Retrieve the PID for the Dobj.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+pid = dobj.id
+</code></pre>
+<p><em>See also <a href="#dobjdobj">Dobj.dobj</a></em></p>
+<h4 id="dobjinfo">Dobj.info</h4>
+<p>Return a dictionary based on the metadata available from the landing
+page of the ICOS Carbon Portal website.<br />
+This property will be deprecated in the next release.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+from pprint import pprint
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+pprint(dobj.info)
+</code></pre>
+<p><em>See also <a href="#dobjmeta">Dobj.meta</a></em></p>
+<h4 id="dobjlat">Dobj.lat</h4>
+<p>Retrieve the float value representing the latitude of the station associated
+with the Dobj. If the station does not have a specified latitude, return
+<code>None</code>.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+latitude = dobj.lat
+</code></pre>
+<h4 id="dobjlicence">Dobj.licence</h4>
+<p>Return a dictionary with these keys: 'baseLicence', 'name', 'url', 
+'webpage', containing information about the dataset's associated
+license.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+latitude = dobj.lat
+</code></pre>
+<h4 id="dobjlon">Dobj.lon</h4>
+<p>Retrieve the float value representing the longitude of the station associated
+with the Dobj. If the station does not have a specified longitude, return
+<code>None</code>.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+longitude = dobj.lon
+</code></pre>
+<h4 id="dobjmeta">Dobj.meta</h4>
+<p>Return a dictionary based on the metadata available from the landing
+page of the ICOS Carbon Portal website. Every data object has a rich
+set of metadata available. You can download an <a href="https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01/meta.json">example</a> from the
+data portal. This will then be parsed into a python dictionary representing the
+metadata from ICOS. Some of the important key properties, like
+'previous', 'next', 'citation', e.t.c., are extracted for easy access and
+made available as properties.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+from pprint import pprint
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+pprint(dobj.meta)
+</code></pre>
+<h4 id="dobjnext">Dobj.next</h4>
+<p>Return a landing page in the form of a string, featuring the next
+version of this data object if it exists.<br />
+Return <code>None</code> if a next version does not exist.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+next_version = dobj.next
+</code></pre>
+<h4 id="dobjprevious">Dobj.previous</h4>
+<p>Return a landing page in the form of a string, featuring the previous
+version of this data object if it exists.<br />
+Return <code>None</code> if a previous version does not exist.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+previous_version = dobj.previous
+</code></pre>
+<h4 id="dobjstation">Dobj.station</h4>
+<p>Return a dictionary containing metadata associated with the station
+corresponding to the Dobj. Please be aware that prior to version 0.1.15 this
+has returned a string with station id, which is now available as station['id'].</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+station_meta = dobj.station
+</code></pre>
+<h4 id="dobjvalid">Dobj.valid</h4>
+<p>Return the validity of a Dobj as a boolean. This is kept for backwards
+compatibility reasons. From icoscp 0.2.0 and onwards, the Dobj class cannot be
+instantiated with an invalid PID, thus this will always return <code>True</code>.<br />
+This property will be deprecated in the next release.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+validity = dobj.valid
+</code></pre>
+<h4 id="dobjvariables">Dobj.variables</h4>
+<p>Return a Pandas DataFrame providing access to all available variables,
+including the name, unit, type, and the landing page for the format used
+(int, float, char, ...).<br />
+Raise a <code>MetaValueError</code> exception if no variable information is
+available.</p>
+<p>The following example and its output shows the variables of an
+atmospheric methane concentration data object:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/zjNZLdVDcVUNwonvJIN5GQ3b')
+variables = dobj.variables
+print(variables)
+</code></pre>
+<p>Output:</p>
 <table>
 <thead>
 <tr>
@@ -476,88 +520,102 @@ available metadata.</p>
 </tr>
 </tbody>
 </table>
-<ul>
-<li>Return Pandas DataFrame</li>
-</ul>
-<h3 id="dobjdata"><strong>Dobj.data</strong></h3>
-<p>Retrieve the actual data for the PID. All available variables will be returned.</p>
-<ul>
-<li>Return Pandas DataFrame</li>
-</ul>
-<h3 id="dobjgetvariables"><strong>Dobj.get(variables)</strong></h3>
-<p>Retrieve the actual data for the PID. The same as <code>.data</code> but you have the option to retrieve only selected columns (or variables). Only valid and unique entries will be returned. You can see valid entries with <a href="#dobjvariables">.variables['name']</a> or <a href="#dobjcolnames">.colNames</a>. If columns are not provided, or if none of the provided variables are valid, or if you work with local data, the default DataFrame (with all columns) will be returned, which is the same as <code>.data</code>. </p>
-<ul>
-<li>Parameter variables: LIST[STR]</li>
-<li>Return Pandas DataFrame</li>
-</ul>
-<h3 id="dobjgetcolumnsvariables"><strong>Dobj.getColumns(variables)</strong></h3>
-<p>This is exactly the same as <code>.get()</code>. See details above. We keep this for backward compatibility,  please do not use. This function will be deprecated over time.</p>
-<p><strong> Examples to retrieve data</strong>:</p>
-<pre><code># Create a dobj:
+<h3 id="methods">Methods</h3>
+<h4 id="dobjgetcolumns">Dobj.get(columns)</h4>
+<p>Retrieve the actual data for the PID in Pandas DataFrame format.
+You have the option to retrieve only selected
+columns (or variables) using a list of variables as an input argument. Only
+valid and unique entries will be returned. You can see valid entries with
+<a href="#dobjcolnames">Dobj.colNames</a> or <a href="#dobjvariables">Dobj.variables</a>. If columns
+are not provided, or if none of the provided variables are valid, or if you
+work with local data, the default DataFrame (with all columns) will be
+returned.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
 
-do = Dobj('https://meta.icos-cp.eu/objects/9GVNGXhqvmn7UUsxSWp-zLyR')
-
-# Access all data, or specific columns:
-
-data = do.data                                  # all data is returned&lt;br&gt;
-data = do.get(['timestamp','ch4'])              # only timestamp and ch4 is returned&lt;br&gt;
-data = do.get(['timestamp','ch4','notValid'])   # only timestamp and ch4 is returned&lt;br&gt;
-data = do.get()                                 # all data is returned&lt;br&gt;
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+col_names = dobj.colNames
+# or
+# col_names = dobj.variables['name'].to_list()
+data = dobj.get(columns=col_names)
 </code></pre>
-<h3 id="dobjdatetimeconvert-true"><strong>Dobj.dateTimeConvert = True</strong></h3>
-<p>Set or retrieve. Default <strong>True</strong>. The binary data representation provides a UTC Timestamp as 
-Unixtimestamp with start point of 1970-01-01 00:00:00. By default, this is converted to a DateTimeObject
-(<strong>pandas._libs.tslibs.timestamps.Timestamp</strong>). If you prefer to have the raw Unixtimestamp 
-(<strong>numpy.float64</strong>), set Dobj.dateTimeConvert = False prior to load the data with <strong>.get()</strong> or <strong>.data</strong> or <strong>.getColumns()</strong>.</p>
+<h4 id="dobjgetcolumnscolumns">Dobj.getColumns(columns)</h4>
+<p>Retrieve the actual data for the PID in Pandas DataFrame format.  </p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+col_names = dobj.colNames
+# or
+# col_names = dobj.variables['name'].to_list()
+data = dobj.getColumns(columns=col_names)
+</code></pre>
+<p><em>See also <a href="#dobjgetcolumns">Dobj.get(columns)</a> and <a href="#dobjdata">Dobj.data</a></em></p>
+<h4 id="dobjget_citationformat">Dobj.get_citation(format)</h4>
+<p>Return the citation string in different formats. By default, a plain 
+formatted string is returned.<br />
+Possible formats are:</p>
+<ul>
+<li><strong>plain</strong> : (default) a simple string</li>
+<li><strong>bibtex</strong> : <a href="https://en.wikipedia.org/wiki/BibTeX">wikipedia</a></li>
+<li><strong>ris</strong> : <a href="https://en.wikipedia.org/wiki/RIS_(file_format)">wikipedia</a></li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+ris_citation = dobj.get_citation('ris')
+</code></pre>
+<p><em>See also <a href="#dobjcitation">Dobj.citation</a></em></p>
+<hr />
+<h2 id="original-legacy-dobj">Original legacy Dobj</h2>
+<p>The actual original legacy (prior to version <code>0.2.0</code>) <code>Dobj</code> class resides in
+module <code>icoscp.cpb.dobj</code>. Most code is recommended to migrate to the new
+implementation of this class residing in module <code>icoscp.dobj</code>, but the old
+class is preserved to avoid breaking any dependent code by library update,
+and additionally, there are some known differences between the versions,
+documented below.</p>
+<h3 id="dobj-initialization">Dobj initialization</h3>
+<p>Using <code>from icoscp.cpb.dobj import Dobj</code>, you can initialize the Dobj class in
+one of the following ways:</p>
+<pre><code class="language-python">from icoscp.cpb.dobj import Dobj
+
+my_dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+my_dobj = Dobj('11676/pli1C0sX-HE2KpQQIvuYhX01')
+my_dobj = Dobj('pli1C0sX-HE2KpQQIvuYhX01')
+</code></pre>
+<p>or create an 'empty' Dobj instance and set the identifier later:</p>
+<pre><code class="language-python">from icoscp.cpb.dobj import Dobj
+
+dobj = Dobj()
+dobj.dobj = 'https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01'
+</code></pre>
+<p>Using <code>from icoscp.dobj import Dobj</code>, instantiating an 'empty' Dobj class, and
+setting the identifier later will result in a <code>TypeError</code>. This functionality
+was removed to preserve the <code>Dobj</code> class state and prevent unexpected behavior.</p>
+<h3 id="dobj-datetime-conversion-control">Dobj datetime conversion control</h3>
+<p>(Not available in the new implementation, as all datetime conversions are
+handled by <code>pandas</code> library in a uniform way)</p>
+<p><strong>Dobj.dateTimeConvert = True</strong>
+The binary data representation provides a UTC Timestamp as Unix-timestamp with
+start point of 1970-01-01 00:00:00. By default, when using
+<code>from icoscp.cpb.dobj import Dobj</code> this is converted to a DateTimeObject of
+type <code>pandas._libs.tslibs.timestamps.Timestamp</code>. If you prefer to have the raw
+Unix-timestamp (<strong>numpy.float64</strong>), set
+<code>Dobj.dateTimeConvert = False</code> prior to load the data with <strong>.get()</strong> or <strong>.data</strong> or <strong>.getColumns()</strong>.</p>
 <ul>
 <li>Return BOOL</li>
-</ul>
-<h3 id="dobjdobj-pid"><strong>Dobj.dobj = PID</strong></h3>
-<p>See Dobj.id</p>
-<h3 id="dobjid-pid"><strong>Dobj.id = PID</strong></h3>
-<p>Set or retrieve the PID for the Dobj, default is empty (""). If a PID is set, an automatic 
-check is performed to find the metadata for the object. If this is successful, the 'valid' 
-property is set to <strong>True</strong></p>
-<ul>
-<li>Return STR</li>
-</ul>
-<h3 id="dobjvalid"><strong>Dobj.valid</strong></h3>
-<p>True if PID is set and found at the ICOS Carbon Portal</p>
-<ul>
-<li>Return BOOL</li>
-</ul>
-<h3 id="dobjlat"><strong>Dobj.lat</strong></h3>
-<p>Latitude for station</p>
-<ul>
-<li>Return FLOAT</li>
-</ul>
-<h3 id="dobjlon"><strong>Dobj.lon</strong></h3>
-<p>Longitude for station</p>
-<ul>
-<li>Return FLOAT</li>
-</ul>
-<h3 id="dobjelevation"><strong>Dobj.elevation</strong></h3>
-<p>Elevation above sea level for station. Be aware, this is NOT the sampling height for the data
-points.</p>
-<ul>
-<li>Return FLOAT</li>
-</ul>
-<h3 id="dobjalt"><strong>Dobj.alt</strong></h3>
-<p>This is exactly the same as .elevation</p>
-<h3 id="dobjstation"><strong>Dobj.station</strong></h3>
-<p>This returns information about the station, where the data was collected/measured, to provide information about the provenance of the data. Further information about sammplingHeight, instruments, documentation, etc. can be found in <code>dobj.meta['specificInfo']['acquisition']</code>.
-Please be aware that prior to version 0.1.15 this has returned a string with station id, which is now available as station['id']. An example code snippet on how to extract all 'keys' from a nested dictionary is available in the <a href="../faq/#q1">FAQ</a></p>
-<ul>
-<li>Return DICT</li>
 </ul>
 <h3 id="dobjsize"><strong>Dobj.size()</strong></h3>
+<p>(Not available in the new implementation. To get data object size in bytes
+from the new <code>Dobj</code> class, call <code>Dobj.metadata.size</code> or <code>Dobj.meta['size']</code>)</p>
 <p>The real size of the dobj in [bytes, KB, MB, TB]. Since this object may contain the data, it is 
 no longer just a pointer to data.</p>
 <ul>
 <li>Return TUPLE (int32, STR), where int32 represents the size and STR the unit. Example output 
   looks like: (4.353, 'MB')</li>
 </ul>
-<hr>
+<hr />
 <h2 id="station">Station</h2>
 <p>The station module provides a search facility to explore ICOS stations and find associated data 
 objects and data products. There is a lot of information available about the ICOS stations, 
@@ -572,7 +630,7 @@ is provided with specific and complex Sparql queries. It is possible to instanti
 class on its own, but we recommend using the convenience functions <code>station.getIdList()</code> 
 <code>station.get('StationID')</code> <code>station.getList()</code>  as described further below to create the 
 station object. Once you have a created valid station object a list of attributes are available:</p>
-<hr><h2>Attributes:</h2>
+<h2>Attributes:</h2>
 <hr>
 
 <h3 id="stationcountry"><strong>Station.country</strong></h3>
@@ -840,283 +898,6 @@ myCollection = get('10.18160/ry7n-3r04')
 </ul>
 <hr>
 
-<h2 id="stilt">STILT</h2>
-<p>At the ICOS Carbon Portal we offer a service to calculate your own STILT footprints and 
-visualize the results. Find out more on our website
-<a href="https://www.icos-cp.eu/data-services/tools/stilt-footprint">https://www.icos-cp.eu/data-services/tools/stilt-footprint</a>. The calculated footprints and time 
-series results are also available through this python library. Please be aware, that the 
-calculated <strong>footprints are only available on our servers</strong>, including our virtual 
-computational environments. Please read about our public available Jupyter Hub 
-<a href="https://icos-carbon-portal.github.io/jupyter/">here</a>. Time series can be accessed from outside 
-our servers as well.</p>
-<p>load the module with:</p>
-<pre><code>from icoscp.stilt import stiltstation
-</code></pre>
-<p>Two functions are available: one to find STILT stations and one to extract the STILT station as 
-an object, which gives access to the data (time series and footprints).</p>
-<h3 id="stiltstation">stiltstation</h3>
-<h3 id="findkwargs">.find(**kwargs)</h3>
-<p>This is the main function to find STILT stations. By default, it returns a dictionary where each 
-station id is the key to access metadata about the station. The order how you provide keywords 
-is respected and you can influence the result. Keyword arguments are applied sequentially (the 
-result from the first keyword is provided as input to the second and so on). With no keyword 
-provided <code>stiltstation.find()</code> returns a dictionary with ALL Stilt stations.</p>
-<p>The following keywords are available:</p>
-<h5 id="idstr-strstr">id='STR' | ['STR','STR',...]</h5>
-<p>Provide a single id as string, or a list of strings.<br>You can provide either STILT or ICOS 
-id's mixed together.</p>
-<pre><code>stiltstation.find(id=['NOR', 'GAT344'])
-stiltstation.find(id='KIT030')
-</code></pre>
-<h5 id="searchstr">search='STR'</h5>
-<p>Arbitrary string search will find any occurrence of STR in the station metadata.</p>
-<pre><code>stiltstation.find(search='south')
-</code></pre>
-<h5 id="stationsdict">stations=DICT</h5>
-<p>all actions are performed on this dictionary, rather than dynamically search for all stilt 
-station on our server. Can be useful for creating a subset of stations from an existing search.</p>
-<pre><code>myStations = stiltstation.find(search='north')
-refined = stiltstation.find(stations=myStations, country='Finland')
-</code></pre>
-<p><br><h2>Spatial keywords</h2><br></p>
-<h5 id="countrystr-strstr">country='STR' | ['STR','STR',...]</h5>
-<p>Provide a single country id as string, or a list of strings. You can provide alpha-2, alpha-3 
-code (ISO 3166) or the full country name (some translations are available as well). To find all 
-STILT stations with geolocation in Norway you can search for either NO, NOR, Norway, Norge.</p>
-<pre><code>stiltstation.find(country=['Swe','norge', 'IT'])
-</code></pre>
-<h5 id="projecticos">project='icos'</h5>
-<p>This option will retrieve all STILT stations that are ICOS stations.</p>
-<h5 id="bboxlatlonlatlon">bbox=[(lat,lon),(lat,lon)]</h5>
-<p>Bounding Box. Provide two tuples (wgs84), where the box is defined as TopLeftCorner (NorthWest) 
-and BottomRightCorner (SouthEast). The following example returns approximately all stations in 
-Scandinavia.</p>
-<pre><code>stiltstation.find(bbox=[(70,5),(55,32)])
-</code></pre>
-<h5 id="pinpointlatlondistancekm">pinpoint=[lat,lon,distanceKM]</h5>
-<p>Provide a single point (lat, lon) and the Distance in KM, which creates a bounding box. 
-Distance is very roughly translated with 1 degree = 1 km. The bounding box is calculated as 
-distance in all directions. For example <code>distance=200</code> will create a bounding box of 400 x 400 
-km with pinpoint in the centre. If you don't provide a distance, a default value of 200 is used.</p>
-<pre><code>stiltstation.find(pinpoint=[55.7,13.1,500])     # bounding box ~ 1000km x 1000km
-stiltstation.find(pinpoint=[55.7,13.1])         # bounding box ~ 400km x 400km
-</code></pre>
-<p><br><h2>Temporal keywords</h2><br></p>
-<p>Be aware, that the granularity for all temporal keywords is year and month, days are not 
-considered in the search. Input format for the dates entry MUST be convertible to data time 
-object through pandas.to_datetime().  Accepted formats are:</p>
-<ul>
-<li>datetime.date objs</li>
-<li>FLOAT or INT representing a unix timestamp (seconds since 1970-01-01)</li>
-<li>pandas.datetime</li>
-<li>STR: "YYYY-MM-DD" , "YYYY", "YYYY/MM/DD"</li>
-</ul>
-<h4 id="sdatestart-date">sdate='start date'</h4>
-<p>Stations are returned where results are available for &gt;= start date. 'sdate' is a single entry. 
-If you provide sdate AND edate, any station with available data within that date range is 
-returned. (accepted formats see above)</p>
-<pre><code>stiltstation.find(sdate= '2018-05-01')
-</code></pre>
-<h4 id="edateend-date">edate='end date'</h4>
-<p>Stations are returned where results are available for &lt;= end date. 'edate' is a single entry. 
-If you provide sdate AND edate, any station with available data within that date range is 
-returned. (accepted formats see above)</p>
-<pre><code>stiltstation.find(edate='2018-06-01')
-</code></pre>
-<h4 id="dates">dates=[]</h4>
-<p>This will return a list of stations where data is available for any of the provided dates. 
-Input format, see sdate,edate. Remember, that only year and month is checked.</p>
-<pre><code>stiltstation.find(dates=['2020-01-01', '2020/05/23'])
-</code></pre>
-<h4 id="progress-bool">progress = BOOL</h4>
-<p>By default a progress bar is displayed while searching all possible STILT stations. With this keyword you can show/hide the progress bar.</p>
-<pre><code>stiltstation.find(progress=True)   # DEFAULT, progress bar is displayed
-stiltstation.find(progress=False)  # No progress bar
-</code></pre>
-<h4 id="outfmt-str">outfmt = 'STR'</h4>
-<p>where string is <code>dict</code> | <code>pandas</code> | <code>list</code> | <code>map</code> | <code>avail</code>.
-This keyword is ALWAYS executed last, regardless of the position within keyword arguments. By 
-default, a <code>dictionary</code> is returned. With <code>pandas</code> a pandas DataFrame is returned where the 
-station id is indexed, each row contains one station with the same metadata as is available in 
-the dictionary <a href="https://pandas.pydata.org/docs/">https://pandas.pydata.org/docs/</a>. List however 
-returns a list of STILT station objects. Please see the documentation about<br>
-<code>stiltstation.get(id="")</code>. The choice <code>map</code>, returns a folium map 
-<a href="https://python-visualization.github.io/folium/">https://python-visualization.github.io/folium/</a>.
-The map can be displayed directly in a Jupyter Notebook, or you can save the map to a html file.</p>
-<pre><code>stiltstation.find(country='Italy', outfmt='pandas') 
-stiltstation.find(country='Italy', outfmt='pandas').save('mymap.html')
-</code></pre>
-<p>Finally, the choice <code>avail</code> will return a pandas DataFrame where availability of timeseries data 
-per STILT station is gathered for each year. </p>
-<h3 id="getid-progressfalse">.get(id='', progress=False)</h3>
-<p>Returns a stilt station object or a list of stilt station objects. A stilt station object, 
-gives access to the underlying data (timeseries and footprints). You may provide a STR or
-LIST[STR] of STILT id's or the 'result' of a .find() query. The properties of the returned stilt 
-object is listed further below.</p>
-<h4 id="id-str-liststr">id = STR | LIST[STR]</h4>
-<p>Provide a string or list of strings representing a STILT station id's.</p>
-<h4 id="id-dict-listdict">id = DICT | LIST[DICT]</h4>
-<p>provide a single dictionary, or a list of dictionaries. The dictionaries should be the result of a stiltstation.find() execution.</p>
-<h4 id="progress-bool_1">progress = BOOL</h4>
-<p>By default no progress bar is displayed while assembling the stiltstation object. With this keyword you can show/hide the progress bar. This parameter is only effective while providing id's.</p>
-<pre><code># return stilt stations based on stiltstation.find(id='STR')
-stiltstation.get('HTM')         
-stiltstation.get(['KIT','HTM150'], progress = True)
-
-# return stilt stations based on dictionary or list of dict with a progressbar
-a = stiltstation.find(search='north')
-stiltstation.get(a)
-OR
-stiltstation.get(stiltstation.find(search='south'))
-</code></pre>
-<h3 id="stilt-object">STILT Object</h3>
-<p>classmethod <strong>StiltStation(dict)</strong><br>
-Please do not use this class directly. You should load <code>from icoscp.stilt import stiltstation</code> 
-and then use the function <code>obj = stiltstation.get('HTM150)</code> which will return a stilt station 
-object. Once you have the object, the following attributes and methods are available:</p>
-<h2>Attributes:</h2>
-
-<h4 id="id">.id</h4>
-<p>Return STILT station ID (e.g. 'HTM150') as string.</p>
-<h4 id="locident">.locIdent</h4>
-<p>String with latitude-longitude-altitude of STILT station (e.g. '35.34Nx025.67Ex00150')</p>
-<h4 id="alt">.alt</h4>
-<p>Station altitude (in meters above ground level)</p>
-<h4 id="lat">.lat</h4>
-<p>Station latitude</p>
-<h4 id="lon">.lon</h4>
-<p>Station longitude</p>
-<h4 id="name">.name</h4>
-<p>STILT station long name</p>
-<h4 id="icos">.icos</h4>
-<p>None | Dict. If the station is an ICOS station, a dictionary with ICOS metadata is available.</p>
-<h4 id="years">.years</h4>
-<p>List of years for which STILT results are available. Be aware that even if only one day is 
-calculated for a year, <code>year</code> will be listed.</p>
-<h4 id="info">.info</h4>
-<p>Returns a dictionary with all metadata.</p>
-<h4 id="geoinfo">.geoinfo</h4>
-<p>Dictionary with geographical (country) information, if the station is within a country border.</p>
-<h2>Methods:</h2>
-
-<h4 id="get_tsstart_date-end_date-hoursnone-columns">.get_ts(start_date, end_date, hours=None, columns=''):</h4>
-<p>STILT concentration time series for a given time period, with optional selection of specific 
-hours and columns. Returns time series as a <code>pandas.DataFrame</code>.</p>
-<ul>
-<li>start_date : STR, FLOAT/INT (Unix timestamp), datetime object<ul>
-<li>start_date = '2018-01-01'</li>
-</ul>
-</li>
-<li>end_date : STR, FLOAT/INT (Unix timestamp), datetime object<ul>
-<li>end_date = '2018-01-31'</li>
-</ul>
-</li>
-<li>
-<p>hours : STR | INT, optional. If hours is empty or None, ALL Timeslots are returned. For 
-  backwards compatibility, input of str format hh:mm is accepted</p>
-<ul>
-<li>hours = [0,3,6,9,12,15,18,21]<pre><code>Valid results are returned with LOWER BOUND values.
-Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
-            hours = [2,3,4,5,6] will return Timeslots for 0,3 and 6
-            hours = [] return ALL
-            hours = ["10", "10:00", 10] returns timeslot 9
-</code></pre>
-</li>
-</ul>
-</li>
-<li>
-<p>columns : STR, optional</p>
-<ul>
-<li>Valid entries are <code>"default", "co2", "co", "rn", "wind", "latlon", "all"</code><pre><code>default:
-    isodate, co2.stilt, co2.bio, co2.fuel, co2.cement, co2.background
-
-co2
-    isodate, co2.stilt, co2.bio, co2.fuel, co2.cement,
-    co2.bio.gee, co2.bio.resp, co2.fuel.coal, co2.fuel.oil, co2.fuel.gas,
-    co2.fuel.bio, co2.fuel.waste, co2.energy, co2.transport, co2.industry,
-    co2.residential, co2.other_categories, co2.background
-
-co
-    isodate, co.stilt, co.fuel, co.cement, 
-    co.fuel.coal, co.fuel.oil, co.fuel.gas, 
-    co.fuel.bio, co.fuel.waste, co.energy
-    co.transport, co.industry, co.residential, 
-    co.other_categories, co.background
-
-rn
-    isodate, rn, rn.era, rn.noah
-
-wind
-    isodate, wind.dir, wind.u, wind.v
-
-latlon
-    isodate, latstart, lonstart
-
-all
-    isodate, co2.stilt, co2.bio, co2.fuel, co2.cement, 
-    co2.bio.gee, co2.bio.resp, 
-    co2.fuel.coal, co2.fuel.oil, co2.fuel.gas, 
-    co2.fuel.bio, co2.fuel.waste, 
-    co2.energy, co2.transport, co2.industry,
-    co2.residential, co2.other_categories,
-    co2.background,
-    co.stilt, co.fuel, co.cement,
-    co.fuel.coal, co.fuel.oil, co.fuel.gas,
-    co.fuel.bio, co.fuel.waste, 
-    co.energy, co.transport, co.industry,
-    co.residential, co.other_categories,
-    co.background,
-    rn, rn.era, rn.noah, wind.dir,
-    wind.u, wind.v, latstart, lonstart
-</code></pre>
-</li>
-</ul>
-</li>
-</ul>
-<h4 id="get_fpstart_date-end_date-hoursnone">.get_fp(start_date, end_date, hours=None):</h4>
-<p>STILT footprints for a given time period, with optional selection of specific hours.
-<code>Returns</code> the footprints as <code>xarray</code> 
-<a href="http://xarray.pydata.org/en/stable/">http://xarray.pydata.org/en/stable/</a> with latitude, 
-longitude, time, and ppm per (micromole m-2 s-1).</p>
-<ul>
-<li>start_date : STR, FLOAT/INT (Unix timestamp), datetime object.<ul>
-<li>start_date = '2018-01-01'</li>
-</ul>
-</li>
-<li>end_date : STR, FLOAT/INT (Unix timestamp), datetime object.<ul>
-<li>end_date = '2018-01-31'</li>
-</ul>
-</li>
-<li>hours : STR | INT, optional. If hours is empty or None, ALL Timeslots are returned. For 
-  backwards compatibility, input of str format hh:mm is accepted<ul>
-<li>hours = [0,3,6,9,12,15,18,21]<pre><code>Valid results are returned with LOWER BOUND values.
-Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
-            hours = [2,3,4,5,6] will return Timeslots for 0,3 and 6
-            hours = [] return ALL
-            hours = ["10", "10:00", 10] returns timeslot 9
-</code></pre>
-</li>
-</ul>
-</li>
-</ul>
-<h4 id="get_dobj_list">.get_dobj_list():</h4>
-<p>If the stiltstation has a corresponding ICOS station, this function will return a dictionary filled with corresponding data objects. A sparql query is executed with ICOS Station id and the sampling height as constraint, returning all data objects (Level 1, 2, 3).</p>
-<p>Returns: List of DICT Each dictionary with the following keys: [dobj,hasNextVersion,spec,fileName,size,submTime,timeStart,timeEnd]</p>
-<p>Example output:</p>
-<pre><code>    [{
-        'dobj': 'https://meta.icos-cp.eu/objects/1DZZOAmmB8YAfYPvXuHMj7Er',
-        'hasNextVersion': 'false',
-        'spec': 'http://meta.icos-cp.eu/resources/cpmeta/atcN2oNrtGrowingDataObject',
-        'fileName': 'ICOS_ATC_NRT_OXK_2022-03-01_2023-02-27_23.0_534_N2O.zip',
-        'size': '110076',
-        'submTime': '2023-02-28T11:16:27.804Z',
-        'timeStart': '2022-03-01T00:00:00Z',
-        'timeEnd': '2023-02-27T23:00:00Z'
-    },
-    ...
-</code></pre>
-<hr>
-
 <h2 id="sparql">Sparql</h2>
 <p>At the ICOS Carbon Portal we store all data and metadata as linked data in a triple store. For 
 more information about this approach refer to 
@@ -1165,397 +946,6 @@ sparql query is not executable because of syntax errors, for example, a TUPLE is
 </ul>
 <hr>
 
-<h2 id="authentication">Authentication</h2>
-<p>To ensure users' <strong>licence</strong> acceptance, when <strong>accessing data objects</strong>
-through the icoscp python library, the <code>cpauth</code> module is introduced. Users
-MUST have 
-<a href="https://cpauth.icos-cp.eu/login/">ICOS Carbon Portal login credentials</a> to 
-access ICOS data. </p>
-<h3 id="overview">Overview</h3>
-<p>In order to fetch data, users make their requests to data objects and must
-provide an API token to do so. The <code>cpauth</code> module helps to retrieve the ICOS
-API token using a variety of ways. Authentication is required only for 
-off-server data access (users who are not using our ICOS Jupyter services).
-Users with direct access to the data files, namely, <strong>users of our 
-<a href="https://www.icos-cp.eu/data-services/tools/jupyter-notebook">ICOS Jupyter services</a>, are excluded
-from authentication</strong>. Metadata access remains unaffected from these changes.
-For security reasons the API token is valid for 100'000 seconds (27 hours) and
-must be refreshed regularly; thus the authentication process can be automated
-to simplify the user experience.</p>
-<p>To use the <code>cpauth</code> module, users need to provide one of the following
-validation options:</p>
-<ol>
-<li><strong>Username and password</strong> as input when instantiating the authentication
-   object. These are the same credentials used for validating oneself at the
-   ICOS Carbon Portal authentication service hosted on 
-   <a href="https://cpauth.icos-cp.eu/">https://cpauth.icos-cp.eu/</a>.</li>
-<li>An <strong>API Token</strong> as input when instantiating the authentication object. The
-   user specific API Token can be found at the bottom of the home page 
-   <a href="https://cpauth.icos-cp.eu/home/">here</a>. Password sign-in is required.</li>
-<li>A <strong>credentials file</strong> containing any of the above validation options.</li>
-</ol>
-<h3 id="quickstart">Quickstart</h3>
-<ul>
-<li>
-<h5 id="running-the-authentication-for-the-first-time">Running the authentication for the first time.</h5>
-<p>To initialize the authentication configuration a user can run:</p>
-<ul>
-<li>
-<pre><code>from icoscp.cpauth.authentication import Authentication
-Authentication()
-</code></pre>
-</li>
-</ul>
-<p>or</p>
-<ul>
-<li>
-<pre><code>from icoscp.cpauth.authentication import init_auth
-init_auth()
-</code></pre>
-</li>
-</ul>
-<p>Both of the above snippets will <strong>prompt the user for username and 
-password</strong> and will do the necessary preparations for the <code>cpauth</code> module.
-After running either of the above, the snippet is no longer needed and
-should be removed from the user's code.</p>
-<p>Under the hood <code>init_auth()</code> and <code>Authentication()</code> will:</p>
-<ol>
-<li>
-<p>Create a hidden credentials file in a system specific location. The
-   standard location of the credentials file directory varies depending
-   on the operating system.</p>
-<ul>
-<li>For Linux: <code>/home/[user]/icoscp/</code></li>
-<li>For Windows: <code>C:\\Users\\[user]\\icoscp\\</code></li>
-<li>For macOS: <code>/Users/[user]/icoscp/</code></li>
-</ul>
-</li>
-<li>
-<p>Store user's username, password (in an encoded base64 format), and API
-   token. The API token will be retrieved automatically given that 
-   username and password are valid.</p>
-</li>
-</ol>
-<p>Also, users can re-initialize the credentials file using either one of the
-calls below (with their respective import statements).</p>
-<ul>
-<li><code>init_auth()</code> will re-initialize the credentials file in a forceful 
-      way (no confirmation is needed.)</li>
-<li><code>Authentication(initialize=True)</code> will re-initialize the credentials
-     file in a diligent way.</li>
-</ul>
-</li>
-</ul>
-<h3 id="authentication-methods">Authentication methods</h3>
-<ul>
-<li>
-<p><strong>Note to users:</strong><br />
-By default, the <code>cpauth</code> module is set to store valid credentials to the ICOS
-carbon portal configuration file. Internally this is handled by performing a
-validation against https://cpauth.icos-cp.eu/password/login using the provided
-credentials and setting <code>write_configuration=True</code> during the instantiation of
-the authentication class.<br />
-<strong>Users can change this default behaviour to prioritize for security and 
-privacy, especially in cases where storing login information is not feasible
-or poses a risk. This can be achieved by explicitly setting 
-<code>write_configuration=False</code> in any of the authentication ways described below.
-In these cases, users must also provide the authentication itself as an
-argument to the <code>Dobj()</code> class instantiation.</strong><br />
-<br></p>
-</li>
-<li>
-<h5 id="default-authentication">Default authentication</h5>
-<ul>
-<li>
-<p><strong>Login information is saved</strong></p>
-<p>The most efficient and easy way to use the <code>cpauth</code> module in an 
-  automated manner is by adding these two lines of code to your 
-  script:</p>
-<pre><code>  from icoscp.cpauth.authentication import Authentication
-  Authentication()
-</code></pre>
-<p>If there is no authentication configuration, the above
-  code will initialize the configuration, by prompting for username
-  and password. If the credentials are valid the call to 
-  <code>Authentication()</code> will store those credentials and reuse them in
-  subsequent calls to data access. In this case, these two lines of
-  code can be removed from users' scripts. </p>
-</li>
-</ul>
-<hr>
-<ul>
-<li>
-<p><strong>Login information is not saved</strong></p>
-<p>If the <code>write_configuration</code> argument is set to <code>False</code> login 
-information will not be stored. In this case the authentication class
-must be passed on as an argument to the <code>Dobj()</code> class:</p>
-<pre><code>from icoscp.cpauth.authentication import Authentication            
-from icoscp.cpb.dobj import Dobj
-
-cp_auth = Authentication(write_configuration=False)
-dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj', cp_auth=cp_auth)
-# Check if data access was successful.
-print(dobj.data.head())
-</code></pre>
-<p>Subsequent calls to the code above will always require input of 
-username and password.<br />
-<br></p>
-</li>
-</ul>
-</li>
-<li>
-<h5 id="authentication-using-username-and-password">Authentication using username and password</h5>
-<p>Authentication is also possible by using username and password as string
-arguments to the <code>Authentication()</code> class. If only the username is provided,
-the module prompts the user for the password, and by default, does not store
-credentials.</p>
-<ul>
-<li>
-<p><strong>Login information is saved</strong></p>
-<p>By default, if the credentials are valid, they will be stored in the
-configuration file. Thus, for subsequent calls, re-authentication is
-performed automatically and the authentication part in the code below
-can be removed.</p>
-<pre><code>from icoscp.cpauth.authentication import Authentication            
-from icoscp.cpb.dobj import Dobj
-
-# Instantiate the Authentication class, using username and password.
-Authentication(username='rbon@portoca.lis', password='pa$$w0rd')
-digital_object = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj')
-# Fetch the specified data. 
-obtained_data = digital_object.data
-# Print a part of the specified data.
-print(obtained_data.head())
-</code></pre>
-</li>
-</ul>
-<hr>
-<ul>
-<li>
-<p><strong>Login information is not saved</strong></p>
-<pre><code>from icoscp.cpauth.authentication import Authentication            
-from icoscp.cpb.dobj import Dobj
-
-cp_auth = Authentication(
-    username='rbon@portoca.lis', 
-    password='pa$$w0rd',
-    write_configuration=False
-)
-dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj', cp_auth=cp_auth)
-# Check if data access was successful.
-print(dobj.data.head())
-</code></pre>
-<p>or</p>
-<pre><code>from icoscp.cpauth.authentication import Authentication            
-from icoscp.cpb.dobj import Dobj
-
-cp_auth = Authentication(
-    username='rbon@portoca.lis'
-)
-dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj', cp_auth=cp_auth)
-# Check if data access was successful.
-print(dobj.data.head())
-</code></pre>
-<p>If only the username is provided, the module prompts for 
-the password. Subsequent calls to the code above will always
-require input of password.<br />
-<br></p>
-</li>
-</ul>
-</li>
-<li>
-<h5 id="authenticate-using-an-api-token">Authenticate using an API token</h5>
-<p>Authentication is also possible using an API token as a string argument to the
-<code>Authentication()</code> class. The user specific API Token can be found at the
-bottom of the home page <a href="https://cpauth.icos-cp.eu/home/">here</a>. Password
-sign-in is required.</p>
-<ul>
-<li>
-<p><strong>Login information is saved</strong></p>
-<p>If the token is valid, by default, it will be stored in the 
-configuration file. Thus, for subsequent calls, re-authentication is
-performed automatically and the authentication part in the code below
-can be removed.</p>
-<pre><code>from icoscp.cpauth.authentication import Authentication
-from icoscp.cpb.dobj import Dobj
-
-token = 'cpauthToken=Wzb+ananas/in+pajamasRA='
-Authentication(token=token)
-dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj')
-# Check if data access was successful.
-print(dobj.data.head())
-</code></pre>
-<p><strong>Remember, the token lasts for 100'000 seconds.</strong> After the validity
-of the token has expired (27 hours), users need to provide a refreshed 
-token. </p>
-</li>
-</ul>
-<hr>
-<ul>
-<li>
-<p><strong>Login information is not saved</strong></p>
-<pre><code>from icoscp.cpauth.authentication import Authentication
-from icoscp.cpb.dobj import Dobj
-
-token = 'cpauthToken=Wfluffy-bunny-slippersA='
-cp_auth = Authentication(token=token, write_configuration=False)
-dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj', cp_auth=cp_auth)
-# Check if data access was successful.
-print(dobj.data.head())
-</code></pre>
-<p><strong>Remember, the token lasts for 100'000 seconds.</strong> After the validity
-of the token has expired, users need to provide a refreshed token.<br />
-<br></p>
-</li>
-</ul>
-</li>
-<li>
-<h5 id="authenticate-using-a-configuration-file-on-a-custom-path">Authenticate using a configuration file on a custom path</h5>
-<p>Authentication is also possible using a configuration file on a custom path.
-Users can create their own file and use the path to the file as an argument
-to the instantiation of the <code>Authentication()</code> class.</p>
-<p>For the purpose of this example, let us assume that the credentials file
-is located at a path specified by the user, such as: 
-<code>'/home/sam/my-folder/icos_carbon_portal.json'</code>. <br />
-Here is the code:</p>
-<pre><code>from icoscp.cpauth.authentication import Authentication
-from icoscp.cpb.dobj import Dobj
-
-conf_file_path = '/home/sam/my-folder/icos_carbon_portal.json'
-cp_auth = Authentication(configuration_file=conf_file_path)
-dobj = Dobj('11676/pDBSKn2D8ic5ttUCpxyaf2pj', cp_auth=cp_auth)
-# Check if data access was successful.
-print(dobj.data.head())
-</code></pre>
-<p>Below you can find an example of the necessary components and format for a
-credentials file that can be used with the code above to complete the 
-authentication process. </p>
-<ul>
-<li>
-<p>Case of username and password</p>
-<pre><code>{
-  "username": "rbon@portoca.lis",
-  "password": "pa$$w0rd"
-}
-</code></pre>
-<p>In this case username and password will be used to try and fetch a
-valid token. At the end of the authentication process, if the 
-credentials are correct, the password will be converted in base64
-format and an API token will be generated and stored in a "token"
-field in the file. For subsequent calls the token is used first to
-authenticate a user.</p>
-</li>
-<li>
-<p>Case of username, password, and API token</p>
-<pre><code>{
-  "username": "rbon@portoca.lis",
-  "password": "pa$$w0rd",
-  "token": "cpauthToken=WzE2Nzc1MTIt+works/on!my0machine!U4NzSpc2k="
-}
-</code></pre>
-<p>In this case the token will be checked first for its validity. If it
-is a valid token, it will be used to fetch the requested data. If the
-token is invalid or has expired, the provided username and password
-will be utilized to retrieve a valid token. For subsequent calls the
-token is used first to authenticate a user.</p>
-</li>
-<li>
-<p>Case of API token only</p>
-<pre><code>{
-  "token": "cpauthToken=WzNzcIkode+there4I/m!caffeinatedU4NzSpck="
-}
-</code></pre>
-<p>In the case that only an API token exists in the credentials file, 
-users need to make sure that it is a valid one. <strong>Remember, the token
-lasts for 100'000 seconds.</strong> After the validity of the token has
-expired, users need to provide a refreshed token. The user specific 
-API Token can be found at the bottom of the home page 
-<a href="https://cpauth.icos-cp.eu/home/">here</a>. Password sign-in is required.</p>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="authentication-parameters">Authentication parameters</h3>
-<p>The authentication class is a tool that provides access to data objects at the
-ICOS Carbon Portal, by providing a valid username and password, or by using an
-API token, which can be supplied in a number of different ways.</p>
-<pre><code class="language-python">class cpauth.Authentication
-(
-    username: str = None, 
-    password: str = None,
-    token: str = None, 
-    read_configuration: bool = True,
-    write_configuration: bool = True, 
-    configuration_file: str = None,
-    initialize: bool = False
-)
-</code></pre>
-<ul>
-<li><strong>username: str, optional, default=None</strong> -&gt; The username required for
-authentication.</li>
-<li><strong>password: str, optional, default=None</strong> -&gt; The password required for
-authentication.</li>
-<li><strong>token: str, optional, default=None</strong> -&gt; The authentication token allows
-data access without the need for a username and password. The token can be
-manually retrieved from https://cpauth.icos-cp.eu after signing in with a
-password. Please note that the token has a limited lifespan (100'000 seconds)
-and must be refreshed periodically to maintain data access.</li>
-<li><strong>read_configuration: bool, optional, default=True</strong> -&gt; This attribute
-controls whether the configuration is read from a file. The default setting is
-to read from a system-specific location.</li>
-<li><strong>write_configuration: bool, optional, default=True</strong> -&gt; This attribute
-controls whether valid configuration will be stored to a system-specific
-location.</li>
-<li><strong>configuration_file: str, optional, default=None</strong> -&gt; This attribute
-specifies the path to the configuration file. By default, the configuration
-file is located in a directory called icoscp in the user's home directory.
-<br></li>
-</ul>
-<h3 id="convenience-functions_2">Convenience functions</h3>
-<p>The following functions provide information and improve the user experience
-with the cpauth module.</p>
-<ul>
-<li>
-<h5 id="authenticationinit">authentication.init()</h5>
-<pre><code>from icoscp.cpauth.authentication import init_auth
-init_auth()
-</code></pre>
-<p>This function is designed to run the authentication for the first time or
-to complete the authentication process easily in a terminal-like
-environment. The function prompts for username and password (password
-masking is utilized) and instantiates the <code>Authentication()</code> class given
-these credentials.<br />
-<br></p>
-</li>
-<li>
-<h5 id="printauthentication">print(Authentication())</h5>
-<p>Users can utilize the standard python <code>print()</code> function with the
-<code>Authentication()</code> class as an argument, to get some extra information
-regarding their log-in information and their configuration.</p>
-<pre><code>from icoscp.cpauth.authentication import Authentication
-print(Authentication())
-</code></pre>
-<p>Here is an example output of the snippet above:</p>
-<pre><code>Username: rbon@portoca.lis
-Token will expire in: 1 day, 2:39:44.773148
-Login source: Password
-Path to configuration file: '/home/[user]/icoscp/'
-</code></pre>
-<p>If the <code>Authentication()</code> class was instantiated using the default 
-<code>configuration_file</code> parameter, the standard location of the credentials
-file directory varies depending on the operating system.</p>
-<ul>
-<li>For Linux: <code>/home/[user]/icoscp/</code> </li>
-<li>For Windows: <code>C:\\Users\\[user]\\icoscp\\</code> </li>
-<li>For macOS: <code>/Users/[user]/icoscp/</code>  </li>
-</ul>
-</li>
-</ul>
-<h3 id="suppressing-warning-messages">Suppressing warning messages</h3>
-<p>To suppress <code>future warnings</code> or <code>user warnings</code> messages, please, refer to 
-<a href="../faq/#how-do-i-suppress-warnings">this</a> section of the documentation.</p>
-<hr>
-
 <h2 id="countries">Countries</h2>
 <p>Search for country information based on a static local file within the 
 library (<code>countries.json</code>). Search is facilitated through Alphanumeric
@@ -1600,8 +990,8 @@ search : STR
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../install/" class="btn btn-neutral float-left" title="Installation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../examples/" class="btn btn-neutral float-right" title="Examples">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../changelog/" class="btn btn-neutral float-left" title="Changelog"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../legacy_examples/" class="btn btn-neutral float-right" title="Legacy examples">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -1624,10 +1014,10 @@ search : STR
   <span class="rst-current-version" data-toggle="rst-current-version">
     
     
-      <span><a href="../install/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../changelog/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../examples/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../legacy_examples/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

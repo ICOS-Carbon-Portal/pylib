@@ -3,9 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://icos-carbon-portal.github.io/pylib/icoscp/install/" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Installation - ICOS Carbon Portal pylib</title>
+    <title>Installation - ICOS Carbon Portal icoscp Library</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
@@ -14,7 +14,7 @@
         // Current page data
         var mkdocs_page_name = "Installation";
         var mkdocs_page_input_path = "install.md";
-        var mkdocs_page_url = null;
+        var mkdocs_page_url = "/pylib/icoscp/install/";
       </script>
     
     <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
-          <a href=".." class="icon icon-home"> ICOS Carbon Portal pylib
+          <a href=".." class="icon icon-home"> ICOS Carbon Portal icoscp Library
         </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
       <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
@@ -48,6 +48,12 @@
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#pip-official-release">Pip official release</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#upgrade-guide">Upgrade guide</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-related-code-update">STILT-related code update</a>
+    </li>
+        </ul>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#manual-installation">Manual installation</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#cutting-edge">Cutting Edge</a>
@@ -60,11 +66,7 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../modules/">Modules</a>
-                </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../examples/">Examples</a>
+                <li class="toctree-l1"><a class="reference internal" href="../getting_started/">Getting started</a>
                 </li>
               </ul>
               <ul>
@@ -75,6 +77,14 @@
                 <li class="toctree-l1"><a class="reference internal" href="../changelog/">Changelog</a>
                 </li>
               </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../modules/">Legacy modules</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../legacy_examples/">Legacy examples</a>
+                </li>
+              </ul>
       </div>
     </div>
     </nav>
@@ -82,7 +92,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
       <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="..">ICOS Carbon Portal pylib</a>
+          <a href="..">ICOS Carbon Portal icoscp Library</a>
         
       </nav>
       <div class="wy-nav-content">
@@ -99,44 +109,100 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="installation">Installation</h1>
-<p>This library is in active development and may change at any time. We do our best to keep the function calls and parameters consistent, but without a guarantee. You can follow the development on <a href="https://github.com/ICOS-Carbon-Portal/pylib">Github</a>. Create an issue to leave comments, suggestions or if you find something not working as expected. The library has not been tested on many different operating systems and environments, hence we appreciate you telling us what is good and bad. </p>
-<p>The library is developed with  Python 3.x and we assume that any recent Python distribution should work. If you have any trouble running the library, we are very keen to know why. Please get in touch ( jupyter-info@icos-cp.eu )</p>
+<p>The library requires Python version 3.10 or later.</p>
 <h2 id="pip-official-release">Pip official release</h2>
 <p>The recommended way of installation is by using pip:</p>
 <pre><code>pip install icoscp
 </code></pre>
-<p>The installation should take care of any dependencies, but to successfully access any data object from the ICOS Carbon Portal you need to have a working internet connection.</p>
-<p>We would encourage you to use a virtual environment for python to test this library. For example with mini-conda <a href="https://docs.conda.io/en/latest/miniconda.html">https://docs.conda.io/en/latest/miniconda.html</a> you can create a new environment with:</p>
+<p>The installation should take care of any dependencies, but to
+successfully access any data object from the ICOS Carbon Portal you need
+to have a working internet connection.  </p>
+<p>We would encourage you to use a virtual environment for python to test
+this library. For example with mini-conda
+<a href="https://docs.conda.io/en/latest/miniconda.html">https://docs.conda.io/en/latest/miniconda.html</a> you can create a new
+environment with:</p>
 <ul>
 <li><code>conda create -n icos python</code></li>
 <li><code>activate icos</code></li>
 <li><code>pip install icoscp</code></li>
 </ul>
-<h2 id="manual-installation">Manual installation</h2>
-<p>If you would like to install the latest version (branch from Github), you can download / fork the repo navigate to the library folder and start the installation with:</p>
+<h2 id="upgrade-guide">Upgrade guide</h2>
+<p>This concerns users of <strong>icoscp</strong> of versions prior to <code>0.2.0</code>.</p>
+<p>For standalone library users (i.e. outside of a Carbon Portal Jupyter
+environment), the package installation (or rather upgrade) procedure must be
+followed by the <a href="../getting_started/#authentication">authentication setup</a>
+(unless you have used <strong>icoscp_core</strong> previously, and configured
+authentication with it using the default method).</p>
+<p>After that all the working code that depended on older versions should work
+(with the exception of STILT-related code, <a href="#stilt-related-code-update">see below</a>),
+and no code changes are necessary, but it is highly recommended to replace the
+following import</p>
+<pre><code class="language-python">from icoscp.cpb.dobj import Dobj
+</code></pre>
+<p>with</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+</code></pre>
+<p>(i.e. drop <code>.cpb</code> from this import's path) everywhere in your scripts and
+notebooks. The new <code>Dobj</code> class has a legacy status (see the
+<a href="../#the-history-and-the-new-role-of-the-library">library history</a>), like
+the old one, but contains an improved implementation of the same API.  </p>
+<div style="margin-bottom: 1em">
+The advantages are:
+</div>
+
 <ul>
-<li><code>pip install .</code>
-<br>or<br></li>
-<li><code>python setup.py install</code></li>
+<li>support for metadata access of all data objects (not only the ones whose
+  <em>data</em> is accessible with the library)</li>
+<li>better performance when fetching the data</li>
+<li>new <code>metadata</code> property that contains <code>DataObject</code> dataclass from
+  <code>icoscp_core.metaclient</code> module, which is a type-annotated nested structure
+  that was (mostly) automatically produced to faithfully reflect the JSON
+  metadata available for the data object from the metadata server.</li>
 </ul>
+<p>An effort was made to ensure identical functionality of the new <code>Dobj</code> class
+when compared with the old one, but there are some differences described
+<a href="../modules/#original-legacy-dobj">elsewhere in the documentation</a>.</p>
+<h3 id="stilt-related-code-update">STILT-related code update</h3>
+<p>Starting from version <code>0.2.0</code>, <code>stilt</code> module has been moved out into a
+dedicated library <code>icoscp_stilt</code>. STILT functionality has normally been
+only used on Carbon Portal Jupyter, and the new library is going to be
+provisioned there. The legacy STILT functionality is preserved in the
+new library with only minor changes. However, the import statements
+containing <code>icoscp.stilt</code> need to be changed by replacing <code>icoscp.stilt</code>
+with <code>icoscp_stilt</code> (dot replaced with underscore). After this change
+all the working legacy STILT notebooks should work. However, the
+developers are encouraged to consult <a href="https://icos-carbon-portal.github.io/pylib/icoscp_stilt/"><code>icoscp_stilt</code> library
+documentation</a>
+to discover new functionality that has been added to it.</p>
+<hr />
+<h2 id="manual-installation">Manual installation</h2>
+<p>If you would like to install the latest version (branch from GitHub),
+you can download / fork the repo navigate to the library folder and
+start the installation with:</p>
+<pre><code class="language-shell">pip install .
+</code></pre>
 <h3 id="cutting-edge">Cutting Edge</h3>
-<p>Install directly from our github master branch. Please be aware that this is not reflecting the official release of the library, but includes the latest development. Hence you should think of this as an alpha or beta version of the new release:<br>
-<code>pip install git+https://github.com/ICOS-Carbon-Portal/pylib.git</code></p>
+<p>Install directly from our GitHub master branch. Please be aware that
+this is not reflecting the official release of the library, but includes
+the latest development. Hence, you should think of this as an alpha or
+beta version of the new release:</p>
+<pre><code class="language-shell">pip install git+https://github.com/ICOS-Carbon-Portal/pylib.git
+</code></pre>
 <h2 id="dependencies">Dependencies</h2>
 <p>The following modules are required by the library:</p>
-<pre><code>- fiona
-- folium
-- geopandas
-- pandas
-- requests
-- tqdm
-</code></pre>
+<ul>
+<li>folium</li>
+<li>icoscp_core</li>
+<li>pandas</li>
+<li>requests</li>
+<li>tqdm</li>
+</ul>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href=".." class="btn btn-neutral float-left" title="About"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../modules/" class="btn btn-neutral float-right" title="Modules">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../getting_started/" class="btn btn-neutral float-right" title="Getting started">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -162,7 +228,7 @@
       <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../modules/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../getting_started/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

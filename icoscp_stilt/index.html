@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" /><link rel="canonical" href="https://icos-carbon-portal.github.io/pylib/icoscp_stilt/" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>ICOS Carbon Portal icoscp_stilt Library</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "About";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = "/pylib/icoscp_stilt/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> ICOS Carbon Portal icoscp_stilt Library
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href=".">About</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#background-and-history">Background and history</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#upgrade-notes">Upgrade notes</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting started</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#getting-help">Getting help</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="modules/">Legacy modules</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">ICOS Carbon Portal icoscp_stilt Library</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">About</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="icos-carbon-portal-library-icoscp_stilt">ICOS Carbon Portal library icoscp_stilt</h1>
+<p>ICOS Carbon Portal offers online services to <a href="https://stilt.icos-cp.eu/worker/">calculate your own STILT
+footprints</a> and <a href="https://stilt.icos-cp.eu/viewer/">visualize the results</a>. Find out more on our website
+<a href="https://www.icos-cp.eu/data-services/tools/stilt-footprint">https://www.icos-cp.eu/data-services/tools/stilt-footprint</a>.</p>
+<p>This library offers access to information about the STILT "stations",
+calculated footprints and time series results. Please note that the
+calculated <strong>footprints</strong> are only accessible if the code is executed on
+<a href="https://icos-carbon-portal.github.io/jupyter/">Carbon Portal's Jupyter notebooks</a>.</p>
+<h2 id="background-and-history">Background and history</h2>
+<p>This library contains functionality split out of library <code>icoscp</code> prior to
+<code>0.2.0</code> release, in order to relieve the latter of the specialized STILT code
+and its dependencies.</p>
+<p>In addition, the library contains a new module <code>icoscp_stilt.stilt</code> with new
+functionality designed to closer match the server APIs and to be performant.</p>
+<h2 id="upgrade-notes">Upgrade notes</h2>
+<p>Releases of <code>icoscp</code> version <code>0.2.0</code> and <code>icoscp_stilt</code> version <code>0.1.0</code>
+constitute a substantial change. For STILT functionality, the change implies
+a necessity to update the existing code by replacing the import</p>
+<pre><code class="language-Python">from icoscp.stilt import stiltstation
+</code></pre>
+<p>with</p>
+<pre><code class="language-Python">from icoscp_stilt import stiltstation
+</code></pre>
+<h2 id="getting-started">Getting started</h2>
+<p>The library is published to PyPI.</p>
+<p>As stated above, the <a href="modules/#legacy-modules">legacy functionality</a> is
+still available, but for new code the developers are encouraged to consider
+the new module <code>icoscp_stilt.stilt</code> as the first choice.</p>
+<p>The following code demonstrates the new functionality.</p>
+<pre><code class="language-Python">from icoscp_stilt import stilt
+from icoscp_stilt.const import CP_OBSPACK_CO2_SPEC
+
+# list of stilt.StiltStation dataclass instances
+stations = stilt.list_stations()
+
+station_info_lookup = {s.id: s for s in stations}
+
+# example: Hyltemossa station, altitude 150 m
+htm_info = station_info_lookup['HTM150']
+&gt;&gt;&gt; htm_info
+StiltStation(
+    id='HTM150', name='Hyltemossa', lat=56.1, lon=13.42, alt=150,
+    countryCode='SE',
+    years=[2006, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022],
+    icosId='HTM', icosHeight=150.0
+)
+
+
+# years for which the station has calculation results
+htm_years = htm_info.years
+
+# grouped STILT time series results, all columns, as pandas DataFrame
+# can be slow when fetching first time after calculation
+htm_time_series_result = stilt.fetch_result_ts('HTM150', '2022-01-01', '2022-01-31')
+
+# list of time-series columns (~60)
+ts_columns = htm_time_series_result.columns
+
+# fetch selected columns only
+htm_ts_ch4_basics = stilt.fetch_result_ts('HTM150', '2022-01-01', '2022-01-31', columns=['isodate', 'ch4.stilt', 'metadata'])
+
+# raw STILT time series results, all columns, as pandas DataFrame
+# always slow, as these results are not cached
+htm_time_series_raw = stilt.fetch_result_ts('HTM150', '2022-01-01', '2022-01-31', raw=True)
+
+# list of raw time-series columns (~800)
+ts_columns_raw = htm_time_series_raw.columns
+
+# find months for which calculation was run
+&gt;&gt;&gt; stilt.available_months('KRE250', 2022)
+['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+
+# find all months for all years for which calculation was run
+htm_yearmonths = stilt.available_year_months(htm_info)
+
+# list footprint time slots that were computed for a station within date interval
+htm_slots_jan2022 = stilt.list_footprints('HTM150', '2022-01-01', '2022-01-31')
+
+# load footprint for one time slot
+htm_fp_example = stilt.load_footprint('HTM150', htm_slots_jan2022[0])
+
+# filter stations
+de_stations = [s for s in stations if s.countryCode == 'DE']
+
+# fetch observations for the German stations as numpy array dicts
+# interesting columns are requested explicitly (all returned otherwise)
+# using bare numpy gives maximum performance
+de_co2_numpy = stilt.fetch_observations(CP_OBSPACK_CO2_SPEC, de_stations, ['value', 'time'])
+
+# same as previous example, but returning pandas DataFrames instead
+# performance may be worse, especially on Jupyter
+de_co2_pandas = stilt.fetch_observations_pandas(CP_OBSPACK_CO2_SPEC, de_stations, ['value', 'time'])
+</code></pre>
+<h2 id="getting-help">Getting help</h2>
+<p>All the methods in the new <code>stilt</code> module have a Python documentation
+accessible by standard means, for example:</p>
+<pre><code>help(stilt.fetch_observations)
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="modules/" class="btn btn-neutral float-right" title="Legacy modules">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+      <span><a href="modules/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.5.3
+Build Date UTC : 2024-06-10 12:05:08.349177+00:00
+-->

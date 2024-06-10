@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://icos-carbon-portal.github.io/pylib/icoscp_stilt/modules/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Legacy modules - ICOS Carbon Portal icoscp_stilt Library</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Legacy modules";
+        var mkdocs_page_input_path = "modules.md";
+        var mkdocs_page_url = "/pylib/icoscp_stilt/modules/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ICOS Carbon Portal icoscp_stilt Library
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">About</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Legacy modules</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#stiltstation">stiltstation</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#findkwargs">.find(**kwargs)</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#idstr-strstr">id='STR' | ['STR','STR',...]</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#searchstr">search='STR'</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#stationsdict">stations=DICT</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#spatial-keywords">Spatial keywords</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#countrystr-strstr">country='STR' | ['STR','STR',...]</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#projecticos">project='icos'</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#bboxlat-lon-lat-lon">bbox=[(lat, lon), (lat, lon)]</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pinpointlat-lon-distance-in-km">pinpoint=[lat, lon, distance in KM]</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#temporal-keywords">Temporal keywords</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#sdatestart-date">sdate='start date'</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#edateend-date">edate='end date'</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dates">dates=[]</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#progress-bool">progress = BOOL</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#outfmt-str">outfmt = 'STR'</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#getid-progressfalse">.get(id="", progress=False)</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#id-str-liststr">id = STR | LIST[STR]</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#id-dict-listdict">id = DICT | LIST[DICT]</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#progress-bool_1">progress = BOOL</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#stiltobj">stiltobj</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-object">STILT Object</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#attributes">Attributes</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#id">.id</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#locident">.locIdent</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#alt">.alt</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#lat">.lat</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#lon">.lon</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#name">.name</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#icos">.icos</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#years">.years</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#info">.info</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#geoinfo">.geoinfo</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#get_tsstart_date-end_date-hoursnone-columns">.get_ts(start_date, end_date, hours=None, columns=" ")</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#get_fpstart_date-end_date-hoursnone">.get_fp(start_date, end_date, hours=None)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#get_dobj_list">.get_dobj_list()</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ICOS Carbon Portal icoscp_stilt Library</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Legacy modules</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="legacy-modules">Legacy modules</h1>
+<p>These modules contain code that may be gradually deprecated in favour of new
+code in <code>icoscp_stilt.stilt</code>. The following documentation and the code it
+describes have been with minimal changes moved from <code>icoscp</code> library prior
+to version <code>0.2.0</code></p>
+<h2 id="stiltstation">stiltstation</h2>
+<p>Load the module with:</p>
+<pre><code class="language-Python">from icoscp_stilt import stiltstation
+</code></pre>
+<p>Two functions are available: one to find STILT stations and one to extract the
+STILT station as an object, which gives access to the data (time series and
+footprints).</p>
+<h3 id="findkwargs">.find(**kwargs)</h3>
+<p>This is the main function to find STILT stations. By default, it returns a
+dictionary where each station id is the key to access metadata about the
+station. The order how you provide keywords is respected, and you can influence
+the result. Keyword arguments are applied sequentially (the result from the
+first keyword is provided as input to the second and so on). With no keyword 
+provided <code>stiltstation.find()</code> returns a dictionary with ALL STILT stations.</p>
+<p>The following keywords are available:</p>
+<h4 id="idstr-strstr">id='STR' | ['STR','STR',...]</h4>
+<p>Provide a single id as string, or a list of strings.<br />
+You can provide either STILT or ICOS 
+ids mixed together.</p>
+<pre><code class="language-Python">stiltstation.find(id=['NOR', 'GAT344'])
+stiltstation.find(id='KIT030')
+</code></pre>
+<h4 id="searchstr">search='STR'</h4>
+<p>Arbitrary string search will find any occurrence of STR in the station
+metadata.</p>
+<pre><code class="language-Python">stiltstation.find(search='south')
+</code></pre>
+<h4 id="stationsdict">stations=DICT</h4>
+<p>All actions are performed on this dictionary, rather than dynamically search
+for all stilt station on our server. Can be useful for creating a subset of
+stations from an existing search.</p>
+<pre><code class="language-Python">myStations = stiltstation.find(search='north')
+refined = stiltstation.find(stations=myStations, country='Finland')
+</code></pre>
+<h4 id="spatial-keywords">Spatial keywords</h4>
+<h4 id="countrystr-strstr">country='STR' | ['STR','STR',...]</h4>
+<p>Provide a single country id as string, or a list of strings. You can provide
+alpha-2, alpha-3 code (ISO 3166) or the full country name (some translations
+are available as well). To find all STILT stations with geolocation in Norway
+you can search for either NO, NOR, Norway, Norge.</p>
+<pre><code class="language-Python">stiltstation.find(country=['Swe', 'norge', 'IT'])
+</code></pre>
+<h4 id="projecticos">project='icos'</h4>
+<p>This option will retrieve all STILT stations that are ICOS stations.</p>
+<h4 id="bboxlat-lon-lat-lon">bbox=[(lat, lon), (lat, lon)]</h4>
+<p>Bounding Box. Provide two tuples (wgs84), where the box is defined as
+TopLeftCorner (NorthWest) and BottomRightCorner (SouthEast). The following
+example returns approximately all stations in Scandinavia.</p>
+<pre><code class="language-Python">stiltstation.find(bbox=[(70,5),(55,32)])
+</code></pre>
+<h4 id="pinpointlat-lon-distance-in-km">pinpoint=[lat, lon, distance in KM]</h4>
+<p>Provide a single point (lat, lon) and the Distance in KM, which creates a
+bounding box. Distance is very roughly translated with 1 degree = 1 km. The
+bounding box is calculated as distance in all directions. For example
+<code>distance=200</code> will create a bounding box of 400 x 400 km with pinpoint in the
+centre. If you don't provide a distance, a default value of 200 is used.</p>
+<pre><code class="language-Python">stiltstation.find(pinpoint=[55.7,13.1,500])     # bounding box ~ 1000km x 1000km
+stiltstation.find(pinpoint=[55.7,13.1])         # bounding box ~ 400km x 400km
+</code></pre>
+<h4 id="temporal-keywords">Temporal keywords</h4>
+<p>Be aware, that the granularity for all temporal keywords is year and month,
+days are not considered in the search. Input format for the dates entry MUST be
+convertible to data time object through pandas.to_datetime().  </p>
+<p>Accepted formats are:</p>
+<ul>
+<li>datetime.date objs</li>
+<li>FLOAT or INT representing a unix timestamp (seconds since 1970-01-01)</li>
+<li>pandas.datetime</li>
+<li>STR: "YYYY-MM-DD" , "YYYY", "YYYY/MM/DD"</li>
+</ul>
+<h4 id="sdatestart-date">sdate='start date'</h4>
+<p>Stations are returned where results are available for &gt;= start date. 'sdate' is
+a single entry. If you provide sdate AND edate, any station with available data
+within that date range is returned. (accepted formats see above)</p>
+<pre><code class="language-Python">stiltstation.find(sdate= '2018-05-01')
+</code></pre>
+<h4 id="edateend-date">edate='end date'</h4>
+<p>Stations are returned where results are available for &lt;= end date. 'edate' is a
+single entry. If you provide sdate AND edate, any station with available data
+within that date range is returned. (accepted formats see above)</p>
+<pre><code class="language-Python">stiltstation.find(edate='2018-06-01')
+</code></pre>
+<h4 id="dates">dates=[]</h4>
+<p>This will return a list of stations where data is available for any of the
+provided dates. Input format, see <a href="./#sdatestart-date">sdate</a>,
+<a href="./#edateend-date">edate</a>. Remember, that only year and month is
+checked.</p>
+<pre><code class="language-Python">stiltstation.find(dates=['2020-01-01', '2020/05/23'])
+</code></pre>
+<h4 id="progress-bool">progress = BOOL</h4>
+<p>By default, a progress bar is displayed while searching all possible STILT
+stations. With this keyword you can show/hide the progress bar.</p>
+<pre><code class="language-Python">stiltstation.find(progress=True)   # DEFAULT, progress bar is displayed
+stiltstation.find(progress=False)  # No progress bar
+</code></pre>
+<h4 id="outfmt-str">outfmt = 'STR'</h4>
+<p>Where string is <code>dict</code> | <code>pandas</code> | <code>list</code> | <code>map</code> | <code>avail</code>. This keyword is
+ALWAYS executed last, regardless of the position within keyword arguments. By
+default, a <code>dictionary</code> is returned. With <code>pandas</code> a pandas DataFrame is
+returned where the station id is indexed, each row contains one station with
+the same metadata as is available in the dictionary
+<a href="https://pandas.pydata.org/docs/">https://pandas.pydata.org/docs/</a>. List
+however returns a list of STILT station objects. Please see the documentation
+about <a href="./#getid-progressfalse">stiltstation.get()</a>. The choice
+<code>map</code>, returns a folium map <a href="https://python-visualization.github.io/folium/">https://python-visualization.github.io/folium/</a>. The map can be displayed
+directly in a Jupyter Notebook, or you can save the map to a html file.</p>
+<pre><code class="language-Python">stiltstation.find(country='Italy', outfmt='pandas') 
+stiltstation.find(country='Italy', outfmt='pandas').save('my_map.html')
+</code></pre>
+<p>Finally, the choice <code>avail</code> will return a pandas DataFrame where availability
+of timeseries data per STILT station is gathered for each year.</p>
+<h3 id="getid-progressfalse">.get(id="", progress=False)</h3>
+<p>Returns a stilt station object or a list of stilt station objects. A stilt
+station object, gives access to the underlying data (timeseries and
+footprints). You may provide a STR or LIST[STR] of STILT id's or the 'result'
+of a .find() query. The properties of the returned stilt object is listed
+further below.</p>
+<h4 id="id-str-liststr">id = STR | LIST[STR]</h4>
+<p>Provide a string or list of strings representing a STILT station id.</p>
+<h4 id="id-dict-listdict">id = DICT | LIST[DICT]</h4>
+<p>Provide a single dictionary, or a list of dictionaries. The dictionaries should
+be the result of a <a href="./#findkwargs">stiltstation.find()</a> execution.</p>
+<h4 id="progress-bool_1">progress = BOOL</h4>
+<p>By default, no progress bar is displayed while assembling the stiltstation
+object. With this keyword you can show/hide the progress bar. This parameter is
+only effective while providing ids.</p>
+<pre><code class="language-Python"># Return stilt stations based on stiltstation.find(id='STR')
+stiltstation.get('HTM')         
+stiltstation.get(['KIT','HTM150'], progress = True)
+
+# Return stilt stations based on dictionary or list of dict with a
+# progressbar.
+a = stiltstation.find(search='north')
+stiltstation.get(a)
+# OR
+stiltstation.get(stiltstation.find(search='south'))
+</code></pre>
+<h2 id="stiltobj">stiltobj</h2>
+<p>Internal-implementation module</p>
+<h3 id="stilt-object">STILT Object</h3>
+<p>Class-method <strong>StiltStation(dict)</strong><br />
+Please do not use this class directly. You should load
+<code>from icoscp_stilt import stiltstation</code> and then use the function
+<code>obj = stiltstation.get('HTM150)</code> which will return a stilt station 
+object. Once you have the object, the following attributes and methods are
+available:</p>
+<h3 id="attributes">Attributes</h3>
+<h4 id="id">.id</h4>
+<p>Return STILT station ID (e.g. 'HTM150') as string.</p>
+<h4 id="locident">.locIdent</h4>
+<p>String with latitude-longitude-altitude of STILT station (e.g.
+'35.34Nx025.67Ex00150')</p>
+<h4 id="alt">.alt</h4>
+<p>Station altitude (in meters above ground level)</p>
+<h4 id="lat">.lat</h4>
+<p>Station latitude</p>
+<h4 id="lon">.lon</h4>
+<p>Station longitude</p>
+<h4 id="name">.name</h4>
+<p>STILT station long name</p>
+<h4 id="icos">.icos</h4>
+<p>None | Dict. If the station is an ICOS station, a dictionary with ICOS metadata
+is available.</p>
+<h4 id="years">.years</h4>
+<p>List of years for which STILT results are available. Be aware that even if only
+one day is calculated for a year, <code>year</code> will be listed.</p>
+<h4 id="info">.info</h4>
+<p>Returns a dictionary with all metadata.</p>
+<h4 id="geoinfo">.geoinfo</h4>
+<p>Dictionary with geographical (country) information, if the station is within a
+country border.</p>
+<h3 id="methods">Methods</h3>
+<h4 id="get_tsstart_date-end_date-hoursnone-columns">.get_ts(start_date, end_date, hours=None, columns=" ")</h4>
+<p>STILT concentration time series for a given time period, with optional
+selection of specific hours and columns. Returns time series as a
+<code>pandas.DataFrame</code>.</p>
+<ul>
+<li>start_date : STR, FLOAT/INT (Unix timestamp), datetime object<ul>
+<li>start_date = '2018-01-01'</li>
+</ul>
+</li>
+<li>end_date : STR, FLOAT/INT (Unix timestamp), datetime object<ul>
+<li>end_date = '2018-01-31'</li>
+</ul>
+</li>
+<li>
+<p>hours : STR | INT, optional. If hours is empty or None, ALL Timeslots are
+  returned. For backwards compatibility, input of str format hh:mm is accepted</p>
+<ul>
+<li>hours = [0,3,6,9,12,15,18,21]<pre><code>Valid results are returned with LOWER BOUND values.
+Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
+            hours = [2,3,4,5,6] will return Timeslots for 0,3 and 6
+            hours = [] return ALL
+            hours = ["10", "10:00", 10] returns timeslot 9
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>columns : STR, optional</p>
+<ul>
+<li>Valid entries are <code>"default", "co2", "co", "rn", "wind", "latlon", "all"</code><pre><code>default:
+    isodate, co2.stilt, co2.bio, co2.fuel, co2.cement, co2.background
+
+co2
+    isodate, co2.stilt, co2.bio, co2.fuel, co2.cement,
+    co2.bio.gee, co2.bio.resp, co2.fuel.coal, co2.fuel.oil, co2.fuel.gas,
+    co2.fuel.bio, co2.fuel.waste, co2.energy, co2.transport, co2.industry,
+    co2.residential, co2.other_categories, co2.background
+
+co
+    isodate, co.stilt, co.fuel, co.cement, 
+    co.fuel.coal, co.fuel.oil, co.fuel.gas, 
+    co.fuel.bio, co.fuel.waste, co.energy
+    co.transport, co.industry, co.residential, 
+    co.other_categories, co.background
+
+rn
+    isodate, rn, rn.era, rn.noah
+
+wind
+    isodate, wind.dir, wind.u, wind.v
+
+latlon
+    isodate, latstart, lonstart
+
+all
+    isodate, co2.stilt, co2.bio, co2.fuel, co2.cement, 
+    co2.bio.gee, co2.bio.resp, 
+    co2.fuel.coal, co2.fuel.oil, co2.fuel.gas, 
+    co2.fuel.bio, co2.fuel.waste, 
+    co2.energy, co2.transport, co2.industry,
+    co2.residential, co2.other_categories,
+    co2.background,
+    co.stilt, co.fuel, co.cement,
+    co.fuel.coal, co.fuel.oil, co.fuel.gas,
+    co.fuel.bio, co.fuel.waste, 
+    co.energy, co.transport, co.industry,
+    co.residential, co.other_categories,
+    co.background,
+    rn, rn.era, rn.noah, wind.dir,
+    wind.u, wind.v, latstart, lonstart
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="get_fpstart_date-end_date-hoursnone">.get_fp(start_date, end_date, hours=None)</h4>
+<p>STILT footprints for a given time period, with optional selection of specific
+hours. Return the footprints as <a href="http://xarray.pydata.org/en/stable/">xarray</a>
+with latitude, longitude, time, and ppm per (micro-mole m-2 s-1).</p>
+<ul>
+<li>start_date : STR, FLOAT/INT (Unix timestamp), datetime object.<ul>
+<li>start_date = '2018-01-01'</li>
+</ul>
+</li>
+<li>end_date : STR, FLOAT/INT (Unix timestamp), datetime object.<ul>
+<li>end_date = '2018-01-31'</li>
+</ul>
+</li>
+<li>hours : STR | INT, optional. If hours is empty or None, ALL Timeslots are
+  returned. For backwards compatibility, input of str format hh:mm is accepted<ul>
+<li>hours = [0,3,6,9,12,15,18,21]<pre><code>Valid results are returned with LOWER BOUND values.
+Example:    hours = ["02:00",3,4] will return Timeslots for 0, 3
+            hours = [2,3,4,5,6] will return Timeslots for 0,3 and 6
+            hours = [] return ALL
+            hours = ["10", "10:00", 10] returns timeslot 9
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="get_dobj_list">.get_dobj_list()</h4>
+<p>If the stiltstation has a corresponding ICOS station, this function will return
+a dictionary filled with corresponding data objects. A sparql query is executed
+with ICOS Station id and the sampling height as constraint, returning all data
+objects (Level 1, 2, 3).</p>
+<p>Returns: List of DICT Each dictionary with the following keys:</p>
+<p><code>[dobj, hasNextVersion, spec, fileName, size, submTime, timeStart, timeEnd]</code></p>
+<p>Example output:</p>
+<pre><code>    [{
+        'dobj': 'https://meta.icos-cp.eu/objects/1DZZOAmmB8YAfYPvXuHMj7Er',
+        'hasNextVersion': 'false',
+        'spec': 'http://meta.icos-cp.eu/resources/cpmeta/atcN2oNrtGrowingDataObject',
+        'fileName': 'ICOS_ATC_NRT_OXK_2022-03-01_2023-02-27_23.0_534_N2O.zip',
+        'size': '110076',
+        'submTime': '2023-02-28T11:16:27.804Z',
+        'timeStart': '2022-03-01T00:00:00Z',
+        'timeEnd': '2023-02-27T23:00:00Z'
+    },
+    ...
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href=".." class="btn btn-neutral float-left" title="About"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

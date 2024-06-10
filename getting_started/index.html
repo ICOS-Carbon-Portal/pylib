@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://icos-carbon-portal.github.io/pylib/icoscp/getting_started/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Getting started - ICOS Carbon Portal icoscp Library</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Getting started";
+        var mkdocs_page_input_path = "getting_started.md";
+        var mkdocs_page_url = "/pylib/icoscp/getting_started/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ICOS Carbon Portal icoscp Library
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">About</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../install/">Installation</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Getting started</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#authentication">Authentication</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#by-credentials-file-default">By credentials file (default)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#by-custom-credentials-file">By custom credentials file</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#by-authentication-token-prototyping">By authentication token (prototyping)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#by-explicit-credentials-advanced-option">By explicit credentials (advanced option)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#general-note-on-metadata">General note on metadata</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#discover-data-types">Discover data types</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#discover-stations">Discover stations</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#list-data-objects">List data objects</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#batch-data-access">Batch data access</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#accessing-documentation">Accessing documentation</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../faq/">FAQ</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../changelog/">Changelog</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../modules/">Legacy modules</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../legacy_examples/">Legacy examples</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ICOS Carbon Portal icoscp Library</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Getting started</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="getting-started">Getting started</h1>
+<p>The examples in this section can be tried on a public Jupyter Hub running
+Python3 notebooks, where the library is preinstalled.</p>
+<p><a href="https://exploredata.icos-cp.eu/">https://exploredata.icos-cp.eu/</a></p>
+<p>Please, click <a href="https://www.icos-cp.eu/data-services/tools/jupyter-notebook/exploredata-password">here</a>
+to request access to the Explore-Data service.</p>
+<p>If run on a standalone machine rather than an ICOS Carbon Portal Jupyter Hub
+instance, the data access examples assume that the authentication has been
+configured as explained in the next section.</p>
+<h2 id="authentication">Authentication</h2>
+<p>To ensure users' licence acceptance when accessing data objects
+through the <code>icoscp</code> Python library, authentication is required. Users
+must either have ICOS Carbon Portal login credentials or
+log in to Carbon Portal using another mechanism
+<a href="https://cpauth.icos-cp.eu/login/">https://cpauth.icos-cp.eu/login/</a>
+to obtain the token to access ICOS data.</p>
+<p>Users also need to read and accept the ICOS Data Licence in their
+<a href="https://cpauth.icos-cp.eu/">user profile</a>.</p>
+<p>Metadata-only access does not require authentication.</p>
+<p>Users with direct access to the data files,
+namely, <strong>users of our <a href="https://www.icos-cp.eu/data-services/tools/jupyter-notebook">ICOS Jupyter services</a>, are
+not required to configure authentication</strong>.</p>
+<p>In order to fetch data, users make their requests to data objects and
+must provide an API token to do so. For security reasons the API token is
+valid for 100'000 seconds (27 hours) and may therefore need to be refreshed;
+this process is automated when using credentials-based authentication (see
+below).</p>
+<p>Authentication can be initialized in a number of ways. <strong>Please note</strong> that
+when using other approaches than the default one (see below), it becomes
+necessary to use the <code>data</code> value (instance of <code>DataClient</code> class) obtained
+in the process of authentication bootstrap, rather than the default instance
+obtained by import <code>from icoscp_core.icos import data</code> used in the code
+examples in this documentation.</p>
+<h3 id="by-credentials-file-default">By credentials file (default)</h3>
+<p>This approach should only be used on machines the developer trusts.</p>
+<p>A username/password account for the <a href="https://cpauth.icos-cp.eu/">ICOS</a>
+authentication service is required for this. Obfuscated (not readable by
+humans) password is stored in a file on the local machine in a <strong>default
+user-specific folder</strong>. To initialize this file, run the following code
+interactively (only needs to be done once for every machine):</p>
+<pre><code class="language-Python">from icoscp_core.icos import auth
+auth.init_config_file()
+</code></pre>
+<p>After the initialization step is done in this way, access to the data can be
+achieved using both the new <code>icoscp_core</code> machinery and the legacy
+<a href="../modules/#dobj">Dobj classes</a>.</p>
+<h3 id="by-custom-credentials-file">By custom credentials file</h3>
+<p>The developer may wish to use a specific file to store obfuscated
+credentials and token cache. In this scenario, data and
+metadata access are achieved as follows:</p>
+<pre><code class="language-Python">from icoscp_core.icos import bootstrap
+auth, meta, data = bootstrap.fromPasswordFile(&quot;&lt;desired path to the file&gt;&quot;)
+# The next line needs to be run interactively (only once per file).
+auth.init_config_file()
+</code></pre>
+<p>If the legacy library functionality will be used, the following extra step is
+needed as well:</p>
+<pre><code class="language-Python">from icoscp import cpauth
+cpauth.init_by(auth)
+</code></pre>
+<h3 id="by-authentication-token-prototyping">By authentication token (prototyping)</h3>
+<p>This option is good for testing, on a public machine or in general. Its
+only disadvantage is that the tokens have limited period of validity
+(100'000 seconds, less than 28 hours), but this is precisely what makes
+it acceptable to include them directly in the Python source code.</p>
+<p>The token can be obtained from the "My Account" page (<a href="https://cpauth.icos-cp.eu/">ICOS</a>), which can be accessed by logging in
+using one of the supported authentication mechanisms (username/password,
+university sign-in, OAuth sign in). After this the bootstrapping can be
+done as follows:</p>
+<pre><code class="language-Python">from icoscp_core.icos import bootstrap
+cookie_token = 'cpauthToken=WzE2OTY2NzQ5OD...'
+meta, data = bootstrap.fromCookieToken(cookie_token)
+</code></pre>
+<p>If the legacy library functionality will be used, the following extra step is
+needed as well:</p>
+<pre><code class="language-Python">from icoscp import cpauth
+cpauth.init_by(data.auth)
+</code></pre>
+<h3 id="by-explicit-credentials-advanced-option">By explicit credentials (advanced option)</h3>
+<p>The user may choose to use their own mechanism of providing the
+credentials to initialize the authentication. This should be considered
+as an advanced option. <strong>(Please do not put your password as clear text
+in your Python code!)</strong> This can be achieved as follows:</p>
+<pre><code class="language-Python">from icoscp_core.icos import bootstrap
+meta, data = bootstrap.fromCredentials(username_variable, password_containing_variable)
+</code></pre>
+<p>If the legacy library functionality will be used, the following extra step is
+needed as well:</p>
+<pre><code class="language-Python">from icoscp import cpauth
+cpauth.init_by(data.auth)
+</code></pre>
+<h2 id="general-note-on-metadata">General note on metadata</h2>
+<p>An important background information on ICOS metadata is that all the
+metadata-represented entities (data objects, data types, documents,
+collections, measurement stations, people, etc) are identified by URIs. The
+metadata-access methods usually accept these URIs (or their lists) as input
+arguments.</p>
+<h2 id="discover-data-types">Discover data types</h2>
+<p>Data type is the main "dimension" used to classify the ICOS data objects. It's
+an "umbrella" term aggregating a number of other metadata properties, such as
+label, data level, project, theme, object format, etc.</p>
+<pre><code class="language-python">from icoscp_core.icos import meta
+# fetches the list of known data types, including metadata associated with them
+data_types = meta.list_datatypes()
+
+data_type_names = [dt.label for dt in data_types]
+data_type_uris = [dt.uri for dt in data_types]
+
+# data types with data access
+previewable_datatypes = [dt for dt in data_types if dt.has_data_access]
+</code></pre>
+<h2 id="discover-stations">Discover stations</h2>
+<p>All measurement stations in ICOS metadata have a property called station id.
+However, this id is not guaranteed to be unique to a station, as it is
+sometimes reused by co-located stations, and sometimes two "incarnations" of
+a station, ICOS and "pre-ICOS" one, coexist in the metadata for a while. The
+only true id is a URI.</p>
+<pre><code class="language-Python">from icoscp_core.icos import meta, ATMO_STATION
+
+# fetch lists of stations, with basic metadata
+icos_stations = meta.list_stations()
+atmo_stations = meta.list_stations(ATMO_STATION)
+all_known_stations = meta.list_stations(False)
+
+# get fully detailed metadata for a station
+htm_uri = 'http://meta.icos-cp.eu/resources/stations/AS_HTM'
+htm_station_meta = meta.get_station_meta(htm_uri)
+</code></pre>
+<h2 id="list-data-objects">List data objects</h2>
+<p>To select and filter (using various criteria), sort and list data objects,
+one can use <code>list_data_objects</code> method. All its arguments are optional, and
+by default it returns 100 latest (by upload time) data objects.</p>
+<pre><code class="language-python">from icoscp_core.icos import meta
+# discovered/chosen data type uri for ICOS ATC CO2 Release
+co2_release_dt = 'http://meta.icos-cp.eu/resources/cpmeta/atcCo2L2DataObject'
+latest_co2_release = meta.list_data_objects(datatype=co2_release_dt)
+
+latest_htm_co2_release = meta.list_data_objects(datatype=co2_release_dt, station=htm_uri)
+</code></pre>
+<h2 id="batch-data-access">Batch data access</h2>
+<p>For lists of uniform data objects of the same data type (or, more generally and
+exactly, sharing variable metadata), like  <code>latest_co2_release</code> from the
+previous example, the most efficient way of fetching the data is as follows:</p>
+<pre><code class="language-python">from icoscp_core.icos import data
+co2_release_data = data.batch_get_columns_as_arrays(latest_co2_release, ['TIMESTAMP', 'co2'])
+</code></pre>
+<p>The result of this call is an iterator ("lazy" sequence) that gets evaluated
+when used (iterated). Each element of the iterator is a pair, where the first
+value is an element from <code>latest_co2_release</code>, and the second value is a
+dictionary mapping variable names to numpy arrays with their values. This
+output can be used as is for many purposes, but if it is desirable to convert
+it to pandas DataFrames, it can be done like so (preserving the "lazyness"):</p>
+<pre><code class="language-python">import pandas as pd
+co2_release_data_pd = ( (dobj, pd.DataFrame(arrs)) for dobj, arrs in co2_release_data)
+</code></pre>
+<h2 id="accessing-documentation">Accessing documentation</h2>
+<p>As this library depends on <code>icoscp_core</code>, all the functionality of the latter
+can be used, not only the examples from above. It is introduced on the
+<a href="https://pypi.org/project/icoscp_core/">PyPi project page</a>, and the source code
+is <a href="https://github.com/ICOS-Carbon-Portal/data/tree/master/src/main/python/icoscp_core">available from GitHub</a>.</p>
+<p>To discover all the rich possibilities of filtering, sorting and paging the
+lists of the data objects, it is helpful to read the Python docstring of
+<code>list_data_objects</code> method:</p>
+<pre><code class="language-python">from icoscp_core.icos import meta
+help(meta.list_data_objects)
+</code></pre>
+<p>The method signature is not easily readable due to expansion of type
+annotations, but the docstring explains the method parameters in detail.</p>
+<p>The output from <code>list_data_objects</code> is a list of <code>DataObjectLite</code> instances.
+Documentation of this class can be accessed as follows:</p>
+<pre><code class="language-python">from icoscp_core.metaclient import DataObjectLite
+help(DataObjectLite)
+</code></pre>
+<p>Similarly, the output from <code>list_datatypes</code> is a list of <code>DobjSpecLite</code>
+instances, whose docstring is accessible like so:</p>
+<pre><code class="language-python">from icoscp_core.metaclient import DobjSpecLite
+help(DobjSpecLite)
+</code></pre>
+<p>Naturally, one can also request Python help on the whole <code>meta</code> constant (which
+is in fact an instance of class <code>MetaClient</code>), and on <code>data</code> constant (which is
+an instance of <code>DataClient</code>), and on all the methods therein:</p>
+<pre><code class="language-python">from icoscp_core.icos import meta, data
+help(meta)
+help(meta.get_dobj_meta)
+help(meta.get_collection_meta)
+help(meta.get_station_meta)
+help(data)
+help(data.batch_get_columns_as_arrays)
+help(data.get_columns_as_arrays)
+</code></pre>
+<p>Finally, <code>MetaClient</code>'s methods fetching detailed metadata (e.g.
+<code>get_dobj_meta</code>, <code>get_collection_meta</code>, <code>get_station_meta</code>) return classes who
+are (or whose constituents are) defined inside module <code>icoscp_core.metacore</code>.
+This module is not available in the source code on GitHub because it is
+autogenerated and auto-imported, but can be very instructive to examine and use
+as a reference. Due to type annotations, it effectively contains metadata
+specification for all the entities available from the metadata repository.
+Standalone library users can find it inside their Python installation folder
+(can be <code>venv</code> or <code>.venv</code> if using a virtual Python environment) at location
+<code>lib/icoscp_core/metacore.py</code>. Jupyter users can inspect the classes in this
+module by calling <code>help</code> on it:</p>
+<pre><code class="language-python">from icoscp_core import metacore
+help(metacore)
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../install/" class="btn btn-neutral float-left" title="Installation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../faq/" class="btn btn-neutral float-right" title="FAQ">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../install/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../faq/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
