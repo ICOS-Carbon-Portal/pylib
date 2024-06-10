@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://icos-carbon-portal.github.io/pylib/icoscp/modules/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Legacy modules - ICOS Carbon Portal icoscp Library</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Legacy modules";
+        var mkdocs_page_input_path = "modules.md";
+        var mkdocs_page_url = "/pylib/icoscp/modules/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ICOS Carbon Portal icoscp Library
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">About</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../install/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../getting_started/">Getting started</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../faq/">FAQ</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../changelog/">Changelog</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Legacy modules</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#dobj">Dobj</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#properties">Properties</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjalt">Dobj.alt</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjcitation">Dobj.citation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjcolnames">Dobj.colNames</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjdata">Dobj.data</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjdobj">Dobj.dobj</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjelevation">Dobj.elevation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjid">Dobj.id</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjinfo">Dobj.info</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjlat">Dobj.lat</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjlicence">Dobj.licence</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjlon">Dobj.lon</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjmeta">Dobj.meta</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjnext">Dobj.next</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjprevious">Dobj.previous</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjstation">Dobj.station</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjvalid">Dobj.valid</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjvariables">Dobj.variables</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjgetcolumns">Dobj.get(columns)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjgetcolumnscolumns">Dobj.getColumns(columns)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjget_citationformat">Dobj.get_citation(format)</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#original-legacy-dobj">Original legacy Dobj</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#dobj-initialization">Dobj initialization</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dobj-datetime-conversion-control">Dobj datetime conversion control</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dobjsize">Dobj.size()</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#station">Station</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#stationcountry">Station.country</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stationdatalevelnone">Station.data(level=None)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stationeas">Station.eas</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stationicosclass">Station.icosclass</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stationfirstname">Station.firstName</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stationlastname">Station.lastName</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stationemail">Station.email</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stationlat">Station.lat</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stationlon">Station.lon</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stationname">Station.name</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stationproject">Station.project</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stationstationid">Station.stationId</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stationtheme">Station.theme</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stationuri">Station.uri</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stationvalid">Station.valid</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#convenience-functions">Convenience functions</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#stationgetidlist">station.getIdList()</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#stationget">station.get()</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#stationgetlist">station.getList()</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#collection">Collection</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#collectionid">Collection.id</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#collectiondoi">Collection.doi</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#collectioncitation">Collection.citation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#collectiontitle">Collection.title</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#collectiondescription">Collection.description</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#collectioninfo">Collection.info()</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#collectiondatalink">Collection.datalink</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#collectiondata">Collection.data</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#collectiongetcitation">Collection.getCitation()</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#convenience-functions_1">Convenience functions</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#collectiongetidlist">collection.getIdList()</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#collectionget">collection.get()</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#sparql">Sparql</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#runsparqldata">RunSparql.data</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runsparqlquery-query">RunSparql.query = 'query'</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runsparqlformat-fmt">RunSparql.format = 'fmt'</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#runsparqlrun">RunSparql.run()</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#countries">Countries</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#countrygetkwargs">country.get(**kwargs)</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#returns">Returns</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../legacy_examples/">Legacy examples</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ICOS Carbon Portal icoscp Library</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Legacy modules</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="legacy-modules">Legacy modules</h1>
+<p>The following legacy modules are available in the library to find and access
+data hosted at the Carbon Portal. After a successful installation into
+your python environment you should be able to load the modules with:</p>
+<ul>
+<li><code>from icoscp.dobj import Dobj</code> (recommended)</li>
+<li><code>from icoscp.cpb.dobj import Dobj</code></li>
+<li><code>from icoscp.station import station</code></li>
+<li><code>from icoscp.collection import collection</code></li>
+<li><code>from icoscp.stilt import stiltstation</code></li>
+<li><code>from icoscp.sparql.runsparql import RunSparql</code></li>
+<li><code>from icoscp.sparql import sparqls</code></li>
+</ul>
+<h2 id="dobj">Dobj</h2>
+<p>This is the basic module to load a <strong>d</strong>igital <strong>obj</strong>ect (data set)
+into memory. You need to know a valid persistent identifier (PID/URL) to
+access the data. Either you can browse the <a href="https://data.icos-cp.eu">data portal</a> to find PIDs or you can use the "station"
+package to find PIDs programmatically (see section <a href="#station">station</a>
+).  </p>
+<p>In essence each data object is linked to a unique and persistent
+identifier in the form of a URL. Hence, each data object has an online
+landing page. If you select any data object on 
+<a href="https://data.icos-cp.eu">https://data.icos-cp.eu</a> and then navigate to
+the PID link (which looks like <code>11676/pli1C0sX-HE2KpQQIvuYhX01</code>) you end
+up on the 'landing' page of the document. If you look at the address bar
+of your browser, you will see a URL similar to 
+<a href="https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01">https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01</a>. To access the
+data you need to know this URL or the last part of the URL
+(<code>pli1C0sX-HE2KpQQIvuYhX01</code>).</p>
+<p>Load the module and initialise the Dobj class with a PID.<br />
+The following statements yield the same result:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+dobj = Dobj('11676/pli1C0sX-HE2KpQQIvuYhX01')
+dobj = Dobj('pli1C0sX-HE2KpQQIvuYhX01')
+</code></pre>
+<h3 id="properties">Properties</h3>
+<h4 id="dobjalt">Dobj.alt</h4>
+<p>Retrieve the float value representing the altitude above sea level of the
+station associated with the Dobj. Be aware, this is not the sampling height for
+the data. If the station does not have a specified altitude, return <code>None</code>.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+altitude = dobj.alt
+</code></pre>
+<h4 id="dobjcitation">Dobj.citation</h4>
+<p>Return the citation string linked to the Dobj in plain string format.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+citation = dobj.citation
+</code></pre>
+<p><em>See also class method <a href="#dobjget_citationformat">Dobj.get_citation()</a></em></p>
+<h4 id="dobjcolnames">Dobj.colNames</h4>
+<p>Return a list of available column names for a station-specific time
+series data object or <code>None</code> if no column names are available. This
+information is part of the <a href="#dobjmeta">Dobj.meta</a> property, which holds
+all the available metadata.<br />
+Raise a <code>MetaTypeError</code> exception for spatiotemporal data objects.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+column_names = dobj.colNames
+</code></pre>
+<h4 id="dobjdata">Dobj.data</h4>
+<p>Retrieve the actual data for the PID in Pandas DataFrame format.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+data = dobj.data
+</code></pre>
+<h4 id="dobjdobj">Dobj.dobj</h4>
+<p>Retrieve the PID for the Dobj.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+pid = dobj.dobj
+</code></pre>
+<p><em>See also <a href="#dobjid">Dobj.id</a></em></p>
+<h4 id="dobjelevation">Dobj.elevation</h4>
+<p>Retrieve the float value representing the elevation above sea level of the
+station associated with the Dobj. Be aware, this is not the sampling height for
+the data. If the station does not have a specified elevation, return <code>None</code>.<br />
+This property will be deprecated in the next release.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+elevation = dobj.elevation
+</code></pre>
+<p><em>See also <a href="#dobjalt">Dobj.alt</a></em></p>
+<h4 id="dobjid">Dobj.id</h4>
+<p>Retrieve the PID for the Dobj.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+pid = dobj.id
+</code></pre>
+<p><em>See also <a href="#dobjdobj">Dobj.dobj</a></em></p>
+<h4 id="dobjinfo">Dobj.info</h4>
+<p>Return a dictionary based on the metadata available from the landing
+page of the ICOS Carbon Portal website.<br />
+This property will be deprecated in the next release.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+from pprint import pprint
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+pprint(dobj.info)
+</code></pre>
+<p><em>See also <a href="#dobjmeta">Dobj.meta</a></em></p>
+<h4 id="dobjlat">Dobj.lat</h4>
+<p>Retrieve the float value representing the latitude of the station associated
+with the Dobj. If the station does not have a specified latitude, return
+<code>None</code>.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+latitude = dobj.lat
+</code></pre>
+<h4 id="dobjlicence">Dobj.licence</h4>
+<p>Return a dictionary with these keys: 'baseLicence', 'name', 'url', 
+'webpage', containing information about the dataset's associated
+license.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+latitude = dobj.lat
+</code></pre>
+<h4 id="dobjlon">Dobj.lon</h4>
+<p>Retrieve the float value representing the longitude of the station associated
+with the Dobj. If the station does not have a specified longitude, return
+<code>None</code>.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+longitude = dobj.lon
+</code></pre>
+<h4 id="dobjmeta">Dobj.meta</h4>
+<p>Return a dictionary based on the metadata available from the landing
+page of the ICOS Carbon Portal website. Every data object has a rich
+set of metadata available. You can download an <a href="https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01/meta.json">example</a> from the
+data portal. This will then be parsed into a python dictionary representing the
+metadata from ICOS. Some of the important key properties, like
+'previous', 'next', 'citation', e.t.c., are extracted for easy access and
+made available as properties.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+from pprint import pprint
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+pprint(dobj.meta)
+</code></pre>
+<h4 id="dobjnext">Dobj.next</h4>
+<p>Return a landing page in the form of a string, featuring the next
+version of this data object if it exists.<br />
+Return <code>None</code> if a next version does not exist.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+next_version = dobj.next
+</code></pre>
+<h4 id="dobjprevious">Dobj.previous</h4>
+<p>Return a landing page in the form of a string, featuring the previous
+version of this data object if it exists.<br />
+Return <code>None</code> if a previous version does not exist.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+previous_version = dobj.previous
+</code></pre>
+<h4 id="dobjstation">Dobj.station</h4>
+<p>Return a dictionary containing metadata associated with the station
+corresponding to the Dobj. Please be aware that prior to version 0.1.15 this
+has returned a string with station id, which is now available as station['id'].</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+station_meta = dobj.station
+</code></pre>
+<h4 id="dobjvalid">Dobj.valid</h4>
+<p>Return the validity of a Dobj as a boolean. This is kept for backwards
+compatibility reasons. From icoscp 0.2.0 and onwards, the Dobj class cannot be
+instantiated with an invalid PID, thus this will always return <code>True</code>.<br />
+This property will be deprecated in the next release.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+validity = dobj.valid
+</code></pre>
+<h4 id="dobjvariables">Dobj.variables</h4>
+<p>Return a Pandas DataFrame providing access to all available variables,
+including the name, unit, type, and the landing page for the format used
+(int, float, char, ...).<br />
+Raise a <code>MetaValueError</code> exception if no variable information is
+available.</p>
+<p>The following example and its output shows the variables of an
+atmospheric methane concentration data object:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/zjNZLdVDcVUNwonvJIN5GQ3b')
+variables = dobj.variables
+print(variables)
+</code></pre>
+<p>Output:</p>
+<table>
+<thead>
+<tr>
+<th>index</th>
+<th>name</th>
+<th>unit</th>
+<th>type</th>
+<th>format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>TIMESTAMP</td>
+<td>None</td>
+<td>time instant, UTC</td>
+<td>http://meta.icos-cp.eu/ontologies/cpmeta/iso8601dateTime</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Flag</td>
+<td>None</td>
+<td>quality flag</td>
+<td>http://meta.icos-cp.eu/ontologies/cpmeta/bmpChar</td>
+</tr>
+<tr>
+<td>2</td>
+<td>NbPoints</td>
+<td>None</td>
+<td>number of points</td>
+<td>http://meta.icos-cp.eu/ontologies/cpmeta/int32</td>
+</tr>
+<tr>
+<td>3</td>
+<td>ch4</td>
+<td>nmol mol-1</td>
+<td>CH4 mixing ratio (dry mole fraction)</td>
+<td>http://meta.icos-cp.eu/ontologies/cpmeta/float32</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Stdev</td>
+<td>nmol mol-1</td>
+<td>standard deviation of gas mole fraction</td>
+<td>http://meta.icos-cp.eu/ontologies/cpmeta/float32</td>
+</tr>
+</tbody>
+</table>
+<h3 id="methods">Methods</h3>
+<h4 id="dobjgetcolumns">Dobj.get(columns)</h4>
+<p>Retrieve the actual data for the PID in Pandas DataFrame format.
+You have the option to retrieve only selected
+columns (or variables) using a list of variables as an input argument. Only
+valid and unique entries will be returned. You can see valid entries with
+<a href="#dobjcolnames">Dobj.colNames</a> or <a href="#dobjvariables">Dobj.variables</a>. If columns
+are not provided, or if none of the provided variables are valid, or if you
+work with local data, the default DataFrame (with all columns) will be
+returned.</p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+col_names = dobj.colNames
+# or
+# col_names = dobj.variables['name'].to_list()
+data = dobj.get(columns=col_names)
+</code></pre>
+<h4 id="dobjgetcolumnscolumns">Dobj.getColumns(columns)</h4>
+<p>Retrieve the actual data for the PID in Pandas DataFrame format.  </p>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+col_names = dobj.colNames
+# or
+# col_names = dobj.variables['name'].to_list()
+data = dobj.getColumns(columns=col_names)
+</code></pre>
+<p><em>See also <a href="#dobjgetcolumns">Dobj.get(columns)</a> and <a href="#dobjdata">Dobj.data</a></em></p>
+<h4 id="dobjget_citationformat">Dobj.get_citation(format)</h4>
+<p>Return the citation string in different formats. By default, a plain 
+formatted string is returned.<br />
+Possible formats are:</p>
+<ul>
+<li><strong>plain</strong> : (default) a simple string</li>
+<li><strong>bibtex</strong> : <a href="https://en.wikipedia.org/wiki/BibTeX">wikipedia</a></li>
+<li><strong>ris</strong> : <a href="https://en.wikipedia.org/wiki/RIS_(file_format)">wikipedia</a></li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+ris_citation = dobj.get_citation('ris')
+</code></pre>
+<p><em>See also <a href="#dobjcitation">Dobj.citation</a></em></p>
+<hr />
+<h2 id="original-legacy-dobj">Original legacy Dobj</h2>
+<p>The actual original legacy (prior to version <code>0.2.0</code>) <code>Dobj</code> class resides in
+module <code>icoscp.cpb.dobj</code>. Most code is recommended to migrate to the new
+implementation of this class residing in module <code>icoscp.dobj</code>, but the old
+class is preserved to avoid breaking any dependent code by library update,
+and additionally, there are some known differences between the versions,
+documented below.</p>
+<h3 id="dobj-initialization">Dobj initialization</h3>
+<p>Using <code>from icoscp.cpb.dobj import Dobj</code>, you can initialize the Dobj class in
+one of the following ways:</p>
+<pre><code class="language-python">from icoscp.cpb.dobj import Dobj
+
+my_dobj = Dobj('https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01')
+my_dobj = Dobj('11676/pli1C0sX-HE2KpQQIvuYhX01')
+my_dobj = Dobj('pli1C0sX-HE2KpQQIvuYhX01')
+</code></pre>
+<p>or create an 'empty' Dobj instance and set the identifier later:</p>
+<pre><code class="language-python">from icoscp.cpb.dobj import Dobj
+
+dobj = Dobj()
+dobj.dobj = 'https://meta.icos-cp.eu/objects/pli1C0sX-HE2KpQQIvuYhX01'
+</code></pre>
+<p>Using <code>from icoscp.dobj import Dobj</code>, instantiating an 'empty' Dobj class, and
+setting the identifier later will result in a <code>TypeError</code>. This functionality
+was removed to preserve the <code>Dobj</code> class state and prevent unexpected behavior.</p>
+<h3 id="dobj-datetime-conversion-control">Dobj datetime conversion control</h3>
+<p>(Not available in the new implementation, as all datetime conversions are
+handled by <code>pandas</code> library in a uniform way)</p>
+<p><strong>Dobj.dateTimeConvert = True</strong>
+The binary data representation provides a UTC Timestamp as Unix-timestamp with
+start point of 1970-01-01 00:00:00. By default, when using
+<code>from icoscp.cpb.dobj import Dobj</code> this is converted to a DateTimeObject of
+type <code>pandas._libs.tslibs.timestamps.Timestamp</code>. If you prefer to have the raw
+Unix-timestamp (<strong>numpy.float64</strong>), set
+<code>Dobj.dateTimeConvert = False</code> prior to load the data with <strong>.get()</strong> or <strong>.data</strong> or <strong>.getColumns()</strong>.</p>
+<ul>
+<li>Return BOOL</li>
+</ul>
+<h3 id="dobjsize"><strong>Dobj.size()</strong></h3>
+<p>(Not available in the new implementation. To get data object size in bytes
+from the new <code>Dobj</code> class, call <code>Dobj.metadata.size</code> or <code>Dobj.meta['size']</code>)</p>
+<p>The real size of the dobj in [bytes, KB, MB, TB]. Since this object may contain the data, it is 
+no longer just a pointer to data.</p>
+<ul>
+<li>Return TUPLE (int32, STR), where int32 represents the size and STR the unit. Example output 
+  looks like: (4.353, 'MB')</li>
+</ul>
+<hr />
+<h2 id="station">Station</h2>
+<p>The station module provides a search facility to explore ICOS stations and find associated data 
+objects and data products. There is a lot of information available about the ICOS stations, 
+partner countries, measured variables and much more in the 
+<a href="https://www.icos-cp.eu/sites/default/files/2022-03/ICOS_Handbook_2022_web.pdf">ICOS Handbook</a>.
+load the module with:</p>
+<pre><code>from icoscp.station import station
+</code></pre>
+<p>classmethod <strong>station.Station()</strong><br>
+The station object is primarily a data structure to store the associated metadata. The metadata 
+is provided with specific and complex Sparql queries. It is possible to instantiate this 
+class on its own, but we recommend using the convenience functions <code>station.getIdList()</code> 
+<code>station.get('StationID')</code> <code>station.getList()</code>  as described further below to create the 
+station object. Once you have a created valid station object a list of attributes are available:</p>
+<h2>Attributes:</h2>
+<hr>
+
+<h3 id="stationcountry"><strong>Station.country</strong></h3>
+<p>Country code</p>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="stationdatalevelnone"><strong>Station.data(level=None)</strong></h3>
+<p>All associated data object for the station are returned. ICOS distinguishes data in terms of 
+how processed they are.</p>
+<pre><code>- Data level 1: Near Real Time Data (NRT) or Internal Work data (IW).
+- Data level 2: The final quality checked ICOS RI data set, published by the CFs, 
+                to be distributed through the Carbon Portal. 
+                This level is the ICOS-data product and free available for users.
+- Data level 3: All kinds of elaborated products by scientific communities
+                that rely on ICOS data products are called Level 3 data.
+</code></pre>
+<ul>
+<li>Return Pandas DataFrame</li>
+</ul>
+<h3 id="stationeas"><strong>Station.eas</strong></h3>
+<p>Elevation above <strong>sea level</strong> in meter.</p>
+<ul>
+<li>Return FLOAT</li>
+</ul>
+<h3 id="stationicosclass"><strong>Station.icosclass</strong></h3>
+<p>Classification for certified ICOS stations. Please consult the 
+<a href="https://www.icos-cp.eu/sites/default/files/cmis/ICOS%20Handbook%202020.pdf">ICOS Handbook</a> for 
+further information about the Class 1&amp;2 certificate.</p>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="stationfirstname"><strong>Station.firstName</strong></h3>
+<p>PI (Principal Investigator) First Name.</p>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="stationlastname"><strong>Station.lastName</strong></h3>
+<p>PI (Principal Investigator) last name</p>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="stationemail"><strong>Station.email</strong></h3>
+<p>PI (Principal Investigator) email address</p>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="stationlat"><strong>Station.lat</strong></h3>
+<p>Latitude for the station.</p>
+<ul>
+<li>Return FLOAT</li>
+</ul>
+<h3 id="stationlon"><strong>Station.lon</strong></h3>
+<p>Longitude for the station.</p>
+<ul>
+<li>Return FLOAT</li>
+</ul>
+<h3 id="stationname"><strong>Station.name</strong></h3>
+<p>Returns the full name for the station.</p>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="stationproject"><strong>Station.project</strong></h3>
+<p>ICOS Carbon Portal is a data portal from and for the ICOS community. However, the data portal 
+does host more than ICOS data. The station association is listed here (if available)</p>
+<ul>
+<li>Return LIST</li>
+</ul>
+<h3 id="stationstationid"><strong>Station.stationId</strong></h3>
+<p>Set or retrieve the StationId </p>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="stationtheme"><strong>Station.theme</strong></h3>
+<p>For ICOS stations a 'theme' is provided. Please note that, a station may belong to more than 
+one theme, but with different themes. For example the stationId "NOR" (Norunda, Sweden), will 
+give you access to the atmospheric data products, whereas the stationId "SE-Nor" will return 
+the Ecosystem data products.</p>
+<pre><code>AS for Atmospheric Stations
+ES for Ecosystem Stations
+OS for Ocean Stations
+</code></pre>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="stationuri"><strong>Station.uri</strong></h3>
+<p>Link to the landing page for the station. Because a station ID may be associated with more than 
+one 'project' this returns a list of URI's</p>
+<ul>
+<li>Return LIST</li>
+</ul>
+<h3 id="stationvalid"><strong>Station.valid</strong></h3>
+<p>True if stationId is found.</p>
+<ul>
+<li>Return BOOL</li>
+</ul>
+<h3 id="convenience-functions"><strong>Convenience functions</strong></h3>
+<p>The following three functions are recommended to get information about the available 
+stations at the Carbon Portal and how to get a valid station object (or list of):</p>
+<h4 id="stationgetidlist">station.getIdList()</h4>
+<p>The <code>station.getIdList</code> takes several parameters: </p>
+<pre><code>project: str = 'ICOS' 
+theme: list = None 
+sort: str = 'name'
+outfmt: str = 'pandas'
+icon=None
+</code></pre>
+<p>The default call <code>station.getIdList()</code>, which is the same as </p>
+<pre><code>station.getIdList(project='ICOS', sort='name')
+</code></pre>
+<p>returns a Pandas DataFrame with columns:</p>
+<p><code>['uri', 'id', 'name', 'icosClass', 'country', 'lat', 'lon', 'elevation', 'stationTheme', 'firstName', 'lastName', 'email', 'siteType', 'project', 'theme']</code></p>
+<p>By default, ICOS certified stations are returned. If project is set to <code>'all'</code>, all known 
+stations (to the Carbon Portal) are returned. By default, the DataFrame is sorted by the column <code>name</code>. You 
+can provide any column name as sorting parameter. The <code>'id'</code> of the record, can be used to 
+instantiate a station. Hence, it is easy to adjust and filter these records and use the column 
+<code>'id'</code> as input for <code>station.get()</code>. </p>
+<p>The theme parameter can be set to either <code>'AS'</code>, <code>'ES'</code> or <code>'OS'</code>, or a list with a combination of these strings. 
+Here <code>'AS'</code>, <code>'ES</code> and <code>'OS'</code> are short for atmospheric, ecosystem and ocean stations.    </p>
+<p>Thus, </p>
+<pre><code>station.getIdList(theme='AS')
+</code></pre>
+<p>will return a DataFrame with all atmospheric ICOS stations. </p>
+<p>If the optional argument <code>outfmt='map'</code> is provided</p>
+<pre><code>station.getIdList(project='ALL', outfmt='map', icon=None)
+</code></pre>
+<p>a folium map is created with, in this case, all stations (since we use <code>project='ALL'</code>). Stations without a fixed location (like 
+measurements collected from instrumented Ships of Opportunity) will not be included in the map. 
+Each marker in the map represents a station and contains station related information. A user can
+further customize the style of the map by providing the <code>icon</code> argument <code>[None, 'flag', 'path/to/image.png']</code>.</p>
+<ul>
+<li>Return Folium Map</li>
+</ul>
+<h4 id="stationget">station.get()</h4>
+<pre><code>station.get('stationID')
+</code></pre>
+<p>Provide a valid station id (see getIdList()) to create a Station object. NOTE: stationId is 
+CaseSensitive.</p>
+<ul>
+<li>Return Station Object</li>
+</ul>
+<h4 id="stationgetlist">station.getList()</h4>
+<pre><code> station.getList(theme=['AS','ES','OS'], ids=None)
+</code></pre>
+<p>This is the easiest way to get a list of ICOS stations. By default, a full list of all 
+certified ICOS stations is returned. You can filter the output by provided a list of themes OR 
+you can provide a list of station id's. NOTE: If you provide a list of id's, the theme filter 
+is ignored. </p>
+<pre><code>station.getList(['as', 'os'])
+</code></pre>
+<p>list with ICOS atmospheric and ocean stations</p>
+<pre><code>station.getList(ids=['NOR', 'HTM', 'HUN'])
+</code></pre>
+<p>list with stations NOR (Norunda), HTM (Hyltemossa), HUN (Hegyhatsal)</p>
+<ul>
+<li>Return LIST[Station Objects]</li>
+</ul>
+<hr>
+<h2 id="collection">Collection</h2>
+<p>This module supports to load a collection of digital objects. Data products 
+(<a href="https://www.icos-cp.eu/data-products">https://www.icos-cp.eu/data-products</a>) or collections 
+are an assembly for a specific theme, or project. For example the ICOS community assembled data 
+to provide a base for the Drought anomaly in 2018. This dataset was then used to study the 
+impact of this extreme event, which ultimately led to a series of publications available as 
+'theme issue' in <a href="https://royalsocietypublishing.org/toc/rstb/2020/375/1810">The Royal Society</a>.
+Subsequently, the data sets are now public available at the ICOS Carbon Portal 
+(<a href="https://www.icos-cp.eu/data-products/YVR0-4898">Drought-2018 ecosystem eddy covariance flux product for 52 stations</a> and 
+<a href="https://www.icos-cp.eu/data-products/ERE9-9D85">Drought-2018 atmospheric CO2 Mole Fraction product for 48 stations (96 sample heights)</a>. <br></p>
+<p>Load the module with:<br>
+    from icoscp.collection import collection</p>
+<p>classmethod <strong>Collection(coll)</strong><br>
+(where <code>coll</code> represents a <code>pandas.DataFrame</code>, similar to the output from .getIdList()). BUT 
+only similar. We do <strong>NOT Recommend</strong> to instantiate this class directly. Please <strong>use</strong> the 
+function <strong>.get(CollectionId)</strong>. The Purpose of the class documentation is to provide you a 
+list of attributes available, after the .get(CollectionId) return a collection object.</p>
+<hr><h2>Attributes:</h2>
+<hr>
+
+<h3 id="collectionid"><strong>Collection.id</strong></h3>
+<p>This is the ICOS URI (PID). A link to the landing page on the ICOS data portal.</p>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="collectiondoi"><strong>Collection.doi</strong></h3>
+<p>If available, the official DOI in form of '10.18160/ry7n-3r04'.</p>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="collectioncitation"><strong>Collection.citation</strong></h3>
+<p>For convenience the citation string provided from [https://citation.crosscite.org/] is stored 
+in this attribute. If you like to have a different format, please have a look at .getCitation 
+description below.</p>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="collectiontitle"><strong>Collection.title</strong></h3>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="collectiondescription"><strong>Collection.description</strong></h3>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="collectioninfo"><strong>Collection.info()</strong></h3>
+<p>For convenience all the attributes above <code>(id, doi, citation, title, description)</code>. You can 
+choose the output format with fmt=["dict" | "pandas" | "html"]. The default is "dict".</p>
+<pre><code>info(self, fmt='dict')
+</code></pre>
+<ul>
+<li>Return FMT, default DICT</li>
+</ul>
+<h3 id="collectiondatalink"><strong>Collection.datalink</strong></h3>
+<p>This returns a list of PID/URI of digital objects associated with the collection.</p>
+<ul>
+<li>Return LIST[STR]</li>
+</ul>
+<h3 id="collectiondata"><strong>Collection.data</strong></h3>
+<p>This returns a list of Dobj associated to the collection. Please refer to the module Digital
+Object above.</p>
+<ul>
+<li>Return LIST[Dobj]</li>
+</ul>
+<h3 id="collectiongetcitation"><strong>Collection.getCitation()</strong></h3>
+<pre><code>Collection.getCitation(format='apa', lang='en-GB')**
+</code></pre>
+<p>If the collection has a DOI, you will get a citation string from 
+<a href="https://citation.crosscite.org/">https://citation.crosscite.org/</a>. You may provide any style &amp; 
+language parameters found on the website. Our default style is <em>apa</em> and language <em>en-GB</em>, 
+which  is stored in the attribute <code>collection.citation</code>. Use the function getCitation(), if you 
+need a specific format &amp; language adaption. Example to get a Bibtex styled citation:
+<code>.getCitation('bibtex','de-CH')</code></p>
+<h3 id="convenience-functions_1"><strong>Convenience functions</strong></h3>
+<p>The following functions are recommended to get information about the available collections as 
+well  as creating an instance of a collection.</p>
+<h4 id="collectiongetidlist">collection.getIdList()</h4>
+<pre><code>collection.getIdList()
+</code></pre>
+<p>This will return a <code>pandas.DataFrame</code>, listing all available collections at the data portal. The 
+DataFrame contains the following columns: 
+<code>['collection', 'doi', 'title', 'description', 'dobj', 'count']</code>. We would recommend that you 
+pay close attention to the <code>count</code>. We have collections with many data objects associated. If 
+you just want to play around, select a collection with less than 10 objects.</p>
+<ul>
+<li><code>collection</code> contains the PID/URI for the collection. This is the ID you need to provide for 
+the .get(CollectionId) function. Please be aware that you need to provide the full URI.<br>
+Example: .get('https://meta.icos-cp.eu/collections/n7cIMHIyqHJKBeF_3jjgptHP')</li>
+<li><code>dobj</code> contains a list (LIST[STR]) of all PID/URI associated data objects.<br></li>
+<li><code>count</code> tells you how many data objects are associated with this collection.
+<br><br></li>
+<li>Returns a pandas DataFrame </li>
+</ul>
+<h4 id="collectionget">collection.get()</h4>
+<pre><code>collection.get(CollectionId)
+</code></pre>
+<p>Create a collection object. See the class method above for the attributes available in the 
+collection object. The <code>CollectionId</code> must be either the full ICOS URI of the collection 
+landing page or the DOI (if one is available). Not all collections have a DOI. Both information 
+can be extracted with the function .getIdList() .The following to lines to create 
+'myCollection' yield the <strong>same result</strong>:</p>
+<pre><code>myCollection = get('https://meta.icos-cp.eu/collections/n7cIMHIyqHJKBeF_3jjgptHP')
+myCollection = get('10.18160/ry7n-3r04')
+</code></pre>
+<ul>
+<li>Returns Collection</li>
+</ul>
+<hr>
+
+<h2 id="sparql">Sparql</h2>
+<p>At the ICOS Carbon Portal we store all data and metadata as linked data in a triple store. For 
+more information about this approach refer to 
+<a href="https://www.w3.org/standards/semanticweb/">Semantic Web</a>, 
+<a href="https://www.w3.org/RDF/">Resource Description Framework (RDF)</a>, and 
+<a href="https://en.wikipedia.org/wiki/Triplestore">Triple Stores</a>.</p>
+<p>This module is a simple interface to the 
+<a href="https://meta.icos-cp.eu/sparqlclient/?type=CSV">SPARQL endpoint</a> at the Carbon Portal. You can 
+write your own queries and use the module to query the database or use some of the provided 
+built-in queries. </p>
+<p>Load the module with:<br>
+<code>from icoscp.sparql.runsparql import RunSparql</code></p>
+<p>classmethod <strong>RunSparql(sparql_query='', output_format='txt')</strong><br>
+sparql_query needs to be a valid query. You can test a query directly at the online SPARQL 
+endpoint at 
+<a href="https://meta.icos-cp.eu/sparqlclient/?type=CSV">https://meta.icos-cp.eu/sparqlclient/?type=CSV</a>.
+The output format is by default (txt/json) but you can adjust with the following formats ['json',
+'csv', 'dict', 'pandas', 'array', 'html'].</p>
+<h2>Attributes:</h2>
+<hr>
+
+<h3 id="runsparqldata"><strong>RunSparql.data</strong></h3>
+<p>If a query is set and the method .run() was executed, it returns the result from the SPARQL 
+endpoint. If no data is available the method returns False (BOOL).</p>
+<ul>
+<li>Return BOOL | STR</li>
+</ul>
+<h3 id="runsparqlquery-query"><strong>RunSparql.query = 'query'</strong></h3>
+<p>Retrieve or set the query.</p>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="runsparqlformat-fmt"><strong>RunSparql.format = 'fmt'</strong></h3>
+<p>Retrieve or set the output format.</p>
+<pre><code>fmt = 'json', 'csv', 'dict', 'pandas', 'array', 'html'
+</code></pre>
+<ul>
+<li>Return STR</li>
+</ul>
+<h3 id="runsparqlrun"><strong>RunSparql.run()</strong></h3>
+<p>This method actually executes the query and formats the result to the output format. If the 
+sparql query is not executable because of syntax errors, for example, a TUPLE is returned 
+(False, 'Bad Request')</p>
+<ul>
+<li>Return TUPLE | FMT</li>
+</ul>
+<hr>
+
+<h2 id="countries">Countries</h2>
+<p>Search for country information based on a static local file within the 
+library (<code>countries.json</code>). Search is facilitated through Alphanumeric
+2 &amp; 3 Code characters and arbitrary text search. Credit to
+<a href="https://github.com/mledoze/countries">https://github.com/mledoze/countries</a>. 
+Further a reverse geocoder search is provided using on-server shapefiles.</p>
+<p>Please note: in case you provide more than one parameter, the order of keywords is not 
+respected. The execution order is always like the function signature and as soon as a result is 
+found, it will be returned and the search is stopped.</p>
+<h3 id="countrygetkwargs">country.get(**kwargs)</h3>
+<p>Accepted keywords: code='', name='', latlon=[], search=''</p>
+<pre><code>Examples:
+.get()                      list of dict: all countries
+.get(code='CH')             dict: Switzerland
+.get(name='greece')         dict: Greece
+.get(latlon=[48.85, 2.35])  dict:
+.get(search='europe')
+</code></pre>
+<h4 id="parameters">Parameters</h4>
+<pre><code>code : STR
+    Search by ISO 3166-1 2-letter or 3-letter country codes
+
+name : STR
+    search by country name, including alternative spellings.
+    It can be the native name or a partial name.
+
+latlon : List[]
+    List with two integer or floating point numbers representing
+    latitude and longitude. BE AWARE: This functionality is only available
+    to users with access to the ICOS Carbon Portal Jupyter Hub.
+
+search : STR
+    arbitrary text search, not case sensitive, search in all fields
+</code></pre>
+<h4 id="returns">Returns</h4>
+<ul>
+<li>DICT: if a single country is found</li>
+<li>LIST[DICT]: list of dictionaries if more than one country is found</li>
+<li>BOOL (False) if no result</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../changelog/" class="btn btn-neutral float-left" title="Changelog"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../legacy_examples/" class="btn btn-neutral float-right" title="Legacy examples">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../changelog/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../legacy_examples/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

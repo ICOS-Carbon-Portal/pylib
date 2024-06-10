@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://icos-carbon-portal.github.io/pylib/icoscp/changelog/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Changelog - ICOS Carbon Portal icoscp Library</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Changelog";
+        var mkdocs_page_input_path = "changelog.md";
+        var mkdocs_page_url = "/pylib/icoscp/changelog/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ICOS Carbon Portal icoscp Library
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">About</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../install/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../getting_started/">Getting started</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../faq/">FAQ</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Changelog</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#020a0">0.2.0a0</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#cpauth-module">cpauth module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module">stilt module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#documentation">documentation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#0120">0.1.20</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#country-module">country module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#cpauth-module_1">cpauth module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sparql-module">sparql module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_1">stilt module</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#0119">0.1.19</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_2">stilt module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#documentation_1">documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#project-structure">project-structure</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#0118">0.1.18</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#cpauth-module_2">cpauth module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#cpb-module">cpb module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_3">stilt module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#station-module">station module</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#0117">0.1.17</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#station-module_1">station module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sparql-module_1">sparql module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_4">stilt module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#other-changes">other changes</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#0116">0.1.16</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#sparql">sparql</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#station-module_2">station module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_5">stilt module</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#0115">0.1.15</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#cpb-module_1">cpb module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#access-to-data">access to data</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#other-changes_1">other changes</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#0114">0.1.14</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#0113">0.1.13</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#0112">0.1.12</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#0111">0.1.11</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#0110">0.1.10</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#019">0.1.9</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#018">0.1.8</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#017">0.1.7</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#016">0.1.6</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#015">0.1.5</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#014">0.1.4</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#013">0.1.3</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#012">0.1.2</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../modules/">Legacy modules</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../legacy_examples/">Legacy examples</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ICOS Carbon Portal icoscp Library</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Changelog</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="changelog">Changelog</h1>
+<h2 id="020a0">0.2.0a0</h2>
+<ul>
+<li>
+<h4 id="cpauth-module">cpauth module</h4>
+<ul>
+<li>Remove legacy authentication.</li>
+<li>Authenticate via <a href="https://pypi.org/project/icoscp_core/">icoscp_core</a>.</li>
+</ul>
+</li>
+<li>
+<h4 id="stilt-module">stilt module</h4>
+<ul>
+<li>The module is moved out to a new library <code>icoscp_stilt</code>
+  #### dependencies</li>
+<li>Dependencies <code>fiona</code> and <code>geopandas</code> are gone due to <code>stilt</code>
+  module removal</li>
+</ul>
+</li>
+<li>
+<h4 id="documentation">documentation</h4>
+<ul>
+<li>Move the <code>cpauth</code> module to the <a href="../getting_started/">Getting started</a>
+  section.</li>
+<li>Add <a href="../install/#upgrade-guide">Upgrade guide</a> to the installation
+  section.</li>
+<li>Add substantial amount of content to the <a href="../">About page</a>.</li>
+<li>Add <a href="../getting_started/">Getting started examples</a> and move the old
+  examples to a <a href="../legacy_examples/">separate section</a> as legacy.</li>
+<li>Remove most of the old FAQ, add a few new ones.</li>
+</ul>
+</li>
+</ul>
+<h2 id="0120">0.1.20</h2>
+<ul>
+<li>
+<h4 id="country-module">country module</h4>
+<ul>
+<li>Make the reverse geocoding functionality available only to users
+  with access to the ICOS Jupyter Hub.</li>
+<li>Replace the nominatim reverse geocoder with on-server access to 
+  shapefiles.</li>
+</ul>
+</li>
+<li>
+<h4 id="cpauth-module_1">cpauth module</h4>
+<ul>
+<li>Enforce secure data access via mandatory authentication.</li>
+</ul>
+</li>
+<li>
+<h4 id="sparql-module">sparql module</h4>
+<ul>
+<li>Accept cached SPARQL responses by default.</li>
+</ul>
+</li>
+<li>
+<h4 id="stilt-module_1">stilt module</h4>
+<ul>
+<li>Obtain country information more accurately.</li>
+</ul>
+</li>
+</ul>
+<h2 id="0119">0.1.19</h2>
+<ul>
+<li>
+<h4 id="stilt-module_2">stilt module</h4>
+<ul>
+<li>Filter out <code>.zip</code> data files from <code>stiltweb</code> data structure.</li>
+</ul>
+</li>
+<li>
+<h4 id="documentation_1">documentation</h4>
+<ul>
+<li>Apply <a href="https://github.com/tylere">Tyler's</a> changes in the file 
+  <code>README.md</code>.</li>
+</ul>
+</li>
+<li>
+<h4 id="project-structure">project-structure</h4>
+<ul>
+<li>Introduce a streamlined development workflow for the library, using
+  <a href="https://pytest.org">pytest</a>, <a href="https://beta.ruff.rs/docs/">ruff</a>, and
+  <a href="https://hatch.pypa.io/latest/">hatch</a>. </li>
+</ul>
+</li>
+</ul>
+<h2 id="0118">0.1.18</h2>
+<ul>
+<li>
+<h4 id="cpauth-module_2">cpauth module</h4>
+   Implement authentication for secure data access. The full documentation of
+   the authentication module can be found <a href="https://icos-carbon-portal.github.io/pylib/modules/#authentication">here</a>.</li>
+<li>
+<h4 id="cpb-module">cpb module</h4>
+<ul>
+<li>Rework code in <code>Dobj()</code> class to correctly add <code>series</code> to pandas
+  <code>DataFrame</code> and avoid pandas performance warning.</li>
+<li>Verify timestamp format of binary files and convert accordingly to
+  avoid error in data accessing.</li>
+</ul>
+</li>
+<li>
+<h4 id="stilt-module_3">stilt module</h4>
+<ul>
+<li>Remove mutable default arguments from functions in the <code>stilt</code> module.</li>
+<li>Update availability table, such that only 'real' ICOS stations get an
+  ICOS id.</li>
+<li>Add ICOS sampling height to the ICOS dictionary.</li>
+<li>Add corresponding data files to the ICOS dictionary.</li>
+<li>Increase performance when reading <code>STILT</code> footprints.</li>
+<li>Replace <code>eval()</code> statement to prevent security risks.</li>
+<li>Make function <code>station.get()</code> case-insensitive.</li>
+</ul>
+</li>
+<li>
+<h4 id="station-module">station module</h4>
+<ul>
+<li>Remove elevation above ground attribute from <code>Station()</code> class.</li>
+<li>Update documentation on how to correctly retrieve station names when
+  iterating over pandas <code>DataFrames'</code> rows.</li>
+</ul>
+</li>
+</ul>
+<h2 id="0117">0.1.17</h2>
+<ul>
+<li>
+<h4 id="station-module_1">station module</h4>
+   The station class has been somewhat optimized:<ul>
+<li><code>station.getList()</code> is faster </li>
+<li><code>station.getIdList()</code> has a new parameter <code>theme</code> (as in <code>getList</code>)</li>
+</ul>
+</li>
+<li>
+<h4 id="sparql-module_1">sparql module</h4>
+   In the background the station class use sparql queries, and <code>sparqls.py</code> has been endowed with station query function:  <ul>
+<li><code>sparqls.station_query()</code>, the function has a filter parameter with which the experienced user for example can use to fetch stations in a list of countries.   </li>
+</ul>
+</li>
+<li>
+<h4 id="stilt-module_4">stilt module</h4>
+<ul>
+<li>Update <code>xarray</code> call in <code>stiltobj.py</code>.</li>
+</ul>
+</li>
+<li>
+<h4 id="other-changes">other changes</h4>
+<ul>
+<li>Fix library's building problems which resulted in an empty project description here: 
+   <a href="https://pypi.org/project/icoscp/">https://pypi.org/project/icoscp/</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="0116">0.1.16</h2>
+<ul>
+<li>
+<h4 id="sparql">sparql</h4>
+<ul>
+<li>Remove methods with unused queries <code>cpbGetInfo(dobj)</code> and <code>cpbGetSchemaDetail(formatSpec)</code>.</li>
+<li>Speed up queries in functions <code>objectSpec(spec='atcCo2L2DataObject', station='', limit=0)</code>, 
+  <code>getStations(station = '')</code>, <code>get_coords_icos_stations_atc()</code>, and <code>get_icos_stations_atc_L1()</code>.</li>
+<li>Update query in <code>getStations(station = '')</code> to correctly retrieve stations.</li>
+<li>Add deprecation warning for <code>stations_with_pi()</code> query.</li>
+</ul>
+</li>
+<li>
+<h4 id="station-module_2">station module</h4>
+<ul>
+<li>Filter out non icos stations when querying themed stations in <code>getList()</code>. </li>
+</ul>
+</li>
+<li>
+<h4 id="stilt-module_5">stilt module</h4>
+<ul>
+<li>Regenerate STILT module's static file <code>stations.json</code>.</li>
+</ul>
+</li>
+</ul>
+<h2 id="0115">0.1.15</h2>
+<ul>
+<li>
+<h4 id="cpb-module_1">cpb module</h4>
+<ul>
+<li>Dobj change to read metadata from http request. Instead of using sparql queries, a http request is used to load 
+  the same meta data as available from the website.</li>
+<li>Add new script to extract metadata from server <code>metadata.py</code>.</li>
+<li>Add new property <code>.meta</code> returns a dictionary based on the meta data available from the landing page of a data 
+  object containing a very rich set of information. An example: 
+  <a href="https://meta.icos-cp.eu/objects/M8STRfcQfU4Yj7Uy0snHvlve/meta.json">https://meta.icos-cp.eu/objects/M8STRfcQfU4Yj7Uy0snHvlve/meta.json</a></li>
+<li>Add new property: <code>.previous</code> Return the pid/url of the previous version of this file if available.</li>
+<li>Add new property: <code>.next</code> -&gt; Return the pid/url of the next version of this file if available.</li>
+<li>Add new property: <code>.variables</code> Return a PandasDataFrame with metadata for all variables 
+  ['name', 'unit', 'type', 'format'].</li>
+<li>Add new property: <code>.alt</code> Returns altitude of station, the same as <code>.elevation</code>.</li>
+<li>Remove properties: <code>._info1</code>, <code>._info2</code>, <code>._info3</code> from Dobj.</li>
+<li>Change <code>.info</code> (consisted of info 1,2,3,) and return <code>.meta</code> instead.</li>
+<li>Change <code>.station</code>: Returns a dictionary with a subset of .meta describing the station.</li>
+<li>Change of <code>.colNames</code>: returns now a list of strings with all variable names instead of a pandas core series.</li>
+<li>License is extracted dynamically from the metadata per object.</li>
+<li>Add new method <code>get_citation(format='plain')</code>. Returns the citation by default as plain string, the same as 
+  .citation (property) which internally calls this method. Argument options are ('bibtex', 'ris', 'plain') -&gt; 
+  <code>.citation('bibtex'|'ris'|'plain')</code>.</li>
+<li><code>print(Dobj)</code> output of __str__ changed to plain citation string, instead of pid.</li>
+<li>References to server calls moved to <code>const.py</code>.</li>
+<li>Rename file dtype_dict.py to dtype.py for better readability.</li>
+<li>add simple unit test and implement initial assertions for the cpb module.</li>
+</ul>
+</li>
+<li>
+<h4 id="access-to-data">access to data</h4>
+<ul>
+<li><code>.data</code> [property] will always return all columns.</li>
+<li><code>.get(columns=None)</code> [method] returns all data by default. Provides the possibility to extract specific columns 
+  from the data set. Expected is a list of column names, which then returns only the selected columns. Non valid 
+  entries are removed from the list (if only non valid entries are provided, an empty list by default returns all 
+  columns). Please be aware, that <code>.get()</code> will ALWAYS return ALL columns if executed on the Carbon Portal server. 
+  Valid entries can be obtained with <code>.colNames</code> or `.variables['name'].</li>
+<li><code>.getColumns(columns=None)</code>, this is exactly the same as .get(columns='None'). We keep this function for
+  compatibility to previous versions.</li>
+</ul>
+</li>
+<li>
+<h4 id="other-changes_1">other changes</h4>
+<ul>
+<li>add <code>icon</code> argument to <code>station.getIdList()</code> function.</li>
+<li>regenerate STILT module's static <code>stations.json</code>.</li>
+<li>resolve deprecation warnings from <code>numpy</code> calls.</li>
+<li>implement <code>stiltstation.find()</code> by <code>project</code>.</li>
+<li>add <code>outfmt='avail'</code> argument to <code>stiltstation.find()</code> function to generate an availability table for 
+  <code>STILT stations</code>.</li>
+<li>fix <code>stiltstation.find(outfmt='list')</code>.</li>
+<li>fix <code>print(stiltobj)</code> by removing country information. Country information can still be retrieved using the
+  <code>.info</code> attribute of the <code>StilStation</code> object. </li>
+</ul>
+</li>
+</ul>
+<h2 id="0114">0.1.14</h2>
+<ul>
+<li>update <code>get_ts()</code> to case-insensitive and include <code>co2.bio.gee</code> and <code>co2.bio.resp</code> in the 
+  <code>co2</code> results</li>
+<li>correctly redirect nominatim requests when icos nominatim is unable to reverse geocode.</li>
+</ul>
+<h2 id="0113">0.1.13</h2>
+<ul>
+<li>rework directory listing of STILT stations and ignore queued but empty stations</li>
+</ul>
+<h2 id="0112">0.1.12</h2>
+<ul>
+<li>fix <code>stiltstation.find()</code> to return all STILT stations</li>
+<li>switch to ICOS reverse geocoder as default</li>
+<li>precompute all known stations to speed up search functions</li>
+<li>if possible, use ICOS station's latitude/longitude when reverse geocoding a STILT station for 
+  precision</li>
+</ul>
+<h2 id="0111">0.1.11</h2>
+<ul>
+<li>rework process of requesting stilt stations</li>
+<li>add a progress bar when requesting stilt stations</li>
+<li>update user information when using the stilt module</li>
+<li>add stilt data reporting to the back-end</li>
+</ul>
+<h2 id="0110">0.1.10</h2>
+<ul>
+<li>adjust pylib version reported to the back-end</li>
+<li>include non-code files to distribution</li>
+<li>inform users when wrongly accessing the Stilt module locally</li>
+</ul>
+<h2 id="019">0.1.9</h2>
+<ul>
+<li>add Stilt module and documentation</li>
+<li>add local country information</li>
+<li>add folium map extension to <code>getIdList()</code> function</li>
+</ul>
+<h2 id="018">0.1.8</h2>
+<ul>
+<li>change licence on https://pypi.org/project/icoscp/ to https://www.icos-cp.eu/data-services/about-data-portal/data-license</li>
+<li>adjust portal use internal flag</li>
+</ul>
+<h2 id="017">0.1.7</h2>
+<ul>
+<li>add licence attribute to Dobj()</li>
+<li>handle single str input to station.getList()</li>
+<li>stats report distinguish between intern/external usage</li>
+<li>remove _checkdata flag from station.info()</li>
+<li>update documentation</li>
+</ul>
+<h2 id="016">0.1.6</h2>
+<ul>
+<li>2021/03/29</li>
+<li>add sparql queries for availability table</li>
+<li>typos and additions to documentation</li>
+<li>move changelog to separate file</li>
+</ul>
+<h2 id="015">0.1.5</h2>
+<ul>
+<li>2020/10/20</li>
+<li>fix bug introduced with v 0.1.4</li>
+<li>datasets with optional columns where not loaded if data object specifications mismatched the list of columns</li>
+</ul>
+<h2 id="014">0.1.4</h2>
+<p>-2020/10/16
+- add support for regex columns</p>
+<h2 id="013">0.1.3</h2>
+<ul>
+<li>2020/10/01</li>
+<li>Add module 'collection' to support loading data products. See <a href="../modules/#collection">Modules / collection</a></li>
+<li>Change behaviour of Dobj to keep data persistent. The pandas data frame is now persistent stored as pandas dataframe in the object. Older versions did query the server every time for the data. A new attribute is available: <code>Dobj.data</code> which returns the pandas dataframe. This change in behaviour is controlled with <code>Dobj._datapersistent = True</code> (default), and can be reverted by setting it to False. </li>
+<li>A new attribute <code>Dobj.id</code> is available (which is equivalent to Dobj.dobj) but is more human understandable. Dobj.id retrieves or sets the PID/URI.</li>
+</ul>
+<h2 id="012">0.1.2</h2>
+<ul>
+<li>2020/07/15</li>
+<li>first public version to pypi.org</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../faq/" class="btn btn-neutral float-left" title="FAQ"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../modules/" class="btn btn-neutral float-right" title="Legacy modules">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../faq/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../modules/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

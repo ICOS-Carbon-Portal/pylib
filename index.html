@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" /><link rel="canonical" href="https://icos-carbon-portal.github.io/pylib/icoscp/" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>ICOS Carbon Portal icoscp Library</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "About";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = "/pylib/icoscp/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> ICOS Carbon Portal icoscp Library
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href=".">About</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#icos">ICOS</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#icoscp-python-library">icoscp Python library</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-history-and-the-new-role-of-the-library">The history and the new role of the library</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#icos-data-licence">ICOS data licence</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#older-notes">(older) Notes</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="install/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="getting_started/">Getting started</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="faq/">FAQ</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="changelog/">Changelog</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="modules/">Legacy modules</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="legacy_examples/">Legacy examples</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">ICOS Carbon Portal icoscp Library</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">About</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="welcome-to-the-icos-carbon-portal-python-library">Welcome to the ICOS Carbon Portal Python Library</h1>
+<h2 id="icos">ICOS</h2>
+<p>The Integrated Carbon Observation System (ICOS) is a European-wide greenhouse
+gas research infrastructure. ICOS produces standardised data on greenhouse gas
+concentrations in the atmosphere, as well as on carbon fluxes between the
+atmosphere, the earth and oceans. This information is being used by scientists
+as well as by decision-makers in predicting and mitigating climate change. The
+ICOS Station Network consists of over 170 measurement stations in three domains
+located in 16 countries in Europe. For more information please visit
+<a href="https://www.icos-cp.eu/">https://www.icos-cp.eu/</a>.</p>
+<h2 id="icoscp-python-library">icoscp Python library</h2>
+<p>This library provides full metadata and partial data access to the data
+objects hosted at the ICOS Carbon Portal
+(<a href="https://data.icos-cp.eu/">https://data.icos-cp.eu/</a>). A benefit of this
+library is to relieve the data users from downloading the files and
+parsing their content. It is provisioned to Carbon Portal's
+<a href="https://jupyter.icos-cp.eu/">Jupyter Hub</a> services, making it possible to
+use supported types of ICOS data without installing any software.</p>
+<p>To download full original data of all types, the users are referred to
+<a href="https://data.icos-cp.eu/">data portal</a>
+web application to find, preview and download the data objects.</p>
+<h2 id="the-history-and-the-new-role-of-the-library">The history and the new role of the library</h2>
+<p>This library has a history of being developed somewhat empirically, resulting
+in mismatch with the Carbon Portal metadata model and APIs, and suboptimal
+performance. Starting from version <code>0.2.0</code>, it is being put on a more
+principled foundation in the form of a new library
+<strong><a href="https://pypi.org/project/icoscp_core/">icoscp_core</a></strong>, also developed by the
+Carbon Portal. The new library is now a dependency of <strong>icoscp</strong>, meaning that
+by installing <strong>icoscp</strong> one automatically gains access to all the
+functionality of <strong>icoscp_core</strong>. As the latter happens to have all the
+functionality expected to be <em>required</em> by most use cases, the majority of
+<strong>icoscp</strong> code written prior to version <code>0.2.0</code> is being assigned a legacy
+status. Legacy in this context means that it is not recommended for new
+projects, but will be preserved to keep all the existing code, that depends on
+older versions of <strong>icoscp</strong>, working in the foreseeable future.</p>
+<p>For new projects, developers are advised to consider
+<strong><a href="https://pypi.org/project/icoscp_core/">icoscp_core</a></strong> as the first choice,
+unless it is explicitly known that some specific <strong>icoscp</strong> feature is
+required.</p>
+<p>However, it should be recognized that <strong>icoscp_core</strong>, though making possible
+with little code to achieve results that were previously impossible or lengthy
+with <strong>icoscp</strong>, is a somewhat lower-level library. Notably, <strong>icoscp_core</strong>
+does not depend on <strong>pandas</strong> library, which means the developers who want to
+work with pandas DataFrames, may need to take one extra step (albeit short and
+easy) to produce them from <strong>icoscp_core</strong> outputs. Additionally,
+<strong>icoscp_core</strong> was designed to serve not only ICOS, but also other data
+repositories based on Carbon Portal server software, which makes it
+inappropriate to add much ICOS-specific functionality to <strong>icoscp_core</strong>.</p>
+<p>Hence, the new role of <strong>icoscp</strong> library is three-fold:</p>
+<ul>
+<li>keeping the legacy functionality intact, to prevent breakage of Jupyter
+  notebooks and Python scripts that depend on the older library versions</li>
+<li>providing convenient high-level ICOS-specific functionality, built on top of
+  <strong>icoscp_core</strong>; future examples of that are:<ul>
+<li>the latest near-real-time data for comparison across stations</li>
+<li>concatenation of latest L2 release with corresponding latest
+  near-real-time dataset </li>
+</ul>
+</li>
+<li>making all the <strong>icoscp_core</strong> functionality available as a dependency</li>
+</ul>
+<h2 id="icos-data-licence">ICOS data licence</h2>
+<p>Please be aware, that by either downloading or accessing the data directly
+through this library, you acknowledge that all ICOS data are provided under a
+<a href="https://data.icos-cp.eu/licence" target="_blank">CC BY 4.0 licence 
+<img src="https://www.icos-cp.eu/sites/default/files/inline-images/creativecommons.png">
+</a>, and accept the licence. When using the library standalone (not on a
+Carbon-Portal-provided Jupyter instance) to access the <em>data</em>, you are required
+to authenticate as a user with ICOS licence accepted in your Carbon Portal profile
+(<a href="https://cpauth.icos-cp.eu/">https://cpauth.icos-cp.eu/</a>). <em>Metadata</em> access,
+on the other hand, is provided for anonymous users as well as for registered
+ones.</p>
+<h2 id="older-notes">(older) Notes</h2>
+<p>The ICOS Carbon Portal provides persistent digital object identifiers for each
+data set or file to improve the FAIR-ness of data and to give all the users
+easy to use tools for provenance, citation and reproducibility, etc. Hence, you
+only need to store a list of PID's (persistent digital object identifiers), or
+you can use one of the built-in SPARQL queries, to reproduce always the same
+result, regardless of the computer you run it on. You can share your code with
+colleagues, without the need of moving data around. You bring the software to
+the data, rather than data to the software. This is especially true if you
+create a Jupyter Notebook hosted at the Carbon Portal.</p>
+<p>You can follow the development on the 
+<a href="https://github.com/ICOS-Carbon-Portal/pylib">GitHub repository</a>. Create an
+issue to report bugs or request new features. The library has not been
+thoroughly tested on many different operating systems and environments, hence
+we appreciate feedback.</p>
+<p>The library is developed with  Python 3.10, and we assume that any recent
+Python distribution should work. If you have any trouble running the library,
+we would like to hear about it.<br />
+Please get in touch: <a href="mailto:jupyter-info@icos-cp.eu">jupyter-info@icos-cp.eu</a></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="install/" class="btn btn-neutral float-right" title="Installation">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+      <span><a href="install/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.5.3
+Build Date UTC : 2024-06-10 14:09:06.914503+00:00
+-->

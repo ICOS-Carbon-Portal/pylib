@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://icos-carbon-portal.github.io/pylib/icoscp/legacy_examples/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Legacy examples - ICOS Carbon Portal icoscp Library</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Legacy examples";
+        var mkdocs_page_input_path = "legacy_examples.md";
+        var mkdocs_page_url = "/pylib/icoscp/legacy_examples/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ICOS Carbon Portal icoscp Library
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">About</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../install/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../getting_started/">Getting started</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../faq/">FAQ</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../changelog/">Changelog</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../modules/">Legacy modules</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Legacy examples</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#digital-object">Digital Object</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#data-object">Data Object</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dataframe">DataFrame</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#minimalistic-plot">Minimalistic Plot</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plot-with-title-and-units">Plot with Title and Units</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#stations">Stations</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#station-ids">Station Id's</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#a-station-object">A station Object</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#list-of-stations">List of Stations</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#collections">Collections</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#find-a-collection">Find a collection</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#create-a-collection-representation">Create a collection representation</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ICOS Carbon Portal icoscp Library</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Legacy examples</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="legacy-examples">Legacy examples</h1>
+<p>The following documents legacy code deprecated since library version <code>0.2.0</code>.</p>
+<h2 id="digital-object">Digital Object</h2>
+<p>For the example below, we assume that you know how to get hold of the PID/URI
+used at the Carbon Portal. You can read more about this in the Modules section.
+Each object in the data portal has a unique and persistent identification in
+form of a URI. The following examples will use the URI 
+<a href="https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc">https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc</a>, which is an ICOS
+Atmosphere Level 2 data set from Norunda, release 2019-1. Go to the landing
+page to find more information about this data set.</p>
+<hr>
+<h3 id="data-object">Data Object</h3>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
+</code></pre>
+<p>Information (metadata) is automatically stored in a dictionary (the <code>json</code>-file
+from the landing page) with the object, accessible with <code>Dobj.meta</code>. More about
+the content of meta and other attributes are in the <a href="../modules/#dobjinfo">modules section</a>. Common used properties are as well available directly.
+Following are a few examples:</p>
+<pre><code class="language-python">dobj.colNames
+</code></pre>
+<p>['TIMESTAMP', 'Flag', 'NbPoints', 'ch4', 'Stdev']</p>
+<p>or get the citation string for this object:</p>
+<pre><code class="language-python">dobj.citation
+</code></pre>
+<p>"Lehner, I., Mölder, M., ICOS RI, 2019. ICOS ATC CH4 Release, Norunda (59.0 m),
+2017-04-01–2019-04-30, https://hdl.handle.net/11676/lNJPHqvsMuTAh-3DOvJejgYc"</p>
+<h3 id="dataframe">DataFrame</h3>
+<p>Extracting the data as pandas data frame:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
+display(dobj.data.head(10))
+</code></pre>
+<p>Printing the first 10 rows of the data (<code>data.head(10)</code>) should yield the
+following table:</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>Flag</th>
+<th>NbPoints</th>
+<th>Stdev</th>
+<th>TIMESTAMP</th>
+<th>ch4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>N</td>
+<td>0</td>
+<td>-9.990</td>
+<td>2017-04-01 00:00:00</td>
+<td>NaN</td>
+</tr>
+<tr>
+<td>1</td>
+<td>N</td>
+<td>0</td>
+<td>-9.990</td>
+<td>2017-04-01 01:00:00</td>
+<td>NaN</td>
+</tr>
+<tr>
+<td>2</td>
+<td>O</td>
+<td>9</td>
+<td>0.079</td>
+<td>2017-04-01 02:00:00</td>
+<td>1948.660034</td>
+</tr>
+<tr>
+<td>3</td>
+<td>O</td>
+<td>16</td>
+<td>1.070</td>
+<td>2017-04-01 03:00:00</td>
+<td>1950.900024</td>
+</tr>
+<tr>
+<td>4</td>
+<td>O</td>
+<td>17</td>
+<td>0.817</td>
+<td>2017-04-01 04:00:00</td>
+<td>1953.229980</td>
+</tr>
+<tr>
+<td>5</td>
+<td>O</td>
+<td>16</td>
+<td>0.271</td>
+<td>2017-04-01 05:00:00</td>
+<td>1956.319946</td>
+</tr>
+<tr>
+<td>6</td>
+<td>O</td>
+<td>16</td>
+<td>0.590</td>
+<td>2017-04-01 06:00:00</td>
+<td>1957.810059</td>
+</tr>
+<tr>
+<td>7</td>
+<td>O</td>
+<td>16</td>
+<td>0.736</td>
+<td>2017-04-01 07:00:00</td>
+<td>1960.550049</td>
+</tr>
+<tr>
+<td>8</td>
+<td>O</td>
+<td>16</td>
+<td>0.429</td>
+<td>2017-04-01 08:00:00</td>
+<td>1962.540039</td>
+</tr>
+<tr>
+<td>9</td>
+<td>O</td>
+<td>17</td>
+<td>0.861</td>
+<td>2017-04-01 09:00:00</td>
+<td>1965.349976</td>
+</tr>
+</tbody>
+</table>
+<h3 id="minimalistic-plot">Minimalistic Plot</h3>
+<p>This first example shows how to extract a data file and create a plot. It is
+the easiest way to load the data into a Pandas DataFrame in your Python
+environment. The DataFrame contains the following columNames: Flag, NbPoints,
+Stdev, TIMESTAMP, ch4. Let's load the data and create a plot for measured
+methane concentrations over time.</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
+dobj.data.plot(x='TIMESTAMP', y='ch4', grid=True)
+</code></pre>
+<p><img alt="Result" src="../img/dobj_minimal.png" /></p>
+<h3 id="plot-with-title-and-units">Plot with Title and Units</h3>
+<p>To get a useful plot, at the very least we should have a title and the unit of
+measurement:</p>
+<pre><code class="language-python">import matplotlib.pyplot as plt
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
+
+
+# Extract information from the dobj meta data.
+# Look at dobj.meta for a full list of metadata.
+unit = dobj.variables[dobj.variables.name == 'ch4'].unit.values[0]
+name = dobj.station['org']['name']
+uri = dobj.station['org']['self']['uri']
+title = f&quot;{name} \n {uri}&quot;
+
+plot = dobj.data.plot(x='TIMESTAMP', y='ch4', grid=True, title=title)
+plot.set(ylabel=unit)
+
+plt.show()
+</code></pre>
+<p><img alt="Result" src="../img/dobj_title.png" /></p>
+<h2 id="stations">Stations</h2>
+<h3 id="station-ids">Station Id's</h3>
+<p>The function to get the station id's might be something you will use a lot.
+Based on a station id you can get all the dobj id's (PID/URI) and hence access
+to the data. So if you have no idea whatsoever what stations are available, you
+came to the right place:</p>
+<pre><code class="language-python">from icoscp.station import station
+
+station_list = station.getIdList()  # Returns a Pandas DataFrame.
+station_list.columns  # What information do we get back?
+</code></pre>
+<p>Index(['uri', 'id', 'name', 'country', 'lat', 'lon', 'elevation', 'project',
+       'theme'], dtype='object')</p>
+<pre><code class="language-python">station_list.head(5)
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>uri</th>
+<th>id</th>
+<th>name</th>
+<th>...</th>
+<th>project</th>
+<th>theme</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>...</td>
+<td>SE-Sto</td>
+<td>Abisko-Stordalen Palsa Bog</td>
+<td>...</td>
+<td>ICOS</td>
+<td>ES</td>
+</tr>
+<tr>
+<td>...</td>
+<td>IT-Noe</td>
+<td>Arca di Noe - Le Prigionette</td>
+<td>...</td>
+<td>ICOS</td>
+<td>ES</td>
+</tr>
+<tr>
+<td>...</td>
+<td>UK-AMo</td>
+<td>Auchencorth Moss</td>
+<td>...</td>
+<td>ICOS</td>
+<td>ES</td>
+</tr>
+<tr>
+<td>...</td>
+<td>FR-Aur</td>
+<td>Aurade</td>
+<td>...</td>
+<td>ICOS</td>
+<td>ES</td>
+</tr>
+<tr>
+<td>...</td>
+<td>11BE</td>
+<td>BE-SOOP-Belgica</td>
+<td>...</td>
+<td>ICOS</td>
+<td>OS</td>
+</tr>
+</tbody>
+</table>
+<p>Now you have basic information about a station, but most important you got the
+station id as well. NOTE: to create a station object you need to provide the
+station id as is <strong>CaseSensitive</strong></p>
+<h3 id="a-station-object">A station Object</h3>
+<p>Let's create a station object and have a look what information is provided
+with the function .info() . Each entry from "info" is an attribute and can be
+extracted with "myStation.attribute". In the following example you can access
+the station name with myStation.name</p>
+<pre><code class="language-python">from icoscp.station import station
+
+my_station = station.get('SE-Nor')
+my_station.info()
+</code></pre>
+<p>{<br />
+'stationId': 'SE-Nor',<br />
+'name': 'Norunda',<br />
+'theme': 'ES',<br />
+'icosclass': '2',<br />
+'siteType': 'Forest',<br />
+'lat': 60.0865,<br />
+'lon': 17.4795,<br />
+'eas': None,<br />
+'firstName': 'Meelis',<br />
+'lastName': 'Mölder',<br />
+'email': 'meelis.molder@nateko.lu.se',<br />
+'country': 'SE',<br />
+'project': ['ICOS'],<br />
+'uri': ['http://meta.icos-cp.eu/resources/stations/ES_SE-Nor']<br />
+}</p>
+<pre><code class="language-python"># Return a DataFrame with all products available from this station.
+myStation.products()
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>specification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Drought 2018 Archive Product</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Ecosystem meteo time series (ICOS Sweden)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Ecosystem fluxes time series (ICOS Sweden)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Ecosystem eco time series (ICOS Sweden)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Drought 2018 FLUXNET Product</td>
+</tr>
+<tr>
+<td>5</td>
+<td>ICOS ETC Archive Product</td>
+</tr>
+<tr>
+<td>6</td>
+<td>ICOS ETC FLUXNET Product</td>
+</tr>
+</tbody>
+</table>
+<p>All the dobj URI's (ultimately containing the data itself) can be retrieved
+with <code>myStation.data()</code> let see what columns are provided. The most important
+information will be the 'dobj' column. This contains the link to the data and
+can be used to extract the data.</p>
+<pre><code class="language-python">from icoscp.station import station
+
+myStation = station.get('SE-Nor')
+myStation.data().columns
+</code></pre>
+<p>Index(['station', 'dobj', 'spec', 'timeStart', 'timeEnd', 'specLabel',
+       'samplingheight', 'datalevel', 'bytes'],
+      dtype='object')</p>
+<pre><code class="language-python"># Return a DataFrame with Level 2 data objects for the station.
+myStation.data(level='2')
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>station</th>
+<th>dobj</th>
+<th>spec</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>...stations/ES_SE-Nor</td>
+<td>https://meta.icos-cp.eu/objects/KfJjYyksI2nxCiJU36UfYVY_</td>
+<td>.../dought2018ArchiveProduct</td>
+</tr>
+<tr>
+<td>...stations/ES_SE-Nor</td>
+<td>https://meta.icos-cp.eu/objects/L-in6TpOcGjmXruwi3ESD9G2</td>
+<td>.../drought2018FluxnetProduct</td>
+</tr>
+<tr>
+<td>...stations/ES_SE-Nor</td>
+<td>https://meta.icos-cp.eu/objects/mBPKiB9tIQZQGrsy8ehAinvz</td>
+<td>.../etcArchiveProduct</td>
+</tr>
+<tr>
+<td>...stations/ES_SE-Nor</td>
+<td>https://meta.icos-cp.eu/objects/XA_Ifq7BKqS0tkQd4dGVEFnM</td>
+<td>.../etcFluxnetProduct</td>
+</tr>
+</tbody>
+</table>
+<p>This is not the full output, just an excerpt.</p>
+<h3 id="list-of-stations">List of Stations</h3>
+<p>There is a built-in function to extract a list of stations. Be aware that if
+you extract all ICOS stations, a lot of information is gathered and retrieved.
+At the time of writing there are over a 170 stations and in can take up to a
+minute to extract all.</p>
+<pre><code class="language-python">from icoscp.station import station
+
+icosStations = station.getList()    
+for s in icosStations:
+    print(s.stationId, s.name, s.lat, s.lon)
+</code></pre>
+<p>SE-Sto Abisko-Stordalen Palsa Bog 68.35596 19.04521<br />
+IT-Noe Arca di Noe - Le Prigionette 40.60617 8.15117<br />
+UK-AMo Auchencorth Moss 55.7925 -3.24362<br />
+FR-Aur Aurade 43.54965 1.106103<br />
+...</p>
+<h2 id="collections">Collections</h2>
+<h3 id="find-a-collection">Find a collection</h3>
+<pre><code class="language-python">from icoscp.collection import collection
+
+collection.getIdList()
+</code></pre>
+<p>Output is a pandas data frame, where each row contains information about a
+collection. The column <code>collection</code> or <code>doi</code> can be used to create a collection
+representation. The column <code>dobj</code> contains a list of all associated digital
+objects (the data) and the column <code>count</code> tells you how many data files are
+associated.</p>
+<table>
+<thead>
+<tr>
+<th>collection</th>
+<th>doi</th>
+<th>title</th>
+<th>description</th>
+<th>dobj</th>
+<th>count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>https://meta.icos-cp.eu/collections/WM5ShdLFqP...</td>
+<td>10.18160/P7E9-EKEA</td>
+<td>Ambient atmospheric methane observations from ...</td>
+<td>This dataset for historic ambient CH4 mole fra...</td>
+<td>[https://meta.icos-cp.eu/objects/pWqX-lRUsilS_...</td>
+<td>30</td>
+</tr>
+</tbody>
+</table>
+<h3 id="create-a-collection-representation">Create a collection representation</h3>
+<p>With the information from above, you can use either the <code>collection</code> or <code>doi</code>
+to initialize a collection representation and print some information. Have a
+look at <a href="../modules/#collection">Modules / collection</a> for a full list of
+attributes.</p>
+<pre><code class="language-python">my_collection = collection.get('10.18160/P7E9-EKEA')
+my_collection.info()
+</code></pre>
+<p>{<br />
+'id': 'https://meta.icos-cp.eu/collections/WM5ShdLFqPSI0coyVa57G1_Z',<br />
+'doi': '10.18160/P7E9-EKEA',<br />
+'citation': 'Integrated Non-CO2 Observing System (INGOS). (2018). Ambient
+atmospheric methane observations from the ICOS/InGOS network 2000-2015. ICOS
+ERIC - Carbon Portal. https://doi.org/10.18160/P7E9-EKEA\n',<br />
+'title': 'Ambient atmospheric methane observations from the ICOS/InGOS network
+2000-2015',<br />
+'description': 'This dataset for historic ambient CH4 mole fractions is an
+important outcome of the FP7 InGOS project (http://www.ingos-infrastructure.eu,
+Grant Agreement Number 284274). Data from 17 stations have been reprocessed for
+the period 2000-2015; in some cases involving re-integration of chromatograms
+and in all cases re-calibrating the time series using updated assigned values
+for standard gases and target gases. All data have been brought to the same
+concentration scale (NOAA-2006A). Data have been flagged for identified periods
+with instrumental or sampling problems. Next to added estimations for
+measurement uncertainty based on repeatability of the working standards also
+error estimates are added that represent uncertainty due to lab internal scale
+consistency, monthly reproducibility, scale transfer and where available
+comparison with concurrent flask sampling.'<br />
+}</p>
+<p>A more in depth example and how to plot data from the collection can be found
+on <a href="https://exploredata.icos-cp.eu">https://exploredata.icos-cp.eu</a></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../modules/" class="btn btn-neutral float-left" title="Legacy modules"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../modules/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
