@@ -260,6 +260,13 @@ def _project(kwargs, stations):
     stations = {k: stations[k] for k in flt}
     return stations
 
+def _country(kwargs, stations):
+    ccode = kwargs['country']
+    return {
+        id: station
+        for id, station in stations.items()
+        if station['country'] == ccode
+    }
 
 def _avail(stations):
     years_set = set()
@@ -470,6 +477,9 @@ def find(**kwargs):
         Example:    station.find(id='HTM')
                     station.find(id=['NOR', 'GAT344'])
 
+    country STR:
+        ISO 3166-1 alpha-2 country code
+
     search STR:
         Arbitrary string search keyword
          Example:    station.find(search='north')
@@ -587,6 +597,7 @@ def find(**kwargs):
     # the function has been defined above and that outfmt is the very
     # last call:
     fun = {'id': _id,
+           'country': _country,
            'bbox': _bbox,
            'pinpoint': _pinpoint,
            'sdate': _sdate,
