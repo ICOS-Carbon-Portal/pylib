@@ -39,8 +39,8 @@ pip install icoscp
 
 ## Documentation
 The full documentation about the library and all the modules are available at
-[https://icos-carbon-portal.github.io/pylib/](
-https://icos-carbon-portal.github.io/pylib/)
+[https://icos-carbon-portal.github.io/pylib/icoscp/](
+https://icos-carbon-portal.github.io/pylib/icoscp/)
 
 ## Development
 For instructions about how to go about extending and testing this software,
