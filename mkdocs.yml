@@ -1,0 +1,8 @@
+site_url: 'https://icos-carbon-portal.github.io/pylib/'
+
+site_name: ICOS Carbon Portal Python Libraries
+nav:
+    - About: index.md
+
+theme:
+    name: readthedocs
