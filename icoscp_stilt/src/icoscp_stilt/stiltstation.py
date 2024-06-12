@@ -490,7 +490,7 @@ def find(**kwargs):
         Can be useful for creating a map, or getting a subset of stations
         from an existing search.
         Example: myStations = station.find(search='north')
-                 refined = station.find(stations=myStations, country='Finland')
+                 refined = station.find(stations=myStations, country='FI')
 
     # Spatial search keywords:
 
@@ -632,8 +632,8 @@ def get(id=None, progress=False):
             .get('KIT')
                 returns a list of stiltstations based on .find(search='KIT')
 
-            .get(find(country=['Sweden','Finland']))
-                returns a list of stilstations found in Sweden and Finland
+            .get(find(country='SE'))
+                returns a list of stilstations found in Sweden
     Parameters
     ----------
     id :    DICT | LIST[DICT]
