@@ -49,19 +49,16 @@ stations from an existing search.
 
 ```Python
 myStations = stiltstation.find(search='north')
-refined = stiltstation.find(stations=myStations, country='Finland')
+refined = stiltstation.find(stations=myStations, country='FI')
 ```
 
 #### Spatial keywords 
 
-#### country='STR' | ['STR','STR',...]
-Provide a single country id as string, or a list of strings. You can provide
-alpha-2, alpha-3 code (ISO 3166) or the full country name (some translations
-are available as well). To find all STILT stations with geolocation in Norway
-you can search for either NO, NOR, Norway, Norge.
+#### country='STR'
+Provide a single country ISO 3166 alpha-2 id as string
 
 ```Python
-stiltstation.find(country=['Swe', 'norge', 'IT'])
+stiltstation.find(country='NO')
 ```
 
 #### project='icos'
@@ -151,8 +148,8 @@ https://python-visualization.github.io/folium/). The map can be displayed
 directly in a Jupyter Notebook, or you can save the map to a html file.
 
 ```Python
-stiltstation.find(country='Italy', outfmt='pandas') 
-stiltstation.find(country='Italy', outfmt='pandas').save('my_map.html')
+stiltstation.find(country='IT', outfmt='pandas') 
+stiltstation.find(country='IT', outfmt='pandas').save('my_map.html')
 ```
 
 Finally, the choice `avail` will return a pandas DataFrame where availability
