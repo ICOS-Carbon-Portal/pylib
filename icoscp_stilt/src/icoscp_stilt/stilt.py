@@ -62,7 +62,7 @@ class StiltStation:
         """
         if self.icosId is None: return False
         uri = ICOS_STATION_PREFIX + self.icosId
-        return uri in station_class_lookup().keys()
+        return uri in station_class_lookup()
 
     @property
     def has_observation_data(self) -> bool:
