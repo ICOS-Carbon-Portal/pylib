@@ -9,7 +9,7 @@ import requests
 import xarray as xr
 from dacite import from_dict
 from icoscp_core.cpb import ArraysDict
-from icoscp_core.icos import data, meta
+from icoscp_core.icos import data, meta, station_class_lookup
 from icoscp_core.queries.dataobjlist import DataObjectLite
 
 from .const import (
@@ -53,6 +53,27 @@ class StiltStation:
     years: list[int]
     icosId: str | None
     icosHeight: float | None
+
+    @property
+    def is_icos_proper(self) -> bool:
+        """
+        Boolean property indicating whether the station corresponds to a
+        proper ICOS station.
+        """
+        if self.icosId is None: return False
+        uri = ICOS_STATION_PREFIX + self.icosId
+        return uri in station_class_lookup().keys()
+
+    @property
+    def has_observation_data(self) -> bool:
+        """
+        Boolean property indicating whether the station corresponds to a
+        station in ICOS Carbon Portal. Does not mean that this is a 'proper'
+        ICOS station, as ICOS Carbon Portal contains data from some other
+        stations, too.
+        """
+        return self.icosId is not None
+
 
 def list_stations() -> list[StiltStation]:
     """
