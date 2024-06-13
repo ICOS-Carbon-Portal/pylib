@@ -20,7 +20,7 @@ import re
 import json
 import pandas as pd
 from tqdm.notebook import tqdm
-from icoscp_core.icos import meta, ATMO_STATION
+from icoscp_core.icos import meta, ATMO_STATION, station_class_lookup
 from icoscp_core.queries.stationlist import StationLite
 from .stiltobj import StiltStation
 from . import fmap
@@ -245,20 +245,14 @@ def _edate(kwargs, stations):
     return stations
 
 
-def _project(kwargs, stations):
-    proj = kwargs['project']
+def _project(kwargs: dict[str, str], stations: dict[str, Any]) -> dict[str, Any]:
+    proj = kwargs['project'].lower()
 
-    # We use lowercase.
-    proj = proj.lower()
-
-    flt = []
-    if proj == 'icos':
-        for k in stations:
-            if stations[k]['icos']:
-                flt.append(k)
-
-    stations = {k: stations[k] for k in flt}
-    return stations
+    return {
+        id: s
+        for id, s in stations.items()
+        if s['icos'] and s['icos']['uri'][0] in station_class_lookup()
+    } if proj == 'icos' else {}
 
 def _country(kwargs, stations):
     ccode = kwargs['country']
@@ -352,7 +346,7 @@ def __get_stations(ids: list | None = None,
     ) if ids else all_station_ids
 
     df = pd.read_csv(STILTINFO)
-    icos_stations = meta.list_stations(ATMO_STATION)
+    icos_stations = {s.id: s for s in meta.list_stations(ATMO_STATION)}
 
     stations = {}
     for station_id in tqdm(requested_stations, disable=not progress):
@@ -389,7 +383,7 @@ def parse_location(loc: str) -> dict[str, Any]:
 def get_stn_info(loc: str,
                  station_id: str,
                  stiltinfo_row: pd.DataFrame,
-                 icos_stations: list[StationLite]) -> dict[str, Any]:
+                 icos_stations: dict[str, StationLite]) -> dict[str, Any]:
     """Return stilt-station metadata."""
 
     stn_info = parse_location(loc)
@@ -403,7 +397,7 @@ def get_stn_info(loc: str,
         if not pd.isna(country_code := stiltinfo_row['Country'].item()):
             stn_info['country'] = country_code
         if not pd.isna(icos_id := stiltinfo_row['ICOS id'].item()):
-            icos_st: StationLite | None = next(filter(lambda x: x.id == station_id, icos_stations), None)
+            icos_st: StationLite | None = icos_stations.get(icos_id, None)
             if icos_st is not None:
                 stn_info['icos'] = {
                     'country': icos_st.country_code,
