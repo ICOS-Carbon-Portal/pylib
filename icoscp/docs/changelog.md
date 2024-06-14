@@ -6,6 +6,10 @@
     - Authenticate via [icoscp_core](https://pypi.org/project/icoscp_core/).
 - #### stilt module
     - The module is moved out to a new library `icoscp_stilt`
+  #### countries module
+    - The module has been removed, as its only usage was from the `stilt` module
+    - Within the new `icoscp_stilt` library, the geo information handling has
+    been radically simplified, making the `countries` module redundant
 - #### dependencies
     - Dependencies `fiona` and `geopandas` are gone due to `stilt`
       module removal

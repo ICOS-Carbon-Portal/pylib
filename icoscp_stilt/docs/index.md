@@ -31,6 +31,37 @@ with
 from icoscp_stilt import stiltstation
 ```
 
+Additionally, handling of country-association of the STILT stations is
+radically simplified with this new release. This was made possible by a
+change on the server side that guaranteed ISO-3166 alpha-2 country code
+association with every STILT station. The previously-utilized geo lookup of
+countries thus became redundant. Also, in the context of STILT, detailed
+country metadata was deemed unnecessary, retaining the country code only,
+with a possibility of country name lookup. This resulted in a potential
+breaking change for the existing STILT-related Jupyter notebooks, namely
+country filtering in `stiltstation.find` method needs to use the two-letter
+country codes rather than the previously arbitrary choice of country names or
+3-letter codes, for example:
+
+```Python
+stiltstation.find(country='SE')
+```
+instead of the previously-allowed
+```Python
+stiltstation.find(country='swe')
+```
+or
+```Python
+stiltstation.find(country='Sweden')
+```
+
+Also, selecting multiple countries at once is not supported in the legacy code
+any more.
+
+In general, library users are encouraged to switch to using the new
+functionality (`stilt` module) instead whenever possible (see the code
+examples below).
+
 ## Getting started
 The library is published to PyPI.
 
