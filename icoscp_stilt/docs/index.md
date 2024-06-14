@@ -82,15 +82,18 @@ station_info_lookup = {s.id: s for s in stations}
 
 # example: Hyltemossa station, altitude 150 m
 htm_info = station_info_lookup['HTM150']
->>> htm_info
-StiltStation(
-    id='HTM150', name='Hyltemossa', lat=56.1, lon=13.42, alt=150,
-    countryCode='SE',
-    years=[2006, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022],
-    icosId='HTM', icosHeight=150.0
-)
+htm_info
+```
+Here is the output of the above code.
 
+    StiltStation(
+        id='HTM150', name='Hyltemossa', lat=56.1, lon=13.42, alt=150,
+        countryCode='SE',
+        years=[2006, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022],
+        icosId='HTM', icosHeight=150.0
+    )
 
+```Python
 # years for which the station has calculation results
 htm_years = htm_info.years
 
@@ -104,16 +107,8 @@ ts_columns = htm_time_series_result.columns
 # fetch selected columns only
 htm_ts_ch4_basics = stilt.fetch_result_ts('HTM150', '2022-01-01', '2022-01-31', columns=['isodate', 'ch4.stilt', 'metadata'])
 
-# raw STILT time series results, all columns, as pandas DataFrame
-# always slow, as these results are not cached
-htm_time_series_raw = stilt.fetch_result_ts('HTM150', '2022-01-01', '2022-01-31', raw=True)
-
-# list of raw time-series columns (~800)
-ts_columns_raw = htm_time_series_raw.columns
-
 # find months for which calculation was run
->>> stilt.available_months('KRE250', 2022)
-['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+stilt.available_months('KRE250', 2022)
 
 # find all months for all years for which calculation was run
 htm_yearmonths = stilt.available_year_months(htm_info)
