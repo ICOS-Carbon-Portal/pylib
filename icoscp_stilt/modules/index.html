@@ -58,7 +58,7 @@
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#spatial-keywords">Spatial keywords</a>
     </li>
-    <li class="toctree-l4"><a class="reference internal" href="#countrystr-strstr">country='STR' | ['STR','STR',...]</a>
+    <li class="toctree-l4"><a class="reference internal" href="#countrystr">country='STR'</a>
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#projecticos">project='icos'</a>
     </li>
@@ -195,15 +195,12 @@ metadata.</p>
 for all stilt station on our server. Can be useful for creating a subset of
 stations from an existing search.</p>
 <pre><code class="language-Python">myStations = stiltstation.find(search='north')
-refined = stiltstation.find(stations=myStations, country='Finland')
+refined = stiltstation.find(stations=myStations, country='FI')
 </code></pre>
 <h4 id="spatial-keywords">Spatial keywords</h4>
-<h4 id="countrystr-strstr">country='STR' | ['STR','STR',...]</h4>
-<p>Provide a single country id as string, or a list of strings. You can provide
-alpha-2, alpha-3 code (ISO 3166) or the full country name (some translations
-are available as well). To find all STILT stations with geolocation in Norway
-you can search for either NO, NOR, Norway, Norge.</p>
-<pre><code class="language-Python">stiltstation.find(country=['Swe', 'norge', 'IT'])
+<h4 id="countrystr">country='STR'</h4>
+<p>Provide a single country ISO 3166 alpha-2 id as string</p>
+<pre><code class="language-Python">stiltstation.find(country='NO')
 </code></pre>
 <h4 id="projecticos">project='icos'</h4>
 <p>This option will retrieve all STILT stations that are ICOS stations.</p>
@@ -269,8 +266,8 @@ however returns a list of STILT station objects. Please see the documentation
 about <a href="./#getid-progressfalse">stiltstation.get()</a>. The choice
 <code>map</code>, returns a folium map <a href="https://python-visualization.github.io/folium/">https://python-visualization.github.io/folium/</a>. The map can be displayed
 directly in a Jupyter Notebook, or you can save the map to a html file.</p>
-<pre><code class="language-Python">stiltstation.find(country='Italy', outfmt='pandas') 
-stiltstation.find(country='Italy', outfmt='pandas').save('my_map.html')
+<pre><code class="language-Python">stiltstation.find(country='IT', outfmt='pandas') 
+stiltstation.find(country='IT', outfmt='pandas').save('my_map.html')
 </code></pre>
 <p>Finally, the choice <code>avail</code> will return a pandas DataFrame where availability
 of timeseries data per STILT station is gathered for each year.</p>
