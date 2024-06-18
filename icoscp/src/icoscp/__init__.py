@@ -17,7 +17,7 @@ from icoscp.cpauth.authentication import AuthProvider
 """
 __credits__ = "ICOS Carbon Portal"
 __license__ = ['Software: GPL-3.0', 'ICOS Data accessed with this library CC BY 4.0']
-__version__ = "0.2.0a2"
+__version__ = "0.2.0"
 __maintainer__ = "ICOS Carbon Portal, elaborated products team"
 __email__ = ['info@icos-cp.eu']
 __status__ = "stable"
