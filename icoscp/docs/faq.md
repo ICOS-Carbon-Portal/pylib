@@ -4,10 +4,12 @@ Please see [Getting started](getting_started.md) for possible answers to questio
 covered here.
 
 ### `icoscp_core` is very different from the old `icoscp`, do I have to rewrite everything?
-No, your code depending on the older version will continue working. No code got
-removed from `icoscp` with release `0.2.0`. But you may benefit from the new
-`icoscp_core` features for new developments, and from gradual porting of your
-older code to using `icoscp_core`.
+No, your code depending on the older version will continue working. Apart from
+moving stilt-related functionality to a new dedicated library and overhauling
+authentication that was present in later versions of `0.1.x` series, no code got
+removed from `icoscp` with release `0.2.0`. But you should use the new
+`icoscp_core` features for new developments, and can benefit from gradual
+porting of at least some of your older code to using `icoscp_core`.
 
 ### How can I retrieve the latest/newest version of a dataset?
 ```python

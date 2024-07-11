@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0a0
+## 0.2.0
 - #### cpauth module
     - Remove legacy authentication.
     - Authenticate via [icoscp_core](https://pypi.org/project/icoscp_core/).
