@@ -302,7 +302,8 @@
                         "lat": 47.4165,
                         "lon": 10.9796,
                         "name": "Zugspitze",
-                        "stationId": "ZSF"
+                        "stationId": "ZSF",
+                        "uri": ["http://meta.icos-cp.eu/resources/stations/AS_ZSF"]
                 },
                 "id": "ZSF",
                 "lat": 47.42,
