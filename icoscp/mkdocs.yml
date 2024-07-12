@@ -4,11 +4,13 @@ site_name: ICOS Carbon Portal icoscp Library
 nav:
     - About: index.md
     - Installation: install.md
-    - Getting started: getting_started.md
+    - Authentication: authentication.md
+    - Getting started with icoscp_core: getting_started.md
+    - Examples: examples.md
+    - Legacy icoscp modules: modules.md
+    - Legacy icoscp examples: legacy_examples.md
     - FAQ: faq.md
     - Changelog: changelog.md
-    - Legacy modules: modules.md
-    - Legacy examples: legacy_examples.md
 
 theme:
     name: readthedocs

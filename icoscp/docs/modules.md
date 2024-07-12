@@ -7,7 +7,6 @@ your python environment you should be able to load the modules with:
 - `from icoscp.cpb.dobj import Dobj`
 - `from icoscp.station import station`
 - `from icoscp.collection import collection`
-- `from icoscp.stilt import stiltstation`
 - `from icoscp.sparql.runsparql import RunSparql`
 - `from icoscp.sparql import sparqls`
 
