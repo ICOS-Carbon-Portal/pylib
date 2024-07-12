@@ -48,7 +48,23 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../getting_started/">Getting started</a>
+                <li class="toctree-l1"><a class="reference internal" href="../authentication/">Authentication</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../getting_started/">Getting started with icoscp_core</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../examples/">Examples</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../modules/">Legacy icoscp modules</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../legacy_examples/">Legacy icoscp examples</a>
                 </li>
               </ul>
               <ul class="current">
@@ -69,14 +85,6 @@
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../changelog/">Changelog</a>
-                </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../modules/">Legacy modules</a>
-                </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../legacy_examples/">Legacy examples</a>
                 </li>
               </ul>
       </div>
@@ -106,10 +114,12 @@
 <p>Please see <a href="../getting_started/">Getting started</a> for possible answers to questions not
 covered here.</p>
 <h3 id="icoscp_core-is-very-different-from-the-old-icoscp-do-i-have-to-rewrite-everything"><code>icoscp_core</code> is very different from the old <code>icoscp</code>, do I have to rewrite everything?</h3>
-<p>No, your code depending on the older version will continue working. No code got
-removed from <code>icoscp</code> with release <code>0.2.0</code>. But you may benefit from the new
-<code>icoscp_core</code> features for new developments, and from gradual porting of your
-older code to using <code>icoscp_core</code>.</p>
+<p>No, your code depending on the older version will continue working. Apart from
+moving stilt-related functionality to a new dedicated library and overhauling
+authentication that was present in later versions of <code>0.1.x</code> series, no code got
+removed from <code>icoscp</code> with release <code>0.2.0</code>. But you should use the new
+<code>icoscp_core</code> features for new developments, and can benefit from gradual
+porting of at least some of your older code to using <code>icoscp_core</code>.</p>
 <h3 id="how-can-i-retrieve-the-latestnewest-version-of-a-dataset">How can I retrieve the latest/newest version of a dataset?</h3>
 <pre><code class="language-python">from icoscp_core.icos import meta
 dobj = meta.get_dobj_meta('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
@@ -170,7 +180,7 @@ installation section <a href="../install/#authentication">here</a>.</p>
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../getting_started/" class="btn btn-neutral float-left" title="Getting started"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../legacy_examples/" class="btn btn-neutral float-left" title="Legacy icoscp examples"><span class="icon icon-circle-arrow-left"></span> Previous</a>
         <a href="../changelog/" class="btn btn-neutral float-right" title="Changelog">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
@@ -194,7 +204,7 @@ installation section <a href="../install/#authentication">here</a>.</p>
   <span class="rst-current-version" data-toggle="rst-current-version">
     
     
-      <span><a href="../getting_started/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../legacy_examples/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
       <span><a href="../changelog/" style="color: #fcfcfc">Next &raquo;</a></span>

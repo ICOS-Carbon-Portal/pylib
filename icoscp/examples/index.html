@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://icos-carbon-portal.github.io/pylib/icoscp/examples/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Examples - ICOS Carbon Portal icoscp Library</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Examples";
+        var mkdocs_page_input_path = "examples.md";
+        var mkdocs_page_url = "/pylib/icoscp/examples/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ICOS Carbon Portal icoscp Library
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">About</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../install/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../authentication/">Authentication</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../getting_started/">Getting started with icoscp_core</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Examples</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#monthly-co2-averages">Monthly CO2 averages</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../modules/">Legacy icoscp modules</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../legacy_examples/">Legacy icoscp examples</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../faq/">FAQ</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../changelog/">Changelog</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ICOS Carbon Portal icoscp Library</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Examples</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="examples">Examples</h1>
+<h2 id="monthly-co2-averages">Monthly CO2 averages</h2>
+<p>This example uses <code>icoscp_core</code> functionality to merge, monthly-average and
+plot CO2 molar fraction data from selected stations, sampled at certain
+heights. See <a href="../getting_started/#discover-data-types">discover data types</a>
+to find out how to discover a URL for a data type.</p>
+<pre><code class="language-Python">from icoscp_core.icos import data, meta, ATMO_STATION
+import pandas as pd
+import numpy as np
+
+# Swedish atmospheric stations whose metadata is supplied to the Carbon Portal
+# by the Atmospheric Thematic Center
+se_atmo_stations = [
+    s for s in meta.list_stations(ATMO_STATION)
+    if s.country_code=='SE'
+]
+
+# Find basic metadata for CO2 release data sampled at at least 100 m above the ground
+se_co2_from_100 = [
+    dobj for dobj in meta.list_data_objects(
+        # URL for official ICOS CO2 molar fraction release data
+        datatype='http://meta.icos-cp.eu/resources/cpmeta/atcCo2L2DataObject',
+        station=se_atmo_stations
+    )
+    if dobj.sampling_height &gt;= 100
+]
+
+# prepare an empty pandas DataFrame to merge the data into
+merged_co2 = pd.DataFrame(columns=['TIMESTAMP', 'co2'])
+
+# batch-fetch the interesting columns and iterate through the results
+for dobj, arrs in data.batch_get_columns_as_arrays(se_co2_from_100, ['TIMESTAMP', 'co2']):
+    st_uri = dobj.station_uri
+    # ICOS atmospheric station URIs end with underscore followed by a 3-letter station ID
+    # this ID is convenient to use as a suffix to rename 'co2' with
+    station_id = st_uri[st_uri.rfind('_'):]
+    df = pd.DataFrame(arrs)
+    # next line would be needed if `keep_bad_data` flag in batch_get_columns_as_arrays was set to True
+    #df.loc[df['Flag'] != 'O', 'co2'] = np.nan 
+    del df['Flag']
+    merged_co2 = pd.merge(merged_co2, df, on='TIMESTAMP', how='outer', suffixes=('', station_id))
+
+del merged_co2['co2']
+
+# compute monthly averages
+by_month = merged_co2.groupby(pd.Grouper(key='TIMESTAMP', freq='M')).mean().reset_index()
+
+# Let us retrieve column metadata to construct Y-axis plot label
+
+# fetch detailed metadata for one of the data objects (they all have same columns)
+dobj_meta = meta.get_dobj_meta(se_co2_from_100[0])
+
+# get 'value type' part of column metadata for co2 column
+columns_meta = dobj_meta.specificInfo.columns
+co2_value_type = [col for col in columns_meta if col.label=='co2'][0].valueType
+
+# construct the Y-axis label from the value type data structure
+co2_axis_label = f'{co2_value_type.self.label} [{co2_value_type.unit}]'
+
+# plotting should work in Jupyter
+by_month.plot(x='TIMESTAMP', ylabel=co2_axis_label);
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../getting_started/" class="btn btn-neutral float-left" title="Getting started with icoscp_core"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../modules/" class="btn btn-neutral float-right" title="Legacy icoscp modules">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../getting_started/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../modules/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
