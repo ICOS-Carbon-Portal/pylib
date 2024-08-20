@@ -191,7 +191,7 @@ def list_footprints(station_id: str, from_date: str, to_date: str) -> list[datet
 
 def load_footprint(station_id: str, dt: datetime) -> xr.DataArray:
     """
-    Load a single footprint as an xarray spatial dataset. Works only on ICOS
+    Load a single footprint as an xarray DataArray. Works only on ICOS
     Jupyter Hub.
 
     :param `station_id` (str): STILT station id
@@ -200,13 +200,45 @@ def load_footprint(station_id: str, dt: datetime) -> xr.DataArray:
 
     :return (DataArray): xarray DataArray instance with the footprint data
     """
-    m_str = str(dt.month).zfill(2)
-    slot_str = f'{dt.year}x{m_str}x{str(dt.day).zfill(2)}x{str(dt.hour).zfill(2)}'
-    fp_path = _year_path(station_id, dt.year) / m_str / slot_str / 'foot'
-    if not os.path.exists(fp_path):
-        msg = f"No footprint found for time {dt} for station {station_id}"
-        raise FileNotFoundError(msg)
-    return xr.open_dataarray(fp_path) # type: ignore
+    fp_path = _footprint_path(station_id, dt)
+    return xr.open_dataarray(fp_path)# type: ignore
+
+
+def load_footprints(station_id: str, dts: list[datetime]) -> xr.Dataset:
+    """
+    Load a number of footprints as an xarray spatial dataset. Works only
+    on ICOS Jupyter Hub.
+
+    :param `station_id` (str): STILT station id
+
+    :param `dt` (list[datetime]): the time slots of interest
+
+    :return (DataArray): xarray DataArray instance with the footprint data
+    """
+    fp_paths = [_footprint_path(station_id, dt) for dt in dts]
+
+    # Concatenate xarrays on time axis:
+    fp = xr.open_mfdataset( # type: ignore
+        fp_paths, combine='by_coords',
+        data_vars='minimal', coords='minimal',
+        compat='override', parallel=True,
+        decode_cf=False
+    )
+    # now check for CF compatibility
+    fp = xr.decode_cf(fp)
+    # Format time attributes:
+    fp.time.attrs["standard_name"] = "time"
+    fp.time.attrs["axis"] = "T"
+
+    # Format latitude attributes:
+    fp.lat.attrs["axis"] = "Y"
+    fp.lat.attrs["standard_name"] = "latitude"
+
+    # Format longitude attributes:
+    fp.lon.attrs["axis"] = "X"
+    fp.lon.attrs["standard_name"] = "longitude"
+    return fp
+
 
 def fetch_observations_pandas(
     spec: URL,
@@ -291,3 +323,12 @@ def _year_path(station_id: str, year: int) -> Path:
         m = "This functionality is only available on a Jupyter Hub from Carbon Portal"
         raise RuntimeError(m)
     return Path(STILTPATH) / station_id / str(year)
+
+def _footprint_path(station_id: str, dt: datetime) -> Path:
+    m_str = str(dt.month).zfill(2)
+    slot_str = f'{dt.year}x{m_str}x{str(dt.day).zfill(2)}x{str(dt.hour).zfill(2)}'
+    fp_path = _year_path(station_id, dt.year) / m_str / slot_str / 'foot'
+    if not os.path.exists(fp_path):
+        msg = f"No footprint found for time {dt} for station {station_id}"
+        raise FileNotFoundError(msg)
+    return fp_path
