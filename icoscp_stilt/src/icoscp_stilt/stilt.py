@@ -211,7 +211,7 @@ def load_footprints(station_id: str, dts: list[datetime]) -> xr.Dataset:
 
     :param `station_id` (str): STILT station id
 
-    :param `dt` (list[datetime]): the time slots of interest
+    :param `dts` (list[datetime]): the time slots of interest
 
     :return (DataArray): xarray DataArray instance with the footprint data
     """
