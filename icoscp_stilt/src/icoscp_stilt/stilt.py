@@ -74,6 +74,15 @@ class StiltStation:
         """
         return self.icosId is not None
 
+@dataclass(frozen=True)
+class ObservationResult:
+    dobj: DataObjectLite
+    columns: ArraysDict
+
+@dataclass(frozen=True)
+class ObservationDfResult:
+    dobj: DataObjectLite
+    df: pd.DataFrame
 
 def list_stations() -> list[StiltStation]:
     """
@@ -244,7 +253,7 @@ def fetch_observations_pandas(
     spec: URL,
     stations: list[StiltStation],
     columns: list[str] | None = None
-) -> dict[str, pd.DataFrame]:
+) -> dict[str, ObservationDfResult]:
     """
     Batch-fetch observational datasets for a number of STILT stations
 
@@ -257,19 +266,19 @@ def fetch_observations_pandas(
     within the observational datasets; if omitted, all columns are included
     in the result
 
-    :return (dict[str, DataFrame]): a dictionary with STILT station IDs as
-    keys and pandas DataFrames with observational datasets as values
+    :return (dict[str, ObservationDfResult]): a dictionary with STILT station IDs as
+    keys and instances of ObservationDfResult as values
     """
     return {
-        st_id: pd.DataFrame(arrs)
-        for st_id, arrs in fetch_observations(spec, stations, columns).items()
+        st_id: ObservationDfResult(obs_res.dobj, pd.DataFrame(obs_res.columns))
+        for st_id, obs_res in fetch_observations(spec, stations, columns).items()
     }
 
 def fetch_observations(
     spec: URL,
     stations: list[StiltStation],
     columns: list[str] | None = None
-) -> dict[str, ArraysDict]:
+) -> dict[str, ObservationResult]:
     """
     Batch-fetch observational datasets for a number of STILT stations. Is a
     lower-level and better-performing version of `fetch_observations_pandas`.
@@ -287,8 +296,8 @@ def fetch_observations(
     within the observational datasets; if omitted, all columns are included
     in the result
 
-    :return (dict[str, dict[str, ndarray]]): a dictionary with STILT station IDs as
-    keys and as values, dictionaries of column names vs numpy arrays
+    :return (dict[str, ObservationResult]): a dictionary with STILT station IDs as
+    keys and ObservationResult instances as values
     """
 
     icos2ss: dict[tuple[URL, float], StiltStation] = {
@@ -312,8 +321,8 @@ def fetch_observations(
         if lookup_ss(dobj)
     ]
     return {
-        ss.id: arrs
-        for dobj, arrs in data.batch_get_columns_as_arrays(dobjs_to_fetch, columns)
+        ss.id: ObservationResult(dobj, cols)
+        for dobj, cols in data.batch_get_columns_as_arrays(dobjs_to_fetch, columns)
         for ss in lookup_ss(dobj)
     }
 
