@@ -39,7 +39,7 @@ requires-python = ">=3.10"
 dependencies = [
     "folium",
     "icoscp_core",
-    "pandas",
+    "pandas >= 1.3.5, < 2",
     "requests",
     "tqdm"
 ]
