@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+- #### dependencies
+    - Version pin library's dependencies.
+
 ## 0.2.0
 - #### cpauth module
     - Remove legacy authentication.
