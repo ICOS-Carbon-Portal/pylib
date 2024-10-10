@@ -568,7 +568,7 @@ def get(stationId: str = None,
     except:
         stn = None
 
-    if not (isinstance(stn, pd.DataFrame) and not stn.empty):
+    if not isinstance(stn, pd.DataFrame) or stn.empty:
         my_stn.stationId = stationId
         my_stn.valid = False
         return my_stn
@@ -715,6 +715,7 @@ def _get_id_list(filter: dict = {'project': 'ICOS', 'theme': ['AS', 'ES', 'OS']}
 
     query = sparqls.station_query(filter=filter)
     stn_df = RunSparql(query, 'pandas').run()
+    stn_df.drop_duplicates(inplace=True)
 
     if not isinstance(stn_df, pd.DataFrame):
         return stn_df
