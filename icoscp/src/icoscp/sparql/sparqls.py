@@ -446,7 +446,7 @@ def station_query(filter: dict = None, return_filter: bool = False) -> str or (s
         prefix xsd: <http://www.w3.org/2001/XMLSchema#>
         prefix cpmeta: <http://meta.icos-cp.eu/ontologies/cpmeta/>
         prefix cpst: <http://meta.icos-cp.eu/ontologies/stationentry/>
-        select ?uri ?id ?name ?icosClass ?country ?lat ?lon ?elevation ?stationTheme ?firstName ?lastName ?email ?siteType
+        select distinct ?uri ?id ?name ?icosClass ?country ?lat ?lon ?elevation ?stationTheme ?firstName ?lastName ?email ?siteType
         from <http://meta.icos-cp.eu/resources/icos/>
         from <http://meta.icos-cp.eu/resources/extrastations/>
         from <http://meta.icos-cp.eu/resources/cpmeta/>
@@ -461,7 +461,8 @@ def station_query(filter: dict = None, return_filter: bool = False) -> str or (s
                     ?uri a ?stationTheme .
                     OPTIONAL{{
                         ?memb cpmeta:atOrganization ?uri ; cpmeta:hasRole <http://meta.icos-cp.eu/resources/roles/PI> .
-                        filter not exists {{?memb cpmeta:hasEndTime []}}
+                        optional {{?memb cpmeta:hasEndTime ?membEnd}}
+                        filter(!bound(?membEnd) || ?membEnd > now())
                         ?pers cpmeta:hasMembership ?memb
                     }}
                 }}
