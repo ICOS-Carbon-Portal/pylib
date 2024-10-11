@@ -460,10 +460,9 @@ def station_query(filter: dict = None, return_filter: bool = False) -> str or (s
                     {theme_filter}
                     ?uri a ?stationTheme .
                     OPTIONAL{{
-                        ?memb cpmeta:atOrganization ?uri .
+                        ?memb cpmeta:atOrganization ?uri ; cpmeta:hasRole <http://meta.icos-cp.eu/resources/roles/PI> .
                         optional {{?memb cpmeta:hasEndTime ?membEnd}}
                         filter(!bound(?membEnd) || ?membEnd > now())
-                        ?memb cpmeta:hasRole <http://meta.icos-cp.eu/resources/roles/PI> .
                         ?pers cpmeta:hasMembership ?memb
                     }}
                 }}
