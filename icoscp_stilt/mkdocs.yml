@@ -5,6 +5,7 @@ nav:
     - About: index.md
     - Getting started with the new icoscp_stilt: getting_started.md
     - Legacy modules: modules.md
+    - Changelog: changelog.md
 
 theme:
     name: readthedocs
