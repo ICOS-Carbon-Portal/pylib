@@ -129,6 +129,10 @@ class Dobj:
         return self.metadata.nextVersion
 
     @property
+    def latest(self) -> URI | list[URI]:
+        return self.metadata.latestVersion
+
+    @property
     def colNames(self) -> list[str] | None:
         specific_info = self.metadata.specificInfo
         if isinstance(specific_info, StationTimeSeriesMeta):

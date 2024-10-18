@@ -1,31 +1,19 @@
-#!/usr/bin/env python
-"""
-    Created on Fri Aug  9 10:40:27 2019
-    Use an ICOS digital object id (persistent identification url)
-    to load a binary representation of the data object.
-"""
-
-__author__      = ['Claudio D\'Onofrio']
-__credits__     = 'ICOS Carbon Portal'
-__license__     = 'GPL-3.0'
-__version__     = '0.1.8'
-__maintainer__  = 'ICOS Carbon Portal, elaborated products team'
-__email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
-__status__      = 'stable'
-__date__        = '2023-02-27'
-
-import os
+# Standard library imports.
+from typing import Optional
 from warnings import warn
-import requests
+import os
 import struct
-import pandas as pd
 
+# Related third party imports.
+import pandas as pd
+import requests
+
+# Local application/library specific imports.
 from icoscp import __version__ as release_version
 from icoscp import cpauth
 from icoscp.cpb import dtype
 from icoscp.cpb import metadata
 import icoscp.const as CPC
-from json.decoder import JSONDecodeError
 
 
 class Dobj():
@@ -39,7 +27,7 @@ class Dobj():
         self._dobj = None           # contains the pid
         self._colSelected = None    # 'none' -> ALL columns are returned
         self._endian = 'big'        # default "big endian conversion
-        self._dtconvert = True      # convert Unixtimstamp to datetime object
+        self._dtconvert = True      # convert Unix timestamp to datetime object
         self._meta = None           # contains metadata about dobj
         self._variables = None      # contains a list of variables, former info2
         self._colSchema = None      # format of columns (read struct bin data)
@@ -95,7 +83,12 @@ class Dobj():
         if self.valid and 'nextVersion' in self.meta.keys():
             nextversion = self.meta['nextVersion']
         return nextversion
-    #-----------
+    @property
+    def latest(self) -> Optional[str]:
+        latest_version = self.meta['latestVersion'] \
+            if self.valid and 'latestVersion' in self.meta.keys() else None
+        return latest_version
+
     @property
     def valid(self):
         return self._dobjValid
@@ -273,11 +266,9 @@ class Dobj():
             self.meta
             self.variables
         '''
-        
         # get all the meta data and check..
         self._meta = metadata.get(self.dobj)
-        
-        if not self._meta:            
+        if not self._meta:
             return False
         else:
             # set conveniance excerpts from meta
