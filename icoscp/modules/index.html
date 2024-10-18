@@ -94,6 +94,8 @@
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#dobjprevious">Dobj.previous</a>
     </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dobjlatest">Dobj.latest</a>
+    </li>
     <li class="toctree-l4"><a class="reference internal" href="#dobjstation">Dobj.station</a>
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#dobjvalid">Dobj.valid</a>
@@ -430,6 +432,17 @@ Return <code>None</code> if a previous version does not exist.</p>
 
 dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
 previous_version = dobj.previous
+</code></pre>
+<h4 id="dobjlatest">Dobj.latest</h4>
+<p>Return a landing page in the form of a string, featuring the latest
+version of this data object.
+If the current version is already the latest, this will return the same 
+URI.
+Example:</p>
+<pre><code class="language-python">from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+latest_version = dobj.latest
 </code></pre>
 <h4 id="dobjstation">Dobj.station</h4>
 <p>Return a dictionary containing metadata associated with the station

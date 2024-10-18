@@ -2,22 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://icos-carbon-portal.github.io/pylib/icoscp_stilt/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-18</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://icos-carbon-portal.github.io/pylib/icoscp_stilt/changelog/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-18</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://icos-carbon-portal.github.io/pylib/icoscp_stilt/getting_started/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-18</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://icos-carbon-portal.github.io/pylib/icoscp_stilt/modules/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-18</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

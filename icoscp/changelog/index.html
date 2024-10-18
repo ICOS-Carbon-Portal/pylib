@@ -74,11 +74,17 @@
               <ul class="current">
                 <li class="toctree-l1 current"><a class="reference internal current" href="./">Changelog</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#021">0.2.1</a>
+    <li class="toctree-l2"><a class="reference internal" href="#022">0.2.2</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#station-sparql-modules">station &amp; sparql modules</a>
+    <li class="toctree-l3"><a class="reference internal" href="#dobj-module">dobj module</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#dependencies">dependencies</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#021">0.2.1</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#dependencies_1">dependencies</a>
     </li>
         </ul>
     </li>
@@ -90,7 +96,7 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#countries-module">countries module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dependencies_1">dependencies</a>
+    <li class="toctree-l3"><a class="reference internal" href="#dependencies_2">dependencies</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#documentation">documentation</a>
     </li>
@@ -215,17 +221,25 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="changelog">Changelog</h1>
-<h2 id="021">0.2.1</h2>
+<h2 id="022">0.2.2</h2>
 <ul>
 <li>
-<h4 id="station-sparql-modules">station &amp; sparql modules</h4>
+<h4 id="dobj-module">dobj module</h4>
 <ul>
-<li>Update the SPARQL query template in sparqls.station_query() to fetch
-  the correct results via the station.getIdList() function.</li>
+<li>Implement <a href="http://localhost:8000/icoscp/modules/#dobjlatest">Dobj().latest</a>.</li>
 </ul>
 </li>
 <li>
 <h4 id="dependencies">dependencies</h4>
+<ul>
+<li>Relax pandas upper dependency from <code>&lt;2</code> to <code>&lt;=2.2.3</code>.</li>
+</ul>
+</li>
+</ul>
+<h2 id="021">0.2.1</h2>
+<ul>
+<li>
+<h4 id="dependencies_1">dependencies</h4>
 <ul>
 <li>Version pin library's dependencies.</li>
 </ul>
@@ -256,7 +270,7 @@ been radically simplified, making the <code>countries</code> module redundant.</
 </ul>
 </li>
 <li>
-<h4 id="dependencies_1">dependencies</h4>
+<h4 id="dependencies_2">dependencies</h4>
 <ul>
 <li>Dependencies <code>fiona</code> and <code>geopandas</code> are gone due to <code>stilt</code>
   module removal.</li>
@@ -269,7 +283,7 @@ been radically simplified, making the <code>countries</code> module redundant.</
   section.</li>
 <li>Add <a href="../install/#upgrade-guide">Upgrade guide</a> to the installation
   section.</li>
-<li>Add a substantial amount of content to the <a href="../">About page</a>.</li>
+<li>Add substantial amount of content to the <a href="../">About page</a>.</li>
 <li>Add <a href="../getting_started/">Getting started examples</a> and move the old
   examples to a <a href="../legacy_examples/">separate section</a> as legacy.</li>
 <li>Remove most of the old FAQ, add a few new ones.</li>
