@@ -1,7 +1,3 @@
-<h1 align="center">
-  <img src="https://static.icos-cp.eu/images/ICOS-logo.svg" style="background-color: #ccc; width: 50%; height: auto">
-</h1><br>
-
 [![Latest Release](https://badge.fury.io/py/icoscp.svg?style=flat&colorA=E1523D&colorB=007D8A)](https://pypi.org/project/icoscp/)
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/icoscp?left_color=blue&style=flat&colorA=E1523D&colorB=007D8A)](https://pepy.tech/project/icoscp)
 
