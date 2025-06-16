@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="https://static.icos-cp.eu/images/ICOS-logo.svg" style="background-color: lightgray; width: 50%; height: auto">
+  <img src="https://static.icos-cp.eu/images/ICOS-logo.svg" style="background-color: #ccc; width: 50%; height: auto">
 </h1><br>
 
 [![Latest Release](https://badge.fury.io/py/icoscp.svg?style=flat&colorA=E1523D&colorB=007D8A)](https://pypi.org/project/icoscp/)
