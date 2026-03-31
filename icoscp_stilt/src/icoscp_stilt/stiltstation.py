@@ -91,7 +91,7 @@ def _outfmt(kwargs, stations):
         return stations
 
     if fmt == 'pandas':
-        df = pd.DataFrame().from_dict(stations)
+        df = pd.DataFrame.from_dict(stations)
         return df.transpose()
 
     if fmt == 'list':
@@ -292,14 +292,14 @@ def _avail(stations):
                       columns=columns_list)
     # Fill in the gaps.
     df[year_list] = df[year_list].fillna(0)
-    df[['Alt'] + year_list] = df[['Alt'] + year_list].applymap(int)
+    df[['Alt'] + year_list] = df[['Alt'] + year_list].map(int)
 
     # convert alt to string, so that we can remove nan values
     df['ICOS alt'] = df['ICOS alt'].astype(str)
     df['ICOS alt'] = df['ICOS alt'].str.replace('nan', '')
 
     # sort by StiltStation id
-    df.sort_index(inplace=True)
+    df = df.sort_index()
     return df
 
 

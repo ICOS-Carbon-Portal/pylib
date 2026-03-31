@@ -73,8 +73,8 @@ def get(queried_stations, project, icon):
     add_tile_layers(stations_map)
     # Use the stations at the most southwest and northeast locations
     # and bind the map within these stations.
-    sw_loc = stations[['lat', 'lon']].dropna(axis=0).min().values.tolist()
-    ne_loc = stations[['lat', 'lon']].dropna(axis=0).max().values.tolist()
+    sw_loc = stations[['lat', 'lon']].dropna(axis=0).min().to_numpy().tolist()
+    ne_loc = stations[['lat', 'lon']].dropna(axis=0).max().to_numpy().tolist()
     stations_map.fit_bounds([sw_loc, ne_loc])
     stations = stations.transpose()
     for station_index in stations:

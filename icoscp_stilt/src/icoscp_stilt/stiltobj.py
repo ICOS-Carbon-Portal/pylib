@@ -151,7 +151,7 @@ class StiltStation():
         new_range = []
         # Create a pandas dataframe containing one column of datetime
         # objects with 3-hour intervals:
-        date_range = pd.date_range(s_date, e_date, freq='3H')
+        date_range = pd.date_range(s_date, e_date, freq='3h')
         # Loop through every Datetime object in the dataframe and
         # generate a list of Datetime objects for the STILT results
         # that exist.
@@ -185,12 +185,12 @@ class StiltStation():
                 output = np.asarray(http_resp.json())
                 # Convert numpy array with STILT results to a pandas dataframe
                 df = pd.DataFrame(output[:, :], columns=columns)
-                df = df.replace('null', np.NaN)
+                df = df.replace('null', np.nan)
                 df = df.astype(float)
                 # Convert 'date' column to a Datetime Object type.
                 df['date'] = pd.to_datetime(df['isodate'], unit='s')
                 # Set 'date'-column as index:
-                df.set_index(['date'], inplace=True)
+                df = df.set_index(['date'])
                 # Filter dataframe values by timeslots:
                 hours = [str(h).zfill(2) for h in hours]
                 df = df.loc[df.index.strftime('%H').isin(hours)]
@@ -259,7 +259,7 @@ class StiltStation():
             return False
 
         # Create a pandas dataframe containing one column of datetime objects with 3-hour intervals:
-        date_range = pd.date_range(start_date, end_date, freq='3H')
+        date_range = pd.date_range(start_date, end_date, freq='3h')
 
         # Filter date_range by timeslots:
         date_range = [t for t in date_range if int(t.strftime('%H')) in hours]
@@ -358,7 +358,7 @@ class StiltStation():
             df = pd.DataFrame(output[:, :], columns=cols)
 
             # Replace 'null'-values with numpy NaN-values:
-            df = df.replace('null', np.NaN)
+            df = df.replace('null', np.nan)
 
             # Set dataframe data type to float:
             df = df.astype(float)
@@ -368,7 +368,7 @@ class StiltStation():
                 df['isodate'] = pd.to_datetime(df['isodate'], unit='s')
 
                 # Set 'date'-column as index:
-                df.set_index(['date'], inplace=True)
+                df = df.set_index(['date'])
 
         # track data usage
         self.__portalUse('timeseries')
