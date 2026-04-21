@@ -272,9 +272,6 @@ def add_tile_layers(folium_map):
     # Add built-in tile layers.
     folium_map.add_child(folium.TileLayer('cartodbpositron'))
     folium_map.add_child(folium.TileLayer('cartodbdark_matter'))
-    folium_map.add_child(folium.TileLayer('stamenwatercolor'))
-    folium_map.add_child(folium.TileLayer('stamentoner'))
-    folium_map.add_child(folium.TileLayer('stamenterrain'))
     # Add another layer with satellite images from ESRI.
     folium_map.add_child(folium.TileLayer(
         tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
