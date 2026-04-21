@@ -50,8 +50,6 @@ def get(stations, fmt='map', cluster=True):
     
     folium.TileLayer('openstreetmap').add_to(myMap)
     folium.TileLayer('cartodbpositron').add_to(myMap)
-    folium.TileLayer('stamentoner').add_to(myMap)
-    folium.TileLayer('stamenterrain').add_to(myMap)
     
     markers = []    # keep all the markers for clustering
     lats = []       # keep lat, lon vector to calculate the center of the map
