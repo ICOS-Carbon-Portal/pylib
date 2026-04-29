@@ -455,7 +455,7 @@ class Station:
             self._products = pd.DataFrame(p)
 
             # replace samplingheight=None with empty string
-            self._data.samplingheight.replace(to_replace=[None], value="", inplace=True)
+            self._data['samplingheight'] = self._data['samplingheight'].replace(to_replace=[None], value="")
         else:
             self._products = 'no data available'
 
@@ -574,7 +574,7 @@ def get(stationId: str = None,
         return my_stn
 
     # we have found a valid id
-    my_stn.stationId = stn.id.values[0]
+    my_stn.stationId = stn.id.iloc[0]
     my_stn.valid = True
 
     # it is possible that more than one station has the same id
@@ -591,11 +591,11 @@ def get(stationId: str = None,
             my_stn.eas = float(stn.elevation[stn.project.str.upper() == 'ICOS'])
     else:
         if stn.lat.any():
-            my_stn.lat = float(stn.lat.values[0])
+            my_stn.lat = float(stn.lat.iloc[0])
         if stn.lon.any():
-            my_stn.lon = float(stn.lon.values[0])
+            my_stn.lon = float(stn.lon.iloc[0])
         if stn.elevation.any():
-            my_stn.eas = float(stn.elevation.values[0])
+            my_stn.eas = float(stn.elevation.iloc[0])
 
     my_stn.name = stn.name.iloc[0]
     my_stn.country = stn.country.iloc[0]
@@ -608,12 +608,12 @@ def get(stationId: str = None,
     # flow from the thematic centres is achieved.
 
     if 'ICOS' in my_stn.project:
-        my_stn.theme = stn.stationTheme.values[0].split('/')[-1]
-        my_stn.icosclass = stn.icosClass.values[0]
-        my_stn.firstName = stn.firstName.values[0]
-        my_stn.lastName = stn.lastName.values[0]
-        my_stn.email = stn.email.values[0]
-        my_stn.siteType = stn.siteType.values[0]
+        my_stn.theme = stn.stationTheme.iloc[0].split('/')[-1]
+        my_stn.icosclass = stn.icosClass.iloc[0]
+        my_stn.firstName = stn.firstName.iloc[0]
+        my_stn.lastName = stn.lastName.iloc[0]
+        my_stn.email = stn.email.iloc[0]
+        my_stn.siteType = stn.siteType.iloc[0]
 
     return my_stn
 
@@ -715,7 +715,7 @@ def _get_id_list(filter: dict = {'project': 'ICOS', 'theme': ['AS', 'ES', 'OS']}
 
     query = sparqls.station_query(filter=filter)
     stn_df = RunSparql(query, 'pandas').run()
-    stn_df.drop_duplicates(inplace=True)
+    stn_df = stn_df.drop_duplicates()
 
     if not isinstance(stn_df, pd.DataFrame):
         return stn_df
@@ -727,7 +727,7 @@ def _get_id_list(filter: dict = {'project': 'ICOS', 'theme': ['AS', 'ES', 'OS']}
     stn_df['theme'] = stn_df.apply(lambda x: x['stationTheme'].split('/')[-1], axis=1)
 
     # Sort queried stations by the given sort argument if any.
-    stn_df.sort_values(by=sort, inplace=True, ignore_index=True)
+    stn_df = stn_df.sort_values(by=sort, ignore_index=True)
 
     if outfmt == 'pandas':
         return stn_df

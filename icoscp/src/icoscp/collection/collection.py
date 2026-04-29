@@ -111,10 +111,10 @@ class Collection():
     
     def __set__(self, coll):
         
-        self._id = coll.collection.values[0]
-        self._doi = coll.doi.values[0]
-        self._title = coll.title.values[0]
-        self._description = coll.description.values[0]
+        self._id = coll.collection.iloc[0]
+        self._doi = coll.doi.iloc[0]
+        self._title = coll.title.iloc[0]
+        self._description = coll.description.iloc[0]
         
         # get data objects for the collection
          
