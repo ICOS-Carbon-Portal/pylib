@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.2.3
+- #### dependencies
+    - Drop the `pandas` upper version cap entirely from
+      `pyproject.toml`.
+    - Replace pandas APIs deprecated in 2.x across
+      `collection/collection.py`, `station/station.py`, and
+      `station/fmap.py` so the library is warning-clean against
+      current pandas.
+- #### station module
+    - Remove the `Stamen Terrain` and `Stamen Toner` folium tile
+      layers from the station map renderer, as Stamen tiles were
+      discontinued and folium dropped them.
+
+## 0.2.2
+- #### dobj module
+    - Implement [Dobj().latest](
+      https://icos-carbon-portal.github.io/pylib/icoscp/modules/#dobjlatest).
+- #### dependencies
+    - Relax pandas upper dependency from `<2` to `<=2.2.3`.
+
 ## 0.2.1
 - #### dependencies
     - Version pin library's dependencies.

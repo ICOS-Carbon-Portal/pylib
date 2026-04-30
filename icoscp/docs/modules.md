@@ -233,6 +233,19 @@ dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
 previous_version = dobj.previous
 ```
 
+#### Dobj.latest
+Return a landing page in the form of a string, featuring the latest
+version of this data object.
+If the current version is already the latest, this will return the same 
+URI.
+Example:
+```python
+from icoscp.dobj import Dobj
+
+dobj = Dobj('https://meta.icos-cp.eu/objects/j7-Lxlln8_ysi4DEV8qine_v')
+latest_version = dobj.latest
+```
+
 #### Dobj.station
 Return a dictionary containing metadata associated with the station
 corresponding to the Dobj. Please be aware that prior to version 0.1.15 this
