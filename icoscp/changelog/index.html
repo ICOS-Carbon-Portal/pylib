@@ -72,19 +72,27 @@
                 </li>
               </ul>
               <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href="./">Changelog</a>
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Changelog</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#023">0.2.3</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#dependencies">dependencies</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#station-module">station module</a>
+    </li>
+        </ul>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#022">0.2.2</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#dobj-module">dobj module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dependencies">dependencies</a>
+    <li class="toctree-l3"><a class="reference internal" href="#dependencies_1">dependencies</a>
     </li>
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#021">0.2.1</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#dependencies_1">dependencies</a>
+    <li class="toctree-l3"><a class="reference internal" href="#dependencies_2">dependencies</a>
     </li>
         </ul>
     </li>
@@ -96,7 +104,7 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#countries-module">countries module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dependencies_2">dependencies</a>
+    <li class="toctree-l3"><a class="reference internal" href="#dependencies_3">dependencies</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#documentation">documentation</a>
     </li>
@@ -132,13 +140,13 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#stilt-module_3">stilt module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#station-module">station module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#station-module_1">station module</a>
     </li>
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#0117">0.1.17</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#station-module_1">station module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#station-module_2">station module</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#sparql-module_1">sparql module</a>
     </li>
@@ -152,7 +160,7 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#sparql">sparql</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#station-module_2">station module</a>
+    <li class="toctree-l3"><a class="reference internal" href="#station-module_3">station module</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#stilt-module_5">stilt module</a>
     </li>
@@ -221,6 +229,28 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="changelog">Changelog</h1>
+<h2 id="023">0.2.3</h2>
+<ul>
+<li>
+<h4 id="dependencies">dependencies</h4>
+<ul>
+<li>Drop the <code>pandas</code> upper version cap entirely from
+  <code>pyproject.toml</code>.</li>
+<li>Replace pandas APIs deprecated in 2.x across
+  <code>collection/collection.py</code>, <code>station/station.py</code>, and
+  <code>station/fmap.py</code> so the library is warning-clean against
+  current pandas.</li>
+</ul>
+</li>
+<li>
+<h4 id="station-module">station module</h4>
+<ul>
+<li>Remove the <code>Stamen Terrain</code> and <code>Stamen Toner</code> folium tile
+  layers from the station map renderer, as Stamen tiles were
+  discontinued and folium dropped them.</li>
+</ul>
+</li>
+</ul>
 <h2 id="022">0.2.2</h2>
 <ul>
 <li>
@@ -230,7 +260,7 @@
 </ul>
 </li>
 <li>
-<h4 id="dependencies">dependencies</h4>
+<h4 id="dependencies_1">dependencies</h4>
 <ul>
 <li>Relax pandas upper dependency from <code>&lt;2</code> to <code>&lt;=2.2.3</code>.</li>
 </ul>
@@ -239,7 +269,7 @@
 <h2 id="021">0.2.1</h2>
 <ul>
 <li>
-<h4 id="dependencies_1">dependencies</h4>
+<h4 id="dependencies_2">dependencies</h4>
 <ul>
 <li>Version pin library's dependencies.</li>
 </ul>
@@ -270,7 +300,7 @@ been radically simplified, making the <code>countries</code> module redundant.</
 </ul>
 </li>
 <li>
-<h4 id="dependencies_2">dependencies</h4>
+<h4 id="dependencies_3">dependencies</h4>
 <ul>
 <li>Dependencies <code>fiona</code> and <code>geopandas</code> are gone due to <code>stilt</code>
   module removal.</li>
@@ -373,7 +403,7 @@ been radically simplified, making the <code>countries</code> module redundant.</
 </ul>
 </li>
 <li>
-<h4 id="station-module">station module</h4>
+<h4 id="station-module_1">station module</h4>
 <ul>
 <li>Remove elevation above ground attribute from <code>Station()</code> class.</li>
 <li>Update documentation on how to correctly retrieve station names when
@@ -384,7 +414,7 @@ been radically simplified, making the <code>countries</code> module redundant.</
 <h2 id="0117">0.1.17</h2>
 <ul>
 <li>
-<h4 id="station-module_1">station module</h4>
+<h4 id="station-module_2">station module</h4>
    The station class has been somewhat optimized:<ul>
 <li><code>station.getList()</code> is faster </li>
 <li><code>station.getIdList()</code> has a new parameter <code>theme</code> (as in <code>getList</code>)</li>
@@ -423,7 +453,7 @@ been radically simplified, making the <code>countries</code> module redundant.</
 </ul>
 </li>
 <li>
-<h4 id="station-module_2">station module</h4>
+<h4 id="station-module_3">station module</h4>
 <ul>
 <li>Filter out non icos stations when querying themed stations in <code>getList()</code>. </li>
 </ul>
