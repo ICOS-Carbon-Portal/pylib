@@ -1,4 +1,5 @@
-from icoscp_core.metacore import SpatioTemporalMeta
+# Local application/library specific imports.
+from icoscp.core.metacore import SpatioTemporalMeta
 
 
 class UriValueError(ValueError):
