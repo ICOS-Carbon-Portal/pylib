@@ -1,5 +1,6 @@
-from icoscp_core.auth import AuthTokenProvider, AuthToken
-from icoscp_core.icos import auth
+# Local application/library specific imports.
+from icoscp.core.auth import AuthToken, AuthTokenProvider
+from icoscp.core.icos import auth
 
 
 class AuthProvider(AuthTokenProvider):
