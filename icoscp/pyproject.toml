@@ -39,10 +39,12 @@ requires-python = ">=3.10"
 dependencies = [
     "dacite == 1.8.1",
     "folium >= 0.13.0",
+    "netCDF4 >= 1.5.8",
     "numpy >= 1.23",
     "pandas >= 1.3.5",
     "requests >= 2.26.0",
-    "tqdm >= 4.64.1"
+    "tqdm >= 4.64.1",
+    "xarray >= 2022.9.0"
 ]
 
 
@@ -52,6 +54,7 @@ Source = "https://github.com/ICOS-Carbon-Portal/pylib/icoscp"
 Documentation = "https://icos-carbon-portal.github.io/pylib/icoscp/"
 DataPortal = "https://data.icos-cp.eu/portal/"
 SparqlEndpoint = "https://meta.icos-cp.eu/sparqlclient/?type=CSV"
+StiltViewer = "https://stilt.icos-cp.eu/viewer/"
 
 [tool.hatch.version]
 path = "src/icoscp/__init__.py"
