@@ -1,5 +1,4 @@
 """
-Created on Wed Sep 30 09:38:18 2020
 based on : return the real size of object
            https://goshippo.com/blog/measure-real-size-any-python-object/
 """

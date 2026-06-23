@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
     Description:      Python functions that process time in STILT model outputs.    
 """

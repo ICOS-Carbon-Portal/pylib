@@ -1,20 +1,8 @@
-#!/usr/bin/env python
-
 """
-    Created on Tue Aug 13 11:45:36 2019
     Check the usage of dataobjects through this
     It is a completely anonymous service to record how many times
     a dataobject is accessed.    
 """
-
-__author__      = ["Claudio D'Onofrio"]
-__credits__     = "ICOS Carbon Portal"
-__license__     = "GPL-3.0"
-__version__     = "0.1.0"
-__maintainer__  = "ICOS Carbon Portal, elaborated products team"
-__email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
-__status__      = "rc1"
-__date__        = "2019-08-13"
 
 import json
 

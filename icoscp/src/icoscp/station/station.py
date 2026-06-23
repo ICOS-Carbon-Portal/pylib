@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-
-"""    
+"""
     The Station module is used to explore ICOS stations and the
     corresponding data products. Since you need to know the "station id"
     to create a station object, the function getIdList() might be useful.
@@ -34,17 +32,6 @@
     https://icos-carbon-portal.github.io/pylib/faq/
 
 """
-
-__author__ = ["Claudio D'Onofrio", "Zois Zogopoulos", "Anders Dahlner"]
-__credits__ = "ICOS Carbon Portal"
-__license__ = "GPL-3.0"
-__version__ = "0.1.3"
-__maintainer__ = "ICOS Carbon Portal, elaborated products team"
-__email__ = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se',
-             'zois.zogopoulos@nateko.lu.se',
-             'anders.dahlner@nateko.lu.se']
-__status__ = "rc1"
-__date__ = "2021-09-20"
 
 import json
 

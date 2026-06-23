@@ -1,23 +1,8 @@
-#!/usr/bin/env python
-
 """
-    Created on Fri Aug  9 10:40:27 2019
     This file handles the communication with the ICOS Sparql Endpoint.
     Instances of RunSparql() is quering the ICOS Sparql endpoint, 
     and returns a formatted response.
 """
-
-__author__      = ["Claudio D'Onofrio"]
-__credits__     = "ICOS Carbon Portal"
-__license__     = "GPL-3.0"
-__version__     = "0.2.0"
-__maintainer__  = "ICOS Carbon Portal, elaborated products team"
-__email__       = ['info@icos-cp.eu']
-__status__      = "rc1"
-__date__        = "2023-01-20"
-__lastchange__  = ["Zois Zogopoulos"]
-
-
 
 import pandas as pd
 import requests
