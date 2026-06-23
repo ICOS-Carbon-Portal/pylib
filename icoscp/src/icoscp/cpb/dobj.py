@@ -1,19 +1,15 @@
-# Standard library imports.
-from typing import Optional
-from warnings import warn
 import os
 import struct
+from typing import Optional
+from warnings import warn
 
-# Related third party imports.
 import pandas as pd
 import requests
 
-# Local application/library specific imports.
+import icoscp.const as CPC
 from icoscp import __version__ as release_version
 from icoscp import cpauth
-from icoscp.cpb import dtype
-from icoscp.cpb import metadata
-import icoscp.const as CPC
+from icoscp.cpb import dtype, metadata
 
 
 class Dobj():

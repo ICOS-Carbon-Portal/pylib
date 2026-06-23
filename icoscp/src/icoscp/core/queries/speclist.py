@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from ..sparql import Binding, as_int, as_uri, as_string, as_opt_uri
 from ..envri import EnvriConfig
-from ..metacore import UriResource, DatasetType
+from ..metacore import DatasetType, UriResource
+from ..sparql import Binding, as_int, as_opt_uri, as_string, as_uri
 
 
 @dataclass(frozen=True)

@@ -1,5 +1,5 @@
-from typing import Literal, TypeAlias
 from dataclasses import dataclass
+from typing import Literal, TypeAlias
 
 Envri: TypeAlias = Literal["ICOS", "SITES", "ICOSCities"]
 

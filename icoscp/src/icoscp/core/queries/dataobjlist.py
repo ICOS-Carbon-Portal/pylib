@@ -3,9 +3,17 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Literal, TypeAlias, TypedDict
 
-from ..sparql import Binding, as_long, as_uri, as_opt_uri, as_string, as_datetime, as_opt_float
-from ..metacore import UriResource
 from ..geofeaturemeta import Point
+from ..metacore import UriResource
+from ..sparql import (
+	Binding,
+	as_datetime,
+	as_long,
+	as_opt_float,
+	as_opt_uri,
+	as_string,
+	as_uri,
+)
 
 
 @dataclass(frozen=True)

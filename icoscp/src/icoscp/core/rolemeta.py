@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional
-from .metacore import UriResource, Person, Organization, Station
+
+from .metacore import Organization, Person, Station, UriResource
+
 
 @dataclass(frozen=True)
 class RoleDetails:

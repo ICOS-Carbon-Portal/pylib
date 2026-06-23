@@ -1,4 +1,3 @@
-# Local application/library specific imports.
 from icoscp.core.metacore import SpatioTemporalMeta
 
 

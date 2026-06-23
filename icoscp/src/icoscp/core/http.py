@@ -1,9 +1,9 @@
 import json
+from http.client import HTTPMessage, HTTPResponse
+from typing import IO, Any, Literal
 from urllib import request
-from urllib.request import Request, HTTPError, urlopen
 from urllib.parse import urlencode
-from http.client import HTTPResponse, HTTPMessage
-from typing import Any, Literal, IO
+from urllib.request import HTTPError, Request, urlopen
 
 Method = Literal["GET", "POST"]
 

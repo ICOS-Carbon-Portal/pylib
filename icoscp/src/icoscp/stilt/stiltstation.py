@@ -8,18 +8,21 @@
 
 """
 
-import re
 import json
-import pandas as pd
-from tqdm.notebook import tqdm
-from icoscp.core.icos import meta, ATMO_STATION, station_class_lookup
-from icoscp.core.queries.stationlist import StationLite
-from .stiltobj import StiltStation
-from . import fmap
-from .const import STILTINFO, STILTPATH, COUNTRIES
+import re
 from pathlib import Path
 from typing import Any
+
+import pandas as pd
+from tqdm.notebook import tqdm
+
+from icoscp.core.icos import ATMO_STATION, meta, station_class_lookup
+from icoscp.core.queries.stationlist import StationLite
+
+from . import fmap
 from . import timefuncs as tf
+from .const import COUNTRIES, STILTINFO, STILTPATH
+from .stiltobj import StiltStation
 
 
 # --- START KEYWORD FUNCTIONS ---
