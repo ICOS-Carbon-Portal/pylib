@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-
-"""    
+"""
     create a map based on folium (wrapper for leaflet)
 """
 

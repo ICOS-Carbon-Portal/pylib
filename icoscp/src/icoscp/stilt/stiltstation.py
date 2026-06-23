@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
     Extract all STILT stations from the ICOS Carbon Portal Server
     The main function is

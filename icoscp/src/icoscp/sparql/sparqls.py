@@ -1,22 +1,10 @@
-#!/usr/bin/env python
-
 """
-    Created on Fri Aug  9 10:40:27 2019
     This file contains an assembly of common sparql queries.
     Each function returns a valid sparql query as string.
     Depending on query, there is an optional input parameter to 
     "limit" how many results are returned. By default it is set to 0 (zero)
     returning all results from the sparql endpoint
 """
-
-__author__      = ["Claudio D'Onofrio"]
-__credits__     = "ICOS Carbon Portal"
-__license__     = "GPL-3.0"
-__version__     = "0.1.3"
-__maintainer__  = "ICOS Carbon Portal, elaborated products team"
-__email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
-__status__      = "rc1"
-__date__        = "2019-08-09"
 
 from warnings import warn
 

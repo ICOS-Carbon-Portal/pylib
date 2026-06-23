@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
     Description:      Class that creates objects to set and get the attributes
                       of a station for which STILT model output is available for.
