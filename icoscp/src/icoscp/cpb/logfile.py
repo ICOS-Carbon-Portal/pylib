@@ -16,8 +16,10 @@ __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "rc1"
 __date__        = "2019-08-13"
 
-import requests
 import json
+
+import requests
+
 
 class Logfile():
     

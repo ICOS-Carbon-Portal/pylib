@@ -24,12 +24,13 @@ __email__       = ['info@icos-cp.eu', 'claudio.donofrio@nateko.lu.se']
 __status__      = "rc1"
 __date__        = "20209-09-23"
 
-from icoscp.sparql.runsparql import RunSparql
-from icoscp.sparql import sparqls
-from icoscp.cpb.dobj import Dobj
-from tqdm import tqdm
 import pandas as pd
 import requests
+from tqdm import tqdm
+
+from icoscp.cpb.dobj import Dobj
+from icoscp.sparql import sparqls
+from icoscp.sparql.runsparql import RunSparql
 
 
 # ----------------------------------------------

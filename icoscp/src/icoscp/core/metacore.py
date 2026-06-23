@@ -1,8 +1,10 @@
 from __future__ import annotations
-from dataclasses import dataclass
-from typing import Optional, Literal, Type, TypeAlias, TypeVar, Any
-from dacite import Config, from_dict
+
 import json
+from dataclasses import dataclass
+from typing import Any, Literal, Optional, Type, TypeAlias, TypeVar
+
+from dacite import Config, from_dict
 
 Orcid: TypeAlias = str
 DoiMeta: TypeAlias = object

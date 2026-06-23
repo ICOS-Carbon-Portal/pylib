@@ -1,9 +1,11 @@
 import os
-from .envri import EnvriConfig
-from .auth import AuthTokenProvider, ConfigFileAuth, PasswordAuth, TokenAuth
-from .metaclient import MetadataClient
-from .dataclient import DataClient
 from typing import Tuple
+
+from .auth import AuthTokenProvider, ConfigFileAuth, PasswordAuth, TokenAuth
+from .dataclient import DataClient
+from .envri import EnvriConfig
+from .metaclient import MetadataClient
+
 
 class Bootstrap():
 	def __init__(self, conf: EnvriConfig) -> None:

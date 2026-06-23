@@ -19,8 +19,9 @@ __lastchange__  = ["Zois Zogopoulos"]
 
 
 
-import requests
 import pandas as pd
+import requests
+
 
 class RunSparql():
     """

@@ -4,22 +4,20 @@
     Description:      Class that creates objects to set and get the attributes
                       of a station for which STILT model output is available for.
 """
-# Standard library imports.
-from pathlib import Path
-from typing import Any, List, Optional
 import json
 import os
+from pathlib import Path
+from typing import Any, List, Optional
 
-# Related third party imports.
-from icoscp.core.icos import meta
-from icoscp.core.queries.dataobjlist import SamplingHeightFilter
 import numpy as np
 import pandas as pd
 import requests
 import xarray as xr
 
-# Local application/library specific imports.
 from icoscp import __version__ as release_version
+from icoscp.core.icos import meta
+from icoscp.core.queries.dataobjlist import SamplingHeightFilter
+
 from . import const as c
 from . import timefuncs as tf
 

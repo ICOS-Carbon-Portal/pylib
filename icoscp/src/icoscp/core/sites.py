@@ -1,5 +1,5 @@
-from .envri import SITES_CONFIG
 from .bootstrap import Bootstrap
+from .envri import SITES_CONFIG
 
 bootstrap = Bootstrap(SITES_CONFIG)
 

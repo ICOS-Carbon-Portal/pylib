@@ -1,11 +1,12 @@
 import logging
 import threading
 from typing import Any
-from . import __version__ as icoscp_core_version
 
+from . import __version__ as icoscp_core_version
 from .auth import AuthTokenProvider
 from .envri import EnvriConfig
 from .http import http_request
+
 
 def report_cpb_file_read(
 	conf: EnvriConfig,

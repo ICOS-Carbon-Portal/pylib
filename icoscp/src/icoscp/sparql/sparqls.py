@@ -19,6 +19,7 @@ __status__      = "rc1"
 __date__        = "2019-08-09"
 
 from warnings import warn
+
 # --------------------------------------------------------------------
 # create internal helper functions to be used for ALL sparql queries
 # --------------------------------------------------------------------

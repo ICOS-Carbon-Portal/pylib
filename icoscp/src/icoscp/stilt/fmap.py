@@ -4,9 +4,10 @@
     create a map based on folium (wrapper for leaflet)
 """
 
+from typing import Any
+
 import folium
 from folium.plugins import MarkerCluster
-from typing import Any
 
 
 def get(stations, fmt='map', cluster=True):

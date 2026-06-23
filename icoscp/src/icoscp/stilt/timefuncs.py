@@ -4,10 +4,11 @@
     Description:      Python functions that process time in STILT model outputs.    
 """
 
-#Import modules:
-from datetime import date
-import pandas as pd
 import re
+from datetime import date
+
+import pandas as pd
+
 ###############################################################################
 
 

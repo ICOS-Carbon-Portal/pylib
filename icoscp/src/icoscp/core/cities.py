@@ -1,5 +1,5 @@
-from .envri import CITIES_CONFIG
 from .bootstrap import Bootstrap
+from .envri import CITIES_CONFIG
 
 bootstrap = Bootstrap(CITIES_CONFIG)
 

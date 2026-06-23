@@ -1,18 +1,25 @@
 import os
 import re
 import shutil
-from urllib.parse import urlsplit, unquote
 from typing import Iterator, Tuple
+from urllib.parse import unquote, urlsplit
 
+from .auth import AuthTokenProvider, http_auth_request
+from .cpb import (
+	ArraysDict,
+	Codec,
+	Dobj,
+	TableRequest,
+	codec_from_dobj_meta,
+	codecs_from_dobjs,
+	to_dobj_uri,
+)
+from .envri import EnvriConfig
+from .http import HTTPResponse
 from .metaclient import MetadataClient
 from .metacore import DataObject
-from .queries.dataobjlist import DataObjectLite
-from .envri import EnvriConfig
-from .auth import AuthTokenProvider, http_auth_request
-from .cpb import Codec, TableRequest, ArraysDict, codec_from_dobj_meta, codecs_from_dobjs
-from .cpb import Dobj, to_dobj_uri
 from .portaluse_client import report_cpb_file_read
-from .http import HTTPResponse
+from .queries.dataobjlist import DataObjectLite
 
 
 class DataClient:

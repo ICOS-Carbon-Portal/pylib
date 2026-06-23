@@ -6,10 +6,10 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from http.client import HTTPResponse
-from typing import TypeAlias, Literal, Optional, Any
+from typing import Any, Literal, Optional, TypeAlias
 
 from .envri import EnvriConfig
-from .http import http_request, Method
+from .http import Method, http_request
 
 AuthSource: TypeAlias = Literal["Password", "Saml", "Orcid", "Facebook", "AtmoAccess"]
 FreshnessMargin: timedelta = timedelta(hours = 1)

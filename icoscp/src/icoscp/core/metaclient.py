@@ -1,20 +1,38 @@
+from dataclasses import dataclass
+from typing import Any, Literal, Optional, Type, TypeAlias
+
 from .envri import EnvriConfig
-from .sparql import SparqlResults, sparql_select as sparql_select_generic
-from .queries.speclist import dobj_spec_lite_list, parse_dobj_spec_lite, DobjSpecLite
-from .queries.dataobjlist import DataObjectLite, parse_dobj_lite, dataobj_lite_list
-from .queries.dataobjlist import Filter, OrderBy, OrderByProp, CategorySelector
-from .queries.stationlist import station_lite_list, parse_station, StationLite
-from .metacore import CPJson, parse_cp_json
-from .metacore import DataObject as VanillaDataObject, StaticCollection as VanillaStaticCollection
-from .rolemeta import StationWithStaff
 from .geofeaturemeta import GeoFeatureWithGeo, Point
 from .http import http_request
-from typing import Type, TypeAlias, Literal, Any, Optional
-from dataclasses import dataclass
+from .metacore import CPJson, parse_cp_json
+from .metacore import DataObject as VanillaDataObject
+from .metacore import StaticCollection as VanillaStaticCollection
 
 # the following are needed for convenient re-export by the end user
-from .queries.dataobjlist import TimeFilter, SizeFilter, SamplingHeightFilter, GeoIntersectFilter
-from .queries.dataobjlist import box_intersect
+from .queries.dataobjlist import (
+	CategorySelector,
+	DataObjectLite,
+	Filter,
+	GeoIntersectFilter,
+	OrderBy,
+	OrderByProp,
+	SamplingHeightFilter,
+	SizeFilter,
+	TimeFilter,
+	box_intersect,
+	dataobj_lite_list,
+	parse_dobj_lite,
+)
+from .queries.speclist import (
+	DobjSpecLite,
+	dobj_spec_lite_list,
+	parse_dobj_spec_lite,
+)
+from .queries.stationlist import StationLite, parse_station, station_lite_list
+from .rolemeta import StationWithStaff
+from .sparql import SparqlResults
+from .sparql import sparql_select as sparql_select_generic
+
 # and the following to suppress warnings about unused imports:
 _needed_classes: TypeAlias = TimeFilter | SizeFilter | SamplingHeightFilter | GeoIntersectFilter | Point
 _needed_method = box_intersect

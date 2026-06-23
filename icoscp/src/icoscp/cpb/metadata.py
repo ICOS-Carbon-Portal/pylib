@@ -3,6 +3,7 @@ Created on Tue May 24 11:56:23 2022
 @author: Claudio
 """
 from warnings import warn
+
 import pandas as pd
 import requests as re
 

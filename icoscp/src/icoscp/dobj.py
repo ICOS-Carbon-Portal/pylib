@@ -1,12 +1,9 @@
-# Standard library imports.
 import warnings
 from dataclasses import asdict
 from typing import Any, Literal, Optional, TypeAlias, TypedDict
 
-# Related third party imports.
 import pandas as pd
 
-# Local application/library specific imports.
 import icoscp.const as c
 from icoscp import cpauth
 from icoscp.core.icos import bootstrap, meta

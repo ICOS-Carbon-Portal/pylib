@@ -1,7 +1,7 @@
-from .envri import ICOS_CONFIG
 from .bootstrap import Bootstrap
-from .sparql import as_string, as_uri
+from .envri import ICOS_CONFIG
 from .metacore import URI
+from .sparql import as_string, as_uri
 
 bootstrap = Bootstrap(ICOS_CONFIG)
 auth, meta, data = bootstrap.fromPasswordFile()

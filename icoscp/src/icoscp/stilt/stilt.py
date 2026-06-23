@@ -8,6 +8,7 @@ import pandas as pd
 import requests
 import xarray as xr
 from dacite import from_dict
+
 from icoscp.core.cpb import ArraysDict
 from icoscp.core.icos import data, meta, station_class_lookup
 from icoscp.core.queries.dataobjlist import DataObjectLite

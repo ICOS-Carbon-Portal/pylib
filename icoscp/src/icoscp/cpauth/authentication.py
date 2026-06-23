@@ -1,4 +1,3 @@
-# Local application/library specific imports.
 from icoscp.core.auth import AuthToken, AuthTokenProvider
 from icoscp.core.icos import auth
 

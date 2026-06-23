@@ -1,15 +1,24 @@
 import io
-import numpy as np
-from numpy.typing import NDArray
 import os
 import re
 import sys
-from typing import Any, TypeAlias, TypedDict, Tuple
 from dataclasses import dataclass
+from typing import Any, Tuple, TypeAlias, TypedDict
+
+import numpy as np
+from numpy.typing import NDArray
+
 from .metaclient import MetadataClient
-from .metacore import DataObject, StationTimeSeriesMeta, URI
+from .metacore import URI, DataObject, StationTimeSeriesMeta
+from .queries.cpbmeta import (
+	CpbMetaData,
+	DatasetCol,
+	get_cpb_meta,
+	get_dataset_cols,
+	get_good_flags_per_spec,
+)
 from .queries.dataobjlist import DataObjectLite
-from .queries.cpbmeta import CpbMetaData, DatasetCol, get_cpb_meta, get_dataset_cols, get_good_flags_per_spec
+
 
 @dataclass(frozen=True)
 class ColumnInfo:

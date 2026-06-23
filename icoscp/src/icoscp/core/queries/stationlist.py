@@ -1,7 +1,16 @@
 from dataclasses import dataclass
-from ..sparql import Binding, as_uri, as_string, as_opt_str, as_opt_double, as_opt_float
+
 from ..envri import EnvriConfig
 from ..metacore import UriResource
+from ..sparql import (
+	Binding,
+	as_opt_double,
+	as_opt_float,
+	as_opt_str,
+	as_string,
+	as_uri,
+)
+
 
 @dataclass(frozen=True)
 class StationLite(UriResource):
