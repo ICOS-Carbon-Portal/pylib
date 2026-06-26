@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Any, Literal, Optional, Type, TypeAlias
-
+import requests
 from .envri import EnvriConfig
 from .geofeaturemeta import GeoFeatureWithGeo, Point
 from .http import http_request
@@ -182,7 +182,7 @@ class MetadataClient:
 		qres = self.sparql_select(query)
 		return [parse_dobj_lite(b) for b in qres.bindings]
 
-	def get_dobj_meta(self, dobj: str | DataObjectLite) -> DataObject:
+	def get_dobj_meta(self, dobj: str | DataObjectLite) -> DataObject | False:
 		"""
 		Get fully detailed metadata of a data object
 
@@ -200,6 +200,11 @@ class MetadataClient:
 		if type(dobj) == str: dobj_uri = dobj
 		elif type(dobj) == DataObjectLite: dobj_uri = dobj.uri
 		else: raise ValueError("dobj must be either landing page URL or an instance of DataObjectLite")
+
+		#check if dobj_uri is valid, return False
+		r = requests.get(dobj_uri)
+		if not r.status_code == requests.codes.ok:			
+			return False
 
 		return _get_json_meta(dobj_uri, DataObject)
 	
