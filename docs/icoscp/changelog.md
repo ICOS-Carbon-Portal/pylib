@@ -74,9 +74,7 @@
 
 ## 0.1.18
  - #### cpauth module
-   Implement authentication for secure data access. The full documentation of
-   the authentication module can be found [here](
-   https://icos-carbon-portal.github.io/pylib/modules/#authentication).
+   Implement authentication for secure data access.
  - #### cpb module
     - Rework code in `Dobj()` class to correctly add `series` to pandas
       `DataFrame` and avoid pandas performance warning.
