@@ -1,4 +1,4 @@
-# Changelog
+# icoscp changelog
 
 ## 0.2.3
 - #### dependencies

@@ -12,7 +12,9 @@ nav:
         - Legacy icoscp modules: icoscp/modules.md
         - Legacy icoscp examples: icoscp/legacy_examples.md
         - FAQ: icoscp/faq.md
-        - Changelog: icoscp/changelog.md
+        - Changelogs:
+            - icoscp: icoscp/changelog.md
+            - icoscp_core: icoscp/changelogs/icoscp_core.md
     - icoscp_stilt:
         - About: icoscp_stilt/index.md
         - Getting started with the new icoscp_stilt: icoscp_stilt/getting_started.md
