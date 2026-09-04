@@ -21,6 +21,9 @@ nav:
         - Legacy modules: icoscp_stilt/modules.md
         - Changelog: icoscp_stilt/changelog.md
 
+markdown_extensions:
+  - admonition
+
 validation:
     links:
         anchors: warn

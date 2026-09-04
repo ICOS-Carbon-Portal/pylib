@@ -66,16 +66,19 @@ Hence, the new role of **icoscp** library is three-fold:
 - making all the **icoscp_core** functionality available as a dependency
 
 ## ICOS data licence
-Please be aware, that by either downloading or accessing the data directly
-through this library, you acknowledge that all ICOS data are provided under a
-<a href="https://data.icos-cp.eu/licence" target="_blank">CC BY 4.0 licence 
-<img src="https://www.icos-cp.eu/sites/default/files/inline-images/creativecommons.png">
-</a>, and accept the licence. When using the library standalone (not on a
-Carbon-Portal-provided Jupyter instance) to access the *data*, you are required
-to authenticate as a user with ICOS licence accepted in your Carbon Portal profile
-([https://cpauth.icos-cp.eu/](https://cpauth.icos-cp.eu/)). *Metadata* access,
-on the other hand, is provided for anonymous users as well as for registered
-ones.
+
+!!! warning
+
+    Please be aware, that by either downloading or accessing the data directly
+    through this library, you acknowledge that all ICOS data are provided under a
+    <a href="https://data.icos-cp.eu/licence" target="_blank">CC BY 4.0 licence 
+    <img src="https://www.icos-cp.eu/sites/default/files/inline-images/creativecommons.png">
+    </a>, and accept the licence. When using the library standalone (not on a
+    Carbon-Portal-provided Jupyter instance) to access the *data*, you are required
+    to authenticate as a user with ICOS licence accepted in your Carbon Portal profile
+    ([https://cpauth.icos-cp.eu/](https://cpauth.icos-cp.eu/)). *Metadata* access,
+    on the other hand, is provided for anonymous users as well as for registered
+    ones.
 
 
 ## (older) Notes
