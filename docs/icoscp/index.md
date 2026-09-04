@@ -101,4 +101,4 @@ we appreciate feedback.
 The library is developed with  Python 3.10, and we assume that any recent
 Python distribution should work. If you have any trouble running the library,
 we would like to hear about it.  
-Please get in touch: [jupyter-info@icos-cp.eu](mailto:jupyter-info@icos-cp.eu)
+Please get in touch: [jupyter-info@icos-ri.eu](mailto:jupyter-info@icos-ri.eu)
