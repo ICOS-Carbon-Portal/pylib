@@ -4,21 +4,21 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://icos-carbon-portal.github.io/pylib/icoscp/changelog/" />
-      <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Changelog - ICOS Carbon Portal icoscp Library</title>
-    <link rel="stylesheet" href="../css/theme.css" />
-    <link rel="stylesheet" href="../css/theme_extra.css" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>icoscp - ICOS Carbon Portal Python Libraries</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Changelog";
-        var mkdocs_page_input_path = "changelog.md";
+        var mkdocs_page_name = "icoscp";
+        var mkdocs_page_input_path = "icoscp/changelog.md";
         var mkdocs_page_url = "/pylib/icoscp/changelog/";
       </script>
     
     <!--[if lt IE 9]>
-      <script src="../js/html5shiv.min.js"></script>
+      <script src="../../js/html5shiv.min.js"></script>
     <![endif]-->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
       <script>hljs.highlightAll();</script> 
@@ -30,181 +30,173 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
-          <a href=".." class="icon icon-home"> ICOS Carbon Portal icoscp Library
+          <a href="../.." class="icon icon-home"> ICOS Carbon Portal Python Libraries
         </a><div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
       <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="..">About</a>
-                </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../install/">Installation</a>
-                </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../authentication/">Authentication</a>
-                </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../getting_started/">Getting started with icoscp_core</a>
-                </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../examples/">Examples</a>
-                </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../modules/">Legacy icoscp modules</a>
-                </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../legacy_examples/">Legacy icoscp examples</a>
-                </li>
-              </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../faq/">FAQ</a>
-                </li>
-              </ul>
-              <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href="#">Changelog</a>
+        <p class="caption"><span class="caption-text">icoscp</span></p>
+        <ul class="current">
+            <li class="toctree-l1"><a class="reference internal" href="../">About</a>
+            </li>
+            <li class="toctree-l1"><a class="reference internal" href="../install/">Installation</a>
+            </li>
+            <li class="toctree-l1"><a class="reference internal" href="../authentication/">Authentication</a>
+            </li>
+            <li class="toctree-l1"><a class="reference internal" href="../getting_started/">Getting started with icoscp_core</a>
+            </li>
+            <li class="toctree-l1"><a class="reference internal" href="../examples/">Examples</a>
+            </li>
+            <li class="toctree-l1"><a class="reference internal" href="../modules/">Legacy icoscp modules</a>
+            </li>
+            <li class="toctree-l1"><a class="reference internal" href="../legacy_examples/">Legacy icoscp examples</a>
+            </li>
+            <li class="toctree-l1"><a class="reference internal" href="../faq/">FAQ</a>
+            </li>
+            <li class="toctree-l1 current"><a class="reference internal current" >Changelogs</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#023">0.2.3</a>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">icoscp</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#023">0.2.3</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#dependencies">dependencies</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dependencies">dependencies</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#station-module">station module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#station-module">station module</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#022">0.2.2</a>
+    <li class="toctree-l3"><a class="reference internal" href="#022">0.2.2</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#dobj-module">dobj module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dobj-module">dobj module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dependencies_1">dependencies</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dependencies_1">dependencies</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#021">0.2.1</a>
+    <li class="toctree-l3"><a class="reference internal" href="#021">0.2.1</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#dependencies_2">dependencies</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dependencies_2">dependencies</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#020">0.2.0</a>
+    <li class="toctree-l3"><a class="reference internal" href="#020">0.2.0</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#cpauth-module">cpauth module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#cpauth-module">cpauth module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#stilt-module">stilt module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#stilt-module">stilt module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#countries-module">countries module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#countries-module">countries module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dependencies_3">dependencies</a>
+    <li class="toctree-l4"><a class="reference internal" href="#dependencies_3">dependencies</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#documentation">documentation</a>
+    <li class="toctree-l4"><a class="reference internal" href="#documentation">documentation</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#0120">0.1.20</a>
+    <li class="toctree-l3"><a class="reference internal" href="#0120">0.1.20</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#country-module">country module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#country-module">country module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#cpauth-module_1">cpauth module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#cpauth-module_1">cpauth module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#sparql-module">sparql module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#sparql-module">sparql module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_1">stilt module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#stilt-module_1">stilt module</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#0119">0.1.19</a>
+    <li class="toctree-l3"><a class="reference internal" href="#0119">0.1.19</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_2">stilt module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#stilt-module_2">stilt module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#documentation_1">documentation</a>
+    <li class="toctree-l4"><a class="reference internal" href="#documentation_1">documentation</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#project-structure">project-structure</a>
+    <li class="toctree-l4"><a class="reference internal" href="#project-structure">project-structure</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#0118">0.1.18</a>
+    <li class="toctree-l3"><a class="reference internal" href="#0118">0.1.18</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#cpauth-module_2">cpauth module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#cpauth-module_2">cpauth module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#cpb-module">cpb module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#cpb-module">cpb module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_3">stilt module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#stilt-module_3">stilt module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#station-module_1">station module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#station-module_1">station module</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#0117">0.1.17</a>
+    <li class="toctree-l3"><a class="reference internal" href="#0117">0.1.17</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#station-module_2">station module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#station-module_2">station module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#sparql-module_1">sparql module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#sparql-module_1">sparql module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_4">stilt module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#stilt-module_4">stilt module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#other-changes">other changes</a>
+    <li class="toctree-l4"><a class="reference internal" href="#other-changes">other changes</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#0116">0.1.16</a>
+    <li class="toctree-l3"><a class="reference internal" href="#0116">0.1.16</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#sparql">sparql</a>
+    <li class="toctree-l4"><a class="reference internal" href="#sparql">sparql</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#station-module_3">station module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#station-module_3">station module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#stilt-module_5">stilt module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#stilt-module_5">stilt module</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#0115">0.1.15</a>
+    <li class="toctree-l3"><a class="reference internal" href="#0115">0.1.15</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#cpb-module_1">cpb module</a>
+    <li class="toctree-l4"><a class="reference internal" href="#cpb-module_1">cpb module</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#access-to-data">access to data</a>
+    <li class="toctree-l4"><a class="reference internal" href="#access-to-data">access to data</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#other-changes_1">other changes</a>
+    <li class="toctree-l4"><a class="reference internal" href="#other-changes_1">other changes</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#0114">0.1.14</a>
+    <li class="toctree-l3"><a class="reference internal" href="#0114">0.1.14</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#0113">0.1.13</a>
+    <li class="toctree-l3"><a class="reference internal" href="#0113">0.1.13</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#0112">0.1.12</a>
+    <li class="toctree-l3"><a class="reference internal" href="#0112">0.1.12</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#0111">0.1.11</a>
+    <li class="toctree-l3"><a class="reference internal" href="#0111">0.1.11</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#0110">0.1.10</a>
+    <li class="toctree-l3"><a class="reference internal" href="#0110">0.1.10</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#019">0.1.9</a>
+    <li class="toctree-l3"><a class="reference internal" href="#019">0.1.9</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#018">0.1.8</a>
+    <li class="toctree-l3"><a class="reference internal" href="#018">0.1.8</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#017">0.1.7</a>
+    <li class="toctree-l3"><a class="reference internal" href="#017">0.1.7</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#016">0.1.6</a>
+    <li class="toctree-l3"><a class="reference internal" href="#016">0.1.6</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#015">0.1.5</a>
+    <li class="toctree-l3"><a class="reference internal" href="#015">0.1.5</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#014">0.1.4</a>
+    <li class="toctree-l3"><a class="reference internal" href="#014">0.1.4</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#013">0.1.3</a>
+    <li class="toctree-l3"><a class="reference internal" href="#013">0.1.3</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#012">0.1.2</a>
+    <li class="toctree-l3"><a class="reference internal" href="#012">0.1.2</a>
     </li>
     </ul>
                 </li>
-              </ul>
+                <li class="toctree-l2"><a class="reference internal" href="../changelogs/icoscp_core/">icoscp_core</a>
+                </li>
+    </ul>
+            </li>
+        </ul>
+
       </div>
     </div>
     </nav>
@@ -212,14 +204,16 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
       <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="..">ICOS Carbon Portal icoscp Library</a>
+          <a href="../..">ICOS Carbon Portal Python Libraries</a>
         
       </nav>
       <div class="wy-nav-content">
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-      <li class="breadcrumb-item active">Changelog</li>
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">icoscp</li>
+          <li class="breadcrumb-item">Changelogs</li>
+      <li class="breadcrumb-item active">icoscp</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
@@ -228,7 +222,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="changelog">Changelog</h1>
+                <h1 id="icoscp-changelog">icoscp changelog</h1>
 <h2 id="023">0.2.3</h2>
 <ul>
 <li>
@@ -378,8 +372,7 @@ been radically simplified, making the <code>countries</code> module redundant.</
 <ul>
 <li>
 <h4 id="cpauth-module_2">cpauth module</h4>
-   Implement authentication for secure data access. The full documentation of
-   the authentication module can be found <a href="https://icos-carbon-portal.github.io/pylib/modules/#authentication">here</a>.</li>
+   Implement authentication for secure data access.</li>
 <li>
 <h4 id="cpb-module">cpb module</h4>
 <ul>
@@ -606,6 +599,7 @@ been radically simplified, making the <code>countries</code> module redundant.</
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../faq/" class="btn btn-neutral float-left" title="FAQ"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../changelogs/icoscp_core/" class="btn btn-neutral float-right" title="icoscp_core">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -631,13 +625,15 @@ been radically simplified, making the <code>countries</code> module redundant.</
       <span><a href="../faq/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
+      <span><a href="../changelogs/icoscp_core/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
   </span>
 </div>
-    <script src="../js/jquery-3.6.0.min.js"></script>
-    <script>var base_url = "..";</script>
-    <script src="../js/theme_extra.js"></script>
-    <script src="../js/theme.js"></script>
-      <script src="../search/main.js"></script>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
     <script>
         jQuery(function () {
             SphinxRtdTheme.Navigation.enable(true);

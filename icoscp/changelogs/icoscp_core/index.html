@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://icos-carbon-portal.github.io/pylib/icoscp/changelogs/icoscp_core/" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>icoscp_core - ICOS Carbon Portal Python Libraries</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "icoscp_core";
+        var mkdocs_page_input_path = "icoscp/changelogs/icoscp_core.md";
+        var mkdocs_page_url = "/pylib/icoscp/changelogs/icoscp_core/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> ICOS Carbon Portal Python Libraries
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+        <p class="caption"><span class="caption-text">icoscp</span></p>
+        <ul class="current">
+            <li class="toctree-l1"><a class="reference internal" href="../../">About</a>
+            </li>
+            <li class="toctree-l1"><a class="reference internal" href="../../install/">Installation</a>
+            </li>
+            <li class="toctree-l1"><a class="reference internal" href="../../authentication/">Authentication</a>
+            </li>
+            <li class="toctree-l1"><a class="reference internal" href="../../getting_started/">Getting started with icoscp_core</a>
+            </li>
+            <li class="toctree-l1"><a class="reference internal" href="../../examples/">Examples</a>
+            </li>
+            <li class="toctree-l1"><a class="reference internal" href="../../modules/">Legacy icoscp modules</a>
+            </li>
+            <li class="toctree-l1"><a class="reference internal" href="../../legacy_examples/">Legacy icoscp examples</a>
+            </li>
+            <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+            </li>
+            <li class="toctree-l1 current"><a class="reference internal current" >Changelogs</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../../changelog/">icoscp</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">icoscp_core</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#0313">0.3.13</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#metadata">metadata</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#0312">0.3.12</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#metacore">metacore</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#cpb">cpb</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#packaging">packaging</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#0311">0.3.11</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#dependencies">dependencies</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#metaclient">metaclient</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#0310">0.3.10</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#cpb_1">cpb</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#modules">modules</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#039">0.3.9</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#release">release</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#038">0.3.8</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#dataclient">dataclient</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#modules_1">modules</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#037">0.3.7</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#http">http</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#cpb_2">cpb</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#queries">queries</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#typing">typing</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#036">0.3.6</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#collection-metadata">collection metadata</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#documentation">documentation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#035">0.3.5</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#dependencies_1">dependencies</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#documentation_1">documentation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#034">0.3.4</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#metaclient_1">metaclient</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dataclient_1">dataclient</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#cpb_3">cpb</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#033">0.3.3</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#metaclient_2">metaclient</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#auth">auth</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#032">0.3.2</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#geo">geo</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#documentation_2">documentation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#031">0.3.1</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#metacore_1">metacore</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#030">0.3.0</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#dependencies_2">dependencies</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#http_1">http</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#cpb_4">cpb</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#022">0.2.2</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#cpb_5">cpb</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#021">0.2.1</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#cpb_6">cpb</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#metacore_2">metacore</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#documentation_3">documentation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#020">0.2.0</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#cpb_7">cpb</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#metacore_3">metacore</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#jupyter">jupyter</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#documentation_4">documentation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#012">0.1.2</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#cpb_8">cpb</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#metaclient_3">metaclient</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#bootstrap">bootstrap</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#011">0.1.1</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#release_1">release</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#010">0.1.0</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#initial-release">initial release</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+    </ul>
+            </li>
+        </ul>
+
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">ICOS Carbon Portal Python Libraries</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">icoscp</li>
+          <li class="breadcrumb-item">Changelogs</li>
+      <li class="breadcrumb-item active">icoscp_core</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="icoscp_core-changelog">icoscp_core changelog</h1>
+<h2 id="0313">0.3.13</h2>
+<ul>
+<li>
+<h4 id="metadata">metadata</h4>
+<ul>
+<li>Fix URI protocol rewriting.</li>
+</ul>
+</li>
+</ul>
+<h2 id="0312">0.3.12</h2>
+<ul>
+<li>
+<h4 id="metacore">metacore</h4>
+<ul>
+<li>Regenerate from the current Scala backend: remove the <code>Network</code>
+  class, update <code>CityNetwork</code> literals, and add <code>empty_dict_to_none</code>
+  JSON preprocessing.</li>
+</ul>
+</li>
+<li>
+<h4 id="cpb">cpb</h4>
+<ul>
+<li>Fix flag column resolution. Regex-pattern flag column names from
+  metadata were passed through as-is instead of being matched
+  against the actual column names, so lookups failed.</li>
+</ul>
+</li>
+<li>
+<h4 id="packaging">packaging</h4>
+<ul>
+<li>Switch the build backend from <code>flit</code> to <code>hatch</code>.</li>
+<li>Add a changelog link to <code>[project.urls]</code> for PyPI.</li>
+<li>Update the maintainer list and email addresses.</li>
+</ul>
+</li>
+</ul>
+<h2 id="0311">0.3.11</h2>
+<ul>
+<li>
+<h4 id="dependencies">dependencies</h4>
+<ul>
+<li>Remove the <code>numpy &lt; 2</code> limit.</li>
+</ul>
+</li>
+<li>
+<h4 id="metaclient">metaclient</h4>
+<ul>
+<li>Fix station URI handling by converting between <code>http</code> and <code>https</code>
+  where needed.</li>
+</ul>
+</li>
+</ul>
+<h2 id="0310">0.3.10</h2>
+<ul>
+<li>
+<h4 id="cpb_1">cpb</h4>
+<ul>
+<li>Add a boolean value format.</li>
+</ul>
+</li>
+<li>
+<h4 id="modules">modules</h4>
+<ul>
+<li>Fix a circular import.</li>
+</ul>
+</li>
+</ul>
+<h2 id="039">0.3.9</h2>
+<ul>
+<li>
+<h4 id="release">release</h4>
+<ul>
+<li>Released the same day as <code>0.3.8</code>, with no separately recorded
+  changes.</li>
+</ul>
+</li>
+</ul>
+<h2 id="038">0.3.8</h2>
+<ul>
+<li>
+<h4 id="dataclient">dataclient</h4>
+<ul>
+<li>Report a clear error when fetching the content of a data object
+  without having accepted the licence terms.</li>
+</ul>
+</li>
+<li>
+<h4 id="modules_1">modules</h4>
+<ul>
+<li>Fix a circular import.</li>
+</ul>
+</li>
+</ul>
+<h2 id="037">0.3.7</h2>
+<ul>
+<li>
+<h4 id="http">http</h4>
+<ul>
+<li>Overhaul request handling.</li>
+</ul>
+</li>
+<li>
+<h4 id="cpb_2">cpb</h4>
+<ul>
+<li>Best-effort reporting of the user for Jupyter <code>cpb</code> access.</li>
+</ul>
+</li>
+<li>
+<h4 id="queries">queries</h4>
+<ul>
+<li>Simplify the SPARQL query by dropping <code>filter exists</code> inside
+  <code>optional</code>.</li>
+</ul>
+</li>
+<li>
+<h4 id="typing">typing</h4>
+<ul>
+<li>Assorted type annotation fixes.</li>
+</ul>
+</li>
+</ul>
+<h2 id="036">0.3.6</h2>
+<ul>
+<li>
+<h4 id="collection-metadata">collection metadata</h4>
+<ul>
+<li>Add <code>parentCollections</code> to <code>StaticCollection</code>.</li>
+<li>Add <code>coverage</code> to <code>StaticCollection</code>, declared as
+  <code>Optional[GeoFeatureWithGeo]</code> so it carries GeoJSON.</li>
+<li>Make <code>StaticCollection.members</code> lighter when sub-collections are
+  present. Values can now be either <code>PlainStaticObject</code> or
+  <code>PlainStaticCollection</code>; the two differ in their fields (<code>name</code>
+  versus <code>title</code>), so test at runtime, as a collection can contain
+  both objects and other collections.</li>
+</ul>
+</li>
+<li>
+<h4 id="documentation">documentation</h4>
+<ul>
+<li>Update the <code>meta.get_collection_meta</code> examples accordingly.</li>
+</ul>
+</li>
+</ul>
+<h2 id="035">0.3.5</h2>
+<ul>
+<li>
+<h4 id="dependencies_1">dependencies</h4>
+<ul>
+<li>Limit the dependency to <code>numpy &lt; 2</code>.</li>
+</ul>
+</li>
+<li>
+<h4 id="documentation_1">documentation</h4>
+<ul>
+<li>Minor README update.</li>
+</ul>
+</li>
+</ul>
+<h2 id="034">0.3.4</h2>
+<ul>
+<li>
+<h4 id="metaclient_1">metaclient</h4>
+<ul>
+<li>Correct Carbon Portal ontology URLs from <code>https</code> to <code>http</code>.</li>
+<li>Add <code>format</code> to <code>DobjSpecLite</code> and document the class.</li>
+</ul>
+</li>
+<li>
+<h4 id="dataclient_1">dataclient</h4>
+<ul>
+<li>Add an <code>auth</code> property.</li>
+</ul>
+</li>
+<li>
+<h4 id="cpb_3">cpb</h4>
+<ul>
+<li>Fix a typo in date format post-processing.</li>
+</ul>
+</li>
+</ul>
+<h2 id="033">0.3.3</h2>
+<ul>
+<li>
+<h4 id="metaclient_2">metaclient</h4>
+<ul>
+<li>Add <code>get_collection_meta()</code>.</li>
+</ul>
+</li>
+<li>
+<h4 id="auth">auth</h4>
+<ul>
+<li>Improve error messages and documentation.</li>
+</ul>
+</li>
+</ul>
+<h2 id="032">0.3.2</h2>
+<ul>
+<li>
+<h4 id="geo">geo</h4>
+<ul>
+<li>Add a geographical filter, with examples and a new bootstrap
+  method.</li>
+<li>Fix <code>polygon_to_wkt</code>.</li>
+</ul>
+</li>
+<li>
+<h4 id="documentation_2">documentation</h4>
+<ul>
+<li>Rework the introductory part of the README.</li>
+</ul>
+</li>
+</ul>
+<h2 id="031">0.3.1</h2>
+<ul>
+<li>
+<h4 id="metacore_1">metacore</h4>
+<ul>
+<li>Metadata updates accompanying CF-compliant NetCDF preview support.</li>
+</ul>
+</li>
+</ul>
+<h2 id="030">0.3.0</h2>
+<ul>
+<li>
+<h4 id="dependencies_2">dependencies</h4>
+<ul>
+<li>Drop the <code>requests</code> dependency.</li>
+</ul>
+</li>
+<li>
+<h4 id="http_1">http</h4>
+<ul>
+<li>Rework the module along more systematic lines.</li>
+</ul>
+</li>
+<li>
+<h4 id="cpb_4">cpb</h4>
+<ul>
+<li>Improve binary fetch performance.</li>
+<li>Return arrays with more consistent endianness.</li>
+</ul>
+</li>
+</ul>
+<h2 id="022">0.2.2</h2>
+<ul>
+<li>
+<h4 id="cpb_5">cpb</h4>
+<ul>
+<li>Inject flags in non-batch data fetch.</li>
+<li>Set bad values to <code>NaN</code> by default.</li>
+</ul>
+</li>
+</ul>
+<h2 id="021">0.2.1</h2>
+<ul>
+<li>
+<h4 id="cpb_6">cpb</h4>
+<ul>
+<li>Add flag columns to batch data fetch, preparing for good/bad flag
+  filtering.</li>
+<li>Byte-swap on little-endian systems for pandas compatibility.</li>
+</ul>
+</li>
+<li>
+<h4 id="metacore_2">metacore</h4>
+<ul>
+<li>Use frozen dataclasses; fix person and role metadata.</li>
+</ul>
+</li>
+<li>
+<h4 id="documentation_3">documentation</h4>
+<ul>
+<li>Update the <code>DataClient</code> documentation.</li>
+</ul>
+</li>
+</ul>
+<h2 id="020">0.2.0</h2>
+<ul>
+<li>
+<h4 id="cpb_7">cpb</h4>
+<ul>
+<li>Parse binaries with <code>numpy</code>.</li>
+<li>Support file access event logging.</li>
+</ul>
+</li>
+<li>
+<h4 id="metacore_3">metacore</h4>
+<ul>
+<li>Make all dataclasses immutable.</li>
+<li>Add extensions for <code>GeoFeature</code> classes with a <code>geo</code> field.</li>
+</ul>
+</li>
+<li>
+<h4 id="jupyter">jupyter</h4>
+<ul>
+<li>Basic support for deployment on Jupyter.</li>
+</ul>
+</li>
+<li>
+<h4 id="documentation_4">documentation</h4>
+<ul>
+<li>Expand the documentation, in particular for the authentication
+  mechanisms.</li>
+</ul>
+</li>
+</ul>
+<h2 id="012">0.1.2</h2>
+<ul>
+<li>
+<h4 id="cpb_8">cpb</h4>
+<ul>
+<li>Add batch fetching of binary tabular data.</li>
+<li>Add fetching of the binary of a single data object.</li>
+<li>Convert unicode and time types, and keep track of column indices
+  when some columns are filtered out.</li>
+</ul>
+</li>
+<li>
+<h4 id="metaclient_3">metaclient</h4>
+<ul>
+<li>Enhance <code>DataObjectLite</code> and <code>StationLite</code>, and document more of
+  the client.</li>
+</ul>
+</li>
+<li>
+<h4 id="bootstrap">bootstrap</h4>
+<ul>
+<li>Hide the <code>envri</code> module behind the bootstrapping code.</li>
+</ul>
+</li>
+</ul>
+<h2 id="011">0.1.1</h2>
+<ul>
+<li>
+<h4 id="release_1">release</h4>
+<ul>
+<li>Released the same day as <code>0.1.0</code>, with no separately recorded
+  changes.</li>
+</ul>
+</li>
+</ul>
+<h2 id="010">0.1.0</h2>
+<ul>
+<li>
+<h4 id="initial-release">initial release</h4>
+<ul>
+<li>Metadata access through <code>MetaClient</code>, including data type and
+  station listings.</li>
+<li>Data access through <code>DataClient</code>, with the <code>cpb</code> binary format
+  reader.</li>
+<li>Authentication, and bootstrapping for the ICOS, SITES and ICOS
+  Cities repositories.</li>
+</ul>
+</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../changelog/" class="btn btn-neutral float-left" title="icoscp"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../../icoscp_stilt/" class="btn btn-neutral float-right" title="About">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../../changelog/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../../icoscp_stilt/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
