@@ -178,7 +178,7 @@ class MetadataClient:
 		:return: a list of `DataObjectLite` instances with basic data
 		object metadata (defined in `queries.dataobjlist` package).
 		"""
-		query = dataobj_lite_list(datatype, station, filters, include_deprecated, order_by, limit, offset)
+		query = dataobj_lite_list(datatype, station, filters, include_deprecated, order_by, limit, offset, self._envri_conf)
 		qres = self.sparql_select(query)
 		return [parse_dobj_lite(b) for b in qres.bindings]
 
