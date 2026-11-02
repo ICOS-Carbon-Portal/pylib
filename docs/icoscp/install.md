@@ -25,7 +25,7 @@ This concerns users of **icoscp** of versions prior to `0.2.0`.
 
 For standalone library users (i.e. outside of a Carbon Portal Jupyter
 environment), the package installation (or rather upgrade) procedure must be
-followed by the [authentication setup](getting_started.md#authentication)
+followed by the [authentication setup](authentication.md)
 (unless you have used **icoscp_core** previously, and configured
 authentication with it using the default method).
 

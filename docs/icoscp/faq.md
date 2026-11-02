@@ -70,5 +70,5 @@ useful information to the users.
         warnings.simplefilter("ignore", UserWarning)
 
 ### Where is the documentation for the cpauth module?
-The documentation for the authentication module can be found in the
-installation section [here](install.md#authentication).
+The documentation for the authentication module can be found
+[here](authentication.md).
