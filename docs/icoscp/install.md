@@ -54,7 +54,7 @@ The advantages are:
   *data* is accessible with the library)
 - better performance when fetching the data
 - new `metadata` property that contains `DataObject` dataclass from
-  `icoscp_core.metaclient` module, which is a type-annotated nested structure
+  `icoscp.core.metaclient` module, which is a type-annotated nested structure
   that was (mostly) automatically produced to faithfully reflect the JSON
   metadata available for the data object from the metadata server.
 

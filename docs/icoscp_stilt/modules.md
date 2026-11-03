@@ -1,6 +1,6 @@
 # Legacy modules
 These modules contain code that may be gradually deprecated in favour of new
-code in `icoscp_stilt.stilt`. The following documentation and the code it
+code in `icoscp.stilt.stilt`. The following documentation and the code it
 describes have been with minimal changes moved from `icoscp` library prior
 to version `0.2.0`
 
@@ -8,7 +8,7 @@ to version `0.2.0`
 Load the module with:
 
 ```Python
-from icoscp_stilt import stiltstation
+from icoscp.stilt import stiltstation
 ```
 Two functions are available: one to find STILT stations and one to extract the
 STILT station as an object, which gives access to the data (time series and
@@ -193,7 +193,7 @@ Internal-implementation module
 ### STILT Object
 Class-method **StiltStation(dict)**  
 Please do not use this class directly. You should load
-`from icoscp_stilt import stiltstation` and then use the function
+`from icoscp.stilt import stiltstation` and then use the function
 `obj = stiltstation.get('HTM150)` which will return a stilt station 
 object. Once you have the object, the following attributes and methods are
 available:

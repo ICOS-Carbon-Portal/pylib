@@ -8,7 +8,7 @@ heights. See [discover data types](getting_started.md#discover-data-types)
 to find out how to discover a URL for a data type.
 
 ```Python
-from icoscp_core.icos import data, meta, ATMO_STATION
+from icoscp.core.icos import data, meta, ATMO_STATION
 import pandas as pd
 import numpy as np
 

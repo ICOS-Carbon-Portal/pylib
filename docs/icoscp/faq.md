@@ -13,7 +13,7 @@ porting of at least some of your older code to using `icoscp_core`.
 
 ### How can I retrieve the latest/newest version of a dataset?
 ```python
-from icoscp_core.icos import meta
+from icoscp.core.icos import meta
 dobj = meta.get_dobj_meta('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
 
 latest_version_uri = dobj.latestVersion
@@ -25,7 +25,7 @@ collectively deprecate a single one.
 
 ### How to obtain ICOS station class of a station?
 ```python
-from icoscp_core.icos import station_class_lookup
+from icoscp.core.icos import station_class_lookup
 station_uri = 'http://meta.icos-cp.eu/resources/stations/AS_HTM'
 station_class = station_class_lookup().get(station_uri)
 ```

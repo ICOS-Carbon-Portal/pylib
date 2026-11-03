@@ -16,7 +16,7 @@ This library contains functionality split out of library `icoscp` prior to
 `0.2.0` release, in order to relieve the latter of the specialized STILT code
 and its dependencies.
 
-In addition, the library contains a new module `icoscp_stilt.stilt` with new
+In addition, the library contains a new module `icoscp.stilt.stilt` with new
 functionality designed to closer match the server APIs and to be performant.
 
 ## Upgrade notes
@@ -28,7 +28,7 @@ from icoscp.stilt import stiltstation
 ```
 with
 ```Python
-from icoscp_stilt import stiltstation
+from icoscp.stilt import stiltstation
 ```
 
 Additionally, handling of country-association of the STILT stations is
