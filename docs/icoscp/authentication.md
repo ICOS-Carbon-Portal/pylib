@@ -44,7 +44,7 @@ auth.init_config_file()
 ```
 
 After the initialization step is done in this way, access to the data can be
-achieved using both the new `icoscp_core` machinery and the legacy
+achieved using both the new `icoscp.core` machinery and the legacy
 [Dobj classes](modules.md#dobj).
 
 ## By custom credentials file
