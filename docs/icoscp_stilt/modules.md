@@ -194,7 +194,7 @@ Internal-implementation module
 Class-method **StiltStation(dict)**  
 Please do not use this class directly. You should load
 `from icoscp.stilt import stiltstation` and then use the function
-`obj = stiltstation.get('HTM150)` which will return a stilt station 
+`obj = stiltstation.get('HTM150')` which will return a stilt station 
 object. Once you have the object, the following attributes and methods are
 available:
 
