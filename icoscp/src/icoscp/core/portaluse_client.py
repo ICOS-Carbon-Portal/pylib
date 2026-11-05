@@ -2,7 +2,8 @@ import logging
 import threading
 from typing import Any
 
-from . import __version__ as icoscp_core_version
+from icoscp import __version__ as icoscp_version
+
 from .auth import AuthTokenProvider
 from .envri import EnvriConfig
 from .http import http_request
@@ -16,8 +17,8 @@ def report_cpb_file_read(
 ) -> None:
 	access_info: dict[str, Any] = {
 		"objects": hashes,
-		"client": 'icoscp_core',
-		"version": icoscp_core_version
+		"client": 'icoscp',
+		"version": icoscp_version
 	}
 	if columns is not None:
 		access_info["columns"] = columns
