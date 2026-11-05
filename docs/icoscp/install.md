@@ -86,7 +86,7 @@ this is not reflecting the official release of the library, but includes
 the latest development. Hence, you should think of this as an alpha or
 beta version of the new release:
 ```shell
-pip install git+https://github.com/ICOS-Carbon-Portal/pylib.git
+pip install "git+https://github.com/ICOS-Carbon-Portal/pylib.git#subdirectory=icoscp"
 ```
 
 ## Dependencies
