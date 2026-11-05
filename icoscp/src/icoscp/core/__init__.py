@@ -1,4 +1,4 @@
-"""icoscp_core
+"""icoscp.core
 
 Python API for access to ICOS Carbon Portal-based data portals and their
 core services, such as authentication, metadata access, and data access.
