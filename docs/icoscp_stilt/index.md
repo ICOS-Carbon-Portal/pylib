@@ -1,39 +1,39 @@
-# ICOS Carbon Portal library icoscp_stilt
+# ICOS Carbon Portal STILT module icoscp.stilt
 ICOS Carbon Portal offers online services to [calculate your own STILT
 footprints](https://stilt.icos-cp.eu/worker/) and [visualize the results](
 https://stilt.icos-cp.eu/viewer/). Find out more on our website
 [https://www.icos-cp.eu/data-services/tools/stilt-footprint](
 https://www.icos-cp.eu/data-services/tools/stilt-footprint).
 
-This library offers access to information about the STILT "stations",
+This module offers access to information about the STILT "stations",
 calculated footprints and time series results. Please note that the
 calculated **footprints** are only accessible if the code is executed on
 [Carbon Portal's Jupyter notebooks](
 https://icos-carbon-portal.github.io/jupyter/).
 
 ## Background and history
-This library contains functionality split out of library `icoscp` prior to
-`0.2.0` release, in order to relieve the latter of the specialized STILT code
-and its dependencies.
+This module was a separate library, `icoscp_stilt`, during the `0.2.x`
+releases of **icoscp**, and is now part of **icoscp** again.
 
-In addition, the library contains a new module `icoscp.stilt.stilt` with new
+In addition, it contains a newer submodule `icoscp.stilt.stilt` with new
 functionality designed to closer match the server APIs and to be performant.
 
 ## Upgrade notes
-Releases of `icoscp` version `0.2.0` and `icoscp_stilt` version `0.1.0`
-constitute a substantial change. For STILT functionality, the change implies
-a necessity to update the existing code by replacing the import
+STILT functionality is part of **icoscp**, as `icoscp.stilt`. Code written
+for the separate `icoscp_stilt` library (used with **icoscp** `0.2.x`) needs
+its imports updated by replacing
 ```Python
-from icoscp.stilt import stiltstation
+from icoscp_stilt import stiltstation
 ```
 with
 ```Python
 from icoscp.stilt import stiltstation
 ```
 
-Additionally, handling of country-association of the STILT stations is
-simplified in this new release, which was made possible by a
-change on the server side that enforced ISO-3166 alpha-2 country code
+Compared with **icoscp** versions prior to `0.2.0`, handling of
+country-association of the STILT stations is simplified, which was made
+possible by a change on the server side that enforced ISO-3166 alpha-2
+country code
 association with every STILT station. (Geo-lookup of country used previously
 thus became redundant). Also, for the STILT station metadata, detailed
 country metadata was deemed unnecessary, retaining the country code only,

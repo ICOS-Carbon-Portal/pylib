@@ -7,7 +7,7 @@ nav:
         - About: icoscp/index.md
         - Installation: icoscp/install.md
         - Authentication: icoscp/authentication.md
-        - Getting started with icoscp_core: icoscp/getting_started.md
+        - Getting started with icoscp.core: icoscp/getting_started.md
         - Examples: icoscp/examples.md
         - Legacy icoscp modules: icoscp/modules.md
         - Legacy icoscp examples: icoscp/legacy_examples.md
@@ -15,9 +15,9 @@ nav:
         - Changelogs:
             - icoscp: icoscp/changelog.md
             - icoscp_core: icoscp/changelogs/icoscp_core.md
-    - icoscp_stilt:
+    - icoscp.stilt:
         - About: icoscp_stilt/index.md
-        - Getting started with the new icoscp_stilt: icoscp_stilt/getting_started.md
+        - Getting started with icoscp.stilt: icoscp_stilt/getting_started.md
         - Legacy modules: icoscp_stilt/modules.md
         - Changelog: icoscp_stilt/changelog.md
 

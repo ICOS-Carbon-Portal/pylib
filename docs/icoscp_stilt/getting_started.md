@@ -1,6 +1,6 @@
-# Getting started with the new icoscp_stilt
+# Getting started with icoscp.stilt
 
-The library is published to PyPI.
+STILT functionality is part of **icoscp**, see [Installation](../icoscp/install.md).
 
 As stated in [Background and history](index.md#background-and-history),
 the [legacy functionality](modules.md#legacy-modules) is
