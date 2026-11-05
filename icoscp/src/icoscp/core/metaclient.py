@@ -89,7 +89,7 @@ class MetadataClient:
 			Data objects with `'StationTimeSeries'` datasets and non-
 			empty `dataset_spec_uri` can be fetched as CSV or as a
 			dictionary of readily parsed arrays using DataClient
-			(obtainable as e.g. `from icoscp_core.<repo> import data`).
+			(obtainable as e.g. `from icoscp.core.<repo> import data`).
 		"""
 		query = dobj_spec_lite_list(self._envri_conf)
 		qres = self.sparql_select(query)
@@ -106,9 +106,9 @@ class MetadataClient:
 		station resource, or a supertype of the interesting types).
 		If omitted, a default type specific to the Repository
 		context is used (e.g. only the ICOS stations for ICOS
-		Repository). Look in `icoscp_core.<repo>` package for your
+		Repository). Look in `icoscp.core.<repo>` package for your
 		Repository for defined constants for different interesting
-		types of stations. For example, `icoscp_core.icos.ATMO_STATION`
+		types of stations. For example, `icoscp.core.icos.ATMO_STATION`
 		for ICOS Atmosphere stations. To get all stations without any
 		filtering, use `False`.
 

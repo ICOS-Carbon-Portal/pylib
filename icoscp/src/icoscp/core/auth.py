@@ -83,10 +83,10 @@ class PasswordAuth(AuthTokenProvider):
 	@staticmethod
 	def load_from_file(file_path: str, conf: EnvriConfig) -> "PasswordAuth":
 		if not os.path.exists(file_path):
-			docs_url = "https://github.com/ICOS-Carbon-Portal/data/tree/master/src/main/python/icoscp_core#authentication"
+			docs_url = "https://icos-carbon-portal.github.io/pylib/icoscp/authentication/"
 			raise Exception(f"Authentication config file not found at {file_path}. " +
 				f"Please initialize authentication according to {docs_url} \n" +
-				"(Remember to use Repository-specific imports in 'from icoscp_core.<repo> import auth')")
+				"(Remember to use Repository-specific imports in 'from icoscp.core.<repo> import auth')")
 		with open(file_path, 'r') as conf_file:
 			js = json.load(conf_file)
 			user_id: str = js["user_id"]
