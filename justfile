@@ -62,8 +62,8 @@ release part="patch":
     sed -i -E "s|^__date__ = .*|__date__ = \"${today}\"|" src/icoscp/__init__.py
     echo "→ bumped ${old_version} → ${new_version} (${today})"
 
-    if ! grep -qE "^## ${new_version}([[:space:]]|$)" ../docs/icoscp/changelog.md; then
-        echo "❌ ../docs/icoscp/changelog.md is missing a '## ${new_version}' entry" >&2
+    if ! grep -qE "^## ${new_version}([[:space:]]|$)" docs/icoscp/changelog.md; then
+        echo "❌ docs/icoscp/changelog.md is missing a '## ${new_version}' entry" >&2
         echo "   add the entry, then re-run. revert version bump with:" >&2
         echo "     git checkout -- src/icoscp/__init__.py" >&2
         exit 1
@@ -122,7 +122,7 @@ publish:
         hatch publish
     fi
 
-    git add src/icoscp/__init__.py ../docs/icoscp/changelog.md
+    git add src/icoscp/__init__.py docs/icoscp/changelog.md
     git commit -m "release ${version}"
     git tag "v${version}"
     echo "✓ published ${version} and tagged v${version}"

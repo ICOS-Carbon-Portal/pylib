@@ -50,7 +50,7 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://www.icos-cp.eu/"
-Source = "https://github.com/ICOS-Carbon-Portal/pylib/tree/master/icoscp"
+Source = "https://github.com/ICOS-Carbon-Portal/pylib"
 Documentation = "https://icos-carbon-portal.github.io/pylib/icoscp/"
 DataPortal = "https://data.icos-cp.eu/portal/"
 SparqlEndpoint = "https://meta.icos-cp.eu/sparqlclient/?type=CSV"
