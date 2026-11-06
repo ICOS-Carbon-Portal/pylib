@@ -20,7 +20,7 @@ If you need the cutting edge version you may install the library directly from
 GitHub with:
 
 ```shell
-pip install "git+https://github.com/ICOS-Carbon-Portal/pylib.git#subdirectory=icoscp"
+pip install git+https://github.com/ICOS-Carbon-Portal/pylib.git
 ```
 
 We would encourage you to use a virtual environment for python to test this
