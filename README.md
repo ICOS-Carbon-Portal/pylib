@@ -1,18 +1,58 @@
 [![Latest Release](https://badge.fury.io/py/icoscp.svg?style=flat&colorA=E1523D&colorB=007D8A)](https://pypi.org/project/icoscp/)
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/icoscp?left_color=blue&style=flat&colorA=E1523D&colorB=007D8A)](https://pepy.tech/project/icoscp)
 
+# icoscp
 
-# ICOS Carbon Portal Python Libraries
+Python library for accessing data hosted by the [ICOS Carbon Portal](https://www.icos-cp.eu/observations/carbon-portal), including the `icoscp.core` and `icoscp.stilt` modules.
 
-This repository contains source code for some Python libraries developed by [ICOS Carbon Portal](https://www.icos-cp.eu/observations/carbon-portal)
 - **Website:** https://icos-cp.eu
 - **Documentation:** https://icos-carbon-portal.github.io/pylib/
+
+## Installation
+The latest release is available on [https://pypi.org/project/icoscp/](
+https://pypi.org/project/icoscp/). You can simply run:
+
+```shell
+pip install icoscp
+```
+
+If you need the cutting edge version you may install the library directly from
+GitHub with:
+
+```shell
+pip install git+https://github.com/ICOS-Carbon-Portal/pylib.git
+```
+
+We would encourage you to use a virtual environment for python to test this
+library.  
+For example with [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
+you can create a new environment with:
+
+```shell
+conda create -n icos python
+activate icos
+pip install icoscp
+```
+
+or with python
+
+```shell
+python3 -m venv icos
+source icos/bin/activate
+pip install icoscp
+```
+
+## Documentation
+The full documentation about the library and all the modules are available at
+[https://icos-carbon-portal.github.io/pylib/icoscp/](
+https://icos-carbon-portal.github.io/pylib/icoscp/)
+
+## Development
+For instructions about how to go about extending and testing this software,
+please see [development.md](https://github.com/ICOS-Carbon-Portal/pylib/blob/master/development.md).
 
 ## About ICOS
 
 The Integrated Carbon Observation System, ICOS, is a European-wide greenhouse gas research infrastructure. ICOS produces standardised data on greenhouse gas concentrations in the atmosphere, as well as on carbon fluxes between the atmosphere, earth and oceans. This information is being used by scientists as well as by decision makers in predicting and mitigating climate change. The high-quality and open ICOS data is based on the measurements from over 130 stations across Europe. For more information about the ICOS station network, data quality control and assurance, and much more, please read the [ICOS Handbook 2022](https://www.icos-cp.eu/sites/default/files/2022-03/ICOS_handbook_2022_WEB.pdf), or visit our [website](https://www.icos-cp.eu/).
 
-
 Please be aware, that by either downloading data, or accessing data directly through ICOS libraries, you agree and accept, that all ICOS data is provided under a <a href="https://data.icos-cp.eu/licence" target="_blank">CC BY 4.0 licence <img src="https://www.icos-cp.eu/sites/default/files/inline-images/creativecommons.png"></a>
-
-

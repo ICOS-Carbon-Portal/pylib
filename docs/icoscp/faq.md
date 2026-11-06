@@ -3,17 +3,16 @@
 Please see [Getting started](getting_started.md) for possible answers to questions not
 covered here.
 
-### `icoscp_core` is very different from the old `icoscp`, do I have to rewrite everything?
-No, your code depending on the older version will continue working. Apart from
-moving stilt-related functionality to a new dedicated library and overhauling
-authentication that was present in later versions of `0.1.x` series, no code got
-removed from `icoscp` with release `0.2.0`. But you should use the new
-`icoscp_core` features for new developments, and can benefit from gradual
-porting of at least some of your older code to using `icoscp_core`.
+### `icoscp.core` is very different from the old `icoscp` API, do I have to rewrite everything?
+No, your code depending on the older API will continue working. Apart from
+overhauling authentication that was present in later versions of `0.1.x`
+series, no code got removed from `icoscp` with release `0.2.0`. But you should
+use the new `icoscp.core` features for new developments, and can benefit from
+gradual porting of at least some of your older code to using `icoscp.core`.
 
 ### How can I retrieve the latest/newest version of a dataset?
 ```python
-from icoscp_core.icos import meta
+from icoscp.core.icos import meta
 dobj = meta.get_dobj_meta('https://meta.icos-cp.eu/objects/lNJPHqvsMuTAh-3DOvJejgYc')
 
 latest_version_uri = dobj.latestVersion
@@ -25,7 +24,7 @@ collectively deprecate a single one.
 
 ### How to obtain ICOS station class of a station?
 ```python
-from icoscp_core.icos import station_class_lookup
+from icoscp.core.icos import station_class_lookup
 station_uri = 'http://meta.icos-cp.eu/resources/stations/AS_HTM'
 station_class = station_class_lookup().get(station_uri)
 ```

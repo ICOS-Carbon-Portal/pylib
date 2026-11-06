@@ -29,10 +29,10 @@ This library has a history of being developed somewhat empirically, resulting
 in mismatch with the Carbon Portal metadata model and APIs, and suboptimal
 performance. Starting from version `0.2.0`, it is being put on a more
 principled foundation in the form of a new library
-**[icoscp_core](https://pypi.org/project/icoscp_core/)**, also developed by the
-Carbon Portal. The new library is now a dependency of **icoscp**, meaning that
-by installing **icoscp** one automatically gains access to all the
-functionality of **icoscp_core**. As the latter happens to have all the
+**icoscp_core**, also developed by the Carbon Portal. It is now part of
+**icoscp** as the `icoscp.core` module, meaning that by installing **icoscp**
+one automatically gains access to all of its functionality. As it happens to
+have all the
 functionality expected to be *required* by most use cases, the majority of
 **icoscp** code written prior to version `0.2.0` is being assigned a legacy
 status. Legacy in this context means that it is not recommended for new
@@ -40,30 +40,30 @@ projects, but will be preserved to keep all the existing code, that depends on
 older versions of **icoscp**, working in the foreseeable future.
 
 For new projects, developers are advised to consider
-**[icoscp_core](https://pypi.org/project/icoscp_core/)** as the first choice,
+**[icoscp.core](getting_started.md)** as the first choice,
 unless it is explicitly known that some specific **icoscp** feature is
 required.
 
-However, it should be recognized that **icoscp_core**, though making possible
+However, it should be recognized that `icoscp.core`, though making possible
 with little code to achieve results that were previously impossible or lengthy
-with **icoscp**, is a somewhat lower-level library. Notably, **icoscp_core**
-does not depend on **pandas** library, which means the developers who want to
+with **icoscp**, is a somewhat lower-level module. Notably, `icoscp.core`
+does not use the **pandas** library, which means the developers who want to
 work with pandas DataFrames, may need to take one extra step (albeit short and
-easy) to produce them from **icoscp_core** outputs. Additionally,
-**icoscp_core** was designed to serve not only ICOS, but also other data
+easy) to produce them from `icoscp.core` outputs. Additionally,
+`icoscp.core` was designed to serve not only ICOS, but also other data
 repositories based on Carbon Portal server software, which makes it
-inappropriate to add much ICOS-specific functionality to **icoscp_core**.
+inappropriate to add much ICOS-specific functionality to `icoscp.core`.
 
 Hence, the new role of **icoscp** library is three-fold:
 
 - keeping the legacy functionality intact, to prevent breakage of Jupyter
   notebooks and Python scripts that depend on the older library versions
 - providing convenient high-level ICOS-specific functionality, built on top of
-  **icoscp_core**; future examples of that are:
+  `icoscp.core`; future examples of that are:
     - the latest near-real-time data for comparison across stations
     - concatenation of latest L2 release with corresponding latest
       near-real-time dataset 
-- making all the **icoscp_core** functionality available as a dependency
+- making all the `icoscp.core` functionality available as part of the package
 
 ## ICOS data licence
 

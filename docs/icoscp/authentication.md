@@ -26,7 +26,7 @@ Authentication can be initialized in a number of ways. **Please note** that
 when using other approaches than the default one (see below), it becomes
 necessary to use the `data` value (instance of `DataClient` class) obtained
 in the process of authentication bootstrap, rather than the default instance
-obtained by import `from icoscp_core.icos import data` used in the code
+obtained by import `from icoscp.core.icos import data` used in the code
 examples in this documentation.
 
 ## By credentials file (default)
@@ -39,12 +39,12 @@ user-specific folder**. To initialize this file, run the following code
 interactively (only needs to be done once for every machine):
 
 ```Python
-from icoscp_core.icos import auth
+from icoscp.core.icos import auth
 auth.init_config_file()
 ```
 
 After the initialization step is done in this way, access to the data can be
-achieved using both the new `icoscp_core` machinery and the legacy
+achieved using both the new `icoscp.core` machinery and the legacy
 [Dobj classes](modules.md#dobj).
 
 ## By custom credentials file
@@ -53,7 +53,7 @@ credentials and token cache. In this scenario, data and
 metadata access are achieved as follows:
 
 ```Python
-from icoscp_core.icos import bootstrap
+from icoscp.core.icos import bootstrap
 auth, meta, data = bootstrap.fromPasswordFile("<desired path to the file>")
 # The next line needs to be run interactively (only once per file).
 auth.init_config_file()
@@ -80,7 +80,7 @@ university sign-in, OAuth sign in). After this the bootstrapping can be
 done as follows:
 
 ```Python
-from icoscp_core.icos import bootstrap
+from icoscp.core.icos import bootstrap
 cookie_token = 'cpauthToken=WzE2OTY2NzQ5OD...'
 meta, data = bootstrap.fromCookieToken(cookie_token)
 ```
@@ -100,7 +100,7 @@ as an advanced option. **(Please do not put your password as clear text
 in your Python code!)** This can be achieved as follows:
 
 ```Python
-from icoscp_core.icos import bootstrap
+from icoscp.core.icos import bootstrap
 meta, data = bootstrap.fromCredentials(username_variable, password_containing_variable)
 ```
 
