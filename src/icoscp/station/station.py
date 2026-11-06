@@ -571,11 +571,11 @@ def get(stationId: str = None,
     # get lat, lon, eas from icos entry
     if not stn[stn.project.str.upper() == "ICOS"].empty:
         if stn.lat.any():
-            my_stn.lat = float(stn.lat[stn.project.str.upper() == 'ICOS'])
-        if stn.lat.any():
-            my_stn.lon = float(stn.lon[stn.project.str.upper() == 'ICOS'])
+            my_stn.lat = float(stn.lat[stn.project.str.upper() == 'ICOS'].iloc[0])
+        if stn.lon.any():
+            my_stn.lon = float(stn.lon[stn.project.str.upper() == 'ICOS'].iloc[0])
         if stn.elevation.any():
-            my_stn.eas = float(stn.elevation[stn.project.str.upper() == 'ICOS'])
+            my_stn.eas = float(stn.elevation[stn.project.str.upper() == 'ICOS'].iloc[0])
     else:
         if stn.lat.any():
             my_stn.lat = float(stn.lat.iloc[0])
