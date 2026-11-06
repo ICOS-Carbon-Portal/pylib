@@ -31,6 +31,63 @@ test *args:
 covhtml:
     hatch run covhtml
 
+# build a wheel, install it in a fresh venv, and import every module
+check-install:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd "{{justfile_directory()}}"
+
+    tmp=$(mktemp -d)
+    trap 'rm -rf "$tmp"' EXIT
+
+    hatch build -t wheel "$tmp/dist"
+    python3 -m venv "$tmp/venv"
+    "$tmp/venv/bin/pip" install -q "$tmp"/dist/*.whl
+    "$tmp/venv/bin/pip" check
+
+    cd "$tmp"
+    "$tmp/venv/bin/python" -I -c '
+    import importlib
+    import os
+    import pkgutil
+    import sys
+    import warnings
+
+    import pandas
+
+    import icoscp
+
+    venv = os.path.realpath(sys.argv[1])
+    where = os.path.realpath(icoscp.__file__)
+    print("icoscp: " + icoscp.__version__ + " from " + where)
+    print("python: " + sys.version.split()[0] + ", pandas: " + pandas.__version__)
+    if not where.startswith(venv + os.sep):
+        print("❌ icoscp was not imported from the temp venv", file=sys.stderr)
+        sys.exit(1)
+
+    ok = 0
+    failed = []
+    # onerror: a broken subpackage is already counted below; keep walking
+    walk = pkgutil.walk_packages(icoscp.__path__, "icoscp.", onerror=lambda name: None)
+    for mod in walk:
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                # icoscp.cpb resets the filter to "always", so mute output too
+                warnings.showwarning = lambda *args, **kwargs: None
+                importlib.import_module(mod.name)
+            ok += 1
+        except Exception as exc:
+            failed.append("%s: %s: %s" % (mod.name, type(exc).__name__, exc))
+
+    print("ok: %d, failed: %d" % (ok, len(failed)))
+    for line in failed:
+        print("  " + line)
+    sys.exit(1 if failed else 0)
+    ' "$tmp/venv"
+
+    echo "✓ installed wheel imports cleanly"
+
 
 # RUFF
 lint:
