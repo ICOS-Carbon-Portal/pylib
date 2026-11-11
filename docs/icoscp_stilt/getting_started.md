@@ -1,17 +1,17 @@
-# Getting started with the new icoscp_stilt
+# Getting started with icoscp.stilt
 
-The library is published to PyPI.
+STILT functionality is part of **icoscp**, see [Installation](../icoscp/install.md).
 
 As stated in [Background and history](index.md#background-and-history),
 the [legacy functionality](modules.md#legacy-modules) is
 still available, but for new code the developers are encouraged to consider
-the new module `icoscp_stilt.stilt` as the first choice.
+the new module `icoscp.stilt.stilt` as the first choice.
 
 The following code demonstrates the new functionality.
 
 ```Python
-from icoscp_stilt import stilt
-from icoscp_stilt.const import CP_OBSPACK_CO2_SPEC
+from icoscp.stilt import stilt
+from icoscp.stilt.const import CP_OBSPACK_CO2_SPEC
 
 # list of stilt.StiltStation dataclass instances
 stations = stilt.list_stations()
