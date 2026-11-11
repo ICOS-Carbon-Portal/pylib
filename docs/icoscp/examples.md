@@ -2,13 +2,13 @@
 
 ## Monthly CO2 averages
 
-This example uses `icoscp_core` functionality to merge, monthly-average and
+This example uses `icoscp.core` functionality to merge, monthly-average and
 plot CO2 molar fraction data from selected stations, sampled at certain
 heights. See [discover data types](getting_started.md#discover-data-types)
 to find out how to discover a URL for a data type.
 
 ```Python
-from icoscp_core.icos import data, meta, ATMO_STATION
+from icoscp.core.icos import data, meta, ATMO_STATION
 import pandas as pd
 import numpy as np
 

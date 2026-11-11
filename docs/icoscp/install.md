@@ -30,7 +30,7 @@ followed by the [authentication setup](authentication.md)
 authentication with it using the default method).
 
 After that all the working code that depended on older versions should work
-(with the exception of STILT-related code, [see below](#stilt-related-code-update)),
+(for STILT-related code, [see below](#stilt-related-code-update)),
 and no code changes are necessary, but it is highly recommended to replace the
 following import
 ```python
@@ -54,7 +54,7 @@ The advantages are:
   *data* is accessible with the library)
 - better performance when fetching the data
 - new `metadata` property that contains `DataObject` dataclass from
-  `icoscp_core.metaclient` module, which is a type-annotated nested structure
+  `icoscp.core.metaclient` module, which is a type-annotated nested structure
   that was (mostly) automatically produced to faithfully reflect the JSON
   metadata available for the data object from the metadata server.
 
@@ -63,17 +63,13 @@ when compared with the old one, but there are some differences described
 [elsewhere in the documentation](modules.md#original-legacy-dobj).
 
 ### STILT-related code update
-Starting from version `0.2.0`, `stilt` module has been moved out into a
-dedicated library `icoscp_stilt`. STILT functionality has normally been
-only used on Carbon Portal Jupyter, and the new library is going to be
-provisioned there. The legacy STILT functionality is preserved in the
-new library with only minor changes. However, the import statements
-containing `icoscp.stilt` need to be changed by replacing `icoscp.stilt`
-with `icoscp_stilt` (dot replaced with underscore). After this change
-all the working legacy STILT notebooks should work. However, the
-developers are encouraged to consult [`icoscp_stilt` library
-documentation](https://icos-carbon-portal.github.io/pylib/icoscp_stilt/)
-to discover new functionality that has been added to it.
+STILT functionality is available as `icoscp.stilt`, so legacy notebooks
+importing `icoscp.stilt` keep working, with only minor changes to the legacy
+STILT functionality. If your code imports from `icoscp_stilt` (the separate
+library used with **icoscp** `0.2.x`), replace `icoscp_stilt` with
+`icoscp.stilt` (underscore replaced with dot). Developers are encouraged to
+consult the [STILT documentation](../icoscp_stilt/index.md) to discover new
+functionality.
 ---
 
 ## Manual installation
@@ -96,8 +92,11 @@ pip install git+https://github.com/ICOS-Carbon-Portal/pylib.git
 ## Dependencies
 The following modules are required by the library:
 
+- dacite
 - folium
-- icoscp_core
+- netCDF4
+- numpy
 - pandas
 - requests
 - tqdm
+- xarray
